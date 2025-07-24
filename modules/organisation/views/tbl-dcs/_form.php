@@ -176,6 +176,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'fssi_expiry_date', '', FALSE, date('Y-m-d')); ?>
+        </div>
+        <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
         <div class="col-sm-2">
@@ -218,7 +221,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
         <!--    <div class="col-sm-2">
-                <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
             </div>-->
         <div class="col-sm-2">
             <div class="col-sm-12">
@@ -281,7 +284,8 @@ $form = ActiveForm::begin([
             <?=
             $this->render('../../../details/views/tbl-contact-details/_form', [
                 'model' => $contactDetails,
-                'form' => $form
+                'form' => $form,
+                'show_optional_fields' => TRUE
             ])
             ?>
 
@@ -357,8 +361,30 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'morning_kms')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 mb15">
             <?= $form->field($model, 'evening_kms')->textInput() ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_security_cheque', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-2 mt10 security_cheque">
+            <?= $form->field($model, 'cheque_number')->textInput() ?>   
+        </div>
+        <div class="col-sm-2 mt10 number-validate security_cheque">
+            <?= $form->field($model, 'cheque_amount')->textInput() ?>   
+        </div>
+        <div class="col-sm-2 mt10 security_cheque">
+            <?= $form->field($model, 'cheque_bank')->textInput() ?>   
+        </div>
+        <div class="col-sm-2 mt10 security_cheque">
+            <?= Yii::$app->controls->date($model, $form, 'security_return_date'); ?>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-2 mt10 number-validate security_cheque">
+            <?= $form->field($model, 'security_return_amt')->textInput() ?>   
+        </div>
+        <div class="col-sm-2 mt10 security_cheque">
+            <?= Yii::$app->dropdown->dropdownStatic('security_return_mode', $model, $form, '', $model->getAttributeLabel('security_return_mode'), false); ?>
         </div>
     </div>
 
@@ -394,6 +420,10 @@ $form = ActiveForm::begin([
     });
     $('#tblbankdetails-ifsc').on('change', function(){
         $('#bank_ac_warning').val(0);
+    });
+    securityCheque($('#tbldcs-is_security_cheque').prop('checked'));	
+    $('#tbldcs-is_security_cheque').on('change', function() {
+        securityCheque($(this).prop('checked'));
     });
    $('#tbldcs-branch_code').on('change',function(){
             var id = $('#tbldcs-branch_code').val();
@@ -510,6 +540,13 @@ $form = ActiveForm::begin([
             $('#tbldcs-lower_milk_type').trigger('select2:select');
             $('#tbldcs-lower_milk_type').parent('div').addClass('disabledDiv');
             $('#tbldcs-cutoff_val').parent('div').addClass('disabledDiv');
+        }
+    }
+    
+    function securityCheque(check_value) {
+        $('.security_cheque').hide();
+        if(check_value == true){
+            $('.security_cheque').show();
         }
     }
 ";

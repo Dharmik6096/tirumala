@@ -6,7 +6,7 @@ use kartik\detail\DetailView;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
-$this->title = Yii::$app->label->title('view', 'provisional member').' > '.$model->application_no;
+$this->title = Yii::$app->label->title('view', 'provisional member') . ' > ' . $model->application_no;
 if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     if ($model->is_approved != 1) {
@@ -28,33 +28,39 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'union_code',
                             'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'bmc_code',
+                            'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->ref_code : '',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                     [
                     'columns' => [
-                            [
-                            'attribute' => 'bmc_code',
-                            'value' => (string) $model->bmc_code,
-                            'valueColOptions' => ['style' => 'width:30%']],
                             [
                             'attribute' => 'bmc_name',
                             'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->bmc_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                            [
+                            'attribute' => 'dcs_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                     ],
                 ],
                     [
                     'columns' => [
                             [
-                            'attribute' => 'society_code',
-                            'value' => (string) $model->dcs_code,
+                            'attribute' => 'dcs_ref_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->ref_code : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'dcs_code',
-                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'attribute' => 'society_code',
+                            'value' => (string) $model->dcs_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -243,7 +249,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => !empty($model->applicant_relation) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => Yii::$app->general->getforeignkey($model->applicantRelationship, 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -285,6 +291,18 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             [
                             'attribute' => 'is_operator_aggre',
                             'value' => ($model->is_operator_aggre == 0) ? 'Pending' : ($model->is_operator_aggre == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'witness_name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'place',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -475,7 +493,15 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                             'attribute' => 'is_approved',
                             'format' => 'html',
                             'value' => $model->is_approved == 1 ? 'Approved' : 'Pending',
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'beneficiary_name',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
@@ -608,7 +634,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                 </tr>
             </thead>
             <tr>
-                <td><?= $model->member_class; ?></td>
+                <td><?= Yii::$app->general->getStaticDropdownVal('member_class', $model, 'member_class'); ?></td>
                 <td><?= $model->home_consumption_milk; ?></td>
                 <td><?= $model->market_surplus_milk; ?></td>
                 <td><?= $model->annual_milk_pour; ?></td>
@@ -626,6 +652,21 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                 $this->render('_share_grid', [
                     'shareMemberModel' => $shareMemberModel,
                     'shareDataProvider' => $shareDataProvider,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Previous Approval Detail</h4>
+            </div>
+            <div class="col-sm-12">
+                <?=
+                $this->render('_process_approval_grid', [
+                    'processApprovalModel' => $processApprovalModel,
+                    'processApprovalDataProvider' => $processApprovalDataProvider,
                 ])
                 ?>
             </div>

@@ -27,6 +27,7 @@ use app\modules\organisation\models\TblCustomerMasterSearch;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblCustomerMasterHistory;
 use app\modules\transporter\models\TblVehicleKmInfo;
+use app\models\TblUserOrganizationMapping;
 
 /**
  * TblRouteMappingController implements the CRUD actions for TblRouteMapping model.
@@ -101,6 +102,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $this->contactDetails->form_validation_type = 'route-create';
+        $this->contactDetails->department = 'route_supervisor';
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
@@ -198,6 +200,15 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 $dcsModel->scenario = 'routeMapping';
                 $saveModel[] = $dcsModel;
             }
+            $organizationMappings = TblUserOrganizationMapping::find()->alias('om')
+                    ->innerJoin('user u', 'u.id = om.user_id')
+                    ->where(['om.organization_code' => $dcsModel->dcs_code, 'u.login_type' => 'route_supervisor', 'om.organization_type' => 'DCS'])
+                    ->all();
+            if (!empty($organizationMappings)) {
+                foreach ($organizationMappings as $orgMapping) {
+                    $deleteModel[] = $orgMapping;
+                }
+            }
             $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Route', 'delete']);
 //            $record = $this->generalModel->deleteTransaction([$this->model, $saveModel]);
             if ($transaction == 'customRedirect') {
@@ -289,8 +300,10 @@ class TblRouteMappingController extends \app\controllers\ChildController {
             $dest[$value['code'] . '-' . $value['tname']] = $value['ref_code'] . ' - ' . $value['name'] . ' - ' . Yii::t('app', $value['tname']);
         }
         if (Yii::$app->request->post()) {
-            $route_code = Yii::$app->request->post('TblRouteMappingSources')['route_code'];
-            $from_dest = Yii::$app->request->post('TblRouteMappingSources')['from_dest'];
+            $routeData = !empty(Yii::$app->request->post('TblRouteMappingSources')) ? Yii::$app->request->post('TblRouteMappingSources') : [];
+            $route_code = !empty($routeData['route_code']) ? $routeData['route_code'] : null;
+            $from_dest = !empty($routeData['from_dest']) ? $routeData['from_dest'] : null;
+            $user_code = !empty($routeData['user_code']) ? $routeData['user_code']: null;
             if (empty($from_dest)) {
                 $model->addError('route_code', 'Please select at least one Source.');
             } else {
@@ -332,6 +345,9 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
                 $record = $this->generalModel->mappingTransactionMultiField([], $src, ['TblRouteMappingSources', 'TblRouteMappingSourcesHistory'], $mapping);
 
+                if (!empty($from_dest) && !empty($user_code)) {
+                    $this->addUserOrganizationMapping($from_dest, 'DCS', $user_code, 1);
+                }
                 if ($record) {
                     Yii::$app->display->message(true, 'route source mapping', 'edit');
                     return $this->redirect(['index']);
@@ -480,6 +496,36 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 $data = $model->getRouteTransporterList($route_codes);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    private function addUserOrganizationMapping($data, $type, $userId, $active) {
+        foreach ($data as $value) {
+            $dcsCode = explode('-', $value)[0];
+            $modelNew = new TblUserOrganizationMapping();
+            $modelNew->organization_code = $dcsCode;
+            $modelNew->organization_type = $type;
+            $modelNew->user_id = $userId;
+            $modelNew->is_active = $active;
+            if (!$modelNew->save()) {
+                Yii::error("Failed to save organization mapping for user ID $userId and DCS $dcsCode.");
+            }
+        }
+    }
+
+    public function actionUserList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $model = new TblRouteMapping();
+                $data = $model->getUserList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['user_code'], 'name' => $val['name']);
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }

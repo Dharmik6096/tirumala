@@ -42,10 +42,14 @@ use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\tms\models\TblUserAttendance;
 use app\components\WebApi;
+use app\modules\collection\models\TblBulkBillingImport;
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\eipldpu\models\TblEiplPacketFileLog;
+use app\modules\eipldpu\controllers\PendriveImportController;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -326,6 +330,15 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_quality_test') {
                 $flag = 'bmc-quality-test';
                 $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
+            } else if ($row->file_type == 'member_billing_import') {
+                $flag = 'member-billing-bulk';
+                $sp_name = 'DB_JOB_PORTAL_MEMBER_BILLING';
+            } else if ($row->file_type == 'vendor_billing_import') {
+                $flag = 'vendor-billing-bulk';
+                $sp_name = 'DB_JOB_PORTAL_VSP_BILLING';
+            } else if ($row->file_type == 'milk_collection_qty') {
+                $flag = 'milk-collection-qty';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection_qty_wise';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -356,20 +369,37 @@ class SchedulerController extends ChildController {
                         }
                     }
                     $data = array_combine($header, $line);
-                    $model = new TblBulkDataImport();
-                    $model->attributes = $data;
-                    $model->uuid = $uuid;
-                    $model->union_code = $row->union_code;
-                    $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
-                    $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
-                    if (in_array($row->file_type, $FileType)) {
-                        $model->SetDataForShagunDPU();
+                    if (($flag == 'member-billing-bulk') || ($flag == 'vendor-billing-bulk')) {
+                        $model = new TblBulkBillingImport();
+                        $model->attributes = $data;
+                        $model->uuid = $uuid;
+                        $model->union_code = $row->union_code;
+                        if ($flag == 'member-billing-bulk') {
+                            $model->billing_type = 'Member';
+                            $model->customer_type = 'Member';
+                        } else if ($flag == 'vendor-billing-bulk') {
+                            $model->billing_type = 'vendor_billing';
+                            $model->customer_type = 'DCS';
+                            $model->customer_code = !empty($model->customer_code) ? $model->customer_code : $model->dcs_code;
+                        }
+                        $model->from_date = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : '';
+                        $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
                     } else {
-                        $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
-                        $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        $model = new TblBulkDataImport();
+                        $model->attributes = $data;
+                        $model->uuid = $uuid;
+                        $model->union_code = $row->union_code;
+                        $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
+                        $FileType = ['milk_collection_dpu_data', 'milk_collection_other_data'];
+                        if (in_array($row->file_type, $FileType)) {
+                            $model->SetDataForShagunDPU();
+                        } else {
+                            $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                            $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        }
+                        $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
+                        $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
                     }
-                    $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
-                    $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
                     if ($model->save()) {
                         $success++;
                     } else {
@@ -574,13 +604,11 @@ class SchedulerController extends ChildController {
         $limit = 250;
         $deactiveData = $model->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
-
         $activeData = $model->getActiveRecords($limit);
         $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
 
         $CustModel = new TblCustomerDeactive();
         $deactiveData = $CustModel->getDeactiveRecords(true, '', $limit);
-
         $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
         $activeData = $CustModel->getActiveRecords($limit);
         $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
@@ -589,7 +617,6 @@ class SchedulerController extends ChildController {
         $MemberModel = new TblMemberDeactive();
         $deactiveData = $MemberModel->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
-
         $activeData = $MemberModel->getActiveRecords($limit);
         $this->setSentBox($MemberModel, $activeData, 'member_deactive_code', 'TblMember', 'member_code', 1, 4, 5, 6);
     }
@@ -600,15 +627,30 @@ class SchedulerController extends ChildController {
                 return $e->{$key};
             }, $data);
             $update = $model->updateFileStatus($ids, $u_status);
+            $uniqueUnionConfigData = [];
             foreach ($data as $row) {
                 $model_name = Yii::$app->path->define($masterModel);
                 $modelMaster = new $model_name();
                 $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
                 if (!empty($existData)) {
+                    if (method_exists($existData, 'updateChildRecord')) {
+                        $existData->updateChildRecord($existData, $status);
+                    }
+                    $is_active = $existData->is_active;
                     $existData->is_active = $status;
                     $sentboxArray = [];
                     $encrypt = $modelMaster->encryptModel($existData->attributes);
                     $existData->setAttributes($encrypt);
+                    $unionCode = $row->union_code;
+                    if (!isset($uniqueUnionConfigData[$unionCode])) {
+                        $uniqueUnionConfigData[$unionCode] = Yii::$app->general->getUnionConfiguration($unionCode, 'reset_data_on_deactivation', 'PORTAL');
+                    }
+                    if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                        $historyModelName = $model_name . 'History';
+                        $modelHistory = new $historyModelName();
+                        Yii::$app->operation->history($existData, $modelHistory, UPDATE);
+                        $existData->resetData();
+                    }
                     if (!empty($existData->customer_type)) {
                         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $existData->bmc_code);
                     } else {
@@ -626,6 +668,15 @@ class SchedulerController extends ChildController {
                             $row->data_post_status = $success;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
+                            if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                                $modelHistory->save();
+                                $decrypt = $modelMaster->decryptModel($existData);
+                                $existData->setAttributes($decrypt);
+                                $existData->is_active = $is_active;
+                                $existData->is_sentbox = FALSE;
+                                $existData->save(TRUE, FALSE);
+                                $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
+                            }
                             $row->save(FALSE);
                             $statusModel = new TblDcsVendorStatus();
                             $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
@@ -639,16 +690,16 @@ class SchedulerController extends ChildController {
                             } else {
                                 $statusModel->save(FALSE);
                             }
-                            if ($status == '0' && $statusModel->customer_type == 'DCS') {
+                            if ($status == '0' && strtolower($statusModel->customer_type) != 'member') {
                                 $bankModel = new TblBankDetails();
-                                $existbankModel = $bankModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                $existbankModel = $bankModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
                                 if (!empty($existbankModel)) {
-                                    $existbankModel->updateAll(['is_active' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
+                                    $existbankModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                                 $contactModel = new TblContactDetails();
-                                $existcontactModel = $contactModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                $existcontactModel = $contactModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
                                 if (!empty($existcontactModel)) {
-                                    $existcontactModel->updateAll(['is_active' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code, 'module_name' => 'society']);
+                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                                 }
                             }
                         }
@@ -1102,13 +1153,15 @@ class SchedulerController extends ChildController {
                 $saveModel[] = $row;
 
                 $appmodel = new TblEiplAppLogin();
-                $appData = $appmodel->getAppDetail($row);
-                if (!empty($appData)) {
-                    $appHistoryModel = new TblEiplAppLoginHistory();
-                    Yii::$app->operation->history($appData, $appHistoryModel, UPDATE);
-                    $saveModel[] = $appHistoryModel;
-                    $appData->is_active = 0;
-                    $saveModel[] = $appData;
+                $appDataList = $appmodel->getAppDetail($row);
+                if (!empty($appDataList)) {
+                    foreach ($appDataList as $appData) {
+                        $appHistoryModel = new TblEiplAppLoginHistory();
+                        Yii::$app->operation->history($appData, $appHistoryModel, UPDATE);
+                        $saveModel[] = $appHistoryModel;
+                        $appData->is_active = 0;
+                        $saveModel[] = $appData;
+                    }
                 }
                 $generalModel = new GeneralModel();
                 $transaction = $generalModel->saveTransaction($saveModel, [], ['User Deactivated', 'edit']);
@@ -1370,6 +1423,81 @@ class SchedulerController extends ChildController {
                     $errorMessage = substr($e->getMessage(), 0, 250);
                     $model->updateErrorApiStatus($errorMessage, $ids);
                 }
+            }
+        }
+    }
+
+    public function actionMilkCollectionFtpUploadAnanda() {
+        $model = new TblMilkCollection();
+        $modelData = \Yii::$app->general->getSpData('rpt_MIS_SDSAPReport_Ananda_Ftp_Auto_Push', []);
+        $data = $modelData;
+        if (!empty($modelData)) {
+            try {
+                $bmcDateShiftData = [];
+                foreach ($modelData as $code) {
+                    $collData = explode('_', $code['ftp_txn_file_name']);
+                    $date = $collData[2];
+                    $shift = $collData[3];
+                    $bmc = $collData[1];
+                    $uniqueKey = $bmc . '_' . $date . '_' . $shift;
+                    $bmcDateShiftData[$uniqueKey][] = $code;
+                }
+
+                foreach ($bmcDateShiftData as $uniqueKey => $mapData) {
+                    $cnt = count($mapData);
+                    $data_array = [];
+                    $data_array['module_name'] = 'TblMilkCollection_Ananda';
+                    $data_array['module_code'] = $mapData[0]['MCC'];
+                    $data_array['mcc_plant_code'] = $mapData[0]['MCC'];
+                    $data_array['union_code'] = $mapData[0]['union_code'];
+                    $data_array['applicable_date'] = Yii::$app->formatter->asDate($mapData[0]['Date'], DATE_FORMAT) . ' ' . Yii::$app->general->getshift($mapData[0]['shift_code']);
+                    $data_array['shift_code'] = $mapData[0]['shift_code'];
+                    $data_array['bmc_code'] = NULL;
+                    $data_array['from_date'] = $data_array['applicable_date'];
+                    $data_array['to_date'] = $data_array['applicable_date'];
+
+                    $modelDataOutput = array_map(function($item) {
+                        unset($item['union_code'], $item['data_post_status'], $item['ftp_txn_file_name']);
+                        return $item;
+                    }, $mapData);
+                    $title = $mapData[0]['ftp_txn_file_name'];
+                    $ftp_model = new TblFtpTxnLog();
+                    $result = $ftp_model->exportData($data_array, $title, $modelDataOutput, '', false, TRUE, TRUE);
+                    if (!empty($result)) {
+                        $model->updateProcessStatus('SUCCESS', '2', 2, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+                    } else {
+                        $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+                    }
+                }
+            } catch (\yii\db\Exception $e) {
+                $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+            } catch (\Throwable $e) {
+                $model->updateProcessStatus('ERROR', '0', 0, $mapData[0]['data_post_status'], $mapData[0]['ftp_txn_file_name']);
+            }
+        }
+    }
+
+    public function actionProcessBulkEiplFiles() {
+        $model = new TblEiplPacketFileLog();
+        $model->file_status = 0;
+        $model->status = 0;
+        $modelData = $model->getPendingData();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->file_id;
+            }, $modelData);
+            $model->updateFileStatus($ids);
+            $file_id = implode(',', $ids);
+            PendriveImportController::actionProcessFiles($file_id);
+
+            $model->file_status = 2;
+            $model->status = 2;
+            $modelData = $model->getPendingData($ids);
+            if (!empty($modelData)) {
+                $ids = array_map(function($e) {
+                    return $e->file_id;
+                }, $modelData);
+                PendriveImportController::savePacketData($ids);
             }
         }
     }

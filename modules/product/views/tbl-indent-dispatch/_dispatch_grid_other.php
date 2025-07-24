@@ -52,7 +52,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
                 }, 'filter' => FALSE],
                 ['attribute' => 'available_stock', 'value' => function($model) {
-                    return !empty($model['warehouse_code']) ? $model->getExistingStock($model) : 0;
+                    return (empty($model['warehouse_code']) || $model['warehouse_code'] == 0) ? $model->getExistingStock($model) : 0;
                 }, 'filter' => FALSE],
 //                ['attribute' => 'qty', 'filter' => FALSE],
             ['attribute' => 'approve_qty', 'filter' => FALSE],
@@ -97,11 +97,11 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
+                echo Html::button(Yii::t('app', 'Dispatch'), ['class' => 'btn btn-primary submit mt10', 'id' => 'approve', 'value' => 'dispatch', 'name' => 'dispatch']);
 //                echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'indent-approval'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index-other', false, 'mt10'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>
@@ -125,7 +125,10 @@ $script = '
         dispatch_qty = dispatch_qty == "" ? 0 : dispatch_qty;
         var new_remaining_qty = parseFloat(remaining_qty)-parseFloat(dispatch_qty);
 
-        if(!isNaN(remaining_qty) && parseInt(dispatch_qty) <= parseInt(approve_qty)){
+        if (!isNaN(remaining_qty) && parseInt(dispatch_qty) <= 0 && dispatch_qty != "") {
+            $("#tblindentdispatch-" + tr_key + "-dispatch_qty").val("");
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Dispatch quantity must be greater than zero.</span></div></div>");
+        } else if(!isNaN(remaining_qty) && parseInt(dispatch_qty) <= parseInt(approve_qty)){
             new_remaining_qty=parseInt(new_remaining_qty).toFixed(2);
             $("#tblindentdispatch-" + tr_key +"-remaining").text(new_remaining_qty);                     
         } else {

@@ -50,7 +50,7 @@ class TblVehicleMasterHistory extends \yii\db\ActiveRecord {
         return [
                 [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by', 'fuel_type_code', 'operation_type'], 'safe'],
                 [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active'], 'safe'],
-                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'history_created_at', 'parsing_no', 'licence_expiry_date', 'history_created_by'], 'safe'],
+                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'history_created_at', 'parsing_no', 'licence_expiry_date', 'history_created_by', 'no_of_compartment'], 'safe'],
         ];
     }
 
@@ -84,6 +84,7 @@ class TblVehicleMasterHistory extends \yii\db\ActiveRecord {
             'updated_by' => Yii::t('app', 'Updated By'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'is_active' => Yii::t('app', 'Is Active'),
+            'no_of_compartment' => Yii::t('app', 'No Of Compartment'),
         ];
     }
 

@@ -48,7 +48,7 @@ class TblInventoryTransferHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['inventory_transfer_code'], 'safe'],
-                [['inventory_transfer_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['inventory_transfer_date', 'created_at', 'updated_at', 'history_created_at', 'is_stock_posted'], 'safe'],
                 [['remarks'], 'safe'],
                 [['originating_type'], 'safe'],
                 [['inventory_transfer_code', 'inventory_transfer_no'], 'safe'],
@@ -56,7 +56,7 @@ class TblInventoryTransferHistory extends \yii\db\ActiveRecord {
                 [['union_code'], 'safe'],
                 [['created_by', 'updated_by', 'history_created_by'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['operation_type'], 'safe'],
+                [['operation_type', 'data_post_status', 'response_msg'], 'safe'],
         ];
     }
 
@@ -90,6 +90,7 @@ class TblInventoryTransferHistory extends \yii\db\ActiveRecord {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'is_stock_posted' => Yii::t('app', 'Is Stock Posted'),
         ];
     }
 

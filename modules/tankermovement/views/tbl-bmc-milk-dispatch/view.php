@@ -22,37 +22,37 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                 $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : (strtolower($model->destination_type) == 'party' ? 'party_name' : 'name'));
                 $attSource = strtolower($sourceType) == 'bmc' ? 'bmc_name' : (strtolower($sourceType) == 'vendor' ? 'customer_name' : (strtolower($sourceType) == 'party' ? 'party_name' : 'name'));
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'source_org_type',
                                 'label' => Yii::t('app', 'Source Type'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'source_org_code',
                                 'label' => Yii::t('app', 'Source Name'),
                                 'value' => !empty($rel) ? Yii::$app->general->getforeignkey($model->$relSource, $attSource) : '',
@@ -60,14 +60,14 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'source_org_code',
                                 'label' => Yii::t('app', 'Source Code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'bmc_code',
                                 'label' => (Yii::t('app', 'Source Ref.Code')),
                                 'value' => (strtolower($model->source_org_type) != 'party') ? Yii::$app->general->getforeignkey($model->$relSource, 'ref_code') : 'N/A',
@@ -75,14 +75,14 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'destination_type',
                                 'label' => Yii::t('app', 'Dest. Type'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'destination_code',
                                 'label' => Yii::t('app', 'Dest. Name'),
                                 'value' => !empty($rel) ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) : $model->destination_type,
@@ -90,14 +90,14 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'destination_code',
                                 'label' => Yii::t('app', 'Dest. Code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'bmc_code',
                                 'label' => (Yii::t('app', 'Dest. Ref.Code')),
                                 'value' => (strtolower($model->destination_type) != 'party') ? Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, 'ref_code') : 'N/A',
@@ -105,55 +105,55 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'from_date',
                                 'value' => Yii::$app->controls->view_date($model->from_date) . '(' . Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift') . ')',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'to_date',
                                 'value' => Yii::$app->controls->view_date($model->to_date) . '(' . Yii::$app->general->getforeignkey($model->toShiftCode, 'shift') . ')',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'transaction_date',
                                 'value' => Yii::$app->controls->view_date($model->transaction_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'trip_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'challan_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'is_last_destination',
                                 'value' => $model->is_last_destination == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'transporter_code',
                                 'label' => Yii::t('app', 'Transporter'),
                                 'value' => Yii::$app->general->getmultiforeignkey($model->vehicleCode, ['transporter'], 'transporter_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'vehicle_code',
                                 'value' => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no'),
                                 'label' => Yii::t('app', 'Vehicle No.'),
@@ -161,55 +161,63 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'driver_name',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'driver_contact_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'vehicle_in_time',
                                 'value' => Yii::$app->controls->view_time($model->vehicle_in_time),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'vehicle_out_time',
                                 'value' => Yii::$app->controls->view_time($model->vehicle_out_time),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'gross_weight',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'tare_weight',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'bmc_code',
                                 'label' => Yii::t('app', 'Channel'),
                                 'value' => Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
-                                'attribute' => 'remarks',
+                            [
+                                'attribute' => 'tested_by',
                                 'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'remarks',
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -239,18 +247,19 @@ $this->title = Yii::$app->label->title('view', 'Tanker Milk Dispatch');
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h4>
             </div>
             <div class="form-grid">
-<?=
-$this->render('_transaction_detail', [
-    'searchModel' => $searchModel,
-    'dataProvider' => $dataProvider,
-    'isVisible' => (strtolower($model->source_org_type == 'bmc')) ? true : false,
-]);
-?>
+                <?=
+                $this->render('_transaction_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'isVisible' => (strtolower($model->source_org_type == 'bmc')) ? true : false,
+                    'txnEdit' => 'false',
+                ]);
+                ?>
             </div>
         </div>
     </div>
-                <?php
-                $script = "$(document).ready(function(){
+    <?php
+    $script = "$(document).ready(function(){
     $(document).on('click','.view-config',function(e){
     var id= $(this).attr('data-val');
   ViewConfig(id);
@@ -279,5 +288,5 @@ $this->render('_transaction_detail', [
         }
     }
 });";
-                $this->registerJs($script, View::POS_END, 'bmc-config-popup');
-                ?>
+    $this->registerJs($script, View::POS_END, 'bmc-config-popup');
+    ?>

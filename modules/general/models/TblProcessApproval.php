@@ -9,6 +9,7 @@ use app\modules\usermanagement\models\User;
 use yii\db\Expression;
 use app\modules\configuration\models\TblShiftTimeExceed;
 use app\modules\organisation\models\TblCustomerMasterProvisional;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -98,20 +99,24 @@ class TblProcessApproval extends \app\models\ChildModel {
         return $this->hasOne(User::className(), ['user_code' => 'updated_by']);
     }
 
-    public function getApproveLavel($process_name) {
+    public function getApproveLavel($process_name, $status = 0) {
         $login_type = '0';
         if (isset(\Yii::$app->user->identity->login_type) && \Yii::$app->user->identity->login_type != '') {
             $login_type = \Yii::$app->user->identity->login_type;
         }
         $subquery = $this::find()
                 ->select([
-                    'process_code',
-                    'process_name',
-                    new Expression('MIN(level_priority) AS level_priority'),
-                    new Expression('MIN(level) AS level')
-                ])
-                ->where(['status' => 0, 'process_name' => $process_name])
-                ->groupBy(['process_code', 'process_name']);
+            'process_code',
+            'process_name',
+            new Expression('MIN(level_priority) AS level_priority'),
+            new Expression('MIN(level) AS level')
+        ]);
+        if ($status == 2) {
+            $subquery->andWhere(['process_name' => $process_name, 'level' => 1]);
+        } else {
+            $subquery->where(['status' => $status, 'process_name' => $process_name]);
+        }
+        $subquery->groupBy(['process_code', 'process_name']);
 
         $query = $this::find()
                 ->alias('app')
@@ -123,14 +128,20 @@ class TblProcessApproval extends \app\models\ChildModel {
                         ]
                 )
                 ->where([
-                    'or',
-                        ['app.login_type' => $login_type],
-                        ['app.user_code' => \Yii::$app->user->identity->user_code]
-                ])
-                ->andWhere([
-            'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
-            'app.status' => 0
+            'or',
+                ['app.login_type' => $login_type],
+                ['app.user_code' => \Yii::$app->user->identity->user_code]
         ]);
+        if ($status == 2) {
+            $query->andWhere([
+                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
+            ]);
+        } else {
+            $query->andWhere([
+                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
+                'app.status' => $status
+            ]);
+        }
         return $query;
     }
 
@@ -138,32 +149,33 @@ class TblProcessApproval extends \app\models\ChildModel {
         return $this->hasOne(TblShiftTimeExceed::className(), ['shift_time_exceed_code' => 'process_code']);
     }
 
-    public function approvalList($model, &$model_save, &$status) {
+    public function approvalList($model, &$model_save, &$status, $status_by = '') {
+        if ($model->status != '2') {
+            $next_count = TblProcessApproval::find()
+                    ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])
+                    ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
+            if ($model->approval_mode == 'flexi') {
+                $next_count = $next_count->andWhere(['<>', 'level', $model->level]);
+                $all_level = TblProcessApproval::find()
+                                ->where(['process_code' => $model->process_code, 'status' => 0])
+                                ->andWhere(['level' => $model->level])->all();
 
-        $next_count = TblProcessApproval::find()
-                ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])
-                ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
-        if ($model->approval_mode == 'flexi') {
-            $next_count = $next_count->andWhere(['<>', 'level', $model->level]);
-            $all_level = TblProcessApproval::find()
-                            ->where(['process_code' => $model->process_code, 'status' => 0])
-                            ->andWhere(['level' => $model->level])->all();
-
-            foreach ($all_level as $level) {
-                $approvalHistoryModel = new TblProcessApprovalHistory();
-                Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
-                $model_save[] = $approvalHistoryModel;
-                $level->status_date = date('Y-m-d H:i:s');
-                $level->status_by = \Yii::$app->user->identity->user_code;
-                $level->status = $model->status;
-                $model_save[] = $level;
+                foreach ($all_level as $level) {
+                    $this->updateApprovalHistory($level, $model_save, $model, $status_by);
+                }
+            } else {
+                $model->status_date = date('Y-m-d H:i:s');
+                $model->status_by = !empty($status_by) ? $status_by : \Yii::$app->user->identity->user_code;
+                $model_save[] = $model;
             }
+            $next_count = $next_count->count();
         } else {
-            $model->status_date = date('Y-m-d H:i:s');
-            $model->status_by = \Yii::$app->user->identity->user_code;
-            $model_save[] = $model;
+            $all_level = TblProcessApproval::find()
+                            ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])->all();
+            foreach ($all_level as $level) {
+                $this->updateApprovalHistory($level, $model_save, $model, $status_by);
+            }
         }
-        $next_count = $next_count->count();
         if ($model->status == '2') {
             $status = 'Reject';
         } else if ($model->status == '1' && $next_count > 0) {
@@ -173,8 +185,47 @@ class TblProcessApproval extends \app\models\ChildModel {
         }
     }
 
+    private function updateApprovalHistory($level, &$model_save, $model, $status_by = '') {
+        if ($model->process_approval_code != $level->process_approval_code) {
+            $approvalHistoryModel = new TblProcessApprovalHistory();
+            Yii::$app->operation->history($level, $approvalHistoryModel, 'UPDATE');
+            $model_save[] = $approvalHistoryModel;
+        }
+        $level->status_date = date('Y-m-d H:i:s');
+        $level->status_by = (isset($status_by) && !empty($status_by)) ? $status_by : \Yii::$app->user->identity->user_code;
+        $level->status = $model->status;
+        $level->remarks = $model->remarks;
+        $model_save[] = $level;
+    }
+
     public function getCustomerProvisional() {
         return $this->hasOne(TblCustomerMasterProvisional::className(), ['customer_provisional_code' => 'process_code']);
+    }
+
+    public function RejectList($model, &$model_save, &$status, $autoCode) {
+        $all_level = TblProcessApproval::find()->where(['process_code' => $model->process_code, 'process_name' => $model->process_name])->all();
+        foreach ($all_level as $level) {
+            if ($model->process_approval_code != $level->process_approval_code) {
+                $approvalHistoryModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
+                $model_save[] = $approvalHistoryModel;
+            }
+            $level->process_code = $autoCode;
+            $level->status_date = date('Y-m-d H:i:s');
+            $level->status_by = \Yii::$app->user->identity->user_code;
+            $level->status = ($level->status == 0) ? $model->status : $level->status;
+            $level->remarks = $model->remarks;
+            $model_save[] = $level;
+        }
+        $status = 'Reject';
+    }
+
+    public function getManualCollectionUserCode() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'user_code']);
+    }
+
+    public function getManualCollectionUpdatedBy() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'status_by']);
     }
 
 }

@@ -220,7 +220,8 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
-                                'attribute' => 'address',
+                                'attribute' => 'fssi_expiry_date',
+                                'value' => Yii::$app->controls->view_date($model->fssi_expiry_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -228,42 +229,44 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'address',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'local_address',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'state_code',
                                 'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'district_code',
                                 'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'sub_district_code',
-                                'value' => Yii::$app->general->getforeignkey($model->subDistrictCode, 'sub_district_name'),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
+                            
                         ],
                     ],
                     [
                         'columns' => [
                             [
+                                'attribute' => 'sub_district_code',
+                                'value' => Yii::$app->general->getforeignkey($model->subDistrictCode, 'sub_district_name'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'block_code',
                                 'value' => Yii::$app->general->getforeignkey($model->blockCode, 'block_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'village_code',
-                                'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
+                            
                         ],
                     ],
                     /* [
@@ -329,14 +332,16 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'village_code',
+                                'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'hamlet_code',
                                 'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'pincode',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
+                            
 //                            [
 //                                'attribute' => 'upi_no',
 //                                'valueColOptions' => ['style' => 'width:30%'],
@@ -346,35 +351,41 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'pincode',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'allow_multi_family_member',
                                 'label' => 'Allow Multi Family Member',
                                 'format' => 'html',
                                 'value' => $model->allow_multi_family_member == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'bipl_code',
                                 'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'vendor',
                                 'value' => isset($model->societyVendors) ? $model->societyVendors->vendor_code : Yii::t('app', 'Other'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'dpu_type',
                                 'value' => isset($model->dpu_type) ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
@@ -382,12 +393,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'bipl_code',
-                                'label' => Yii::t('app', 'Reference Code'),
-                                'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
+                            
 //                            [
 //                                'label' => 'IMEI Number',
 //                                'value' => isset($model->societyCodes) ? $model->societyCodes->imei_no : '',
@@ -398,17 +404,18 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'bipl_code',
+                                'label' => Yii::t('app', 'Reference Code'),
+                                'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'is_dispatch_mandate',
                                 'format' => 'html',
                                 'value' => isset($model->is_dispatch_mandate) ? Yii::$app->dropdown->getRecords('is_dispatch_mandate')['data'][$model->is_dispatch_mandate] : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'is_bmc',
-                                'format' => 'html',
-                                'value' => $model->is_bmc == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
+                            
 //                            [
 //                                'attribute' => 'is_weight_manual',
 //                                'format' => 'html',
@@ -430,105 +437,127 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'is_bmc',
+                                'format' => 'html',
+                                'value' => $model->is_bmc == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'credit_sale_allow',
                                 'format' => 'html',
                                 'value' => $model->credit_sale_allow == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'default_milk_type',
                                 'value' => Yii::$app->general->getStaticDropdownVal('default_milk_type', $model, 'default_milk_type'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'aadhaar_no',
                                 'format' => 'html',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'is_chiller',
                                 'value' => ($model->is_chiller == 1) ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'sap_vendor_code',
                                 'format' => 'html',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'password',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
+                            
                         ],
                     ],
                     [
                         'columns' => [
+                            [
+                                'attribute' => 'password',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                             [
                                 'attribute' => 'antibiotic_check',
                                 'value' => isset($model->antibiotic_check) ? Yii::$app->dropdown->getRecords('is_type')['data'][$model->antibiotic_check] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'x_col2',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'ts_code_m',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
-                                'attribute' => 'ts_code_e',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
+                            
                         ],
                     ],
                     [
                         'columns' => [
+                            [
+                                'attribute' => 'ts_code_e',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                             [
                                 'attribute' => 'bmc_code',
                                 'label' => Yii::t('app', 'Channel'),
                                 'value' => Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'lower_milk_type',
                                 'value' => Yii::$app->general->getforeignkey($model->lowerMilkType, 'animal_type_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'cutoff',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                            
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'cutoff_val',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
                             [
                                 'attribute' => 'morning_kms',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
                             [
                                 'attribute' => 'evening_kms',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'machine_owned',
+                                'value' => isset($model->machine_owned) ? Yii::$app->dropdown->getRecords('machine_owned_type')['data'][$model->machine_owned] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -536,8 +565,45 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'machine_owned',
-                                'value' => isset($model->machine_owned) ? Yii::$app->dropdown->getRecords('machine_owned_type')['data'][$model->machine_owned] : '',
+                                'attribute' => 'cheque_number',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'cheque_amount',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'cheque_bank',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'security_return_date',
+                                'value' => Yii::$app->controls->view_date($model->security_return_date),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'security_return_amt',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'security_return_mode',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_security_cheque',
+                                'value' => ($model->is_security_cheque == 1) ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],

@@ -2,16 +2,20 @@
 
 namespace app\modules\organisation\models;
 
+use app\modules\dcsoperation\models\TblMemberProvisional;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\organisation\models\TblCustomerMasterProvisional;
 use app\modules\general\models\TblProcessApproval;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblCustomerMasterProvisionalSearch represents the model behind the search form about `app\modules\organisation\models\TblCustomerMasterProvisional`.
  */
 class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
+
+    public $from_date, $to_date, $table_name, $report_type;
 
     /**
      * @inheritdoc
@@ -19,6 +23,11 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
     public function rules() {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'customer_code', 'customer_code_ex', 'customer_name', 'customer_type', 'sap_code', 'refference_code', 'address', 'local_name', 'local_address', 'gst_no', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'ccenter_code', 'ref_code', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'vendor_code', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'sap_vendor_code', 'customer_category', 'distance_from_mcc', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'contact_person', 'email', 'mobile_no', 'local_contact_person', 'department', 'firstname', 'lastname', 'surname', 'local_firstname', 'local_lastname', 'local_surname', 'status', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'morning_kms', 'evening_kms', 'customer_provisional_code', 'auto_code', 'data_post_status', 'animal_type_code', 'originating_type'], 'safe'],
+                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'from_date', 'to_date', 'table_name', 'report_type'], 'safe'],
+                [['from_date', 'to_date'], 'required', 'on' => 'ApprovedAttachmentDetails'],
+                [['from_date',], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'on' => 'ApprovedAttachmentDetails'],
         ];
     }
 
@@ -62,6 +71,16 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        if (!$pending_approval) {
+            $query->andFilterWhere(['tbl_customer_master_provisional.status' => $this->status]);
+        }
+
+        $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_customer_master_provisional.created_at as date)', $this->from_date]);
+
+        $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_customer_master_provisional.created_at as date)', $this->to_date]);
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -130,9 +149,117 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 ->andFilterWhere(['like', 'x_col2', $this->x_col2])
                 ->andFilterWhere(['like', 'x_col3', $this->x_col3])
                 ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-                ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+                ->andFilterWhere(['like', 'x_col5', $this->x_col5])
+                ->orderBy(['created_at' => SORT_DESC]);
 
         return $dataProvider;
+    }
+
+    public function approvedAttachmentDetailsSearch($params) {
+        $this->load($params);
+        $fromDate = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : null;
+        $toDate = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : null;
+
+        $results = [];
+        if ($this->validate()) {
+            $provisionalMembers = TblMemberProvisional::find()
+                    ->andFilterWhere(['>=', 'cast(registration_date as date)', $fromDate])
+                    ->andFilterWhere(['<=', 'cast(registration_date as date)', $toDate])
+                    ->andFilterWhere(['=', 'union_code', $this->union_code])
+                    ->all();
+            $approvedProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'approve';
+            });
+            $inprogressProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'inprogress';
+            });
+            $pendingProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'pending' || strtolower($member->provisional_status) == 'reroute';
+            });
+            $registeredProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'register';
+            });
+            $rejectedProvisionalMembers = array_filter($provisionalMembers, function($member) {
+                return strtolower($member->provisional_status) == 'reject';
+            });
+            $results[] = [
+                'process_name' => Yii::t('app', 'Provisional Member'),
+                'table_name' => 'tbl_member_provisional',
+                'approved_count' => count($approvedProvisionalMembers),
+                'inprogress_count' => count($inprogressProvisionalMembers),
+                'pending_count' => count($pendingProvisionalMembers),
+                'registered_count' => count($registeredProvisionalMembers),
+                'rejected_count' => count($rejectedProvisionalMembers),
+                'total_count' => count($provisionalMembers),
+            ];
+
+            $provisionalSocieties = TblDcsProvisional::find()
+                    ->andFilterWhere(['>=', 'cast(registration_date as date)', $fromDate])
+                    ->andFilterWhere(['<=', 'cast(registration_date as date)', $toDate])
+                    ->andFilterWhere(['=', 'union_code', $this->union_code])
+                    ->all();
+            $approvedProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'approve';
+            });
+            $inprogressProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'inprogress';
+            });
+            $pendingProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'pending' || strtolower($society->status) == 'reroute';
+            });
+            $registerProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'register';
+            });
+            $rejectedProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
+                return strtolower($society->status) == 'reject';
+            });
+            $results[] = [
+                'process_name' => Yii::t('app', 'Provisional Society'),
+                'table_name' => 'tbl_dcs_provisional',
+                'approved_count' => count($approvedProvisionalSocieties),
+                'inprogress_count' => count($inprogressProvisionalSocieties),
+                'pending_count' => count($pendingProvisionalSocieties),
+                'registered_count' => count($registerProvisionalSocieties),
+                'rejected_count' => count($rejectedProvisionalSocieties),
+                'total_count' => count($provisionalSocieties),
+            ];
+
+            $provisionalVendors = TblCustomerMasterProvisional::find()
+                    ->andFilterWhere(['>=', 'cast(created_at as date)', $fromDate])
+                    ->andFilterWhere(['<=', 'cast(created_at as date)', $toDate])
+                    ->andFilterWhere(['=', 'union_code', $this->union_code])
+                    ->all();
+            $approvedProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'approve';
+            });
+            $inprogressProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'inprogress';
+            });
+            $pendingProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'pending' || strtolower($vendor->status) == 'reroute';
+            });
+            $registerProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'register';
+            });
+            $rejectedProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
+                return strtolower($vendor->status) == 'reject';
+            });
+            $results[] = [
+                'process_name' => Yii::t('app', 'Provisional Vendor/Customer'),
+                'table_name' => 'tbl_customer_master_provisional',
+                'approved_count' => count($approvedProvisionalVendors),
+                'inprogress_count' => count($inprogressProvisionalVendors),
+                'pending_count' => count($pendingProvisionalVendors),
+                'registered_count' => count($registerProvisionalVendors),
+                'rejected_count' => count($rejectedProvisionalVendors),
+                'total_count' => count($provisionalVendors),
+            ];
+        }
+
+        return new ArrayDataProvider([
+            'allModels' => $results,
+            'pagination' => false
+        ]);
     }
 
 }

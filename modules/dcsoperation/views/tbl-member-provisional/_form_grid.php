@@ -2,7 +2,7 @@
 
 use app\components\GeneralFunctions;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
@@ -14,7 +14,9 @@ $attribute = [
         ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
             return Yii::$app->general->generateActivityStatus($model, 'updated_at');
         }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
-        ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
+        ['attribute' => 'bmc_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->tblDcsBmc, 'ref_code');
+        }, 'filter' => false],
         ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
         ['attribute' => 'created_at', 'vAlign' => 'middle', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->created_at);
@@ -92,7 +94,7 @@ $attribute = [
         ['attribute' => 'application_no', 'filter' => true],
         ['attribute' => 'is_approved', 'value' => function($model) {
             return $model->is_approved == 1 ? 'Approved' : 'Pending';
-        }, 'visible' => true, 'filter' => false],
+        }, 'visible' => false, 'filter' => false],
         ['attribute' => 'provisional_from'],
         ['attribute' => 'employee_code', 'visible' => false, 'filter' => true],
         ['attribute' => 'employee_name', 'visible' => false, 'filter' => true],
@@ -107,10 +109,50 @@ $attribute = [
         }, 'visible' => false, 'filter' => true
     ],
         ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'place', 'visible' => false, 'filter' => false],
+        ['attribute' => 'payment_type', 'value' => function($model) {
+            return (!empty($model['shareCode']->mode_of_payment) && $model['shareCode']->mode_of_payment != null) ? Yii::$app->dropdown->getRecords('mode_of_payment')['data'][$model['shareCode']->mode_of_payment] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('mode_of_payment', $searchModel, 'payment_type')],
+        ['attribute' => 'recipt_ref_no', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->shareCode, 'ref_no');
+        }, 'visible' => true, 'filter' => true
+    ],
+        ['attribute' => 'provisional_status',
+        'filter' => (!$pending_approval) ? Yii::$app->dropdown->dropdownfilterStatic('provisional_status', $searchModel, 'provisional_status') : false,
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->provisional_status] : '';
+        }],
+        ['attribute' => 'sap_farmer_code', 'visible' => true, 'filter' => false],
+        ['attribute' => 'is_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_verify');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_contact_verified', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_contact_verified');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_email_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_email_verify');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_aadhar_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_aadhar_verify');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'data_post_status',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+        }, 'filter' => false, 'visible' => false],
+        ['attribute' => 'picked_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'response_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-
+$gridId = 'member-grid';
 $grid_option = [
-    'id' => 'member-grid',
+    'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
@@ -123,7 +165,7 @@ $grid_option = [
             } else {
                 $class = '';
                 if (!$pending_approval) {
-                    $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
+                    $class = ($model->is_active === 0 || ($model->provisional_status != 'Pending' && $model->provisional_status != 'Reroute')) ? 'link-disable' : '';
                 }
                 $name = $model->member_name;
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
@@ -134,11 +176,13 @@ $grid_option = [
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1) {
                 $icon = '<i class="fa fa-eye"></i>';
                 $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
+                $title = 'Provisional Member View';
                 if ($pending_approval) {
                     $icon = '<i class="fa fa-check"></i>';
                     $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+                    $title = 'Approve Member';
                 }
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title];
                 return Html::a($icon, $url, $options);
             } else {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
@@ -152,10 +196,26 @@ $grid_option = [
         },
         'document-upload' => function ($url, $model) use ($pending_approval) {
             if (!$pending_approval) {
-                $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
+                $disable = ($model->provisional_status == 'Pending' || $model->provisional_status == 'Reroute') ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
                 return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
             }
+        },
+        'report' => function ($url, $model) use ($pending_approval) {
+            if (!$pending_approval) {
+                $disable = in_array(strtolower($model->provisional_status), ['approve', 'register', 'inprogress', 'pending', 'reject', 'Reroute']) ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target' => '_blank'];
+                // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
+                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'code' => $model->provisional_member_code], $options);
+            }
+        },
+        'repush' => function ($url, $model) use ($gridId) {
+            return Yii::$app->general->createRePushLink($url, $model, $gridId, 'provisional_member_code');
+        },
+        'delete' => ['option' => 'member_name,provisional_member_code,tbl-member-provisional/delete,checkDelete()'],
+        'view_attachment' => function($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Attachment'];
+            return Html::a('<i class="fa fa-paperclip"></i>', ['view-attachment', 'id' => $model->provisional_member_code], $options);
         },
     ]
 ];
@@ -189,6 +249,5 @@ $(document).on('click','.view_data',function(e){
 });
 });
 ";
-
 $this->registerJs($script, View::POS_END, 'provisional-data');
 ?>

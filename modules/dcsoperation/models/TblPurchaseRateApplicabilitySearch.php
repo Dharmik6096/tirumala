@@ -53,8 +53,9 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         ]);
 
 //        $query->joinWith(['dcsCode', 'shiftCode']);
-        $query->joinWith(['shiftCode', 'shiftApplicability sapp', 'dcsCode.bmcCode as bmc']);
+        $query->joinWith(['shiftCode', 'shiftApplicability sapp']);
         $query->join('LEFT JOIN', 'tbl_dcs as dcs', 'dcs.dcs_code = tbl_purchase_rate_applicability.dcs_code');
+        $query->join('LEFT JOIN', 'tbl_bmc as bmc', 'bmc.bmc_code = dcs.bmc_code');
         //$query->joinWith(['rateType','dcsCode','rateMethod']);
 
         $this->load($params);
@@ -88,13 +89,13 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
+                ->andFilterWhere(['like', 'dcs.dcs_name', $this->dcs_name])
                 ->andFilterWhere(['like', 'tbl_purchase_rate_applicability.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'sapp.shift', $this->shift_applicability])
                 ->andFilterWhere(['like', 'is_download', $this->is_download])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->code_ex])
-                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'dcs.dcs_code_ex', $this->code_ex])
+                ->andFilterWhere(['like', 'dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'bmc.ref_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'bmc.bmc_name', $this->bmc_name]);
         //->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])

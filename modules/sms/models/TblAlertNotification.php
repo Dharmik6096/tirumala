@@ -37,11 +37,11 @@ class TblAlertNotification extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['receiver_detail', 'receiver_type', 'message', 'header_info', 'status', 'send_status', 'response_status', 'refecence_code', 'module_type', 'template_id', 'other_receiver_detail'], 'safe'],
-            [['language_code'], 'safe'],
-            [['entry_datetime', 'pick_datetime', 'response_datetime', 'content_id', 'send_mail', 'created_by', 'activity_type'], 'safe'],
-            [['send_mail'], 'default', 'value' => 0],
-            [['queue_name', 'generate_queue', 'eipl_code'], 'safe'],
+                [['receiver_detail', 'receiver_type', 'message', 'header_info', 'status', 'send_status', 'response_status', 'refecence_code', 'module_type', 'template_id', 'other_receiver_detail'], 'safe'],
+                [['language_code'], 'safe'],
+                [['entry_datetime', 'pick_datetime', 'response_datetime', 'content_id', 'send_mail', 'created_by', 'activity_type'], 'safe'],
+                [['send_mail'], 'default', 'value' => 0],
+                [['queue_name', 'generate_queue', 'eipl_code', 'file_param'], 'safe'],
         ];
     }
 
@@ -74,6 +74,7 @@ class TblAlertNotification extends \app\models\ChildModel {
 
         return $this->find()
                         ->Where(['or', ['send_status' => 0], ['send_status' => NULL]])
+                        ->andWhere(['IS', 'queue_name', NULL])
                         ->andWhere(['>=', 'entry_datetime', $from_date])
                         ->andWhere(['<=', 'entry_datetime', $to_date])
 //                        ->andWhere(['alert_notification_id' => '113838'])

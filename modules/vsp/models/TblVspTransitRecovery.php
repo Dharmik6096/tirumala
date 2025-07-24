@@ -62,15 +62,15 @@ class TblVspTransitRecovery extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['transaction_date', 'from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
-            [['composite_qty', 'composite_fat', 'composite_snf', 'actual_qty', 'actual_fat', 'actual_snf', 'a_c_qty', 'a_c_fat', 'a_c_snf', 'composite_ts', 'actual_ts', 'ts_difference', 'ts_deduction_amount', 'qty_diff', 'shortage_recovery', 'total_recovery_incharge', 'total_recovery_transporter'], 'number'],
-            [['ts_loss_responsibility', 'qty_diff_responsibility', 'originating_type'], 'integer'],
-            [['union_code', 'qty_diff_type'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code'], 'string', 'max' => 12],
-            [['from_shift', 'to_shift'], 'string', 'max' => 30],
-            [['status'], 'string', 'max' => 20],
-            [['created_by', 'updated_by', 'originating_org_code'], 'string', 'max' => 14],
-            [['flg_sentbox_entry'], 'string', 'max' => 1],
+                [['transaction_date', 'from_date', 'to_date', 'created_at', 'updated_at', 'remarks', 'ts_deduction_for_incharge', 'ts_deduction_for_transporter', 'qty_recovery_for_incharge', 'qty_recovery_for_transporter'], 'safe'],
+                [['composite_qty', 'composite_fat', 'composite_snf', 'actual_qty', 'actual_fat', 'actual_snf', 'a_c_qty', 'a_c_fat', 'a_c_snf', 'composite_ts', 'actual_ts', 'ts_difference', 'ts_deduction_amount', 'qty_diff', 'shortage_recovery', 'total_recovery_incharge', 'total_recovery_transporter', 'composite_qty_in_kg', 'composite_kg_fat', 'composite_kg_snf', 'actual_qty_in_kg', 'actual_kg_fat', 'actual_kg_snf', 'kg_fat_difference', 'kg_snf_difference', 'kg_fat_recovery_amount', 'kg_snf_recovery_amount', 'type_of_shortage', 'deduction_kg_fat_difference', 'deduction_kg_snf_difference'], 'number'],
+                [['ts_loss_responsibility', 'qty_diff_responsibility', 'originating_type'], 'integer'],
+                [['union_code', 'qty_diff_type'], 'string', 'max' => 3],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code'], 'string', 'max' => 12],
+                [['from_shift', 'to_shift'], 'string', 'max' => 30],
+                [['status'], 'string', 'max' => 20],
+                [['created_by', 'updated_by', 'originating_org_code'], 'string', 'max' => 14],
+                [['flg_sentbox_entry'], 'string', 'max' => 1],
         ];
     }
 
@@ -122,11 +122,12 @@ class TblVspTransitRecovery extends \yii\db\ActiveRecord {
         ];
     }
 
-   public function getExistData($data) {
+    public function getExistData($data) {
         $status = 'Lock';
         return $this->find()
                         ->where('mcc_plant_code=\'' . $data->mcc_plant_code . '\' and status=\'' . $status . '\'')
-                        ->andWhere('((\'' . date('Y-m-d', strtotime($data->date_time_of_collection)) . '\' between cast(from_date as date)  and cast(to_date as date)))')
+                        ->andWhere('(\'' . date('Y-m-d H:i:s', strtotime($data->date_time_of_collection)) . '\' between from_date  and to_date)')
+                        ->andFilterWhere(['bmc_code' => $data->bmc_code])
                         ->count();
     }
 

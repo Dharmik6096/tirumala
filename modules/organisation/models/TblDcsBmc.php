@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\organisation\models\TblChannelMaster;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -66,54 +67,64 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
-            [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
-            [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type', 'fssi'], 'safe'],
-            [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
+                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+                [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
+                [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
+                [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+                [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type', 'fssi', 'bmc_short_name', 'fssi_expiry_date'], 'safe'],
+                [['fssi_expiry_date'], 'required', 'when' => function ($model) {
+                        return !empty($model->fssi);
+                    }, 'whenClient' => "function (attribute, value) {return $('#tbldcsbmc-fssi').val() !== '';
+                    }"],
+                [['fssi_expiry_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['fssi_expiry_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['fssi_expiry_date'], 'convertDate', 'on' => ['importCsv']],
+                [['fssi_expiry_date'], 'validateDate', 'when' => function ($model) {
+                        return !empty($model->fssi);
+                    }, 'on' => ['importCsv']],
+                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
+                [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['local_name'], function ($attribute, $params) {
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
 //            [['bmc_code'], 'integer', 'min' => 1],
 //            [['bmc_code'], 'string', 'max' => 5],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type', 'gst_no', 'pan_no', 'is_rented_bmc'], 'safe'],
-            [['mcc_plant_code'], 'setField'],
-            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+                [['mcc_plant_code'], 'setField'],
+                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'address', 'aadhaar_no'], 'safe'],
-            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-            [['bmc_code'], function ($attribute, $params) {
+                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'address', 'aadhaar_no'], 'safe'],
+                [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
+                [['bmc_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-            [['rate_calculate_on_merge'], 'default', 'value' => 0],
-            [['is_rented_bmc'], 'default', 'value' => 0],
-            [['password'], 'string', 'min' => 8, 'max' => 8],
-            [['antibiotic_check'], function ($attribute, $params) {
+                [['rate_calculate_on_merge'], 'default', 'value' => 0],
+                [['is_rented_bmc'], 'default', 'value' => 0],
+                [['password'], 'string', 'min' => 8, 'max' => 8],
+                [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
-            [['pan_no'], 'trim'],
-            [['pan_no'], function ($attribute, $params) {
+                [['pan_no'], 'trim'],
+                [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
-            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-            [['gst_no'], 'unique', 'except' => ['post_sap_data', 'from_mcc']],
-            [['gst_no'], 'string', 'max' => 15],
-            [['gst_no'], function ($attribute, $params) {
+                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+                [['gst_no'], 'unique', 'except' => ['post_sap_data', 'from_mcc']],
+                [['gst_no'], 'string', 'max' => 15],
+                [['gst_no'], function ($attribute, $params) {
                     $this->validateGstNo($attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
-            [['address'], 'string', 'max' => 500],
-            [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['importCsv']],
+                [['address'], 'string', 'max' => 500],
+                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -161,6 +172,8 @@ class TblDcsBmc extends \app\models\ChildModel {
             'address' => Yii::t('app', 'Address'),
             'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
             'fssi' => Yii::t('app', 'FSSAI'),
+            'fssi_expiry_date' => Yii::t('app', 'FSSAI Expiry Date'),
+            'bmc_short_name' => Yii::t('app', 'Bmc Short Name'),
         ];
     }
 
@@ -309,7 +322,7 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = [], $concatField = '') {
         $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode, $plant_bmc);
-        $concatField = !empty($concatField) ? ' - '.$concatField : '';
+        $concatField = !empty($concatField) ? ' - ' . $concatField : '';
         $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert, $concatField) {
                     return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code . $concatField;
                 });
@@ -365,15 +378,20 @@ class TblDcsBmc extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '', TRUE, 2);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
+            }
+        }
+        if (!empty($this->set_master_hierarchy) && $flag == 'INSERT') {
+            foreach ($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
             }
         }
     }
@@ -553,5 +571,40 @@ class TblDcsBmc extends \app\models\ChildModel {
             $query->andFilterWhere(['is_mcc' => 1]);
         }
         return $query->all();
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->fssi_expiry_date = Yii::$app->controls->view_date($this->fssi_expiry_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->fssi_expiry_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->fssi_expiry_date = !empty($this->fssi_expiry_date) ? Yii::$app->controls->view_date($this->fssi_expiry_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateDate($attribute, $params) {
+        if (empty($this->getErrors())) {
+            if ($this->$attribute < date('Y-m-d')) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Must Not Allow Past Date.'));
+                return false;
+            }
+        }
+    }
+
+    public function getAllBmcData() {
+        return $this->find()->where(['bmc_code' => $this->bmc_code])->all();
+    }
+
+    public function getBmcPlantList() {
+        return $this->find()
+            ->select('plant_code')
+            ->distinct()
+            ->where(['is_active' => 1])
+            ->all();
     }
 }

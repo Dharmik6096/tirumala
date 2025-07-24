@@ -201,4 +201,11 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
         return $this->hasOne(TblPurchaseRate::className(), ['dcs_purchase_rate_code' => 'purchase_rate_code']);
     }
 
+    public function getAllRateChartList($union_code) {
+        $data = $this->find()->where(['union_code' => $union_code, 'for_member' => 1])->orderBy('wef_date DESC')->all();
+        return ArrayHelper::map($data, 'purchase_rate_code', function ($data) {
+                    return !empty($data->description) ? $data->purchase_rate_code . ' (' . $data->description . ')' : $data->purchase_rate_code;
+                });
+    }
+
 }

@@ -14,6 +14,7 @@ $config = [
     'controllerNamespace' => 'app\commands',
     'components' => [
         'general' => ['class' => 'app\components\GeneralFunctions'],
+        'default' => ['class' => 'app\components\DefaultValue'],
         'encrypter' => [
             'class' => '\nickcv\encrypter\components\Encrypter',
             'globalPassword' => '1234567890123456',
@@ -31,6 +32,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'session' => [
+            'class' => 'yii\web\Session',
+        ],
     ],
     'modules' => [
         'user-management' => [

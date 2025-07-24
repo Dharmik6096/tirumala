@@ -12,6 +12,7 @@ use app\modules\globalmaster\models\TblAnimalType;
 /* @var $form yii\widgets\ActiveForm */
 
 $readonly = $type == 'create' ? FALSE : TRUE;
+$ex_code_readonly = $type == 'create' ? TRUE : FALSE;
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {
@@ -61,15 +62,25 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberprovisional-mcc_plant_code', 'bmc_code', true, false, '', '', $readonly); ?>
         </div>
+        <div class="col-sm-4 DCS">
+            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmemberprovisional-plant_code,tblmemberprovisional-mcc_plant_code,tblmemberprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+        </div>
         <div class="col-sm-4">
+            <?php $readonly = (empty($model->provisional_status) || (($model->provisional_status == 'Pending' || $model->provisional_status == 'Reroute') && $model->provisional_from != 'mobile_update')) ? false : true; ?>
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code', true, false, '', $readonly); ?>         
-        </div>  
+        </div>
         <!-- <div class="col-sm-4">
         <?php //Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
         </div> -->
         <?php //Html::activeHiddenInput($model, 'district_code'); ?>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'supervisor_employee_id')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
+        </div>
         <div class="col-sm-4 number-validate">
-            <?= $form->field($model, 'ex_member_code')->textInput() ?>
+            <?= $form->field($model, 'ex_member_code')->textInput(['readonly' => $ex_code_readonly]) ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
@@ -132,7 +143,7 @@ if ($model->isNewRecord) {
             <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdownStatic('applicant_relation', $model, $form, 'form-group', $model->getAttributeLabel('applicant_relation'), false, 'applicant_relation', false); ?>
+            <?= Yii::$app->dropdown->dropdown('relation', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('applicant_relation'), false, 'applicant_relation'); ?>
         </div>
         <!--    <div class="col-sm-4">
                 <? //$form->field($model, 'land_class')->textInput() ?>
@@ -148,6 +159,13 @@ if ($model->isNewRecord) {
         </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'annual_milk_pour')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signatureOfwitness']) ?>
+            <?= $form->field($model, 'witness_name')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'place')->textarea() ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'remarks')->textarea() ?>
@@ -193,7 +211,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'post_office')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                                                                              ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -209,12 +227,31 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', $model->getAttributeLabel('email_relation'), false, 'email_relation'); ?>
         </div>
-        <div class="col-sm-4 mt10">
-            <?= $form->field($model, 'is_contact_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
-        <div class="col-sm-4 mt10">
-            <?= $form->field($model, 'is_email_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
+
+        <?php if ($model->provisional_from == 'mobile_app' || $model->provisional_from == 'mobile_update') { ?>
+            <div class = "col-sm-4 mt10">
+                <?php
+                $contactVerificationStatus = $model->is_contact_verified == 1 ? 'Verify' : 'Not Verify';
+                echo $model->getAttributeLabel('is_contact_verified') . '-' . $contactVerificationStatus;
+                ?>
+            </div>
+            <div class = "col-sm-4 mt10">
+                <?php
+                $emailVerificationStatus = $model->is_email_verify == 1 ? 'Verify' : 'Not Verify';
+                echo $model->getAttributeLabel('is_email_verify') . '-' . $emailVerificationStatus;
+                ?>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="col-sm-4 mt10">
+                <?= $form->field($model, 'is_contact_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+            <div class="col-sm-4 mt10">
+                <?= $form->field($model, 'is_email_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+        <?php }
+        ?>
 
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Animal Details</h4>
@@ -253,8 +290,11 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                                                                              ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'beneficiary_name')->textInput() ?>
         </div>
         <div class="col-sm-2 icon-set">
             <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard']) ?>
@@ -317,6 +357,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('.btn-toolbar.kv-grid-toolbar').hide();
 });
+if ('$type' == 'create') {
     $('#tblmemberprovisional-dcs_code').on('change',function(){
         var id = $(this).val();
             $.ajax({
@@ -334,8 +375,49 @@ $(document).ready(function() {
                                     //alert('Your data has not been submitted..Please try again');
                                 }
             });
+            
+            $.ajax({
+		type: 'post',
+		url: '" . Url::to(['/dcsoperation/tbl-member-provisional/get-ex-member-code']) . "',
+		data: {'dcs_code':id},
+		success: function(exMemberCode) {
+			if(exMemberCode){
+                            $('#tblmemberprovisional-ex_member_code').val(exMemberCode);
+			}
+		},
+		error:function(exMemberCode){
+                    //alert('Failed to retrieve ex_member_code.');
+		}
+            });
     });
-    
+    $('#tblmemberprovisional-route_code').on('change', function(e) {
+        var module_code = $(this).val();
+        var module_name = 'routeMapping';
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/details/tbl-contact-details/contact-details']) . "',
+            data: 'module_code='+module_code+'&module_name='+module_name,
+            success: function(response) {
+                var obj1 = $.parseJSON(response);
+                var data = obj1.data;
+                if(data){
+                    $('#tblmemberprovisional-supervisor_employee_id').val(data.employee_code);
+                    $('#tblmemberprovisional-supervisor_employee_name').val(data.firstname);
+                    if(data.employee_code != '' && data.employee_code != null){
+                        $('.field-tblmemberprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                    }
+                    if(data.firstname != '' && data.firstname != null){
+                        $('.field-tblmemberprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                    }
+                }                               
+            },
+            error:function(data){
+                //alert('Your data has not been submitted..Please try again');
+            }
+        });
+    });
+}
+  
     $('#tblmemberprovisional-no_of_buffalo, #tblmemberprovisional-no_of_cow_cross, #tblmemberprovisional-no_of_cow_ind').on('change',function(){
             var no_of_buffalo = document.getElementById('tblmemberprovisional-no_of_buffalo').value;
             var no_of_cow_cross = document.getElementById('tblmemberprovisional-no_of_cow_cross').value;

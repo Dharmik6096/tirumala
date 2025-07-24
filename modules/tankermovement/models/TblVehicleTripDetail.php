@@ -8,7 +8,10 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use app\modules\tankermovement\models\TblVehicleTrip;
 
 /**
  * This is the model class for table "tbl_vehicle_trip_detail".
@@ -53,12 +56,17 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['destination_code', 'destination_type', 'source_org_code', 'source_org_type'], 'required'],
-            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
+            [['source_org_code', 'source_org_type'], 'required'],
+            [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
+            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks', 'is_virtual_location'], 'safe'],
+            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
             [['travel_km', 'originating_type', 'is_active'], 'safe'],
-            [['is_last_destination'], 'default', 'value' => 0],
+            [['is_last_destination', 'is_virtual_location'], 'default', 'value' => 0],
             [['is_active'], 'default', 'value' => 1],
+            [['arrival_time'], 'required', 'on' => ['gate-in']],
+            [['departure_time'], 'required', 'on' => ['gate-out']],
+            [['arrival_time'], 'validateArrival'],
+            [['departure_time'], 'validateDeparture'],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
@@ -93,6 +101,9 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'in_remarks' => Yii::t('app', 'Remarks'),
+            'out_remarks' => Yii::t('app', 'Remarks'),
+            'is_virtual_location' => Yii::t('app', 'Is Vertual Location'),
         ];
     }
 
@@ -132,6 +143,14 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
     }
 
+    public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'source_org_code']);
+    }
+
+    public function getPartyMasterCodeDest() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'destination_code']);
+    }
+
     public function getTripDetailEntry() {
         $model = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
         $last_trip = TblVehicleTripDetail::find()
@@ -159,31 +178,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 ->one();
     }
 
-    public function afterSave($insert, $changedAttributes) {
-        if (strtolower($this->source_org_type) == 'bmc') {
-            $sentboxArray = [];
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->source_org_code, '', '', FALSE);
-            foreach ($sentboxArray as $sent) {
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                    if (!($sentbox->setSentbox($this, $flag))) {
-                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                    }
-                }
-            }
-        }
-    }
-
-    public function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->originating_org_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
-
-    public function getOpenTripList($bmc_code, $vehicle_code, $transaction_date, $tripCode = '') {
+    public function getOpenTripList($bmc_code, $vehicle_code, $transaction_date, $tripCode = '', $type = '', $tankerMovementWithTripSubStatus = '') {
         $transaction_date = date('Y-m-d', strtotime($transaction_date));
         $query = TblVehicleTripDetail::find()
                 ->select(['tbl_vehicle_trip.trip_code'])
@@ -199,16 +194,155 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $to_date = !empty($tripCode) ? date('Y-m-d', strtotime($tripCode)) : $transaction_date;
             $query->andWhere(['>=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);
             $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $to_date]);
+        } else if (!empty($type) && $tankerMovementWithTripSubStatus && $tripCode != 'alltrip') {
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open'], 'tbl_vehicle_trip_detail.source_org_type' => $type, 'tbl_vehicle_trip_detail.source_org_code' => $bmc_code])
+                    ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date])
+                    ->andWhere(['IS NOT', 'arrival_time', null])
+                    ->andWhere(['IS', 'departure_time', null]);
         } else {
             if ($tripCode != 'alltrip') {
                 $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
             }
         }
         if (!empty($tripCode) && $bmc_code != 'alltrip' && $tripCode != 'alltrip') {
-            $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode]);
+            $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode])
+                ->andFilterWhere(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
         }
         $data = $query->all();
         return ArrayHelper::map($data, 'trip_code', 'trip_code');
+    }
+
+    public function getOpenTripDetailList($union_code, $trip_process, $vehicle_code = '', $plants = '') {
+        $query = TblVehicleTripDetail::find()->alias('vtd')
+                ->select(['vt.trip_code', 'vt.vehicle_code', 'v.parsing_no'])
+                ->distinct()
+                ->innerJoin('tbl_vehicle_trip as vt', 'vt.trip_code = vtd.trip_code')
+                ->innerJoin('tbl_vehicle_master as v', 'v.vehicle_code = vt.vehicle_code')
+                ->where(['vt.union_code' => $union_code, 'vt.is_active' => 1]);
+
+        if ($trip_process == 'milk_entry_qlty') {
+            $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
+            $query->andWhere(['vt.trip_status' => ['open', 'tankerfull']]);
+            $query->andWhere(['<=', 'vt.transaction_date', date('Y-m-d H:i:s')]);
+            if (!empty($plants)) {
+                $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
+            }
+        } else if (in_array($trip_process, ['cleaning_inspection', 'qa_inspection'])) {
+            $subStatus = $trip_process == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';
+            $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => $subStatus]);
+        } else if ($trip_process == 'milk_entry_qlty_merge') {
+            $plants = empty($plants) ? (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL) : $plants;
+            $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => 'cleaning_pending']);
+            $query->andWhere(['BETWEEN', 'vt.transaction_date', date('Y-m-d', strtotime('-2 days')), date('Y-m-d')]);
+            if (!empty($plants)) {
+                $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
+            }
+        }
+
+        if (!empty($vehicle_code)) {
+            $query->andWhere(['vt.vehicle_code' => $vehicle_code]);
+        }
+        return $query->asArray()->all();
+    }
+
+    public function getTripDetails($tankerMovementWithTripSubStatus) {
+        $query = $this->find()->alias('td')->select(['td.destination_type', 'td.destination_code', 't.is_auto_trip', 'td.is_last_destination', 'td.arrival_time', 'td.vehicle_trip_detail_code'])
+                ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+                ->where(['td.trip_code' => $this->trip_code, 'td.source_org_type' => $this->source_org_type, 'td.source_org_code' => $this->source_org_code])
+                ->andWhere(['IS', 'td.challan_no', NULL]);
+
+        if ($tankerMovementWithTripSubStatus) {
+            $query->andWhere(['IS NOT', 'td.arrival_time', null])
+                    ->andWhere(['IS', 'td.departure_time', null]);
+        }
+
+        return $query->orderBy(['td.sequence_no' => SORT_ASC])
+                        ->asArray()
+                        ->one();
+    }
+
+    public function getMaxCode($vehicleTripCode) {
+        $prefixToRemove = $vehicleTripCode . 'T';
+        $prefixLength = strlen($prefixToRemove);
+        $maxCode = $this->find()
+                ->select([
+                    'max_number' => new Expression("MAX(CAST(SUBSTRING(vehicle_trip_detail_code, {$prefixLength} + 1, LEN(vehicle_trip_detail_code)) AS INT))"),
+                ])
+                ->where(['like', 'vehicle_trip_detail_code', $prefixToRemove . '%', false])
+                ->andWhere(new Expression("LEN(vehicle_trip_detail_code) > {$prefixLength}"))
+                ->scalar();
+        return $maxCode + 1;
+    }
+
+    public function getTripData() {
+        return $this->find()
+                        ->select(['source_org_type', 'source_org_code'])
+                        ->where(['trip_code' => $this->trip_code])->andWhere(['!=', 'is_last_destination', 1])
+                        ->orderBy(['sequence_no' => SORT_DESC])
+                        ->one();
+    }
+
+    public function validateArrival($attribute, $params) {
+        $prevTrip = self::find()
+                ->where(['<', 'sequence_no', $this->sequence_no])
+                ->andWhere(['vehicle_trip_code' => $this->vehicle_trip_code])
+                ->orderBy(['sequence_no' => SORT_DESC])
+                ->one();
+        if ($prevTrip && !empty($prevTrip->departure_time) && strtotime($this->arrival_time) <= strtotime($prevTrip->departure_time)) {
+            $this->addError($attribute, 'Arrival time must be greater than previous departure time.');
+        }
+    }
+
+    public function validateDeparture($attribute, $params) {
+        if (!empty($this->arrival_time) && strtotime($this->departure_time) <= strtotime($this->arrival_time)) {
+            $this->addError($attribute, 'Departure time must be greater than Arrival time.');
+        }
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$childModel) {
+        $content = $modelSave['content'];
+        $action_datetime = $content['action_datetime'];
+        $remarks = $content['remarks'];
+        $action_type = $content['action_type'];
+        $model->scenario = 'gate-' . $action_type;
+        $isValid = FALSE;
+        $trip = TblVehicleTrip::findOne($model->vehicle_trip_code);
+        if ($action_type == 'in' && empty($model->arrival_time)) {
+            $isValid = TRUE;
+            $model->in_remarks = $remarks;
+            $model->arrival_time = $action_datetime;
+            $trip->trip_sub_status = $model->is_last_destination ? 'plant_lot_pending' : 'gate_in';
+            if ($model->is_virtual_location == 1) {
+                $model->departure_time = $departure = date('Y-m-d H:i:s', strtotime($action_datetime) + 1);
+                $nextTripDetail = TblVehicleTripDetail::find()
+                        ->where(['vehicle_trip_code' => $model->vehicle_trip_code])
+                        ->andWhere(['>', 'sequence_no', $model->sequence_no])
+                        ->orderBy(['sequence_no' => SORT_ASC])
+                        ->one();
+                if (!empty($nextTripDetail)) {
+                    $nextTripDetail->scenario = 'gate-' . $action_type;
+                    $nextTripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($departure) + 1);
+                }
+            }
+        } else if ($action_type == 'out' && empty($model->departure_time)) {
+            $isValid = TRUE;
+            $model->departure_time = $action_datetime;
+            $model->out_remarks = $remarks;
+            $trip->trip_sub_status = 'gate_out';
+        }
+        if ($isValid && $model->validate()) {
+            $trip->sub_status_time = $action_datetime;
+            $childModel[] = $trip;
+            if (isset($nextTripDetail)) {
+                $childModel[] = $nextTripDetail;
+            }
+            $response = Yii::$app->general->getColumnName($model->source_org_type);
+            if (!empty($response['rel'])) {
+                $sourceData = $model->{$response['rel'] . 'Source'};
+                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+            }
+            Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
+        }
     }
 
 }

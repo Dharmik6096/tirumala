@@ -72,6 +72,9 @@ class ReportsController extends \app\controllers\ChildController {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberConsolidated';
             }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'MemberConsolidatedWithBank';
+            }
         }
         return $this->actionIndex();
     }
@@ -84,6 +87,9 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'DcsCollectionConsolidate';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'ConsolidatedWithBank';
             }
         }
         return $this->actionIndex();
@@ -125,6 +131,9 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BmcCollConsolidated';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'BmcConsolidatedWithBank';
             }
         }
         return $this->actionIndex();
@@ -734,6 +743,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMissingShift() {
         $this->report = 'MissingShift';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MissingBmcShift';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -1009,7 +1023,13 @@ class ReportsController extends \app\controllers\ChildController {
                     $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
-            $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
+            if ($value == 'date_payment_cycle' && !empty($model->{$value})) {
+                $pay_cycle_date = explode('to', $model->{$value});
+                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])).' 06:00:00';
+                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))).' 18:00:00';
+            } else {
+                $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
+            }
         }
         $showOutPut = TRUE;
         if (!empty($this->data['download_day_differe'])) {
@@ -1046,11 +1066,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
             }
         } else {
-            if ($this->RegisterReportRequest('mis', $this->data, $controls)) {
-                $output = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
-            } else {
-                $output = 'Error While Request Submit.';
-            }
+            $output = $this->RegisterReportRequest('mis', $this->data, $controls);
         }
         $this->output = $output;
 
@@ -1099,12 +1115,22 @@ class ReportsController extends \app\controllers\ChildController {
             if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
                 for ($i = 0; $i < count($output); $i++) {
                     foreach ($dataToDecrypt as $decKey) {
+                        $formateChange = '';
+                        if (strpos($decKey, '##') !== false) {
+                            $formate = explode('##', $decKey);
+                            $decKey = $formate[0];
+                            $formateChange = $formate[1];
+                        }
                         if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
                             $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                            if (!empty($formateChange)) {
+                                $output[$i][$decKey] = date($formateChange, strtotime($output[$i][$decKey]));
+                            }
                         }
                     }
                 }
             }
+            $this->output = $output;
             $dataPro = [];
             $dataPro = [
                 'allModels' => $output,
@@ -1546,6 +1572,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionTallyReport() {
         $this->report = 'TallyReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'TallyConsolidatedReport';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -1668,6 +1699,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapWqFileXls';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -1711,11 +1747,319 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    public function actionExportProvisionalMemberBankReceipt(){
+    public function actionExportProvisionalMemberBankReceipt() {
         $this->report = 'ExportProvisionalMemberBankReceipt';
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionStatusReport() {
+        $this->report = 'MilkCollectionStatusReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionFilterBased() {
+        $this->report = 'MilkCollectionFilterBased';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionAudit() {
+        $this->report = 'MilkCollectionAudit';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkCollection() {
+        $this->report = 'MemberMilkCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkCollectionDcsWise() {
+        $this->report = 'MemberMilkCollectionDcsWise';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsBmcMemberWiseTopCollection() {
+        $this->report = 'DcsBmcMemberWiseTopCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionFatAnalysisReport() {
+        $this->report = 'FatAnalysisReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsAndMemberWiseQtyCompare() {
+        $this->report = 'DcsAndMemberWiseQtyCompare';
+        return $this->actionIndex();
+    }
+
+    public function actionSapDataExportForDeduction() {
+        $this->report = 'SapDataExportForDeduction';
+        return $this->actionIndex();
+    }
+
+    public function actionSapDataExportForVlcReplacement() {
+        $this->report = 'SapDataExportForVlcReplacement';
+        return $this->actionIndex();
+    }
+
+    public function actionStockRegisterBmcToSap() {
+        $this->report = 'StockRegisterBmcToSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'StockRegisterBmcToProduct';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'StockRegisterBmcToSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAssetDetailsReport() {
+        $this->report = 'AssetDetailsReport';
+        return $this->actionIndex();
+    }
+
+    public function actionUserOrganizationMappingReport() {
+        $this->report = 'UserOrganizationMappingReport';
+        return $this->actionIndex();
+    }
+
+    public function actionAppStartupReport() {
+        $this->report = 'AppStartupReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionStatusDetail() {
+        $this->report = 'MilkCollectionStatusDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionEiplInstalledUsersDetails() {
+        $this->report = 'EiplInstalledUsersDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionSapDataExportFeedSaleMember() {
+        $this->report = 'SapDataExportFeedSaleMember';
+        return $this->actionIndex();
+    }
+
+    public function actionPaymentCycleApplicabilityStatus() {
+        $this->report = 'PaymentCycleApplicabilityStatus';
+        return $this->actionIndex();
+    }
+
+    public function actionIndentSummaryDetail() {
+        $this->report = 'IndentSummaryDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionGheeGroupIndentReport() {
+        $this->report = 'GheeGroupIndentReport';
+        return $this->actionIndex();
+    }
+
+    public function actionCfGroupIndentReport() {
+        $this->report = 'CfGroupIndentReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSapGheeGroupIndentReport() {
+        $this->report = 'SapGheeGroupIndentReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSapCfGroupIndentReport() {
+        $this->report = 'SapCfGroupIndentReport';
+        return $this->actionIndex();
+    }
+
+    public function actionBillHeadDetail() {
+        $this->report = 'BillHeadDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionApprovedAttachmentDetails() {
+        $this->report = 'ApprovedAttachmentDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcCollectionRouteWise() {
+        $this->report = 'BmcCollectionRouteWise';
+        return $this->actionIndex();
+    }
+
+    public function actionPlantWiseMilkCollectionTracking() {
+        $this->report = 'PlantWiseMilkCollectionTracking';
+        return $this->actionIndex();
+    }
+
+    public function actionVlcQtySlabWiseCategory() {
+        $this->report = 'VlcQtySlabWiseCategory';
+        return $this->actionIndex();
+    }
+
+    public function actionAvgPerVlcMilkQtySlabWiseCategory() {
+        $this->report = 'AvgPerVlcMilkQtySlabWiseCategory';
+        return $this->actionIndex();
+    }
+
+    public function actionIndentMemberDetail() {
+        $this->report = 'IndentMemberDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionCompanyWiseMilkCollection() {
+        $this->report = 'CompanyWiseMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'PlantWiseMilkCollection';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'DcsWiseMilkCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionRateRecalculationWefDateWise() {
+        $this->report = 'RateRecalculationWefDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostDetail() {
+        $this->report = 'TpCostDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionTpCostSummary() {
+        $this->report = 'TpCostSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionAreBmcCollectionShiftReport() {
+        $this->report = 'AreBmcCollectionShiftReport';
+        return $this->actionIndex();
+    }
+
+    public function actionAreBmcCollDateShiftWiseSummary() {
+        $this->report = 'AreBmcCollDateShiftWiseSummary';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AreBmcCollDateWiseSummary';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AreBmcCollConsolidated';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'AreConsolidatedWithBank';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAreSocietyWiseCda() {
+        $this->report = 'AreSocietyWiseCda';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AreSocietyWiseCdaDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AreSocietyWiseCdaConsolidated';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAreVendorPayment() {
+        $this->report = 'AreVendorPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionAreMemberPayment() {
+        $this->report = 'AreMemberPaymentDcsWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AreMemberPaymentMemberWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAreVendorBankPayment() {
+        $this->report = 'AreVendorBankPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionAreMemberBankPayment() {
+        $this->report = 'AreMemberBankPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionVspTransitRecovery() {
+        $this->report = 'VspTransitRecovery';
+        return $this->actionIndex();
+    }
+    
+    public function actionComplainActivityList() {
+        $this->report = 'ComplainActivityList';
+        return $this->actionIndex();
+    }
+    
+    public function actionRouteWiseCdaFormat() {
+        $this->report = 'RouteWiseCdaFormat';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'RouteWiseCdaDateWiseFormat';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'RouteWiseCdaConsolidatedFormat';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionMilkDispatchList() {
+        $this->report = 'MilkDispatchList';
+        return $this->actionIndex();
+    }
+    
+    public function actionMilkRejectList() {
+        $this->report = 'MilkRejectList';
+        return $this->actionIndex();
+    }
+    
+    public function actionChillerCostSummary() {
+        $this->report = 'ChillerCostSummary';
+        return $this->actionIndex();
+    }
+    
+    public function actionMonthlySahayakIncome() {
+        $this->report = 'MonthlySahayakIncome';
+        return $this->actionIndex();
+    }
+    
+    public function actionMisCcWiseClosingBalance() {
+        $this->report = 'MisCcWiseClosingBalance';
+        return $this->actionIndex();
+    }
+    
+    public function actionProcMisLotWiseDetails() {
+        $this->report = 'ProcMisLotWiseDetails';
+        return $this->actionIndex();
+    }
+    
+    public function actionComparisonReport() {
+        $this->report = 'ComparisonReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionCmpReport() {
+        $this->report = 'CmpReport';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -1726,7 +2070,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_collection_day_wise_report',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
@@ -1735,7 +2079,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_collection_passbook',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
@@ -1744,8 +2088,17 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_collection_summary',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberConsolidatedWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_summary_with_bank',
+                'scenario' => 'MemberDailyCollection',
+                'title' => '101 - Member Collection Detail',
+                'to_decrypt' => ['aadhar_no'],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
                 'bkg_export' => TRUE
             ],
             //102
@@ -1848,21 +2201,28 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date And Shift Wise Summary',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollDateWiseSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_wise_soceity_collection_date_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date Wise Summary',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_collection_consolidated',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Consolidated',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+            ],
+            'BmcConsolidatedWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_collection_consolidated_with_bank',
+                'scenario' => 'BmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             //203
             'UnionCollDateShiftWiseSummary' => [
@@ -2631,6 +2991,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_missing_collection_shift',
                 'scenario' => 'MissingShift',
                 'title' => 'Missing Shift',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'MissingBmcShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_missing_bmc_collection_shift',
+                'scenario' => 'MissingShift',
+                'title' => 'Missing Shift',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
             ],
             'SapMilkCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2813,7 +3181,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'SocietyWiseCdaDateWiseFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -2821,7 +3190,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'SocietyWiseCdaConsolidatedFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -2829,7 +3199,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             'VmReportSap' => [
 //                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
@@ -3007,7 +3378,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],
             ],
             'SummaryReportMcc' => [
-                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,as_on_date:string',
                 'sp_name' => 'mis_summary_report_at_cc',
                 'scenario' => 'SummaryReportMcc',
                 'title' => 'Summary Report - MCC',
@@ -3369,11 +3740,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vehicle Master History',
             ],
             'TallyReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,report_type',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,date_payment_cycle,report_collection_type',
                 'sp_name' => 'mis_milk_collection_bill_shivprasad',
                 'scenario' => 'TallyReport',
-                'title' => '916 - TallyReport',
-                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection')],
+                'title' => '916 - Tally Report',
+                'report_type' => [Yii::t('app', 'Tally Report'), Yii::t('app', 'Tally Consolidated Report')],
+            ],
+            'TallyConsolidatedReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,date_payment_cycle,report_collection_type',
+                'sp_name' => 'mis_milk_collection_bill_shivprasad_consolidated',
+                'scenario' => 'TallyReport',
+                'title' => '916 - Tally Consolidated Report',
+                'report_type' => [Yii::t('app', 'Tally Report'), Yii::t('app', 'Tally Consolidated Report')],
             ],
             'VehicleMasterHistory' => [
                 'param' => 'transporter_code',
@@ -3465,6 +3843,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
                 'multiArray' => ['mcc_code', 'bmc_code'],
                 'downloadFormat' => 'csv',
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
+            ],
+            'SapWqFileXls' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_wq_vrs_newasa_xls',
+                'scenario' => 'SapWqFile',
+                'title' => 'SAP WQ File',
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'report_type' => [Yii::t('app', 'CSV'), Yii::t('app', 'Excel')],
             ],
             'MemberDailyCollectionCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3529,7 +3917,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise_common',
                 'scenario' => 'BmcCollDateShiftWiseSummaryCommon',
                 'title' => '202 - BMC Collection Date And Shift Wise Summary',
-                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+            ],
+            'ConsolidatedWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_bmc_collection_consolidated_with_bank',
+                'scenario' => 'BmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollDateWiseSummaryCommon' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -3618,7 +4013,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'User Task Activity MIS',
             ],
             'MemberProvisionalFamilyDetail' => [
-                'param' => 'union_code,p_date:string',
+                'param' => 'union_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_import_member_provisional_data_saahaj',
                 'scenario' => 'MemberProvisionalFamilyDetail',
                 'title' => 'Member Provisional Family Detail',
@@ -3628,12 +4023,452 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_member_pib_upload_saahaj',
                 'scenario' => 'MemberProvisionalSapExport',
                 'title' => 'Member Provisional SAP Export',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob##d.m.Y', 'Dob', 'adhar_no', 'aadhaar_no'],
             ],
             'ExportProvisionalMemberBankReceipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,as_on_date:string',
                 'sp_name' => 'mis_member_bank_receipt_data_saahaj',
                 'scenario' => 'ExportProvisionalMemberBankReceipt',
                 'title' => 'Export Provisional Member Bank Receipt',
+            ],
+            'MilkCollectionStatusReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_type',
+                'sp_name' => 'mis_milk_collection_status_report',
+                'scenario' => 'MilkCollectionStatusReport',
+                'title' => 'Milk Collection Status Report',
+                'report_type' => [Yii::t('app', 'BMC Wise'), Yii::t('app', 'Company Wise')],
+            ],
+            'MilkCollectionFilterBased' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_type,from_value:txt,to_value:txt',
+                'sp_name' => 'mis_milk_collection_filter_based',
+                'scenario' => 'MilkCollectionFilterBased',
+                'title' => 'Milk Collection Filter Based Report',
+                'report_type' => ['Attendance' => Yii::t('app', 'Attendance'), 'qty' => Yii::t('app', 'Qty'), 'fat' => Yii::t('app', 'FAT'), 'snf' => Yii::t('app', 'SNF'), 'amount' => Yii::t('app', 'Amount')],
+            ],
+            'MilkCollectionAudit' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_member_collection_audit',
+                'scenario' => 'MilkCollectionAudit',
+                'title' => 'Milk Collection Audit',
+            ],
+            'MemberMilkCollection' => [
+                'param' => 'basis_on,union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_member_milk_collection_all_report',
+                'scenario' => 'MemberMilkCollection',
+                'title' => 'Member Milk Collection',
+            ],
+            'MemberMilkCollectionDcsWise' => [
+                'param' => 'basis_on,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_member_milk_collection_society_wise_all_report',
+                'scenario' => 'MemberMilkCollectionDcsWise',
+                'title' => 'Member Milk Collection Society wise',
+            ],
+            'DcsBmcMemberWiseTopCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,top_collection_on:static:top_collection_on,top_value:txt,param_type:static:param_type',
+                'sp_name' => 'rpt_mis_top_society_and_member_all_report',
+                'scenario' => 'DcsBmcMemberWiseTopCollection',
+                'title' => 'DCS/BMC/Member Wise Top Collection',
+            ],
+            'FatAnalysisReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,milk_type',
+                'sp_name' => 'mis_dcs_wise_fat_analysis_report',
+                'scenario' => 'FatAnalysisReport',
+                'title' => 'FAT Analysis Report',
+                'kartik_grid_view' => 'FatAnalysisReport'
+            ],
+            'DcsAndMemberWiseQtyCompare' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,f_spr_date:string,t_spr_date:string,f_cmpr_date:string,t_cmpr_date:string,animal_type',
+                'sp_name' => 'mis_society_and_member_wise_qty_compair_report',
+                'scenario' => 'DcsAndMemberWiseQtyCompare',
+                'title' => 'DCS & Member Wise Qty Compare',
+            ],
+            'SapDataExportForDeduction' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_sap_data_export_for_deduction',
+                'scenario' => 'SapDataExportForDeduction',
+                'title' => 'SAP Data export for Deduction',
+            ],
+            'SapDataExportForVlcReplacement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_sap_data_export_for_vlc_replacement',
+                'scenario' => 'SapDataExportForVlcReplacement',
+                'title' => 'SAP Data export for VLC Replacement',
+            ],
+            'StockRegisterBmcToSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_sap_batch_wise',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterBmcToProduct' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_product_wise',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterBmcToSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_summary',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'AssetDetailsReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,current_status:static:asset_detail_status',
+                'sp_name' => 'mis_asset_details_report',
+                'scenario' => 'AssetDetailsReport',
+                'title' => 'Asset Details Report',
+            ],
+            'UserOrganizationMappingReport' => [
+                'param' => 'login_type_report:static:login_type_report',
+                'sp_name' => 'mis_user_organization_mapping_report',
+                'title' => 'User Organization Mapping Report',
+            ],
+            'AppStartupReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_app_startup_status',
+                'scenario' => 'AppStartupReport',
+                'title' => 'App Startup Report',
+            ],
+            'MilkCollectionStatusDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_status_summary',
+                'scenario' => 'MilkCollectionStatusDetail',
+                'title' => 'Milk Collection Status Detail',
+            ],
+            'EiplInstalledUsersDetails' => [
+                'param' => 'union_code,state_code,region_code,area_code,user_login_type',
+                'sp_name' => 'mis_eipl_installed_users_details',
+                'scenario' => 'EiplInstalledUsersDetails',
+                'title' => 'Eipl Installed Users Details',
+            ],
+            'SapDataExportFeedSaleMember' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_sap_data_export_feed_sale_member',
+                'scenario' => 'SapDataExportFeedSaleMember',
+                'title' => 'SAP Data Export Feed Sale Member',
+            ],
+            'PaymentCycleApplicabilityStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,customer_type,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_payment_cycle_applicability',
+                'scenario' => 'PaymentCycleApplicabilityStatus',
+                'title' => 'Payment Cycle Applicabilit Status',
+            ],
+            'IndentSummaryDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_mcc_wise_indent_summary',
+                'scenario' => 'IndentSummaryDetail',
+                'title' => 'Indent Summary Detail',
+            ],
+            'GheeGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_ghee_indent_download_sap',
+                'scenario' => 'GheeGroupIndentReport',
+                'title' => 'Ghee Group Indent Report',
+            ],
+            'CfGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_cf_indent_download_sap',
+                'scenario' => 'CfGroupIndentReport',
+                'title' => 'CF Group Indent Report',
+            ],
+            'SapGheeGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_ghee_indent_upload_sap',
+                'scenario' => 'SapGheeGroupIndentReport',
+                'title' => 'SAP Ghee Group Indent Report',
+            ],
+            'SapCfGroupIndentReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_cf_indent_upload_sap',
+                'scenario' => 'SapCfGroupIndentReport',
+                'title' => 'SAP CF Group Indent Report',
+            ],
+            'BillHeadDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,bill_head_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bill_head_detail',
+                'scenario' => 'BillHeadDetail',
+                'title' => 'Bill Head Detail',
+            ],
+            'ApprovedAttachmentDetails' => [
+                'param' => 'from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_approved_attachment_details',
+                'scenario' => 'ApprovedAttachmentDetails',
+                'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
+                'title' => 'Approved Attachment Details',
+            ],
+            'BmcCollectionRouteWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_route_wise',
+                'scenario' => 'BmcCollectionRouteWise',
+                'title' => 'Bmc Wise Milk Collection',
+            ],
+            'PlantWiseMilkCollectionTracking' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_plant_wise_milk_collection_tracking',
+                'scenario' => 'PlantWiseMilkCollectionTracking',
+                'title' => 'Plant Wise Milk Collection',
+            ],
+            'VlcQtySlabWiseCategory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_vlc_qty_slab_wise_category',
+                'scenario' => 'VlcQtySlabWiseCategory',
+                'title' => 'Qty Slab Report Format 1',
+                'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'AvgPerVlcMilkQtySlabWiseCategory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_avg_per_vlc_milk_qty_slab_wise_category',
+                'scenario' => 'AvgPerVlcMilkQtySlabWiseCategory',
+                'title' => 'Qty Slab Report Format 2',
+                'report_type' => [Yii::t('app', 'Member Collection'), Yii::t('app', 'Bmc Collection')],
+            ],
+            'IndentMemberDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_member_indent_report',
+                'scenario' => 'IndentMemberDetail',
+                'title' => 'Indent Member Detail',
+            ],
+            'CompanyWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_company_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'PlantWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_plant_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'DcsWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'sp_mis_milk_collection_dcs_wise_report',
+                'scenario' => 'CompanyWiseMilkCollection',
+                'title' => 'Company Wise Collection',
+                'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
+            ],
+            'RateRecalculationWefDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
+                'scenario' => 'RateRecalculationWefDateWise',
+                'title' => 'Rate Recalculation(Custom)',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost',
+                'scenario' => 'TpCostDetail',
+                'title' => 'Tp Cost Detail',
+                'bkg_export' => TRUE,
+            ],
+            'TpCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost_summary',
+                'scenario' => 'TpCostSummary',
+                'title' => 'Tp Cost Summary',
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollectionShiftReport' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift,route_type_trans:static:route_type_trans',
+                'sp_name' => 'sp_mis_are_bmc_collection_shift_report',
+                'scenario' => 'AreBmcCollectionShiftReport',
+                'title' => '201 - BMC Collection Shift Report',
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollDateShiftWiseSummary' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_wise_society_collection_date_shift_wise',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Date And Shift Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollDateWiseSummary' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_wise_soceity_collection_date_wise',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Date Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE,
+            ],
+            'AreBmcCollConsolidated' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_collection_consolidated',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE,
+            ],
+            'AreConsolidatedWithBank' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_bmc_collection_consolidated_with_bank',
+                'scenario' => 'AreBmcCollDateShiftWiseSummary',
+                'title' => '202 - BMC Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+            ],
+            'AreSocietyWiseCda' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_cda_date_shift',
+                'scenario' => 'AreSocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE,
+            ],
+            'AreSocietyWiseCdaDateWise' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_cda_date',
+                'scenario' => 'AreSocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE,
+            ],
+            'AreSocietyWiseCdaConsolidated' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_are_cda_consolidated',
+                'scenario' => 'AreSocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE,
+            ],
+            'AreVendorPayment' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_are_vendor_payment',
+                'scenario' => 'AreVendorPayment',
+                'title' => '602 - Vendor Payment',
+                'bkg_export' => TRUE,
+            ],
+            'AreMemberPaymentDcsWise' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_are_member_billing_dcs_wise',
+                'scenario' => 'AreMemberPaymentDcsWise',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+                'bkg_export' => TRUE,
+            ],
+            'AreMemberPaymentMemberWise' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_are_member_billing_member_wise',
+                'scenario' => 'AreMemberPaymentDcsWise',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+                'bkg_export' => TRUE,
+            ],
+            'AreVendorBankPayment' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,customer_type,payment_cycle_code:type_check,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_are_vendor_bank_payment',
+                'scenario' => 'AreVendorBankPayment',
+                'title' => '606 - Vendor Bank Payment',
+                'bkg_export' => TRUE,
+            ],
+            'AreMemberBankPayment' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,payment_cycle_code:default:dcs,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_are_member_bank_payment',
+                'scenario' => 'AreMemberBankPayment',
+                'title' => '607 - Member Bank Payment',
+                'bkg_export' => TRUE,
+            ],
+            'VspTransitRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vsp_transit_recovery',
+                'scenario' => 'VspTransitRecovery',
+                'title' => '921 - TS Recovery Report',
+                'bkg_export' => TRUE,
+            ],
+            'ComplainActivityList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_complain_activity_list',
+                'scenario' => 'ComplainActivityList',
+                'title' => 'Complain Activity Report',
+                'bkg_export' => TRUE,
+            ],
+            'RouteWiseCdaFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_route_wise_cda_date_shift',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '226 - Route Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
+            ],
+            'RouteWiseCdaDateWiseFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_route_wise_cda_date',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '226 - Route Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
+            ],
+            'RouteWiseCdaConsolidatedFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_route_wise_cda_consolidated',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '226 - Route Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
+            ],
+            'MilkDispatchList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_dispatch_list',
+                'scenario' => 'MilkDispatchList',
+                'title' => '227 - Milk Dispatch List',
+                'bkg_export' => TRUE,
+            ],
+            'MilkRejectList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_reject_list',
+                'scenario' => 'MilkRejectList',
+                'title' => '228 - Milk Reject List',
+                'bkg_export' => TRUE,
+            ],
+            'ChillerCostSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_chiller_cost_summary',
+                'scenario' => 'ChillerCostSummary',
+                'title' => '514 - Handling & Storage Charges(chiller) Summary',
+                'to_decrypt' => ['pan_no'],
+                'bkg_export' => TRUE,
+            ],
+            'MonthlySahayakIncome' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_monthly_sahayak_income',
+                'scenario' => 'MonthlySahayakIncome',
+                'title' => 'CC Incharge Remuneration',
+                'bkg_export' => TRUE,
+            ],
+            'MisCcWiseClosingBalance' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_mis_cc_wise_closing_balance',
+                'scenario' => 'MisCcWiseClosingBalance',
+                'title' => 'CC Wise Closing Balance',
+                'bkg_export' => TRUE,
+            ],
+            'ProcMisLotWiseDetails' => [
+                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_mis_lot_wise_details',
+                'scenario' => 'ProcMisLotWiseDetails',
+                'title' => 'Vehicle wise Quality Report',
+                'bkg_export' => TRUE,
+            ],
+            'ComparisonReport' => [
+                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'proc_mis_quantity_and_quality_comparing',
+                'scenario' => 'ComparisonReport',
+                'title' => 'Comparison Report ',
+                'bkg_export' => TRUE,
+            ],
+            'CmpReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_bmc_compare_date_wise',
+                'scenario' => 'CmpReport',
+                'title' => 'CMP Report ',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
@@ -3694,56 +4529,73 @@ class ReportsController extends \app\controllers\ChildController {
 //        echo "</table>";
 //        exit();
 
-
         if (isset($this->data['downloadFormat']) && $this->data['downloadFormat'] == 'csv') {
             $header = [
                 'mime' => 'text/csv',
                 'extension' => 'csv',
                 'writer' => 'CSV',
             ];
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'];
+
+            header('Content-Type: ' . $header['mime']);
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+
+            $output = fopen('php://output', 'w');
+
+            fwrite($output, implode(',', $labelArray) . "\n");
+
+            foreach ($this->output as $row) {
+                fwrite($output, implode(',', $row) . "\n");
+            }
+            fclose($output);
+            exit();
         } else {
             $header = [
                 'mime' => 'application/vnd.ms-excel',
                 'extension' => 'xls',
                 'writer' => 'Excel2007',
             ];
-        }
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
 
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
+            $objPHPExcel = new PHPExcel();
+            $sheet = $objPHPExcel->getActiveSheet();
+            /* $objPHPExcel->getDefaultStyle()
+              ->getNumberFormat()
+              ->setFormatCode(
+              \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+              ); */
+            $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            /* $file_header = array_map(function($file_header) {
+              return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+              }, array_values($file_header)); */
+
+            $sheet->fromArray(
+                    $file_header, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
+            );
+            $sheet->fromArray(
+                    $this->output, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
-        );
-        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
-        $fileName = $labelT . '.' . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
+            );
+            $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'] .
+                    header('Content-Type: ' . $header['mime']);
 //        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
 //                header('Content-Type: ' . $header['mime']);
-        header('Content-Disposition: attachment;filename=' . $fileName);
-        header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
-        exit();
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+            ob_end_clean();
+            $objWriter->save('php://output');
+            exit();
+        }
     }
 
     public function downloadDataExcel($model) {

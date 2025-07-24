@@ -39,17 +39,17 @@ class TblDeviceMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['tab_type', 'sr_no', 'mac_address'], 'required'],
-            [['tab_type'], function ($attribute, $params) {
+                [['tab_type', 'sr_no', 'mac_address'], 'required'],
+                [['tab_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'tab_type');
                 }, 'on' => 'importCsv'],
-            [['tab_type'], 'integer', 'on' => 'importCsv'],
-            [['created_at', 'updated_at', 'device_master_code', 'collection_center_type', 'collection_center_code', 'eff_date', 'sr_no'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['originating_org_type', 'originating_org_code'], 'string', 'max' => 25],
-            [['sr_no', 'created_by', 'updated_by'], 'string', 'max' => 20],
-            [['mac_address', 'remarks'], 'string', 'max' => 250],
-            [['sr_no', 'mac_address'], 'unique', 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['tab_type'], 'integer', 'on' => 'importCsv'],
+                [['created_at', 'updated_at', 'device_master_code', 'sr_no'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['originating_org_type', 'originating_org_code'], 'string', 'max' => 25],
+                [['sr_no', 'created_by', 'updated_by'], 'string', 'max' => 20],
+                [['mac_address', 'remarks'], 'string', 'max' => 250],
+                [['sr_no', 'mac_address'], 'unique', 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 

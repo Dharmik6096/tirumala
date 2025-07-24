@@ -25,6 +25,7 @@ class ChildModel extends \yii\db\ActiveRecord {
     public $form_validation_type = 'default';
     public $hasImport = FALSE;
     public $import_union_config;
+    public $set_master_hierarchy = [];
 
     //put your code here
     public function beforeSave($insert) {
@@ -70,6 +71,9 @@ class ChildModel extends \yii\db\ActiveRecord {
                 $this->sync_status = 'U';
             }
 
+            if ($this->hasAttribute('emilk_sync_status')) {
+                $this->emilk_sync_status = 'N';
+            }
             $encrypt = $this->encryptModel($this->attributes);
             $this->setAttributes($encrypt);
             $result = $this->validateAttributesSingleSpace($this->attributes());
@@ -119,11 +123,11 @@ class ChildModel extends \yii\db\ActiveRecord {
             'tbl_bill_head' => ['bill_head_name'],
         ];
         $union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->session->get('Unions');
-        $capital_data_conversion = isset(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion']) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion'] : 0;
-        if ($capital_data_conversion == 1) {
+        $capital_data_conversion = isset(Yii::$app->session->get('unionConfig')[$union_code]['capital_data_conversion']) ? Yii::$app->session->get('unionConfig')[$union_code]['capital_data_conversion'] : Yii::$app->general->getUnionConfiguration($union_code, 'capital_data_conversion', 'PORTAL');
+        if (!empty($capital_data_conversion) && $capital_data_conversion == 1) {
             $tableName = $this->tableName();
             foreach ($this->attributes as $attribute => $value) {
-                if (is_string($value) && (!empty($to_include_capital[$tableName])) && in_array($attribute, $to_include_capital[$tableName])) {
+                if (is_string($value) && !empty($to_include_capital[$tableName]) && in_array($attribute, $to_include_capital[$tableName])) {
                     $this->$attribute = strtoupper($value);
                 }
             }

@@ -36,7 +36,7 @@ class TblEiplAppLoginTemp extends \yii\db\ActiveRecord {
             [['orignating_timestamp', 'posting_timestamp'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['app_type', 'otp_code'], 'safe'],
             [['eipl_code', 'mobile_no', 'imei_no', 'device_id', 'lat_long', 'version_no'], 'safe'],
-            [['orignating_timestamp', 'posting_timestamp'], 'safe'],
+            [['orignating_timestamp', 'posting_timestamp', 'department', 'union_code'], 'safe'],
         ];
     }
 

@@ -176,6 +176,7 @@ return [
     'Customer Code Ex.' => 'Dairy Farm Code Ex.',
     'Customer Name' => 'Dairy Farm Name',
     'Customer Type' => 'Dairy Farm Type',
+    'Select Customer Type' => 'Select Dairy Farm Type',
     'Customer Master List' => 'Dairy Farm List',
     'Customer' => 'Dairy Farm',
     'Vendor/Customer' => 'Dairy Farm',
@@ -350,4 +351,6 @@ return [
     'Member Payment Disburse' => 'Farmer Payment Disburse',
     'Member Bill Head Transaction' => 'Farmer Bill Head Transaction',
     'Member Bill Head Import' => 'Farmer Bill Head Import',
+    'DCS Wise Stock' => 'VLCC Wise Stock',
+    'MCC Wise Stock' => 'CC Wise Stock',
 ];

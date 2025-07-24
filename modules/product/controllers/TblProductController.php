@@ -17,7 +17,7 @@ use yii\helpers\Json;
  */
 class TblProductController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['product-list'];
+    public $freeAccessActions = ['product-list', 'product-depend-list'];
 
     /**
      * Lists all TblProduct models.

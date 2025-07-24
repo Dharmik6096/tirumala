@@ -20,10 +20,12 @@ class AlertNotification {
             $url = $api[0]['apiMaster']['url']; //url
             foreach ($api as $a) {
                 //if {mobileno} found in value then replace it with actual no 
-                //if {msg} found in value then replace it with actual text message                
-                $value = ($a['key_value'] == '{mobileno}') ? $mob_no : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
+                //if {msg} found in value then replace it with actual text message     
+                $value = (strpos($a['key_value'], '{mobileno}') !== false) ? str_replace('{mobileno}', $mob_no, $a['key_value']) : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
                 $value = ($a['key_value'] == '{timeStamp}') ? date('dmYHms') : $value;
-                if (!empty($a['parent_tag'])) {
+                if (!empty($a['header_flag']) && $a['header_flag'] == 1) {
+                    $headers[$a['parameter_key']] = $value; // Add to headers
+                } elseif (!empty($a['parent_tag'])) {
                     if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
                         $param[$a['parent_tag']][$a['parameter_key']] = $value; //set parent key to key as single
                     } else {
@@ -52,12 +54,17 @@ class AlertNotification {
             }
             try {
                 foreach ($param as $p) {
-                    if (strpos($p, "%")) {
+                    if (is_string($p) && strpos($p, "%")) {
                         $param = urldecode(http_build_query($param));
                         break;
                     }
                 }
-                $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
+                $option_array=[];
+                $option_array[$request_param['param']]=  $param;
+                if(!empty($headers)){
+                    $option_array['headers']=$headers;
+                }
+                $response = $client->request($request_param['method'], $url, $option_array);   
                 $data = $response->getBody(); //get response . guzzle return respone in stream object
                 $stream = Psr7\stream_for($data); //convert stream response to string
                 return json_encode($stream->getContents()); //getreponse in string format

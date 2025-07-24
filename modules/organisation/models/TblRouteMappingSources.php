@@ -35,7 +35,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
 
     public $dcs_code, $dcs_name, $dcs_code_ex, $ref_code;
     public $is_sentbox;
-    public $customer_code, $customer_type, $union_code;
+    public $customer_code, $customer_type, $union_code, $user_code;
 
     /**
      * @inheritdoc
@@ -335,13 +335,13 @@ class TblRouteMappingSources extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
-    public function validRoute($model) {
+    public function validRoute() {
         $Route = new TblRouteMapping();
-        $data = $Route->find()->select('route_code')->where(['or', ['route_code' => $model->route_code], ['route_code_ex' => $model->route_code], ['ref_code' => $model->route_code]])->andWhere(['is_active' => 1])->all();
+        $data = $Route->find()->select('route_code')->where(['or', ['route_code' => $this->route_code], ['route_code_ex' => $this->route_code], ['ref_code' => $this->route_code]])->andWhere(['is_active' => 1])->all();
         if (!empty($data) && count($data) == 1) {
-            $model->route_code = $data[0]->route_code;
+            $this->route_code = $data[0]->route_code;
         } else {
-            $model->addError('route_code', Yii::t('app/validation', Yii::t('app', 'Route Code') . ' is invalid'));
+            $this->addError('route_code', Yii::t('app/validation', Yii::t('app', 'Route Code') . ' is invalid'));
         }
     }
 

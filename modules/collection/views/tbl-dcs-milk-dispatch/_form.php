@@ -132,11 +132,12 @@ $script = "
         var union = $('#tbldcsmilkdispatch-union_code').val();
         var fat = $('#tbldcsmilkdispatchtxn-avg_fat').val();
         var snf = $('#tbldcsmilkdispatchtxn-avg_snf').val();
+        var bmcCode = $('#tbldcsmilkdispatch-bmc_code').val();
             if(fat !='' && snf !=''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'bmcCode':bmcCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

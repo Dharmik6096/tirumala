@@ -586,10 +586,10 @@ class DbManager extends BaseManager
         if (empty($result)) {
             return [];
         }
-
+        $permissionNames = array_map('strval', array_keys($result));
         $query = (new Query())->from($this->itemTable)->where([
             'type' => Item::TYPE_PERMISSION,
-            'name' => array_keys($result),
+            'name' => $permissionNames,
         ]);
         $permissions = [];
         foreach ($query->all($this->db) as $row) {

@@ -10,6 +10,8 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : '');
 $inclass = !empty($result) ? '' : 'in';
 $model->p_from_date = empty($model->p_from_date) ? date('d-m-Y') : $model->p_from_date;
 $model->p_to_date = empty($model->p_to_date) ? date('d-m-Y') : $model->p_to_date;
+$model->from_shift = empty($model->from_shift) ? 1 : $model->from_shift;
+$model->to_shift = empty($model->to_shift) ? 2 : $model->to_shift;
 $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $model->p_collection_date;
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
@@ -325,6 +327,21 @@ $defaultToggle = true;
                                             </div> 
                                             <?php
                                         }
+                                        if (in_array($value, array('p_provisional_member_code', 'p_mpp_survey_id', 'p_VCG_M_Id'))) {
+                                            if (Yii::$app->request->queryParams && isset(Yii::$app->request->queryParams['code'])) {
+                                                $model->{$value} = Yii::$app->request->queryParams['code'];
+                                            }
+                                            echo Html::activeHiddenInput($model, $value);
+                                        }
+                                        if (in_array($value, array('p_lang_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?php
+                                                echo Yii::$app->dropdown->dropdownStatic('language_list', $model, $form, 'form-group', $model->getAttributeLabel('Language'), false, $value, false);
+                                                ?>
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('p_month'))) {
                                             ?>
                                             <div class="col-sm-3">
@@ -349,6 +366,47 @@ $defaultToggle = true;
                                             if (in_array($value, array('p_billing_for'))) {
                                                 echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
                                             }
+                                            if (in_array($value, array('p_transporter_code'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->all_route_transporter($model, $form, 'reportsmodel-p_plant_code,reportsmodel-p_mcc_code,reportsmodel-p_bmc_code', 'p_transporter_code', $model->getAttributeLabel('Transporter'), FALSE, '', FALSE, TRUE); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                            if (in_array($value, array('p_party_master_code'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->dropdown('party_master', $model, $form, '', 'Party', FALSE, 'p_party_master_code'); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                            if (in_array($value, array('p_trip_code'))) {
+                                                if (isset($value_array[1]) && $value_array[1] == 'p_vehicle_code') {
+                                                    ?>
+                                                    <div class="col-sm-3">
+                                                        <?= Yii::$app->dropdown->depend_dropdown('vehicle_trip', $model, $form, 'reportsmodel-p_vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('p_trip_code')); ?>
+                                                    </div>
+                                                <?php } else { ?>
+                                                    <div class="col-sm-3">
+                                                        <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'p_trip_code'); ?>
+                                                    </div>
+                                                    <?php
+                                                }
+                                            }
+                                            if (in_array($value, array('p_vehicle_code'))) {
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->vehicle($model, $form, 'p_vehicle_code', $model->getAttributeLabel('vehicle_code')); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                            if (in_array($value, array('p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= $form->field($model, $value)->textInput(['maxlength' => true]) ?>
+                                                </div>  
+                                                <?php
+                                            }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -360,6 +418,9 @@ $defaultToggle = true;
                                         echo Html::activeHiddenInput($model, 'p_route_name');
                                         $model->p_report_name = Html::encode($this->title);
                                         echo Html::activeHiddenInput($model, 'p_report_name');
+
+                                        echo Html::activeHiddenInput($model, 'locale');
+                                        echo Html::activeHiddenInput($model, 'digit_config');
                                         ?>
 
                                         <!--            <div class="clearfix"></div>-->
@@ -381,9 +442,9 @@ $defaultToggle = true;
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
                                             $client_code = \Yii::$app->session->get('eiplCode');
-                                            $titleTcpdf = 'pdf';
+                                            $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] : 'pdf';
                                             $iconClass = ' fa fa-file-pdf-o ';
-                                            if (strtolower($client_code) == 'mmd') {
+                                            if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
                                                 $titleTcpdf = 'Milktype Wise Bill';
                                                 $iconClass = ' fa fa-file-text-o ';
                                             }
@@ -460,6 +521,21 @@ $defaultToggle = true;
 
     <?php
     $script = "
+    $('#reportsmodel-p_lang_code').val(1);
+    var languageCode = $('#reportsmodel-p_lang_code').val();
+    setLanguageData(languageCode);
+    function setLanguageData(languageCode){
+        $('#reportsmodel-locale').val('en');
+        $('#reportsmodel-digit_config').val(0);
+        if(languageCode == 1){
+            $('#reportsmodel-locale').val('hn');
+            $('#reportsmodel-digit_config').val(1);
+        }
+    }
+    $('#reportsmodel-p_lang_code').on('change', function(){
+        languageCode = $('#reportsmodel-p_lang_code').val();
+        setLanguageData(languageCode);
+    });
        $('#reportsmodel-p_union_name').val($('select#reportsmodel-union_code option:selected').text());
         $('#reportsmodel-p_union_code').val($('select#reportsmodel-union_code option:selected').val());
     $('#reportsmodel-union_code').change(function() {

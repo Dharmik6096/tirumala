@@ -19,9 +19,9 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
      */
     public function rules() {
         return [
-            [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number'],
-            [['is_active'], 'integer'],
+                [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+                [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number'],
+                [['is_active'], 'integer'],
         ];
     }
 
@@ -40,7 +40,7 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $groupBy = true) {
         $query = TblVehicleKmInfo::find();
 
         // add conditions that should always apply here
@@ -49,6 +49,10 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
+
+        $query->joinWith(['routeCode']);
         $this->load($params);
 
         if (!$this->validate()) {
@@ -89,7 +93,11 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.extra_kms', $this->extra_kms])
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.total_kms', $this->total_kms]);
 
-
+        if ($groupBy) {
+            $subQuery = TblVehicleKmInfo::find()->select(['vehicle_code', 'MAX(wef_date) AS wef_date'])->groupBy('vehicle_code');
+            $query->innerJoin(['subQuery' => $subQuery], 'tbl_vehicle_km_info.wef_date = subQuery.wef_date AND tbl_vehicle_km_info.vehicle_code = subQuery.vehicle_code');
+            $query->orderBy(['created_at' => SORT_DESC]);
+        }
         return $dataProvider;
     }
 

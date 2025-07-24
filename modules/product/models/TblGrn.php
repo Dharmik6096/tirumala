@@ -72,6 +72,7 @@ class TblGrn extends \app\models\ChildModel {
                     Yii::$app->general->validateBMC($this, $attribute, TRUE);
                 }, 'on' => ['importCsv']],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['received_qty', 'rejected_qty'], 'number'],
             [['bmc_code'], 'setImport', 'on' => ['importCsv']],
             [['grn_date', 'invoice_date', 'deduction_start_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['grn_date', 'invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
@@ -181,6 +182,7 @@ class TblGrn extends \app\models\ChildModel {
                 }
                 $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->union_code, 'grn_without_stock_entry', $this);
                 $this->is_stock_posted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
+                $txn_model->is_stock_posted = $this->is_stock_posted;
                 if ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') {
                     $stockModel = new TblProductStock();
                     $stockModel->attributes = $this->attributes;

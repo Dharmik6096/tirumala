@@ -13,6 +13,7 @@ use app\modules\assetmanagement\models\TblAssetTransaction;
 class TblAssetTransactionSearch extends TblAssetTransaction {
 
     public $is_search;
+    public $to_plant, $to_mcc, $to_bmc, $to_dcs, $sloc_code;
 
     /**
      * @inheritdoc
@@ -20,7 +21,8 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
     public function rules() {
         return [
             [['asset_transaction_code', 'asset_detail_code', 'status', 'current_status'], 'integer'],
-            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_date', 'received_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_search', 'put_to_use_date', 'purchase_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'make', 'sap_code'], 'safe'],
+            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_date', 'received_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_search', 'put_to_use_date', 'purchase_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'make', 'sap_code', 'detail_code', 'manufacturer_serial_number', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sloc_code'], 'safe'],
+            [['to_plant', 'to_mcc', 'to_bmc', 'to_dcs'], 'required', 'on'=> 'assetTransfer']
         ];
     }
 
@@ -69,6 +71,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
 
         $query->andFilterWhere(['tbl_asset_master.asset_code' => $this->asset_code])
                 ->andFilterWhere(['serial_number' => $this->serial_number])
+                ->andFilterWhere(['manufacturer_serial_number' => $this->manufacturer_serial_number])
                 ->andFilterWhere(['asset_detail_code' => $this->asset_detail_code]);
 
         return $dataProvider;
@@ -94,7 +97,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
             return $dataProvider;
         }
 
-        $query->joinWith(['toStoreLocCode', 'toStoreLocCode.plantCode', 'toStoreLocCode.mccPlantCode', 'toStoreLocCode.dcsCode', 'assetDetail', 'assetCode']);
+        $query->joinWith(['toStoreLocCode', 'toStoreLocCode.plantCode', 'toStoreLocCode.mccPlantCode', 'toStoreLocCode.dcsCode', 'assetDetail', 'assetCode', 'assetDetail.manufacturerCode', 'fromStoreLocCode as fromStoreLocCode']);
         if (!empty($this->purchase_date))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_asset_detail.purchase_date, 126)', date('Y-m-d', strtotime($this->purchase_date))]);
         if (!empty($this->put_to_use_date))
@@ -125,11 +128,55 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
             $query->andFilterWhere(['tbl_plant.plant_code' => $this->f_plant_code]);
         }
 
+        $query->andFilterWhere([
+            'or',
+            ['like', 'tbl_customer_master.customer_name', $this->from_dest],
+            ['like', 'fromStoreLocCode.store_location_name', $this->from_dest],
+        ]);
+
+
         $query->andFilterWhere(['tbl_asset_transaction.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         $query->andFilterWhere(['like', 'tbl_asset_master.asset_name', $this->asset_code])
                 ->andFilterWhere(['like', 'tbl_asset_detail.make', $this->make])
                 ->andFilterWhere(['like', 'tbl_asset_transaction.sap_code', $this->sap_code])
+                ->andFilterWhere(['like', 'tbl_store_location.sloc_code', $this->sloc_code])
                 ->andFilterWhere(['like', 'tbl_asset_transaction.serial_number', $this->serial_number]);
+
+        return $dataProvider;
+    }
+
+    public function assetTranferSearch($params) {
+        $query = TblAssetTransaction::find();
+        $query->where(['tbl_asset_transaction.status' => [0, 2], 'to_type' => '3']);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $storeLocationCode = TblStoreLocation::find()->select('store_location_code')->where(['reference_code' => $this->to_dcs, 'union_code' => $this->union_code,'store_location_type' => '3','is_active' => '1'])->scalar();
+        if(!empty($storeLocationCode)){
+            $this->to_dest = $storeLocationCode;
+        } else{
+            $query->where('0=1');
+            return $dataProvider;
+        }
+
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'tbl_asset_transaction.to_dest' => $this->to_dest,
+        ]);
+
+        $query->orderBy('tbl_asset_transaction.created_at DESC');
 
         return $dataProvider;
     }

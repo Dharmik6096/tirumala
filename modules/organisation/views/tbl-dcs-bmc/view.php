@@ -20,165 +20,166 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                 <?php
                 // DetailView Attributes Configuration
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => isset($model->tblMccPlant) ? $model->tblMccPlant->name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'bmc_code',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'bmc_code_ex',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'ref_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
-                    ], [
+                    ],
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'bmc_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'local_name',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-//                    'bmc_name',
-//                    'bmc_type_code',
+                    //                    'bmc_name',
+                    //                    'bmc_type_code',
                     [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'bmc_type_code',
                                 'value' => isset($model->bmc_type_code) ? $model->tblBmcType->bmc_type_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-//                    'description
+                    //                    'description
                     [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'state_code',
                                 'value' => isset($model->stateCode) ? $model->stateCode->state_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'district_code',
                                 'value' => isset($model->districtCode) ? $model->districtCode->district_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'sub_district_code',
                                 'value' => isset($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'village_code',
                                 'value' => isset($model->villageCode) ? $model->villageCode->village_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-//                    'unionCode.union_name',
-//                    'stateCode.state_name',
-//                    'districtCode.district_name',
-//                    'subDistrictCode.sub_district_name',
-//                    'villageCode.village_name',
-//                    'hamletCode.hamlet_name',
+                    //                    'unionCode.union_name',
+                    //                    'stateCode.state_name',
+                    //                    'districtCode.district_name',
+                    //                    'subDistrictCode.sub_district_name',
+                    //                    'villageCode.village_name',
+                    //                    'hamletCode.hamlet_name',
                     [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'hamlet_code',
                                 'value' => isset($model->hamletCode) ? $model->hamletCode->hamlet_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'model',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-//                    'model',
+                    //                    'model',
                     [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'capacity',
                                 'format' => 'html',
                                 'value' => isset($model->capacity0) ? $model->capacity0->value : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'valid_from',
                                 'value' => Yii::$app->controls->view_date($model->valid_from),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-//                    'manufacturerCode.manufacturer_name',
+                    //                    'manufacturerCode.manufacturer_name',
                     [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'manufacturer_code',
                                 'value' => isset($model->manufacturerCode) ? $model->manufacturerCode->manufacturer_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'label' => 'Milk Type',
                                 'format' => 'html',
                                 'value' => $model->milkType(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-//                            [
-//                                'attribute' => 'bmc_milk_type',
-//                                'value' => isset($model->bmcMilkType) ? $model->bmcMilkType->animal_type_name : '',
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
+                        //                            [
+                        //                                'attribute' => 'bmc_milk_type',
+                        //                                'value' => isset($model->bmcMilkType) ? $model->bmcMilkType->animal_type_name : '',
+                        //                                'valueColOptions' => ['style' => 'width:30%'],
+                        //                            ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'is_weight_manual',
                                 'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'is_quality_manual',
                                 'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'rate_calculate_on_merge',
                                 'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
@@ -187,52 +188,52 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'password',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'antibiotic_check',
                                 'value' => isset($model->antibiotic_check) ? Yii::$app->dropdown->getRecords('is_type')['data'][$model->antibiotic_check] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'sap_vendor_code',
                                 'format' => 'html',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'x_col1',
                                 'value' => Yii::$app->general->getforeignkey($model->channelMaster, 'channel_desc'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'pan_no',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'gst_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'pincode',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'address',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
@@ -246,14 +247,27 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
+                                'attribute' => 'bmc_short_name',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'fssi',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'fssi_expiry_date',
+                                'value' => Yii::$app->controls->view_date($model->fssi_expiry_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
                 ];
 
-// View file rendering the widget
+                // View file rendering the widget
                 echo DetailView::widget([
                     'model' => $model,
                     'attributes' => $attributes,

@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use PHPExcel;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\vsp\models\TblBillHead;
 
 /**
  * Default controller for the import module
@@ -21,6 +22,7 @@ class DefaultController extends \app\controllers\ChildController {
     public $importClass = '\ruskid\csvimporter\ARImportStrategy';
     public $old_att = array('land_unit,', 'dcs', 'capacity,', 'animal_type_code', 'date_time_of_collection');
     public $change_att = array('convert_to,', 'society', 'capacity_code,', 'milk_type_code', 'collection_date');
+    public $freeAccessActions = ['import-file'];
 
     /**
      * Renders the index view for the module
@@ -69,6 +71,8 @@ class DefaultController extends \app\controllers\ChildController {
                 $fields = $data['mapping_fields'];
                 $scenario = !empty($data['mapping_scenario']) ? $data['mapping_scenario'] : '';
                 $data['save_child'] = !empty($data['save_map_child']) ? TRUE : FALSE;
+                $data['save_delete_child'] = !empty($data['save_delete_child']) ? TRUE : FALSE;
+                $data['unlink_file'] = !empty($data['unlink_file']) ? TRUE : FALSE;
                 $data['update_key'] = FALSE;
             }
             $fields = explode(',', $fields);
@@ -149,6 +153,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => $scenario,
                 'updateField' => !empty($data['update_field']) ? $data['update_field'] : '',
                 'saveChild' => !empty($data['save_child']) ? $data['save_child'] : 0,
+                'saveDeleteChild' => !empty($data['save_delete_child']) ? $data['save_delete_child'] : 0,
+                'unlinkFile' => !empty($data['unlink_file']) ? $data['unlink_file'] : 0,
                 'details' => $data,
                 'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
                 'file_name' => trim($fileName)
@@ -294,10 +300,27 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $a = str_replace($this->old_att, $this->change_att, $a);
         $fields = explode(',', $a);
-        $fields = array_map(function($str) {
-            return ucwords(str_replace('_', ' ', $str));
-        }, $fields);
+        $modelName = str_replace('_', ' ', $data['table_name']);
+        $modelName = str_replace(' ', '', ucwords($modelName));
+        $model_name = Yii::$app->path->getModel($modelName);
 
+        if (!empty($data['set_dynamic_label'])) {
+            $resultArray = $model_name->getLabels($data['set_dynamic_label']);
+            $fields = array_map(function($str) use ($model_name, $resultArray) {
+                if (!empty($model_name)) {
+                    if (isset($resultArray[$str])) {
+                        return $resultArray[$str];
+                    } else {
+                        return $model_name->getAttributeLabel($str);
+                    }
+                }
+                return ucwords(str_replace('_', ' ', $str));
+            }, $fields);
+        } else {
+            $fields = array_map(function($str) {
+                return ucwords(str_replace('_', ' ', $str));
+            }, $fields);
+        }
         foreach ($fields as $col) {
             $objPHPExcel->getActiveSheet()->setCellValue($column . $rowCount, $col);
             $column++;

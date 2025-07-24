@@ -52,7 +52,7 @@ class TblHamlets extends ChildModel {
             [['hamlet_code'], 'required','except'=>'importCsv'],
             [[ 'state', 'district', 'sub_district'], 'required', 'message' => Yii::t('app/validation', '{attribute} cannot be blank.'),'on'=>'add','except'=>'importCsv'],
             [['hamlet_code'], 'unique'],
-            [['created_at', 'updated_at', 'state', 'district', 'sub_district', 'is_active'], 'safe'],
+            [['created_at', 'updated_at', 'state', 'district', 'sub_district', 'is_active', 'ref_code'], 'safe'],
             [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['hamlet_name'], 'string', 'max' => 100],
             //[['hamlet_name'], 'match', 'pattern' => '/^[a-zA-Z\/]*$/'],

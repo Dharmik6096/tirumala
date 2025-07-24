@@ -18,6 +18,7 @@ if ($searchModel->module_name == 'society') {
     $contact_person_lable = 'Contact Person';
     $local_contact_person_lable = Yii::t('app', 'Contact Person Hindi Name');
 }
+$show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : FALSE;
 $attribute = [
 //    'contact_person',
 //    'local_contact_person',
@@ -38,6 +39,26 @@ $attribute = [
     ['attribute' => 'email_to', 'filter' => false],
     ['attribute' => 'email_cc', 'filter' => false],
     ['attribute' => 'email_bcc', 'filter' => false],
+    ['attribute' => 'from_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->from_date);
+        }, 'visible' => $show_optional_fields
+    ],
+    ['attribute' => 'to_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->to_date);
+        }, 'visible' => $show_optional_fields
+    ],
+    ['attribute' => 'primary_parent',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->primaryParent, 'name');
+        }, 'visible' => $show_optional_fields
+    ],
+    ['attribute' => 'secondary_parent',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
+        }, 'visible' => $show_optional_fields
+    ],
 ];
 
 $grid_option = [
@@ -55,7 +76,8 @@ $grid_option = [
 //            die('here');
                 return Html::a('<i class="fa fa-ban"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
             } else {
-                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-is-default' => $model->is_default];
+                $class = ($model->is_contact_verified == 0 || $model->is_contact_verified == 1) ? '' : 'disabled';
+                $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user ' . $class, 'data-is-default' => $model->is_default];
                 return Html::a('<i class="fa fa-life-ring"></i>', ['/details/tbl-contact-details/activate', 'id' => $model->detail_code], $options);
             }
         },
@@ -76,67 +98,64 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->con
 ?>
 <?php
 
+$deactivateUrl = Url::to(['deactivate']);
+$activateUrl = Url::to(['activate']);
+
 $script = <<< JS
-              
-        $(".deactive").on('click',function(event){
-            event.preventDefault();
-            var trg=$(this);
-            var id=$(this).parents('tr').find('td:eq(1)').text();
-            var df = trg.attr("data-is-default");
-            if(df==1){ var msg = 'This is a Default Contact, Are you sure you want to deactivate Contact Person'; }
+
+$(document).ready(function(){
+    $(document).on('click', '.deactive', function(e) {
+        e.preventDefault();
+        var trg = $(this);
+        var id=$(this).parents('tr').find('td:eq(1)').text();
+        var df = trg.attr('data-is-default');
+        if(df==1){ var msg = 'This is a Default Contact, Are you sure you want to deactivate Contact Person'; }
             else { var msg = 'This can not be reactivate, Are you sure you want to deactivate Contact Person'; }
-            bootbox.confirm({
+        bootbox.confirm({
                 message: '<div class="row"><div class="col-sm-12"><div class="bg-info"><i class="fa fa-question"></i></div><span> '+msg+' "'+id+'"?</span></div></div>',
-                buttons: {
-                    'cancel': {
-                           label: 'No',
-                           className: 'btn-danger'
-                      },
-                    'confirm': {
-                           label: 'Yes',
-                           className: 'btn-primary'
-                     }
-                 },
-                callback: function(result) {
-                   if (result) {
-                      window.location = trg.attr('href');
-                   }
-                    else{
-                        //return false;
-                    }
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                },
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
                 }
-             });
-        });
-        
-JS;
-$script = "$(document).ready(function(){
-    $(document).on('click','.react-user',function(e){
-    var id= $(this).attr('data-val');
-    var name = $(this).attr('data-name');
-    bootbox.confirm({
-        callback: function(result) {
-            if (result) {
-              $('#loader').show();
-                 $.ajax({
-                        type: 'get',
-                        url: '" . Url::to(['activate']) . "',
-                        data:{'id':id},
-                        success: function(data) {
-                            var obj1 = $.parseJSON(data);
-                            if (obj1.status == 'success')
-                            {
-                                $.pjax.reload({container: '#user-grid'});
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                            }
-                            else if (obj1.status == 'error'){
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                            }
-                        }
-            });
+            },
+            callback: function(result) {
+                if (result) {
+                    window.location.href = trg.attr('href');
+                }
             }
-        }
+        });
     });
-    });  
-});";
-$this->registerJs($script, View::POS_READY);
+        
+    $(document).on('click', '.react-user', function(e) {
+        e.preventDefault();
+        var trg = $(this);
+        var id=$(this).parents('tr').find('td:eq(1)').text();
+        var name = $(this).attr('data-name');
+        bootbox.confirm({
+            message: '<div class="row"><div class="col-sm-12"><div class="bg-info"><i class="fa fa-question"></i></div><span>Are you sure you want to activate Contact Person "' + id + '"?</span></div></div>',
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                },
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
+                }
+            },
+            callback: function(result) {
+                if (result) {
+                    window.location.href = trg.attr('href');
+                }
+            }
+        });
+    });
+});
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 ?>

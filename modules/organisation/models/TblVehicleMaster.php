@@ -34,44 +34,41 @@ use yii\helpers\ArrayHelper;
  * @property string $delete_by
  * @property integer $is_active
  */
-class TblVehicleMaster extends \yii\db\ActiveRecord
-{
+class TblVehicleMaster extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vehicle_master';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vehicle_type_code', 'capacity_code','registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no','transporter_code', 'mapped_route','wef_date', 'union_code'], 'required'],
-            [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by', 'delete_by'], 'string'],
-            [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer'],
-            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'delete_at','vehicle_code'], 'safe'],
-            [['rent'], 'number'],
-            [['driver_contact_no'], function ($attribute, $params) {
-                Yii::$app->general->vaildatePhoneNumbers($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
-            [['driver_name'], function ($attribute, $params) {
-                Yii::$app->general->validateName($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
-            [['registration_no','driving_license_number','rc_book_no'], function ($attribute, $params) {
-                Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
+                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'mapped_route', 'wef_date', 'union_code'], 'required'],
+                [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by', 'delete_by'], 'string'],
+                [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer'],
+                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'delete_at', 'vehicle_code'], 'safe'],
+                [['rent'], 'number'],
+                [['driver_contact_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['driver_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['registration_no', 'driving_license_number', 'rc_book_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'vehicle_code' => Yii::t('app', 'Vehicle Code'),
             'vehicle_type_code' => Yii::t('app', 'Vehicle Type'),
@@ -105,50 +102,33 @@ class TblVehicleMaster extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblVehicleMasterQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblVehicleMasterQuery(get_called_class());
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity()
-    {
+    public function getCapacity() {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTransporter()
-    {
+    public function getTransporter() {
         return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
     }
 
-    public function getVehicleType()
-    {
+    public function getVehicleType() {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
-    }
-
-    public function getVehicleMaster($unionCode) {
-        $query = $this->find()
-                ->where(['tbl_vehicle_master.union_code' => $unionCode])
-                ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
-                ->andWhere(['NOT', ['tbl_vehicle_trip.trip_status' => 'closed']]);
-        $data = $query->all();
-        $data = ArrayHelper::map($data, 'vehicle_code', function($value) {
-                    return $value->parsing_no;
-                });
-        return $data;
     }
 
 }

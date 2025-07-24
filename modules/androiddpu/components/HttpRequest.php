@@ -20,7 +20,7 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'realtime-services/dpu-product-stock', 'esp-app/register', 'esp-app/verification'];
+    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'realtime-services/dpu-product-stock', 'esp-app/register', 'esp-app/verification', 'android-dpu/send-otp', 'android-dpu/change-password','app-activation/register', 'app-activation/verification'];
     public $request;
     public $allow_call = FALSE;
     public $action_url;
@@ -30,6 +30,9 @@ class HttpRequest extends \yii\base\Component {
 
         $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
         $post_data = Json::decode(Yii::$app->request->getRawBody());
+        if (empty($post_data)) {
+            $post_data = !empty(Yii::$app->request->post()['requestData']) ? Json::decode(Yii::$app->request->post()['requestData']) : [];
+        }
         $request = $this->camelCaseToUnderscore($post_data);
 //        $request['dcs_code'] = $request['identity_code'];
         if (!empty($request['type']) && in_array($request['type'], [5])) {
@@ -40,7 +43,7 @@ class HttpRequest extends \yii\base\Component {
         }
         $this->request = $request;
         $this->allow_call = $this->AuthenticateRequest();
-        $this->setRequestLog();
+//        $this->setRequestLog();
         if ($this->allow_call) {
             return $this->request;
         }

@@ -56,12 +56,12 @@ $attribute = [
     [
         'attribute' => 'email',
         'format' => 'raw',
-        'visible' => User::hasPermission('viewUserEmail'),
+        'visible' => true,
     ],
     [
         'attribute' => 'mobile_no',
         'value' => 'mobile_no',
-        'visible' => false,
+        'visible' => TRUE,
         'filter' => true,
     ],
     ['attribute' => 'allow_app_login',
@@ -104,6 +104,30 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
         },
     ],
+    [
+        'attribute' => 'created_at',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_datetime($model->created_at, 'php:d-m-Y H:i:s');
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
+    [
+        'attribute' => 'date_of_joining',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date($model->date_of_joining);
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
+    [
+        'attribute' => 'created_by',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        },
+        'visible' => FALSE,
+        'filter' => FALSE
+    ],
     'employee_id',
         /* [
           'class' => 'webvimark\components\StatusColumn',
@@ -145,6 +169,16 @@ $grid_option = [
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-val' => $model->id, 'data-name' => $model->name];
                 return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/user-management/user/activate-user', 'id' => $model->id], $options);
             }
+        },
+        'reset-password' => function ($url, $model) {
+            $disable = ''; //($model->checkNotSelf()) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Reset Password', 'class' => $disable];
+            return Html::a('<i class="fa fa-user"></i>', ['/user-management/user/password-reset', 'id' => $model->id], $options);
+        },
+        'user-latlong-map' => function ($url, $model) {
+            $disable = '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization Lat Long Map', 'class' => $disable];
+            return Html::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-organization-latlong/map-route-source', 'id' => $model->id], $options);
         },
     ]
 ];

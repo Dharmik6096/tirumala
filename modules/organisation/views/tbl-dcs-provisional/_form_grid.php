@@ -61,6 +61,10 @@ $attribute = [
         ['attribute' => 'secretory_info', 'visible' => false, 'filter' => false],
         ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'fssi', 'visible' => false, 'filter' => false],
+        ['attribute' => 'fssi_expiry_date', 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->fssi_expiry_date);
+        }, 'filter' => false],
         ['attribute' => 'address', 'value' => 'address', 'visible' => false, 'filter' => false],
         ['attribute' => 'local_address', 'visible' => false, 'filter' => false],
         ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],
@@ -226,10 +230,36 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status] : '';
         }],
+        ['attribute' => 'data_post_status',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+        }, 'filter' => false, 'visible' => false],
+        ['attribute' => 'picked_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'response_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'is_security_cheque', 'filter' => FALSE, 'visible' => FALSE,
+        'value' => function($model) {
+            return ($model->is_security_cheque == 1) ? 'Yes' : 'No';
+        }],
+        ['attribute' => 'cheque_number', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cheque_amount', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cheque_bank', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->security_return_date, 'php:d-m-Y');
+        }, 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_amt', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'security_return_mode', 'filter' => FALSE, 'visible' => FALSE],
 ];
-
+$gridId = 'dcs-list';
 $grid_option = [
-    'id' => 'dcs-list',
+    'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
@@ -246,7 +276,7 @@ $grid_option = [
         'update' => function ($url, $model) use ($pending_approval) {
             $class = '';
             if (!$pending_approval) {
-                $class = ($model->is_active === 0 || $model->status != 'Pending') ? 'link-disable' : '';
+                $class = ($model->is_active === 0 || ($model->status != 'Pending' && $model->status != 'Reroute')) ? 'link-disable' : '';
             }
             $name = $model->dcs_name;
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
@@ -256,9 +286,12 @@ $grid_option = [
             if ($pending_approval) {
                 return false;
             }
-            $disable = ($model->status == 'Pending') ? '' : 'disabled';
+            $disable = ($model->status == 'Pending' || $model->status == 'Reroute') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code], $options);
+        },
+        'repush' => function ($url, $model) use ($gridId) {
+            return Yii::$app->general->createRePushLink($url, $model, $gridId, 'dcs_provisional_code');
         },
     ]
 ];

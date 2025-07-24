@@ -57,11 +57,15 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
             $query->andFilterWhere(['collection_type' => (int) $this->collection_type]);
         }
         if (!empty($this->date)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_collection_approval.date, 126)', date('Y-m-d', strtotime($this->date))]);
+            $query->andFilterWhere(['cast(tbl_collection_approval.date as date)' => date('Y-m-d', strtotime($this->date))]);
         }
 
-        if ((!empty($this->from_date)) && ((!empty($this->to_date)))) {
-            $query->andFilterWhere(['between', 'date', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))]);
+        if (!empty($this->from_date)) {
+            $query->andFilterWhere(['>=', 'cast(tbl_collection_approval.date as date)', date('Y-m-d', strtotime($this->from_date))]);
+        }
+
+        if (!empty($this->to_date)) {
+            $query->andFilterWhere(['<=', 'cast(tbl_collection_approval.date as date)', date('Y-m-d', strtotime($this->to_date))]);
         }
 
 

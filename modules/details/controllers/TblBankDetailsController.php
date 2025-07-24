@@ -170,15 +170,55 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $historyModel = new TblBankDetailsHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->scenario = 'deactivate';
         $this->model->is_active = 0;
         $this->model->is_verified = 0;
-        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
-        if ($transaction !== FALSE) {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                'message' => 'Account deactivated successfully.']);
+        $this->model->is_default = 0;
+        if ($this->model->validate()) {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
+            if ($transaction !== FALSE) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => 'Account deactivated successfully.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Could not deactivate. Please try again.']);
+            }
         } else {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => 'Could not deactivate. Please try again.']);
+            $msg = '';
+            foreach ($this->model->getErrors() as $errorkey => $value) {
+                $msg .= $value[0] . '<br/>';
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $msg]);
+            return $this->redirect(\yii\helpers\Url::previous());
+        }
+
+        return $this->redirect(Url::previous());
+    }
+
+    public function actionActivate($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblBankDetailsHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_active = 1;
+        if (!$this->model->validate()) {
+            $errors = $this->model->getErrors();
+            $errorMessages = '';
+            foreach ($errors as $field => $error) {
+                if ($field == 'bank_account_no') {
+                    $bankDetailModel = $this->model->bankDetails;
+                    $errorMessages .= 'Already Activated In Other ' . $bankDetailModel->module_name . ' - ' . $bankDetailModel->module_code . '.<br>';
+                } else {
+                    $errorMessages .= implode(', ', $error) . '<br>';
+                }
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $errorMessages]);
+            return $this->redirect(Url::previous());
+        }
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
+        if ($transaction == 'customRedirect') {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Account activated successfully.']);
+        } else {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Could not Activate. Please try again.']);
         }
         $this->redirect(Url::previous());
     }

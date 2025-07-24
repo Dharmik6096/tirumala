@@ -1,5 +1,80 @@
 var initDepdropMs;
 (function ($) {
+    window.handleDepdropBeforeSend = function(options) {
+        const parentIds = options.depends || [];
+        const selfId = options.selfId;
+
+        const currentParentVals = parentIds.map(id => {
+            const val = $(`#${id}`).val();
+            return (val === null || val === undefined || val === '') ? '' : val;
+        });
+        var parentVal = $(`#`+parentIds[0]).val();
+        // if (!currentParentVals[0]) { // Check if any parent is empty
+        if (isEmpty(parentVal)) { // Check if first parent is empty
+            resetChildDropdown(selfId);
+            return false;
+        }
+
+        const stateKey = parentIds.concat(currentParentVals).join('|');
+        if (!window.depdropStateTracker) {
+            window.depdropStateTracker = {};
+        }
+
+        const self = $(`#${selfId}`);
+        const shouldAllowRequest = (
+            !window.depdropStateTracker[selfId] ||
+            window.depdropStateTracker[selfId].stateKey !== stateKey ||
+            self.find('option').length <= 1 ||
+            self.prop('disabled')
+        );
+
+        if (shouldAllowRequest) {
+            self.prop('disabled', false);
+
+            // Update tracker
+            window.depdropStateTracker[selfId] = {
+                stateKey: stateKey,
+                timestamp: Date.now()
+            };
+            return true;
+        }
+        return false;
+    };
+
+    function resetChildDropdown(id) {
+        var self = $('#' + id);                                        
+        if (self.data('select2')) {
+            self.val(null).trigger('select2:select');
+            self.trigger('select2:unselect');
+            self.trigger('select2:close');
+            self.find('option').remove();
+            self.prop('disabled', true);
+        }
+    }
+
+    function isEmpty(value) {
+        if (value === null || value === undefined) {
+            return true;
+        } else if (typeof value === 'string') {
+            return value.length === 0;
+        } else if (Array.isArray(value)) {
+            if (value.length === 0) {
+                return true;
+            }
+            return value.every(item => isEmpty(item));
+        } else if (typeof value === 'object') {
+            const keys = Object.keys(value);
+            if (keys.length === 0) {
+                return true;
+            }
+            return keys.every(key => {
+                const propValue = value[key];
+                return isEmpty(propValue);
+            });
+        }
+        return false;
+    }
+    
     initDepdropMs = function (id, text, val) {
         var $s2 = $('#' + id), $s2cont = $('#' + id).parent('.form-group'), ph = '...';
 
@@ -84,7 +159,7 @@ var initDepdropMs;
 
         var specialDecimalKeys = new Array();
         specialDecimalKeys.push(8);
-        $(".number-validate").bind("keypress", function (e) {
+        $(document).on("keypress", ".number-validate", function (e) {
             var keyCode = e.which ? e.which : e.keyCode
             var ret = ((keyCode >= 48 && keyCode <= 57) || (specialDecimalKeys.indexOf(keyCode) != -1) || keyCode == 9 || keyCode == 46);
             return ret;
@@ -248,6 +323,46 @@ var initDepdropMs;
             }
         } else {
             $('.field-' + this_id + ' .help-block').attr('title', $('.field-' + this_id + ' label').text() + ' is not valid').text($('.field-' + this_id + ' label').text() + ' is not valid');
+        }
+    });
+
+    $('.check_password_strength').on("keyup", function () {
+        var this_id = $(this).attr('id');
+        var password = $(this).val();
+        var fieldContainer = $('.field-' + this_id);
+        var helpBlock = fieldContainer.find('.help-block');
+
+        var label = fieldContainer.find('label').text();
+        var messages = [];
+
+        if (password.length < 8) {
+            messages.push(label + ' must be at least 8 characters long');
+        }
+        if (!/[a-z]/.test(password)) {
+            messages.push(label + ' must contain at least one lowercase letter');
+        }
+        if (!/[A-Z]/.test(password)) {
+            messages.push(label + ' must contain at least one uppercase letter');
+        }
+        if (!/\d/.test(password)) {
+            messages.push(label + ' must contain at least one digit');
+        }
+        if (!/[\W_]/.test(password)) {
+            messages.push(label + ' must contain at least one special character');
+        }
+
+        if (messages.length > 0) {
+            helpBlock.attr('title', messages.join(' | ')).html(messages.join('<br>'));
+        } else {
+            helpBlock.attr('title', '').html('');
+        }
+    });
+    $('.24_hour_time_input').on("keyup", function () {
+        var $this = $(this), id = $this.attr('id'), $help = $('.field-' + id + ' .help-block'),
+                time = $this.val();
+        $help.text('');
+        if (time.length == 5 && !time.includes('_') && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+            $help.text('Invalid time.');
         }
     });
 })(jQuery);

@@ -104,10 +104,29 @@ $attribute = [
         ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'ts_code_m', 'visible' => FALSE],
         ['attribute' => 'ts_code_e', 'visible' => FALSE],
+        ['attribute' => 'status',
+        'filter' => (!$pending_approval) ? Yii::$app->dropdown->dropdownfilterStatic('provisional_status', $searchModel, 'status') : false,
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status] : '';
+        }],
+        ['attribute' => 'data_post_status',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+        }, 'filter' => false, 'visible' => false],
+        ['attribute' => 'picked_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'response_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
 ];
-
+$gridId = 'customer-master-list';
 $grid_option = [
-    'id' => 'customer-master-list',
+    'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
@@ -124,7 +143,7 @@ $grid_option = [
         'update' => function ($url, $model) use ($pending_approval) {
             $class = '';
             if (!$pending_approval) {
-                $class = ($model->status != 'Pending') ? 'link-disable' : '';
+                $class = ($model->status != 'Pending' && $model->status != 'Reroute') ? 'link-disable' : '';
             }
             $name = $model->customer_name;
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_provisional_code, 'data-name' => $name];
@@ -134,12 +153,14 @@ $grid_option = [
             if ($pending_approval) {
                 return false;
             }
-            $disable = ($model->status == 'Pending') ? '' : 'disabled';
+            $disable = ($model->status == 'Pending' || $model->status == 'Reroute') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-customer-master-provisional/document-upload', 'id' => $model->customer_provisional_code], $options);
         },
+        'repush' => function ($url, $model) use ($gridId) {
+            return Yii::$app->general->createRePushLink($url, $model, $gridId, 'customer_provisional_code');
+        },
     ]
 ];
-
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

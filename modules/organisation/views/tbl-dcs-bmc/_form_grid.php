@@ -19,6 +19,7 @@ $attribute = [
         ['attribute' => 'ref_code'],
         ['attribute' => 'bmc_name', 'value' => 'bmc_name'],
         ['attribute' => 'local_name', 'filter' => false],
+        ['attribute' => 'bmc_short_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'bmc_type_code', 'value' => 'tblBmcType.bmc_type_name'],
         ['attribute' => 'x_col1', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->channelMaster, 'channel_desc');
@@ -33,8 +34,11 @@ $attribute = [
         ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
         ['attribute' => 'fssi', 'visible' => false, 'filter' => false],
-        [
-        'attribute' => 'valid_from',
+        ['attribute' => 'fssi_expiry_date', 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->fssi_expiry_date);
+        }, 'filter' => false],
+        ['attribute' => 'valid_from',
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->valid_from);
         }, 'visible' => false, 'filter' => false],

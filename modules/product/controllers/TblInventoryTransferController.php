@@ -2,6 +2,7 @@
 
 namespace app\modules\product\controllers;
 
+use app\modules\organisation\models\TblDcs;
 use Yii;
 use app\modules\product\models\TblInventoryTransfer;
 use app\modules\product\models\TblInventoryTransferTxn;
@@ -27,7 +28,7 @@ use app\modules\product\models\TblProductReceiptTransaction;
  */
 class TblInventoryTransferController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['list-grid', 'get-unit', 'get-available-stock'];
+    public $freeAccessActions = ['list-grid', 'get-unit', 'get-available-stock', 'get-sap-vendor-code'];
 
     /**
      * Lists all TblInventoryTransfer models.
@@ -86,6 +87,10 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $this->model;
             }
             $txModel->setAttributes($txnData);
+            $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->model->union_code, 'grn_without_stock_entry');
+            $isStockPosted = ($grnWithoutStockEntry == 0 || $grnWithoutStockEntry == '') ? 1 : 0;
+            $this->model->is_stock_posted = $isStockPosted;
+            $txModel->is_stock_posted = $isStockPosted;
             $txModel->inventory_transfer_code = $this->model->inventory_transfer_code;
             $txModel->union_code = $this->model->union_code;
             $txModel->inventory_transfer_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->inventory_transfer_code);
@@ -145,6 +150,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receipt->bmc_code = $fstockModel->bmc_code;
                 $receipt->dcs_code = $fstockModel->dcs_code;
                 $modelSave[] = $receipt;
+
                 $receiptTxn = new TblProductReceiptTransaction();
                 $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
                 $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
@@ -159,76 +165,76 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $receiptTxn;
 
                 $i++;
+                if ($isStockPosted) {
+                    //set to stock
+                    $stockModel = new TblProductStock();
+                    $stockModel->setCodes($this->model->to_type, $this->model->to_code);
 
-                //set to stock
-                $stockModel = new TblProductStock();
-                $stockModel->setCodes($this->model->to_type, $this->model->to_code);
+                    $stockModel->product_code = $txModel->product_code;
+                    $stockModel->union_code = $txModel->union_code;
+                    $stockModel->sap_batch_no = $batch;
+                    $existtoStock = $stockModel->getExistStock($this->model->to_type, $batch);
 
-                $stockModel->product_code = $txModel->product_code;
-                $stockModel->union_code = $txModel->union_code;
-                $stockModel->sap_batch_no = $batch;               
-                $existtoStock = $stockModel->getExistStock($this->model->to_type, $batch);
-            
-                $t_stock = 0;
-                $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock'] : 0;
-                $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
-                $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
-                if ($valid_avl_stock == 1 && strtoupper($this->model->to_type)=='DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
-                    $err['qty'] = Yii::t('app/validation', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
-                    return Json::encode($err);
-                } else if (!empty($existtoStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
-                    $modelSave[] = $historyModel;
-                    $t_stock = $existtoStock->stock;
-                    $existtoStock->stock = $t_stock + $qty;
-                    $stockModel = $existtoStock;
-                } else {
-                    $stockModel->product_stock_code = $stockModel->getCode($stock_ai);
-                    $stockModel->stock = $t_stock + $qty;
-                    $stockModel->x_col1 = Yii::$app->general->getUuid();
-                    $stockModel->rate = $rate;
+                    $t_stock = 0;
+                    $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock'] : 0;
+                    $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
+                    $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
+                    if ($valid_avl_stock == 1 && strtoupper($this->model->to_type) == 'DCS' && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
+                        $err['qty'] = Yii::t('app/validation', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
+                        return Json::encode($err);
+                    } else if (!empty($existtoStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                        $modelSave[] = $historyModel;
+                        $t_stock = $existtoStock->stock;
+                        $existtoStock->stock = $t_stock + $qty;
+                        $stockModel = $existtoStock;
+                    } else {
+                        $stockModel->product_stock_code = $stockModel->getCode($stock_ai);
+                        $stockModel->stock = $t_stock + $qty;
+                        $stockModel->x_col1 = Yii::$app->general->getUuid();
+                        $stockModel->rate = $rate;
+                    }
+                    $modelSave[] = $stockModel;
+
+                    $stockTxnModel = new TblProductStockTransaction();
+                    $stockTxnModel->attributes = $stockModel->attributes;
+                    unset($stockTxnModel->created_at);
+                    unset($stockTxnModel->created_by);
+                    $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
+                    $stockTxnModel->old_value = $t_stock;
+                    $stockTxnModel->new_value = $qty;
+                    $stockTxnModel->final_value = $stockModel->stock;
+                    $stockTxnModel->transaction_type = 'INVENTORY RECEIVED';
+                    $stockTxnModel->transaction_date = date('Y-m-d');
+                    $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
+                    $modelSave[] = $stockTxnModel;
+
+                    $receiptTo = new TblProductReceipt();
+                    $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
+                    $receiptTo->grn_no = '1234';
+                    $receiptTo->grn_date = date('Y-m-d');
+                    $receiptTo->vendor_type = $this->model->to_type;
+                    $receiptTo->vendor_code = $this->model->to_code;
+                    $receiptTo->union_code = $stockModel->union_code;
+                    $receiptTo->plant_code = $stockModel->plant_code;
+                    $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
+                    $receiptTo->bmc_code = $stockModel->bmc_code;
+                    $receiptTo->dcs_code = $stockModel->dcs_code;
+                    $modelSave[] = $receiptTo;
+                    $receiptTxnTo = new TblProductReceiptTransaction();
+                    $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
+                    $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
+                    $receiptTxnTo->product_code = $stockModel->product_code;
+                    $receiptTxnTo->received_quantity = $qty;
+                    $receiptTxnTo->requested_quantity = $qty;
+                    $receiptTxnTo->dispatched_quantity = $qty;
+                    $receiptTxnTo->rejected_quantity = 0;
+                    $receiptTxnTo->rate = 0;
+                    $receiptTxnTo->amount = 0;
+                    $receiptTxnTo->remark = 'INVENTORY RECEIVED';
+                    $modelSave[] = $receiptTxnTo;
                 }
-                $modelSave[] = $stockModel;
-
-                $stockTxnModel = new TblProductStockTransaction();
-                $stockTxnModel->attributes = $stockModel->attributes;
-                unset($stockTxnModel->created_at);
-                unset($stockTxnModel->created_by);
-                $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
-                $stockTxnModel->old_value = $t_stock;
-                $stockTxnModel->new_value = $qty;
-                $stockTxnModel->final_value = $stockModel->stock;
-                $stockTxnModel->transaction_type = 'INVENTORY RECEIVED';
-                $stockTxnModel->transaction_date = date('Y-m-d');
-                $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
-                $modelSave[] = $stockTxnModel;
-
-                $receiptTo = new TblProductReceipt();
-                $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
-                $receiptTo->grn_no = '1234';
-                $receiptTo->grn_date = date('Y-m-d');
-                $receiptTo->vendor_type = $this->model->to_type;
-                $receiptTo->vendor_code = $this->model->to_code;
-                $receiptTo->union_code = $stockModel->union_code;
-                $receiptTo->plant_code = $stockModel->plant_code;
-                $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
-                $receiptTo->bmc_code = $stockModel->bmc_code;
-                $receiptTo->dcs_code = $stockModel->dcs_code;
-                $modelSave[] = $receiptTo;
-                $receiptTxnTo = new TblProductReceiptTransaction();
-                $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
-                $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
-                $receiptTxnTo->product_code = $stockModel->product_code;
-                $receiptTxnTo->received_quantity = $qty;
-                $receiptTxnTo->requested_quantity = $qty;
-                $receiptTxnTo->dispatched_quantity = $qty;
-                $receiptTxnTo->rejected_quantity = 0;
-                $receiptTxnTo->rate = 0;
-                $receiptTxnTo->amount = 0;
-                $receiptTxnTo->remark = 'INVENTORY RECEIVED';
-                $modelSave[] = $receiptTxnTo;
-
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -255,7 +261,9 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         } else {
             return $this->render('create', [
                         'model' => $this->model,
-                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'txModel' => $txModel,
             ]);
         }
         return $this->render('create', [
@@ -385,6 +393,33 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {
             return Json::encode(['status' => 'success', 'stock' => 0]);
+        }
+    }
+
+    public function actionRfcRePush($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblInventoryTransferHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->data_post_status = 0;
+        $record = [];
+        if ($this->model->save(true, false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'Inventory Transfer re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push Inventory Transfer.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionGetSapVendorCode() {
+        $dcsModel = new TblDcs();
+        $dcsModel->dcs_code = Yii::$app->request->post('dcs');
+        $dcsData = $dcsModel->tblDcs;
+        if (!empty($dcsData->sap_vendor_code)) {
+            return Json::encode(['status' => 'success', 'sap_vendor_code' => $dcsData->sap_vendor_code]);
+        } else {
+            return Json::encode(['status' => 'success', 'sap_vendor_code' => '']);
         }
     }
 

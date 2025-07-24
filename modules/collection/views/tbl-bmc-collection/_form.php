@@ -95,17 +95,17 @@ $script = "
     $(document).on('change', '#tblbmccollection-mcc_plant_code', function() {  
        gridChange();
     });
-    $(document).on('change', '#tblbmccollection-bmc_code', function() { 
-         gridChange();
+    $(document).on('change', '#tblbmccollection-bmc_code', function() {
+        gridChange();
         $('#tblbmccollection-bmc_silos_info_code').val('');
         $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
-         var bmc = $('#tblbmccollection-bmc_code').val();
+        var bmc = $('#tblbmccollection-bmc_code').val();
         if(setData(bmc)){
-        $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
-            $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
-        });
-        } 
+            $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
+                $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
+            });
+        }
     });
     
     $(document).on('change', '#tblbmccollection-date_time_of_collection', function() {  
@@ -208,13 +208,15 @@ $script = "
         var fat = $('#tblbmccollection-fat').val();
         var snf = $('#tblbmccollection-snf').val();
         var clr = $('#tblbmccollection-clr').val();
-        var is_clr_input = $('#is_clr_input').val();
+        var is_clr_input = $('#is_clr_input').val()
+        var bmcCode = $('#tblbmccollection-own_bmc_code').val();
+        var type = $('#tblbmccollection-customer_type').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode,'customer_type':type},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
@@ -222,7 +224,7 @@ $script = "
                             if(is_clr_input==0){
                                 $('#tblbmccollection-clr').val(obj.data.toFixed(2));
                             }else{
-                                $('#tblbmccollection-snf').val(obj.data.toFixed(2));
+                                $('#tblbmccollection-snf').val(obj.data);
                             }
                             rtpl();
                         }
@@ -253,11 +255,12 @@ $script = "
         var type = $('#tblbmccollection-customer_type').val();
         var union = $('#tblbmccollection-union_code').val();
         var bmc = $('#tblbmccollection-bmc_code').val();
-        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != ''){
+        var qty = $('#tblbmccollection-qty').val();
+        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != '' && qty != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'qty':qty},
                 success: function(data) {   
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success')
@@ -313,7 +316,7 @@ $script = "
                         if (obj.status == 'success' && obj.data != null)
                         {
                             var exist_is_clr_input = $('#is_clr_input').val();
-                            var is_clr_input = obj.data.is_clr_input;
+                            var is_clr_input = obj.data;
                             $('#is_clr_input').val(is_clr_input);
                             var snf_html = $('.snf_calculate').html();
                             var crl_html = $('.clr_calculate').html();

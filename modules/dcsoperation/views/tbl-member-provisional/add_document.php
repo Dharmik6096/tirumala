@@ -121,7 +121,12 @@ use yii\web\View;
                                 <?php
                                 echo Html::hiddenInput('request_button', 'save', ['id' => 'request_button']);
                                 $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
-
+                                if ($configValue == 1) {
+                                    ?>
+                                    <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+                                    <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
+                                    <?php
+                                }
                                 AjaxSubmitButton::begin([
                                     'label' => Yii::t('app', 'Save'),
                                     'id' => 'request_approve',
@@ -131,7 +136,14 @@ use yii\web\View;
                                         'url' => Url::to(['document-upload', 'id' => $model->provisional_member_code]),
                                         'processData' => false,
                                         'contentType' => false,
-                                        'data' => new JsExpression("new FormData($('#create-document-form')[0])"),
+                                        'data' => new JsExpression("(function(){
+                                                var mainFormData = new FormData($('#create-document-form')[0]);
+                                                var remarks = \$('[name\$=\"[remarks]\"]').val();
+                                                if (remarks != '') {
+                                                    mainFormData.append('remarks', remarks);
+                                                }
+                                                return mainFormData;
+                                            })()"),
                                         'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
@@ -151,7 +163,7 @@ use yii\web\View;
                                                                 }
                                                  }'),
                                     ],
-                                    'options' => ['class' => 'btn btn-default btn-raised',
+                                    'options' => ['class' => 'btn btn-default btn-raised saveBtn',
                                         'type' => 'submit'],
                                 ]);
                                 AjaxSubmitButton::end();
@@ -185,12 +197,18 @@ use yii\web\View;
         </div>
     </div>
 </div>
-
+<?php if ($configValue == 1) { ?>
+    <?=
+    $this->render('@app/modules/document/views/tbl-attachment/_reroute', [
+        'model' => $model,
+    ])
+    ?>
+<?php } ?>
 <?php
 $script = "
-$('#approve').click(function() {
-    $('#request_button').val('approve');
-    $('#request_approve').trigger('click');
-});
+    $('#approve').click(function() {
+        $('#request_button').val('approve');
+        $('#request_approve').trigger('click');
+    });
 ";
 $this->registerJs($script, View::POS_END, 'document');

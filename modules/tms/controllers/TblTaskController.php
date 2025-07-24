@@ -20,7 +20,7 @@ use app\modules\usermanagement\models\User;
  * TblTaskController implements the CRUD actions for TblTask model.
  */
 class TblTaskController extends ChildController {
-    
+
     public $freeAccessActions = ['task-user-selection'];
 
     /**
@@ -94,11 +94,32 @@ class TblTaskController extends ChildController {
 
     public function actionViewForm($id) {
         $model = TblTaskActivity::findOne($id);
+        $model->form_data = !empty($model->form_data) ? $model->form_data : '';
         $form_data = json_decode($model->form_data, TRUE);
         $form_data = !empty($form_data['details']) ? $form_data['details'] : [];
         $attachment = new TblAttachment();
         $task_attachment = $attachment->getAttachmentDataProvider($id, 'tbl_task_activity');
         ksort($form_data);
+        foreach ($form_data as &$item) {
+            $mpp = $item['answer']['Selected Mpp'] ?? null;
+            if (is_array($mpp)) {
+                $html = "Selected Mpp:\n";
+                $count = 1;
+                foreach ($mpp as $val) {
+                    $html .= $count . ". ";
+                    if (is_array($val)) {
+                        foreach ($val as $key => $v) {
+                            $html .= "$key: $v\n";
+                        }
+                    } else {
+                        $html .= "Mpp Name: $val\n";
+                    }
+                    $count++;
+                }
+                $html .= "remarks: " . ($item['answer']['remarks'] ?? '') . "\n";
+                $item['answer'] = $html;
+            }
+        }
         $dataPro = [
             'allModels' => $form_data,
             'sort' => [
@@ -190,7 +211,7 @@ class TblTaskController extends ChildController {
             $i++;
         }
     }
-    
+
     public function actionTaskUserSelection() {
         $out = [];
         if (isset($_POST['depdrop_parents'][0]) && !empty($_POST['depdrop_parents'][0])) {
@@ -213,5 +234,11 @@ class TblTaskController extends ChildController {
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
+    public function actionTaskActivity($id) {
+        $controls = [];
+        $controls['p_task_activity_code'] = $id;
+        $controls['p_report_name'] = 'Task Activity Form';
+        $this->printDocument($controls, 'vsp/TaskActivityForm', 'TaskActivityForm', 'pdf');
+    }
+
 }
- 

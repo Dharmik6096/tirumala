@@ -75,6 +75,9 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
     <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('mcc_calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false); ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>   

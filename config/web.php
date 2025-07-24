@@ -16,6 +16,7 @@ $config = [
         'session' => ['name' => 'eiplportal'],
         'cache' => ['class' => 'yii\caching\FileCache'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
+        'default' => ['class' => 'app\components\DefaultValue'],
         'dropdown' => ['class' => 'app\components\DropDown'],
         'label' => ['class' => 'app\components\GeneralLabels'],
         'grid' => ['class' => 'app\components\Grid'],
@@ -253,6 +254,7 @@ $config = [
         'document' => ['class' => 'app\modules\document\Document',],
         'feedback' => ['class' => 'app\modules\feedback\Feedback',],
         'clienterp' => ['class' => 'app\modules\clienterp\Clienterp',],
+        'exchangeutility' => ['class' => 'app\modules\webservice\exchangeutility\exchangeUtility',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];

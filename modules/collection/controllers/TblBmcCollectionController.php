@@ -17,10 +17,13 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 use yii\widgets\ActiveForm;
 use app\modules\collection\models\TblCollectionDataAlias;
+use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateBased;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
@@ -79,6 +82,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
+            $i = 0;
             if (!empty(Yii::$app->request->post()['TblBmcCollection']['milk_collection_code'])) {
                 $this->model = $this->findModel(Yii::$app->request->post()['TblBmcCollection']['milk_collection_code']);
                 $historyModel = new TblBmcCollectionHistory();
@@ -87,37 +91,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->load(Yii::$app->request->post());
                 $this->model->scenario = 'update';
                 $update = TRUE;
+                $i = 1;
             }
             if (!$update) {
-                $this->model->qlty_auto = 0;
-                $this->model->qty_auto = 0;
-                $this->model->dt_date = date('Y-m-d H:i:s');
-                $datetime = date('Y-m-d H:i:s');
-                $this->model->sample_no = $this->model->getSampleNo();
-                $this->model->date_time_of_recieve = $datetime;
-                $this->model->type_of_data_receive = 'Manual';
-                $this->model->sms_status = 'n';
-                $this->model->qlty_time = $datetime;
-                $this->model->qty_time = $datetime;
-                $this->model->date_time_of_testing = $datetime;
-                $allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
-                if (strtolower($this->model->customer_type) == 'dcs') {
-                    $dcs = new TblDcs();
-                    $this->model->dcs_code = $dcs->validDcs($this->model->customer_code, $this->model->bmc_code);
-                    $this->model->customer_code = $this->model->dcs_code;
-                    $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
-                    if (!$allowRouteSelection) {
-                        $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
-                    }
-                } else {
-                    $this->model->dcs_code = NULL;
-                    $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
-                    if (!$allowRouteSelection) {
-                        $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
-                    }
-                }
-                $this->model->own_mcc_plant_code = $this->model->mcc_plant_code;
-                $this->model->own_bmc_code = $this->model->bmc_code;
+                $this->model->setCollectionData($this->model);
             } else {
                 if (strtolower($this->model->customer_type) != 'dcs') {
                     $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type, $this->model->bmc_code);
@@ -126,25 +103,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             if ($this->model->validate()) {
-                $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
-                $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
-                $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
-                $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
-                if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
-                    $approvalModel = new TblCollectionDataAlias();
-                    $approvalModel->attributes = $this->model->attributes;
-                    $approvalModel->purchase_rate_code = $this->model->rate_code;
-                    $approvalModel->table_name = 'tbl_bmc_collection';
-                    $approvalModel->action_perform = 'CREATE';
-                    $approvalModel->setOldAttributesValues($approvalModel);
-                    $modelSave[] = $approvalModel;
-                    $message = 'Data For Approval';
-                    $type = 'create';
-                } else {
-                    $modelSave[] = $this->model;
-                }
+                $auto_key_config = [];
+                $this->model->postDataSet($this->model, 'create', $modelSave, $auto_key_config, $i, $message, $type);
 
-                $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
+                if (!empty($auto_key_config)) {
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($modelSave, [$message, $type], $auto_key_config);
+                } else {
+                    $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
+                }
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'temp_collection_data' => [], 'msg' => $msg];
@@ -265,42 +231,11 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['snf'] = Yii::$app->request->post('snf');
         $data['customer_type'] = Yii::$app->request->post('customer_type');
         $data['union'] = Yii::$app->request->post('union_code');
-        $validCode = !empty(Yii::$app->request->post('valid_code')) ? Yii::$app->request->post('valid_code') : '';
-        $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
-        /*   $bmcModel = new TblBmcCollection();
-          $dcsModel = new TblDcs();
-          $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
-          $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
-          //        $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
-          //        $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');
-          //        $is_mcc = Yii::$app->general->getforeignkey($bmcModel->bmcData, 'is_mcc');
-          //        $for = $is_mcc == 1 ? 'MCC' : 'BMC';
-          //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
-          if (strtolower($for) != 'dcs') {
-          $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for, $data['bmc_code']);
-          } else {
-          $code = $bmcModel->dcs_code;
-          } */
-        $model = new TblDcsPurchaseRateApplicabitity();
-        $model->wef_date = $data['dt_date'];
-        $data['milk_type'] = $data['milk_type'];
-        $data['milk_quality_type_code'] = $data['milk_quality_type'];
-        $data['appl_for'] = $for;
-        $data['appl_code'] = !empty($validCode) ? $validCode : $data['dcs_code'];
-        $model_data = $model->getDcsPurchaseRateApplicableData($data);
+        $data['qty'] = Yii::$app->request->post('qty');
 
-        if (!empty($model_data)) {
-            $detail_model = new TblDcsPurchaseRateDetails();
-            $detail_model->rate_type_code = $model_data->rate_app_code;
-            $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
-            $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
-            if (!empty($detail_data)) {
-                $response['status'] = 'success';
-                $rtpl_data['list'] = $detail_data;
-                $response['data'] = $rtpl_data;
-            }
-        }
+        $model = new TblBmcCollection();
+        $response = $model->calculateData('rtpl_calculate', $data['union'], $data['bmc_code'], $data['fat'], $data['milk_type'], $data['snf'], $data['clr'], $data['customer_type'], '', $data);
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
@@ -343,14 +278,13 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         (float) $clr = Yii::$app->request->post('clr');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
-        if ($is_clr_input == 0) {
-            $data = ($snf - ($fat * $lr1) - $lr2) * 4;
-        } else {
-            $data = ($clr / 4) + ($fat * $lr1) + $lr2;
-        }
-        $response['data'] = $data;
+        $org_code = Yii::$app->request->post('bmcCode');
+        $customer_type = Yii::$app->request->post('customer_type');
+
+        $model = new TblBmcCollection();
+        $result = $model->calculateData('calculate_clr', $union, $org_code, $fat, '', $snf, $clr, $customer_type, $is_clr_input);
+
+        $response['data'] = $result['clr'];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
@@ -365,8 +299,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $type = 'edit';
         if (Yii::$app->request->post()) {
             $conversion_const = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'ltr_to_kg_constant', 'BMC');
-            $collection_approval = Yii::$app->general->getUnionConfigResult($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval');
-            // $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
+            $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval');
+// $collection_approval = Yii::$app->general->getUnionConfiguration($queryParams['TblBmcCollectionSearch']['union_code'], 'collection_approval', 'PORTAL');
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
                 $detail->rtpl = '';
@@ -375,16 +309,18 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             Model::loadMultiple($detailModel, Yii::$app->request->post());
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
-                // $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
+// $conversion_const = Yii::$app->general->getUnionConfiguration($detail->union_code, 'ltr_to_kg_constant', 'BMC');
                 $detail->converted_qty = $detail->qty_mode == 1 ? $detail->qty / $conversion_const : $detail->qty * $conversion_const;
                 $modelData[] = $detail;
             }
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
-                foreach ($modelData as $detalData) {
+                $i = 0;
+                $auto_key_config = [];
+                foreach ($modelData as $detailKey => $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->customer_code != $detalData->oldAttributes['customer_code'] || $detalData->route_code != $detalData->oldAttributes['route_code'] || $detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
-                        // if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
-                        if ($collection_approval == 1) {
+// if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        if (in_array($collectionApprovalConfig, [1, 2])) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
                             $approvalModel->old_qty = $detalData->oldAttributes['qty'];
@@ -403,7 +339,15 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $approvalModel->table_name = 'tbl_bmc_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $saveModel[] = $approvalModel;
+
+                            if ($collectionApprovalConfig == 2) {
+                                $modelStages = new TblApprovalStagesDetail();
+                                $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
+                                $i++;
+                            } else {
+                                $saveModel[] = $approvalModel;
+                            }
+
                             $message = 'Data For Approval';
                             $type = 'create';
                         } else {
@@ -421,7 +365,12 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+                if (!empty($auto_key_config)) {
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
+                } else {
+                    $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+                }
+// $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -525,16 +474,25 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
-                foreach ($deletedata as $code) {
+                $i = 0;
+                $auto_key_config = [];
+                foreach ($deletedata as $detailKey => $code) {
                     $where['milk_collection_code'] = $code;
                     $existData = TblBmcCollection::find()->where($where)->one();
-                    if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                    $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL');
+                    if (in_array($collectionApprovalConfig, [1, 2])) {
                         $ApprovalModel = new TblCollectionDataAlias();
                         $ApprovalModel->attributes = $existData->attributes;
                         $ApprovalModel->setOldAttributesValues($ApprovalModel);
                         $ApprovalModel->table_name = 'tbl_bmc_collection';
                         $ApprovalModel->action_perform = 'DELETE';
-                        $saveModel[] = $ApprovalModel;
+                        if ($collectionApprovalConfig == 2) {
+                            $modelStages = new TblApprovalStagesDetail();
+                            $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_bmc_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
+                            $i++;
+                        } else {
+                            $saveModel[] = $ApprovalModel;
+                        }
                     } else {
                         $historyModel = new TblBmcCollectionHistory();
                         Yii::$app->operation->history($existData, $historyModel, DELETE);
@@ -544,10 +502,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $type = 'delete';
                     }
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                if (!empty($auto_key_config)) {
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, [$message, $type], $auto_key_config);
+                } else {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                }
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(Yii::$app->request->referrer);
-//                    return $this->redirect(['index']);
+//return $this->redirect(['index']);
                 }
             }
         }
@@ -566,59 +528,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionCheckFatRange() {
-        $response = [];
-        $response['status'] = 'error';
-        $response['data'] = '';
         (float) $fat = Yii::$app->request->post('fat');
         $union = Yii::$app->request->post('union_code');
         $bmc = Yii::$app->request->post('bmc');
         $milk_type = Yii::$app->request->post('milk_type');
-        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_bmc']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_bmc'] : '';
-        $mapping = new TblBmcMilkType();
-        $mapped = $mapping->find()->where(['bmc_code' => $bmc, 'is_active' => 1])->all();
-
-        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
-            $type = [];
-            foreach ($mapped as $map) {
-                $type[] = $map->milk_type_code;
-            }
-            //Cow and Buffalo
-            if (in_array(1, $type) && in_array(2, $type)) {
-                if ($range < $fat && $milk_type != 2) {
-                    $response['status'] = 'success';
-                    $response['data'] = 2;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
-                } elseif ($range >= $fat && $milk_type != 1) {
-                    $response['status'] = 'success';
-                    $response['data'] = 1;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
-                }
-            }
-            //Cow and Mix
-            if (in_array(1, $type) && in_array(3, $type)) {
-                if ($range < $fat && $milk_type != 3) {
-                    $response['status'] = 'success';
-                    $response['data'] = 3;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
-                } elseif ($range >= $fat && $milk_type != 1) {
-                    $response['status'] = 'success';
-                    $response['data'] = 1;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
-                }
-            }
-            //Buffalo and Mix
-            if (in_array(2, $type) && in_array(3, $type)) {
-                if ($range < $fat && $milk_type != 3) {
-                    $response['status'] = 'success';
-                    $response['data'] = 3;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
-                } elseif ($range >= $fat && $milk_type != 2) {
-                    $response['status'] = 'success';
-                    $response['data'] = 2;
-                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
-                }
-            }
-        }
+        $model = new TblBmcCollection();
+        $response = $model->calculateData('check_fat_range', $union, $bmc, $fat, $milk_type);
+        $response['status'] = 'error';
+        $response['data'] = '';
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }

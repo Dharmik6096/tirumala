@@ -37,6 +37,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->controls->date($model, $form, 'dispatch_date', '', TRUE, date('Y-m-d'), TRUE, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->depend_dropdown('vendor', $model, $form, 'tblplantdispatch-union_code', 'form-group', $model->getAttributeLabel('vendor_master_code'), 'vendor_master_code'); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblplantdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
         </div>
         <div class="col-sm-2 create_fields">
@@ -81,7 +84,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'rate')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field qty-validate">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'qty')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field">
@@ -111,7 +114,11 @@ $form = ActiveForm::begin([
                 <th><?= Yii::t('app', 'Product Code') ?></th>
                 <th><?= $txModel->getAttributeLabel('product_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('unit_code') ?></th>
-                <?php if ($batchNoWiseInventory) {echo '<th>' . $txModel->getAttributeLabel('sap_batch_no') . '</th>'; } ?>
+                <?php
+                if ($batchNoWiseInventory) {
+                    echo '<th>' . $txModel->getAttributeLabel('sap_batch_no') . '</th>';
+                }
+                ?>
                 <th><?= $txModel->getAttributeLabel('rate') ?></th>
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>
@@ -157,7 +164,7 @@ $form = ActiveForm::begin([
         AjaxSubmitButton::end();
         ?>
         <?= Yii::$app->controls->reset(); ?>
-<?= Yii::$app->controls->cancel($model); ?>
+        <?= Yii::$app->controls->cancel($model); ?>
     </div>
 </div>
 

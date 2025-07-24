@@ -106,17 +106,17 @@ class MasterController extends ActiveController {
         $dcs = [];
         $member = [];
         $loginorg = [];
-        if (!empty(Yii::$app->eiplapp->identity->loginOrg)) {
+        if (strtolower(Yii::$app->eiplapp->identity->login_type) == 'member' || empty(Yii::$app->eiplapp->identity->loginOrg)) {
+            $loginorg['organization_type'] = Yii::$app->eiplapp->identity->login_type;
+            $loginorg['organization_code'] = Yii::$app->eiplapp->identity->master_code;
+            //   $data['organization_code'] = $loginorg['organization_code'];
+            $map_data[] = $loginorg;
+        } else {
             foreach (Yii::$app->eiplapp->identity->loginOrg as $org) {
                 $loginorg['organization_type'] = $org->organization_type;
                 $loginorg['organization_code'] = $org->organization_code;
                 $map_data[] = $loginorg;
             }
-        } else {
-            $loginorg['organization_type'] = Yii::$app->eiplapp->identity->login_type;
-            $loginorg['organization_code'] = Yii::$app->eiplapp->identity->master_code;
-            //   $data['organization_code'] = $loginorg['organization_code'];
-            $map_data[] = $loginorg;
         }
         foreach ($map_data as $key => $value) {
             $data['organization_code'][] = $value['organization_code'];
@@ -162,6 +162,8 @@ class MasterController extends ActiveController {
         $data['device_id'] = Yii::$app->eiplapp->identity->device_id;
         $data['department'] = Yii::$app->eiplapp->identity->department;
         $data['login_type'] = Yii::$app->eiplapp->identity->login_type;
+        $data['access_token'] = Yii::$app->eiplapp->identity->access_token;
+        $data['mobile_no'] = Yii::$app->eiplapp->identity->mobile_no;
         return $data;
     }
 

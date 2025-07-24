@@ -19,14 +19,14 @@ class TblMilkCollectionSearch extends TblMilkCollection {
      * @inheritdoc
      */
     public $union_code;
-    public $operator_fat, $operator_snf, $operator_qty, $operator_amount;
+    public $operator_fat, $operator_snf, $operator_qty, $operator_amount, $data_type_filter;
     public $from_date, $to_date, $from_shift, $to_shift, $sap_collection_type, $sap_data_post_status, $ref_code;
 
     public function rules() {
         return [
                 [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
                 [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code', 'dcs_name'], 'safe'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code', 'dcs_name', 'data_type_filter'], 'safe'],
                 [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
                 [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'scheme_rate', 'actual_rate', 'scheme_rate_code'], 'safe'],
@@ -63,11 +63,6 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             'query' => $query,
         ]);
 
-        $query->joinWith(['dcsCode', 'memberCode', 'milkTypeCode']);
-
-
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
-
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
         $from_date .= ' ' . $from_shift;
@@ -79,6 +74,9 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $to_date .= ' ' . $to_shift;
         $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
 
+        $query->joinWith(['dcsCode', 'memberCode', 'milkTypeCode']);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -265,8 +263,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $query = TblMilkCollection::find();
 
         // add conditions that should always apply here
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
-        if ($flag == 1) {
+        $flag = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL');
+        if (in_array($flag, [1, 2])) {
             // $query->joinWith(['approvalData']);
             $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.member_code = tbl_milk_collection.member_code and tbl_collection_data_alias.date_time_of_collection = tbl_milk_collection.date_time_of_collection and tbl_collection_data_alias.shift_code = tbl_milk_collection.shift_code and tbl_collection_data_alias.old_milk_type_code = tbl_milk_collection.milk_type_code and tbl_collection_data_alias.amount = tbl_milk_collection.amount and tbl_collection_data_alias.table_name = 'tbl_milk_collection' and tbl_collection_data_alias.action_perform = 'DELETE'");
         }
@@ -303,7 +301,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         $query->andFilterWhere(['tbl_milk_collection.member_code' => $this->member_code])
                 ->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
-        if ($flag == 1) {
+        if (in_array($flag, [1, 2])) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
         }
         $query->andWhere(['or', ['is', 'tbl_mcc_shift_lock.mcc_plant_code', NULL], ['is', 'tbl_mcc_shift_lock.shift_code', NULL], ['is', 'tbl_mcc_shift_lock.date_time_of_collection', NULL]]);
@@ -448,7 +446,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 'from_date' => '',
                 'from_shift' => '',
                 'to_date' => '',
-                'to_shift' => ''
+                'to_shift' => '',
+                'data_type_filter' => ''
             ];
             if (empty($this->dcs_code)) {
                 $this->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;

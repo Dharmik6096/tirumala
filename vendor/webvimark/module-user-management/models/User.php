@@ -460,9 +460,10 @@ class User extends UserIdentity {
                 }
 
                 // Don't let non-superadmin edit superadmin
-                if (isset($this->oldAttributes['superadmin']) && !Yii::$app->user->isSuperadmin && $this->oldAttributes['superadmin'] == 1) {
-                    return false;
-                }
+                // Comments Regarding Password Reset Functionality
+                // if (isset($this->oldAttributes['superadmin']) && !Yii::$app->user->isSuperadmin && $this->oldAttributes['superadmin'] == 1) {
+                //     return false;
+                // }
             }
         }
 
@@ -725,6 +726,38 @@ class User extends UserIdentity {
 
     public function getSecondaryParent() {
         return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
+    }
+
+    public function getAppUserLists($login_type, $mcc_code = null) {
+        $query = $this->find()
+                ->alias('U')
+                ->select(['U.name', 'U.user_code', 'tuom.organization_type', 'tuom.organization_code'])
+                ->innerJoin('tbl_user_organization_mapping tuom', 'tuom.user_id = U.id')
+                ->andWhere(['U.allow_app_login' => 1])
+                ->andWhere(['U.login_type' => $login_type])
+                ->andWhere(['tuom.organization_type' => ['UNION', 'PLANT', 'MCC', 'BMC', 'DCS']]);
+        $model = new TblDcs();
+        $value = $model->getOrgDCS($mcc_code, TRUE);
+        $unionCodes = ArrayHelper::getColumn($value, 'union_code');
+        $plantCodes = ArrayHelper::getColumn($value, 'plant_code');
+        $mccCodes = ArrayHelper::getColumn($value, 'mcc_plant_code');
+        $bmcCodes = ArrayHelper::getColumn($value, 'bmc_code');
+        $dcsCodes = ArrayHelper::getColumn($value, 'dcs_code');
+        $orgCodes = array_merge($unionCodes, $plantCodes, $mccCodes, $bmcCodes, $dcsCodes);
+
+        if (!empty($orgCodes)) {
+            $org_string = "'" . implode(',', $orgCodes) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $org_codes = $command->sql;
+        }
+
+        $query->andWhere('tuom.organization_code in (' . $org_codes . ')');
+        $data = $query->all();
+        return ArrayHelper::map($data, 'user_code', 'name');
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(self::className(), ['id' => 'created_by']);
     }
 
 }

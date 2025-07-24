@@ -20,10 +20,14 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-            'checkboxOptions' => function($model, $key, $index) {
+            'checkboxOptions' => function($model, $key, $index) use ($is_concate) {
                 echo Html::activeHiddenInput($model, 'action_perform', ['value' => $model->action_perform]);
                 echo Html::activeHiddenInput($model, 'operation', ['value' => $model->operation, 'class' => 'set_operation']);
-                return ['class' => 'checkbox-collection', 'value' => $model['collection_data_alias_code']];
+                $code  = $model['collection_data_alias_code'];
+                if(!empty($is_concate)){
+                    $code = $model['collection_data_alias_code'] . '###' . $model['process_approval_code'];
+                }
+                return ['class' => 'checkbox-collection', 'value' => $code];
             }],
             ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');

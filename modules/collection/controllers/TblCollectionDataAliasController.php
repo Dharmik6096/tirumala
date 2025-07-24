@@ -16,6 +16,8 @@ use app\modules\collection\models\TblBmcCollectionHistory;
 use app\modules\collection\models\TblDcsMilkDispatch;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
 use app\modules\collection\models\TblMilkCollectionHistory;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblCollectionDataAliasController implements the CRUD actions for TblCollectionDataAlias model.
@@ -23,26 +25,41 @@ use app\modules\collection\models\TblMilkCollectionHistory;
 class TblCollectionDataAliasController extends \app\controllers\ChildController {
 
     public function actionMilkCollectionApprove() {
+        $union = !empty(Yii::$app->request->queryParams['TblCollectionDataAliasSearch']) ? (!empty(Yii::$app->request->queryParams['TblCollectionDataAliasSearch']['union_code']) ? Yii::$app->request->queryParams['TblCollectionDataAliasSearch']['union_code'] : '') : '';
+        $collection_config = Yii::$app->general->getUnionConfiguration($union, 'collection_approval', 'PORTAL');
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $succCount = 0;
                 $errorCount = 0;
                 $deletedata = Yii::$app->request->post('selection');
-                foreach ($deletedata as $key => $value) {
+                foreach ($deletedata as $key => $value_code) {
+                    $codes = explode('###', $value_code);
+                    $value = $codes[0];
+                    $approval_code = !empty($codes[1]) ? $codes[1] : '';
                     $saveModel = [];
                     $deleteModel = [];
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
                     $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
                     $existData = $this->findModel($value);
+                    $approval_status = $existData->approval_status;
+                    $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'MilkCollection' : '';
                     if ($operation == 'approve') {
+                        $historyFlag = 'DELETE';
                         if ($existData->validate()) {
-                            if ($action == 'CREATE') {
+                            if ($collection_config == 2 && !empty($approval_code)) {
+                                $status = 1;
+                                $this->updateApprovalHistory($approval_code, $saveModel, $status);
+                                if (strtolower($status) != 'approve') {
+                                    $historyFlag = 'UPDATE';
+                                }
+                            }
+                            if ($action == 'CREATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblMilkCollection();
                                 $MainModel->attributes = $existData->attributes;
                                 $MainModel->setModel($MainModel);
                                 $saveModel[] = $MainModel;
-                            } else if ($action == 'UPDATE') {
+                            } else if ($action == 'UPDATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
@@ -52,7 +69,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     $existMainData->attributes = $existData->attributes;
                                     $saveModel[] = $existMainData;
                                 }
-                            } else if ($action == 'DELETE') {
+                            } else if ($action == 'DELETE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
@@ -64,16 +81,30 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
-                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                        Yii::$app->operation->history($existData, $historyModel, $historyFlag);
                         $saveModel[] = $historyModel;
+                        if ($collection_config == 2) {
+                            $existData->approval_status = $status;
+                            $existData->approved_at = date('Y-m-d H:i:s');
+                            $existData->approved_by = Yii::$app->session['UserCode'];
+                            if (strtolower($status) != 'approve') {
+                                $saveModel[] = $existData;
+                            }
+                        }
                     } else if ($operation == 'reject') {
+                        if ($collection_config == 2) {
+                            $status = 2;
+                            $this->updateApprovalHistory($approval_code, $saveModel, $status);
+                        }
                         $MainModel = new TblCollectionDataAliasReject();
                         $MainModel->attributes = $existData->attributes;
                         $saveModel[] = $MainModel;
                     }
                     if ($existData->validate()) {
                         $succCount++;
-                        $deleteModel[] = $existData;
+                        if (strtolower($status) == 'approve' || strtolower($status) == 'reject' || empty($approval_code)) {
+                            $deleteModel[] = $existData;
+                        }
                     } else {
                         $errorCount++;
                         $errorMsg = [];
@@ -83,6 +114,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $existData->error_desc = implode(', ', $errorMsg);
+                        $existData->approval_status = $approval_status;
                         $existData->scenario = 'approve';
                         $saveModel[] = $existData;
                     }
@@ -102,7 +134,11 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $showFarmer = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
         $searchModel->table_name = 'tbl_milk_collection';
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($collection_config == 2) {
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
+        } else {
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        }
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
         $id = 'milk-collection-approve-' . strtolower($searchModel->action_perform);
@@ -118,28 +154,45 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
     }
 
     public function actionBmcCollectionApprove() {
+        $union = !empty(Yii::$app->request->queryParams['TblCollectionDataAliasSearch']) ? (!empty(Yii::$app->request->queryParams['TblCollectionDataAliasSearch']['union_code']) ? Yii::$app->request->queryParams['TblCollectionDataAliasSearch']['union_code'] : '') : '';
+        $collection_config = Yii::$app->general->getUnionConfiguration($union, 'collection_approval', 'PORTAL');
+
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $succCount = 0;
                 $errorCount = 0;
                 $deletedata = Yii::$app->request->post('selection');
-                foreach ($deletedata as $key => $value) {
+                foreach ($deletedata as $key => $value_code) {
+                    $codes = explode('###', $value_code);
+                    $value = $codes[0];
+                    $approval_code = !empty($codes[1]) ? $codes[1] : '';
                     $saveModel = [];
                     $deleteModel = [];
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
                     $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
                     $existData = $this->findModel($value);
+                    $approval_status = $existData->approval_status;
+                    $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'BmcCollection' : '';
                     if ($operation == 'approve') {
+                        $historyFlag = 'DELETE';
                         if ($existData->validate()) {
-                            if ($action == 'CREATE') {
+                            if ($collection_config == 2 && !empty($approval_code)) {
+                                $status = 1;
+                                $this->updateApprovalHistory($approval_code, $saveModel, $status);
+                                if (strtolower($status) != 'approve') {
+                                    $historyFlag = 'UPDATE';
+                                }
+                            }
+
+                            if ($action == 'CREATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblBmcCollection();
                                 $MainModel->attributes = $existData->attributes;
                                 $MainModel->setModel($MainModel);
                                 $MainModel->rate_code = $existData->purchase_rate_code;
                                 $MainModel->purchase_rate_code = NULL;
                                 $saveModel[] = $MainModel;
-                            } else if ($action == 'UPDATE') {
+                            } else if ($action == 'UPDATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblBmcCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
@@ -149,9 +202,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     $existMainData->attributes = $existData->attributes;
                                     $saveModel[] = $existMainData;
                                 }
-//                                $existMainData->attributes = $existData->attributes;
-//                                $saveModel[] = $existMainData;
-                            } else if ($action == 'DELETE') {
+                                //$existMainData->attributes = $existData->attributes;
+                                //$saveModel[] = $existMainData;
+                            } else if ($action == 'DELETE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblBmcCollection();
                                 $existData->old_customer_code = !empty($existData->old_customer_code) ? $existData->old_customer_code : $existData->customer_code;
                                 $existMainData = $MainModel->getExistingCollection($existData);
@@ -161,7 +214,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     $saveModel[] = $historyModel;
                                     $deleteModel[] = $existMainData;
                                 }
-//                                $deleteModel[] = $existMainData;
+                                //$deleteModel[] = $existMainData;
                             }
                             if ($existData->route_code != $existData->old_route_code && $existData->customer_type == 'DCS') {
                                 $collectionUpdate = new TblBmcCollection();
@@ -169,16 +222,30 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
-                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                        Yii::$app->operation->history($existData, $historyModel, $historyFlag);
                         $saveModel[] = $historyModel;
+                        if ($collection_config == 2) {
+                            $existData->approval_status = $status;
+                            $existData->approved_at = date('Y-m-d H:i:s');
+                            $existData->approved_by = Yii::$app->session['UserCode'];
+                            if (strtolower($status) != 'approve') {
+                                $saveModel[] = $existData;
+                            }
+                        }
                     } else if ($operation == 'reject') {
+                        if ($collection_config == 2) {
+                            $status = 2;
+                            $this->updateApprovalHistory($approval_code, $saveModel, $status);
+                        }
                         $MainModel = new TblCollectionDataAliasReject();
                         $MainModel->attributes = $existData->attributes;
                         $saveModel[] = $MainModel;
                     }
                     if ($existData->validate()) {
                         $succCount++;
-                        $deleteModel[] = $existData;
+                        if (strtolower($status) == 'approve' || strtolower($status) == 'reject' || empty($approval_code)) {
+                            $deleteModel[] = $existData;
+                        }
                     } else {
                         $errorCount++;
                         $errorMsg = [];
@@ -188,6 +255,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             }
                         }
                         $existData->error_desc = implode(', ', $errorMsg);
+                        $existData->approval_status = $approval_status;
                         $existData->scenario = 'approve';
                         $saveModel[] = $existData;
                     }
@@ -208,7 +276,11 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $showType = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
         $searchModel->table_name = 'tbl_bmc_collection';
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($collection_config == 2) {
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
+        } else {
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        }
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
         $id = 'bmc-collection-approve-' . strtolower($searchModel->action_perform);
@@ -347,6 +419,87 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    protected function updateApprovalHistory($approval_code, &$saveModel, &$status) {
+        $approvalModel = TblProcessApproval::findOne($approval_code);
+        if ($approvalModel) {
+            $historyApproval = new TblProcessApprovalHistory();
+            Yii::$app->operation->history($approvalModel, $historyApproval, 'UPDATE');
+            $saveModel[] = $historyApproval;
+            $approvalModel->status = $status;
+            $saveModel[] = $approvalModel;
+            $approvalModel->ApprovalList($approvalModel, $saveModel, $status);
+        }
+    }
+
+    public function actionQtyImportApproval() {
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $succCount = 0;
+                $errorCount = 0;
+                $deletedata = Yii::$app->request->post('selection');
+                $i = 1;
+                foreach ($deletedata as $key => $value) {
+                    $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
+                    $saveModel = [];
+                    $deleteModel = [];
+                    $existData = $this->findModel($value);
+                    if ($operation == 'approve') {
+                        $MainModel = new TblMilkCollection();
+                        $MainModel->attributes = $existData->attributes;
+                        $MainModel->setModel($MainModel);
+                        // $MainModel->sample_no = $MainModel->getSampleNo();
+                        $MainModel->scenario = 'importApproval';
+                        $historyModel = new TblCollectionDataAliasHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    } else if ($operation == 'reject') {
+                        $MainModel = new TblCollectionDataAliasReject();
+                        $MainModel->attributes = $existData->attributes;
+                        $saveModel[] = $MainModel;
+                        $historyModel = new TblCollectionDataAliasHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    }
+                    $deleteModel[] = $existData;
+                    $saveModel[] = $MainModel;
+                    $saveModel[] = $historyModel;
+
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Milk Collection approved', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $succCount++;
+                    } else {
+                        $errorCount++;
+                        $errorMsg = [];
+                        foreach ($MainModel->getErrors() as $err) {
+                            if (!empty($err[0])) {
+                                $errorMsg[] = $err[0];
+                            }
+                        }
+                        $existData->error_desc = implode(', ', $errorMsg);
+                        $existData->save();
+                    }
+                }
+
+                $msg = 'Milk Collection approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount;
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => $msg]);
+                $getData = Yii::$app->request->queryParams;
+                if (!empty($getData['TblCollectionDataAliasSearch'])) {
+                    return $this->redirect(['qty-import-approval', 'TblCollectionDataAliasSearch' => $getData['TblCollectionDataAliasSearch']]);
+                } else {
+                    return $this->redirect(['qty-import-approval']);
+                }
+            }
+        }
+        $searchModel = new TblCollectionDataAliasSearch();
+        $searchModel->table_name = 'qty_import_approval';
+        $searchModel->action_perform = 'IMPORT';
+        $dataProvider = $searchModel->qtyimportsearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'approvalQtyImport';
+        return $this->render('_import_approval', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

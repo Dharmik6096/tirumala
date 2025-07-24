@@ -30,81 +30,54 @@ $this->title = Yii::t('app', $title);
             </div>
             <?= $form->errorSummary($model); ?>
             <div class="col-md-12">
-                <div class="row multiple">
+                <div class="row multiple" id ="hieghtAdjust" data-pluseheigt = "120" data-minuse = "120">
                     <?php
-                    echo $form->field($model, 'federation', ['options' => ['class' => 'form-group col-sm-12 hidden',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $federations['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-
-                    echo $form->field($model, 'union', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $unions['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-
-                    echo $form->field($model, 'plant', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $plant['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'mcc', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $mcc['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'bmc', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $bmc['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'route', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $route['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
-                    echo $form->field($model, 'dcs', ['options' => ['class' => 'form-group col-sm-12',]])
-                            ->widget(DualListbox::className(), [
-                                'items' => $dcs['data'],
-                                'clientOptions' => [
-                                    'moveOnSelect' => FALSE,
-                                    'selectedListLabel' => FALSE,
-                                    'nonSelectedListLabel' => FALSE,
-                                    'filterPlaceHolder' => '',
-                                ],
-                    ]);
+                    $dualListBoxes = [
+                        'federation' => ['data' => $federations['data'], 'hidden' => true],
+                        'union' => ['data' => $unions['data']],
+                        'plant' => ['data' => $plant['data']],
+                        'mcc' => ['data' => $mcc['data']],
+                        'bmc' => ['data' => $bmc['data']],
+                        'route' => ['data' => $route['data']],
+                        'dcs' => ['data' => $dcs['data']],
+                    ];
                     ?>
+                    <div class="row collapse-toggle-buttons margin-bottom-10">
+                        <?php
+                        foreach ($dualListBoxes as $field => $options):
+                            $collapseId = "collapse-" . $field;
+                            $label = $model->getAttributeLabel($field);
+                            $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
+                            ?>
+                            <div class="btn-group margin-right-5 <?= $hiddenClass ?>">
+                                <button type="button" class="collapsible-btn" data-toggle="collapse" data-target="#<?= $collapseId ?>">- <?= $label ?></button>
+                                
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php
+                    foreach ($dualListBoxes as $field => $options):
+                        $collapseId = "collapse-" . $field;
+                        $hiddenClass = isset($options['hidden']) && $options['hidden'] ? 'hidden' : '';
+                        ?>
+                        <div class="col-sm-12 <?= $hiddenClass ?>">
+                            <div id="<?= $collapseId ?>" class="collapse in">
+                                <?=
+                                $form->field($model, $field, [
+                                    'options' => ['class' => 'form-group col-sm-12'],
+                                ])->widget(DualListbox::className(), [
+                                    'items' => $options['data'],
+                                    'clientOptions' => [
+                                        'moveOnSelect' => FALSE,
+                                        'selectedListLabel' => FALSE,
+                                        'nonSelectedListLabel' => FALSE,
+                                        'filterPlaceHolder' => '',
+                                    ],
+                                ])
+                                ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                     <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
                     <div class="clearfix"></div>
                     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -132,7 +105,7 @@ $script = "
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-plant/get-union-plant']) . "',    
-                        data: 'union='+union+'&RLS=FALSE',
+                        data: 'union='+union+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -173,7 +146,7 @@ $script = "
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-mcc-plant/get-plant-mcc']) . "',    
-                        data: 'plant='+plant+'&RLS=FALSE',
+                        data: 'plant='+plant+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -212,7 +185,7 @@ $script = "
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-dcs-bmc/get-mcc-bmc']) . "',    
-                        data: 'mcc='+mcc+'&RLS=FALSE',
+                        data: 'mcc='+mcc+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -261,7 +234,7 @@ $script = "
             $.ajax({
              type: 'post',
                         url: '" . Url::to(['/organisation/tbl-dcs/get-bmc-dcs']) . "',    
-                        data: 'bmc='+bmc+'&route='+route+'&RLS=FALSE',
+                        data: 'bmc='+bmc+'&route='+route+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -303,7 +276,7 @@ $script = "
             $.ajax({
              type: 'post',
                         url: '" . Url::to(['/organisation/tbl-route-mapping/get-bmc-route']) . "',    
-                        data: 'bmc='+bmc+'&mcc='+mcc+'&plant='+plant+'&RLS=FALSE',
+                        data: 'bmc='+bmc+'&mcc='+mcc+'&plant='+plant+'&RLS=TRUE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -341,13 +314,13 @@ $script = "
             if(count > 0 && selectedDcs != 0){
                 $('#user_type').val(7);
                 if(routeCount == selectedRoute && selectedDcs == count){
-                    $('#user_type').val(6);
+                    $('#user_type').val(7);
                 }else if(routeCount == selectedRoute && selectedDcs != count){
                     $('#user_type').val(7);
                 }else if(selectedRoute != 0 && routeCount != selectedRoute && selectedDcs == count){
                     $('#user_type').val(7);
                 }else             
-                if(selectedDcs==count){
+                if(routeCount==selectedRoute){
                     $('#user_type').val(6);
                 }
             }else{
@@ -355,22 +328,22 @@ $script = "
                 var count = $('#tbluserorganizationmapping-bmc option').length;
                 if(count > 0 && selectedBmc != 0){
                    $('#user_type').val(6);
-                   if(selectedBmc==count) 
-                   $('#user_type').val(5);
+//                   if(selectedBmc==count) 
+//                   $('#user_type').val(5);
                 }else{
                     var selectedMcc =  $('#tbluserorganizationmapping-mcc :selected').length;
                     var count = $('#tbluserorganizationmapping-mcc option').length;
                     if(count > 0 && selectedMcc != 0){
                        $('#user_type').val(5);
-                       if(selectedMcc==count)  
-                       $('#user_type').val(4);
+//                       if(selectedMcc==count)  
+//                       $('#user_type').val(4);
                     }  else {
                         var selectedPlant =  $('#tbluserorganizationmapping-plant :selected').length;
                         var count = $('#tbluserorganizationmapping-plant option').length;
                         if(count > 0 && selectedPlant != 0){
                            $('#user_type').val(4);
-                           if(selectedPlant==count) 
-                           $('#user_type').val(3);
+//                           if(selectedPlant==count) 
+//                           $('#user_type').val(3);
                         } else {
                             var selectedUnion =  $('#tbluserorganizationmapping-union :selected').length;
                             var count = $('#tbluserorganizationmapping-union option').length;             
@@ -389,6 +362,42 @@ $script = "
             }  
     }    
 
+function adjustDualListboxHeight(increase = false) {
+        var currentPluseHeight = $('#hieghtAdjust').data('pluseheigt');
+        var currentMinuesHeight = $('#hieghtAdjust').data('minuse');
+        
+        var changesHeight = Math.min(currentPluseHeight + 50, 370);
+        var changeMinHeight = Math.max(currentMinuesHeight - 50, 120);
+ 
+        $('.bootstrap-duallistbox-container select[multiple]').each(function () {
+            const newHeight = increase ? changeMinHeight : changesHeight;
+            $(this).css('height', newHeight + 'px');
+        });
+        
+        if(increase){
+            $('#hieghtAdjust').data('minuse', changeMinHeight);
+            $('#hieghtAdjust').data('pluseheigt', changeMinHeight);
+        }else{
+            $('#hieghtAdjust').data('pluseheigt', changesHeight);
+            $('#hieghtAdjust').data('minuse', changesHeight);
+        }
+    }
+
+    $(document).on('click', '.collapsible-btn', function() {
+        let \$button = $(this);
+        let target = \$button.attr('data-target');
+        let label = \$button.text().substring(1);
+       $(target).off('shown.bs.collapse').on('shown.bs.collapse', function () {
+        \$button.text('-' + label);
+        adjustDualListboxHeight(true);
+       
+    });
+
+    $(target).off('hidden.bs.collapse').on('hidden.bs.collapse', function () {
+       \$button.text('+' + label);
+      adjustDualListboxHeight(false); 
+   });
+});
 ";
 $this->registerJs($script, View::POS_END, 'user-org-map-list');
 ?>

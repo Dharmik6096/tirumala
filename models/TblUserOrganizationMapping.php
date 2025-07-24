@@ -153,7 +153,7 @@ class TblUserOrganizationMapping extends ChildModel {
     }
 
     public function getOrganizationsArray($id, $orgType, $orgArray = []) {
-        if (!empty($orgArray)) {
+        if (!empty($orgArray) && empty($orgType)) {
             $orgType = !empty($orgArray[0]['organization_type_id']) ? $orgArray[0]['organization_type_id'] : '';
         }
         $userOrg = User::getSelectedOrganization($orgType);
@@ -187,6 +187,11 @@ class TblUserOrganizationMapping extends ChildModel {
 
         switch ($orgType) {
             case '7' :
+                if (!empty($orgArray) && !empty($orgType) && !empty($orgArray['bmc'])) {
+                    foreach($orgArray['bmc'] as $key => $value){
+                        $selected[$value] = $value;
+                    }
+                }
                 $federations = $this->getFederations();
                 $unions = $this->getUnions($federations['selectedArray'], 0);
                 $bmc_temp = $this->getBMC(0, $selected);
@@ -207,6 +212,11 @@ class TblUserOrganizationMapping extends ChildModel {
                 $route['selectedArray'] = $route_temp['selectedArray'];
                 break;
             case '6' :
+                if (!empty($orgArray) && !empty($orgType) && !empty($orgArray['mcc'])) {
+                    foreach($orgArray['mcc'] as $key => $value){
+                        $selected[$value] = $value;
+                    }
+                }
                 $federations = $this->getFederations();
                 $unions = $this->getUnions($federations['selectedArray'], 0);
                 $mcc_temp = $this->getMCC(0, $selected);
@@ -223,6 +233,11 @@ class TblUserOrganizationMapping extends ChildModel {
                 $route = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], 0);
                 break;
             case '5' :
+                if (!empty($orgArray) && !empty($orgType) && !empty($orgArray['plant'])) {
+                    foreach($orgArray['plant'] as $key => $value){
+                        $selected[$value] = $value;
+                    }
+                }
                 $federations = $this->getFederations();
                 $unions = $this->getUnions($federations['selectedArray'], 0);
                 $plant = $this->getPlant(0, $selected);
@@ -280,6 +295,10 @@ class TblUserOrganizationMapping extends ChildModel {
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
         }
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $sel = explode(',', Yii::$app->session->get('Dcs'));
+            $query->andWhere(['dcs_code' => $sel]);
+        }
         if ($BMCArray !== 0) {
             $query->andWhere(['bmc_code' => $BMCArray]);
         }
@@ -295,6 +314,10 @@ class TblUserOrganizationMapping extends ChildModel {
         if (!empty(Yii::$app->session->get('Unions'))) {
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
+        }
+        if (!empty(Yii::$app->session->get('BMC'))) {
+            $sel = explode(',', Yii::$app->session->get('BMC'));
+            $query->andWhere(['bmc_code' => $sel]);
         }
         $selected = [];
         if ($MCCArray !== 0) {
@@ -323,6 +346,10 @@ class TblUserOrganizationMapping extends ChildModel {
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
         }
+        if (!empty(Yii::$app->session->get('MCC'))) {
+            $sel = explode(',', Yii::$app->session->get('MCC'));
+            $query->andWhere(['mcc_plant_code' => $sel]);
+        }
         $selected = [];
         if ($plantArray !== 0) {
             $query->andWhere(['plant_code' => array_keys($plantArray)]);
@@ -348,6 +375,10 @@ class TblUserOrganizationMapping extends ChildModel {
         if (!empty(Yii::$app->session->get('Unions'))) {
             $sel = explode(',', Yii::$app->session->get('Unions'));
             $query->andWhere(['union_code' => $sel]);
+        }
+        if (!empty(Yii::$app->session->get('Plant'))) {
+            $sel = explode(',', Yii::$app->session->get('Plant'));
+            $query->andWhere(['plant_code' => $sel]);
         }
         $selected = [];
         if ($unionArray !== 0) {
@@ -453,6 +484,10 @@ class TblUserOrganizationMapping extends ChildModel {
         return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type])->all();
     }
 
+    public function getAllUserOrgMapping() {
+        return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type, 'organization_code' => $this->organization_code, 'is_active' => 1])->all();
+    }
+
     private function getRoute($PlantArray, $MCCArray, $BMCArray, $DcsArray) {
         $query = TblRouteMapping::find();
         $query->select(['route_code', 'route_name']);
@@ -518,6 +553,10 @@ class TblUserOrganizationMapping extends ChildModel {
                     if ((empty($this->mcc))) {
                         $msg = Yii::t('app', 'MCC') . ' cannot be blank.';
                         $this->addError('mcc', Yii::t('app/validation', $msg));
+                        return false;
+                    } else if ((empty($this->dcs))) {
+                        $msg = Yii::t('app', 'DCS') . ' cannot be blank.';
+                        $this->addError('dcs', Yii::t('app/validation', $msg));
                         return false;
                     }
                 }

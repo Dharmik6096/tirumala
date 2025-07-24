@@ -56,14 +56,14 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
                 if (!$config) {
                     echo Html::activeHiddenInput($model, '[' . $index . ']milk_quality_type_code', ['value' => $model->milk_quality_type_code]);
                 }
-                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
+                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE) . '</span>';
             },
         ],
             ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel, $config) {
                 if ($config) {
-                    return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
+                    return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE) . '</span>';
                 } else {
                     return $model->milk_quality_type_code;
                 }
@@ -241,11 +241,12 @@ $script = "
         var union = $('#tblmilkcollection-'+tr_key+'-union_code').val();
         var fat = $('#tblmilkcollection-'+tr_key+'-fat').val();
         var snf = $('#tblmilkcollection-'+tr_key+'-snf').val();
+        var bmcCode = $('#tblmilkcollectionsearch-bmc_code').val();
             if(fat !='' && snf !=''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'bmcCode':bmcCode},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

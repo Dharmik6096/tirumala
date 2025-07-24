@@ -2,7 +2,11 @@
 
 namespace app\modules\details\models;
 
+use app\modules\assetmanagement\models\TblAssetDetail;
+use app\modules\assetmanagement\models\TblStoreLocation;
+use app\modules\usermanagement\models\User;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_contact_details".
@@ -35,27 +39,29 @@ class TblContactDetails extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['detail_code'], 'required'],
-                [['detail_code'], 'required', 'on' => ['additional']],
-                [['detail_code'], 'required', 'except' => ['additional']],
-                [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
-                [['detail_code', 'mobile_no'], 'integer'],
-                [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
+            [['detail_code'], 'required'],
+            [['detail_code'], 'required', 'on' => ['additional']],
+            [['detail_code'], 'required', 'except' => ['additional']],
+            [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
+            [['detail_code', 'mobile_no'], 'integer'],
+            [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-                [['mobile_no'], function ($attribute, $params) {
+            [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-                [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
+            [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             // [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['module_name', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc'], 'safe'],
-                [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
+            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code', 'from_date', 'to_date', 'primary_parent', 'secondary_parent'], 'safe'],
+            [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-                [['is_verified', 'is_contact_verified'], 'default', 'value' => 0]
+            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0],
+            [['to_date'], 'validateToDate'],
+            [['secondary_parent'], 'validateUniqueParent'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -91,6 +97,10 @@ class TblContactDetails extends \app\models\ChildModel {
             'email_to' => Yii::t('app', 'Email To'),
             'email_cc' => Yii::t('app', 'Email CC'),
             'email_bcc' => Yii::t('app', 'Email BCC'),
+            'from_date' => Yii::t('app', 'From Date'),
+            'to_date' => Yii::t('app', 'To Date'),
+            'primary_parent' => Yii::t('app', 'Primary Parent'),
+            'secondary_parent' => Yii::t('app', 'Secondary Parent'),
         ];
     }
 
@@ -176,10 +186,49 @@ class TblContactDetails extends \app\models\ChildModel {
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
         return $OrgContacts = TblContactDetails::find()
                 ->where(['or',
-                        ['mobile_no' => $encryptedmobile],
-                        ['mobile_no' => $this->mobile_no]
+                    ['mobile_no' => $encryptedmobile],
+                    ['mobile_no' => $this->mobile_no]
                 ])->andWhere(['module_name' => $this->module_name, 'is_active' => 1, 'is_default' => 1])
                 ->all();
     }
 
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+            $this->union_code = Yii::$app->session->get('Unions');
+            return true;
+        }
+        return false;
+    }
+
+    public function getPrimaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'primary_parent']);
+    }
+
+    public function getSecondaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->to_date) && !empty($this->from_date) && ($this->from_date > $this->to_date)) {
+            $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than From Date.'));
+            return false;
+        }
+    }
+
+    public function validateUniqueParent($attribute, $params) {
+        if (!empty($this->primary_parent) && !empty($this->secondary_parent) && ($this->primary_parent == $this->secondary_parent)) {
+            $this->addError($attribute, Yii::t('app/validation', 'Parent Must Not Same.'));
+            return false;
+        }
+    }
+
+    public function contactDetailList($moduleCode) {
+        $detailCode = TblAssetDetail::find()->select('detail_code')->joinWith(['storeLocCode'])->where(['reference_code' => $moduleCode])->scalar();
+        $data = $this->find()
+            ->where(['module_code' => $moduleCode, 'module_name' => 'society'])
+            ->andWhere(['not in', 'detail_code', $detailCode])
+            ->all();
+        return ArrayHelper::map($data, 'detail_code', 'contact_person');
+    }
+    
 }

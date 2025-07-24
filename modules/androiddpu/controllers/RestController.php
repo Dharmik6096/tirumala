@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * Default controller for the `restservices` module
@@ -97,7 +98,10 @@ class RestController extends ActiveController {
         $mcc_plant_code = [];
         $plant_code = [];
         $union_code = '';
+        $eipl_code = '';
         $model_data = [];
+        $applicability_type = 0;
+
         if ($type == 'VLC') {
             $model = new TblDcs();
             $model->dcs_code = $code;
@@ -108,7 +112,9 @@ class RestController extends ActiveController {
                 $bmc_code[] = $model_data->bmc_code;
                 $mcc_plant_code[] = $model_data->mcc_plant_code;
                 $plant_code[] = $model_data->plant_code;
+                $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
             }
+            $applicability_type = 2;
         } else if ($type == 'BMC') {
             $model = new TblDcsBmc();
             $model->bmc_code = $code;
@@ -124,7 +130,9 @@ class RestController extends ActiveController {
                 foreach ($model_data->tblBmcGroup as $bmc) {
                     $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
                 }
+                $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
             }
+            $applicability_type = 1;
         } else if ($type == 'MCC') {
             $model = new TblMccPlant();
             $model->mcc_plant_code = $code;
@@ -140,12 +148,23 @@ class RestController extends ActiveController {
                     $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
                     $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
                 }
+                $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
             }
+            $applicability_type = 1;
         } else if ($type == 'ROUTE') {
             $model = new TblDcs();
             $model->route_code = $code;
             $model_data = $model->getRouteDcs($code);
             $dcs_code = ArrayHelper::getColumn($model_data, 'dcs_code');
+        } else if ($type == 'PLANT') {
+            $model = new TblPlant();
+            $model->plant_code = $code;
+            $model_data = $model->getData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $plant_code[] = $model_data->plant_code;
+            }
+            $applicability_type = 3;
         }
         if ($is_string) {
             $dcs_code = implode('\',\'', $dcs_code);
@@ -157,7 +176,7 @@ class RestController extends ActiveController {
             $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
             $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
         }
-        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data];
+        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data, 'applicability_type' => $applicability_type, 'eipl_code' => $eipl_code];
     }
 
 }

@@ -6,6 +6,11 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\details\models\TblContactDetails;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\usermanagement\models\User;
+use yii\db\Expression;
+use yii\db\Query;
 
 /**
  * TblContactDetailsSearch represents the model behind the search form about `app\modules\details\models\TblContactDetails`.
@@ -18,6 +23,7 @@ class TblContactDetailsSearch extends TblContactDetails {
     public function rules() {
         return [
             [['detail_code'], 'integer'],
+            [['mobile_no'], 'required', 'on' => ['mobile_no']],
             [['module_name', 'module_code', 'contact_person', 'email', 'mobile_no', 'local_contact_person', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
         ];
     }
@@ -75,6 +81,85 @@ class TblContactDetailsSearch extends TblContactDetails {
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
+    }
+
+    public function searchcontact($params) {
+        $contactQuery = TblContactDetails::find()
+                ->select([
+            'mobile_no',
+            new Expression("'Contact' as master_name"),
+            'is_active',
+            'firstname as name',
+            new Expression("NULL as login_type"),
+            'module_name',
+            'module_code',
+            new Expression("NULL as app_login_id"),
+            new Expression("NULL as module_type"),
+            new Expression("NULL as master_type"),
+            'is_default',
+        ]);
+
+        $memberQuery = TblMember::find()
+                ->select([
+            'mobile_no',
+            new Expression("'Member' as master_name"),
+            'is_active',
+            'member_name as name',
+            new Expression("NULL as login_type"),
+            new Expression("NULL as module_name"),
+            'member_code as module_code',
+            new Expression("NULL as app_login_id"),
+            new Expression("NULL as module_type"),
+            new Expression("NULL as master_type"),
+            new Expression("NULL as is_default"),
+        ]);
+
+        $userQuery = User::find()
+                ->select([
+            'mobile_no',
+            new Expression("'User' as master_name"),
+            'is_active',
+            'name',
+            'login_type',
+            new Expression("NULL as module_name"),
+            new Expression("NULL as module_code"),
+            new Expression("NULL as app_login_id"),
+            new Expression("NULL as module_type"),
+            new Expression("NULL as master_type"),
+            new Expression("NULL as is_default"),
+        ]);
+
+        $eiplAppLoginQuery = TblEiplAppLogin::find()
+                ->select([
+            'mobile_no',
+            new Expression("'EIPL APP Login' as master_name"),
+            'is_active',
+            'user_name as name',
+            'login_type',
+            new Expression("NULL as module_name"),
+            'module_code',
+            'app_login_id',
+            'module_type',
+            'master_type',
+            new Expression("NULL as is_default"),
+        ]);
+        $query = (new Query())
+                ->select(['mobile_no', 'master_name', 'is_active', 'name', 'login_type', 'module_name', 'module_code', 'app_login_id', 'module_type', 'master_type', 'is_default'])
+                ->from(['q' => $contactQuery->union($memberQuery)->union($userQuery)->union($eiplAppLoginQuery)]);
+
+        $this->scenario = 'mobile_no';
+        $this->load($params);
+        if (!$this->validate()) {
+            return new \yii\data\ArrayDataProvider(['allModels' => [], 'sort' => ['attributes' => ['mobile_no', 'master_name']],]);
+        }
+        if (!empty($this->mobile_no)) {
+            $query->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]]);
+        }
+        $models = $query->all();
+        return new \yii\data\ArrayDataProvider([
+            'allModels' => $models,
+            'sort' => ['attributes' => ['mobile_no', 'master_name'], 'defaultOrder' => ['mobile_no' => SORT_DESC],],
+        ]);
     }
 
 }

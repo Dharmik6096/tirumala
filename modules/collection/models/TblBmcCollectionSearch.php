@@ -24,15 +24,15 @@ class TblBmcCollectionSearch extends TblBmcCollection {
      */
     public function rules() {
         return [
-            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
-            [['can_no', 'no_of_can', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code', 'converted_amount'], 'safe'],
-            [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
-            [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
-            [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
-            [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
+                [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
+                [['can_no', 'no_of_can', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
+                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code', 'converted_amount'], 'safe'],
+                [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+                [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
+                [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
+                [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
         ];
     }
 
@@ -66,17 +66,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bmc_collection.customer_code');
-        $query->join('LEFT JOIN', 'tbl_customer_master', 'tbl_customer_master.customer_code = tbl_bmc_collection.customer_code');
-        $query->join('LEFT JOIN', 'tbl_customer_type', 'tbl_customer_type.customer_type = tbl_bmc_collection.customer_type AND tbl_customer_type.union_code = tbl_bmc_collection.union_code');
-        $query->join('LEFT JOIN', 'tbl_bmc', 'tbl_bmc.bmc_code = tbl_bmc_collection.bmc_code');
-        $query->join('LEFT JOIN', 'tbl_bmc_silos_info', 'tbl_bmc_silos_info.bmc_silos_info_code = tbl_bmc_collection.bmc_silos_info_code');
-//        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode', 'silosCode']);
-
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection', 'tbl_bmc_collection');
-
-        if (!empty($this->date_time_of_collection))
-            $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
         // grid filtering conditions
 
 
@@ -93,6 +82,17 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $to_date .= ' ' . $to_shift;
         $query->andFilterWhere(['<=', 'tbl_bmc_collection.date_time_of_collection', $to_date]);
 
+        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bmc_collection.customer_code');
+        $query->join('LEFT JOIN', 'tbl_customer_master', 'tbl_customer_master.customer_code = tbl_bmc_collection.customer_code');
+        $query->join('LEFT JOIN', 'tbl_customer_type', 'tbl_customer_type.customer_type = tbl_bmc_collection.customer_type AND tbl_customer_type.union_code = tbl_bmc_collection.union_code');
+        $query->join('LEFT JOIN', 'tbl_bmc', 'tbl_bmc.bmc_code = tbl_bmc_collection.bmc_code');
+        $query->join('LEFT JOIN', 'tbl_bmc_silos_info', 'tbl_bmc_silos_info.bmc_silos_info_code = tbl_bmc_collection.bmc_silos_info_code');
+//        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode', 'silosCode']);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection', 'tbl_bmc_collection');
+
+        if (!empty($this->date_time_of_collection))
+            $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
 
         $query->andFilterWhere([
             'tbl_bmc_collection.qty_mode' => $this->qty_mode,
@@ -225,7 +225,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $this->load($params);
         $query = TblBmcCollection::find();
         // ->where(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
-
         // add conditions that should always apply here
 
 
@@ -283,12 +282,15 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         // add conditions that should always apply here
 
         $query->joinWith(['mccPlantCode.plantCode']);
+        $flag = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL');
+        if (in_array($flag, [1, 2])) {
+            $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.bmc_code = tbl_bmc_collection.bmc_code and tbl_collection_data_alias.customer_code = tbl_bmc_collection.customer_code and tbl_collection_data_alias.customer_type = tbl_bmc_collection.customer_type and tbl_collection_data_alias.old_milk_type_code = tbl_bmc_collection.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_bmc_collection.milk_quality_type_code and tbl_collection_data_alias.shift_code = tbl_bmc_collection.shift_code and tbl_collection_data_alias.date_time_of_collection = tbl_bmc_collection.date_time_of_collection and tbl_collection_data_alias.table_name = 'tbl_bmc_collection' and action_perform = 'DELETE'");
+        }
         $query->join('LEFT JOIN', 'tbl_mcc_shift_lock', 'tbl_mcc_shift_lock.mcc_plant_code = tbl_bmc_collection.mcc_plant_code and CAST(tbl_mcc_shift_lock.date_time_of_collection as date) = CAST(tbl_bmc_collection.date_time_of_collection as date) and tbl_mcc_shift_lock.shift_code = tbl_bmc_collection.shift_code and tbl_mcc_shift_lock.bmc_lock = 1');
-        $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.bmc_code = tbl_bmc_collection.bmc_code and tbl_collection_data_alias.customer_code = tbl_bmc_collection.customer_code and tbl_collection_data_alias.customer_type = tbl_bmc_collection.customer_type and tbl_collection_data_alias.old_milk_type_code = tbl_bmc_collection.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_bmc_collection.milk_quality_type_code and tbl_collection_data_alias.shift_code = tbl_bmc_collection.shift_code and tbl_collection_data_alias.date_time_of_collection = tbl_bmc_collection.date_time_of_collection and tbl_collection_data_alias.table_name = 'tbl_bmc_collection' and action_perform = 'DELETE'");
 
         $query->andWhere([
             'tbl_bmc_collection.bmc_code' => $this->bmc_code]);
-        
+
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
             $this->from_shift = 1;
@@ -312,8 +314,9 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         }
 
         $query->andFilterWhere(['tbl_bmc_collection.dcs_code' => $this->dcs_code]);
-
-        $query->andWhere(['or', ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.customer_code', NULL], ['is', 'tbl_collection_data_alias.customer_type', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        if (in_array($flag, [1, 2])) {
+            $query->andWhere(['or', ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.customer_code', NULL], ['is', 'tbl_collection_data_alias.customer_type', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        }
 //        $query->andwhere(['tbl_collection_data_alias.action_perform' => 'DELETE', 'tbl_collection_data_alias.table_name' => 'collectionvillage']);
         $query->andWhere(['or', ['is', 'tbl_mcc_shift_lock.mcc_plant_code', NULL], ['is', 'tbl_mcc_shift_lock.shift_code', NULL], ['is', 'tbl_mcc_shift_lock.date_time_of_collection', NULL]]);
 

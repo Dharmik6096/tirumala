@@ -23,7 +23,7 @@ use yii\helpers\Json;
  */
 class TblAreaController extends ChildController {
 
-    public $contactDetails;
+    public $contactDetails, $freeAccessActions = ['area-bmc-list'];
 
     /**
      * Lists all TblArea models.

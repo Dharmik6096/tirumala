@@ -4,6 +4,7 @@ namespace app\modules\configuration\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\tankermovement\models\TblConfigTxnResult;
 
 /**
  * This is the model class for table "tbl_config".
@@ -29,9 +30,14 @@ class TblConfig extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['config_name', 'config_key', 'config_for'], 'string'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['config_name', 'config_key', 'config_for'], 'string'],
+                [['union_code', 'plant_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['bmc_code', 'mcc_plant_code'], 'required', 'when' => function($model) {
+                    return $model->config_for == 'BMC';
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblconfig-config_for').val() == 'BMC'; 
+                    }"],
         ];
     }
 
@@ -96,18 +102,19 @@ class TblConfig extends \app\models\ChildModel {
         $config_data = ArrayHelper::map($this->configResult, 'config_result_key', 'config_result');
         $config->config_result = empty($config->config_result) ? '0' : $config->config_result;
         if ($this->control_type == 'RADIO') {
-            return $form->field($config, '[' . $index . ']config_result')->inline()->radioList($config_data)->label(Yii::t('app', $this->config_name));
+            return $form->field($config, '[' . $index . ']config_result')->inline()->radioList($config_data, ['itemOptions' => ['class' => 'custom-radio-class']])->label(Yii::t('app', $this->config_name));
         } else if ($this->control_type == 'DROPDOWN') {
             return $form->field($config, '[' . $index . ']config_result')->dropDownList($config_data)->label(Yii::t('app', $this->config_name));
         } else if ($this->control_type == 'CHECKBOX') {
             return $form->field($config, '[' . $index . ']config_result', ['checkboxTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox()->label(Yii::t('app', $this->config_name));
         } else {
-            return $form->field($config, '[' . $index . ']config_result')->textInput()->label(Yii::t('app', $this->config_name));
+            $options = ($this->control_type == 'NUMERIC') ? ['class' => 'form-control number-validate'] : [];
+            return $form->field($config, '[' . $index . ']config_result')->textInput($options)->label(Yii::t('app', $this->config_name));
         }
     }
 
     public function getProcessList($configFor, $inputAllow = '') {
-        $data = $this->find()->select(['process_name'])
+        $data = $this->find()->select(['process_name', 'config_for'])
                 ->distinct()
                 ->where(['config_for' => $configFor])
                 ->andWhere(['IS NOT', 'process_name', NULL]);
@@ -117,8 +124,13 @@ class TblConfig extends \app\models\ChildModel {
             $data->andWhere(['is_input_config' => 1]);
         }
         $data = $data->all();
-        $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
-
+        if ($inputAllow == '1') {
+            $array = \yii\helpers\ArrayHelper::map($data, function ($value) {
+                        return $value->process_name . '##' . $value->config_for;
+                    }, 'process_name');
+        } else {
+            $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
+        }
         return $array;
     }
 
@@ -127,6 +139,28 @@ class TblConfig extends \app\models\ChildModel {
                 ->where(['config_for' => $this->config_for, 'config_type' => $this->config_type, 'process_name' => $this->process_name, 'is_input_config' => $this->is_input_config])
                 ->all();
         return $data;
+    }
+
+    public function getConfigList() {
+        return $this->find()->distinct()
+                        ->joinWith(['configResult'])
+                        ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
+                        ->andWhere(['tbl_config_result.is_active' => 1])
+                        ->orderby(['tbl_config.seq_no' => SORT_ASC])
+                        ->all();
+    }
+
+    public function getconfigResultTxn() {
+        return $this->hasOne(TblConfigTxnResult::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getConfigResultTxnList($ref_code) {
+        return TblConfigTxnResult::find()->select('tbl_config_txn_result.config_result')
+                        ->join('inner join', 'tbl_config', 'tbl_config.config_code = tbl_config_txn_result.config_code')
+                        ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
+                        ->andWhere(['tbl_config_txn_result.config_code' => $this->config_code, 'tbl_config_txn_result.ref_code' => $ref_code])
+                        ->orderby(['tbl_config.seq_no' => SORT_ASC])
+                        ->one();
     }
 
 }

@@ -171,6 +171,10 @@ class SqliteCreate extends Component {
                                         $sql .= ' left join tbl_customer_deactive cd on cd.customer_code = tbl_customer_master.customer_code and (\'' . $currDate . '\' between CAST(cd.from_date as date) and CAST(ISNULL(cd.to_date, getdate()) as date)) ';
                                         $sql = str_replace('tbl_customer_master.is_active', ' CASE WHEN cd.from_date is null THEN tbl_customer_master.is_active ELSE 0 END as is_active ', $sql);
                                     }
+                                    if (strtolower($org_type) == 'plant') {
+                                        $whereKey = $tableName . '.union_code';
+                                        $whereKeyField = $union_code;
+                                    }
                                     $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
                                     if ($tableName == 'tbl_member') {
                                         

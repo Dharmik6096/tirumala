@@ -29,8 +29,8 @@ class TblAlertTemplate extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['receiver_type', 'message', 'header_info', 'module_type', 'union_code'], 'string'],
-                [['language_code'], 'integer'],
+            [['receiver_type', 'message', 'header_info', 'module_type', 'union_code'], 'string'],
+            [['language_code'], 'integer'],
         ];
     }
 

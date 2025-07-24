@@ -142,19 +142,37 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
                 ->select('tbl_android_installation_details.device_id')
                 ->distinct()
                 ->joinWith(['androidInstallationCode'])
-                ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
-                ->andWhere(['tbl_android_installation.organization_code' => (string) $dest_org_id, 'tbl_android_installation.organization_type' => (string) $dest_org_type])
-                ->all();
+                ->where([
+            'tbl_android_installation_details.is_active' => 1,
+            'tbl_android_installation_details.is_expired' => 0,
+            'tbl_android_installation.organization_code' => (string) $dest_org_id,
+            'tbl_android_installation.organization_type' => (string) $dest_org_type
+        ]);
+
         if (!empty($device)) {
-            $query = $this->find()
-                    ->select('tbl_android_installation_details.device_id')
-                    ->distinct()
-                    ->joinWith(['androidInstallationCode'])
-                    ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
-                    ->andWhere(['tbl_android_installation.organization_code' => (string) $dest_org_id, 'tbl_android_installation.organization_type' => (string) $dest_org_type, 'tbl_android_installation_details.device_id' => $device])
-                    ->all();
+            $query->andWhere(['tbl_android_installation_details.device_id' => $device]);
         }
-        return $query;
+        return $query->all();
+    }
+
+    public function getActiveDeviceDataForOrganizations($dest_org_id, $dest_org_type, $device = '') {
+        $org_string = "'" . implode(',', $dest_org_id) . "'";
+        $organization_type = "'" . implode("','", $dest_org_type) . "'";
+        $command_dest_org_id = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+        $organization_code = $command_dest_org_id->sql;
+
+        $query = $this->find()
+                ->select('tbl_android_installation_details.device_id, tbl_android_installation.organization_type, tbl_android_installation.organization_code')
+                ->distinct()
+                ->leftJoin('tbl_android_installation', "tbl_android_installation.android_installation_id = tbl_android_installation_details.android_installation_id")
+                ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
+                ->andWhere('tbl_android_installation.organization_code in (' . $organization_code . ')')
+                ->andWhere('tbl_android_installation.organization_type in (' . $organization_type . ')');
+
+        if (!empty($device)) {
+            $query = $query->andWhere(['tbl_android_installation_details.device_id' => $device]);
+        }
+        return $query->asArray()->all();
     }
 
     public function getRecords() {

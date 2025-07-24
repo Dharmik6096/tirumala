@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\usermanagement\models\User;
 use app\modules\general\models\TblAttachment;
 use app\modules\geo\models\TblAreaBmcMapping;
+use app\modules\general\models\TblDepartment;
 
 /**
  * This is the model class for table "tbl_user_attendance".
@@ -131,7 +132,7 @@ class TblUserAttendance extends \app\models\ChildModel {
     }
 
     public function getAttachment() {
-        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code'])->andOnCondition(['module_name' => ['tbl_user_attendance_detail_in', 'tbl_user_attendance_detail_out']]);
+        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code'])->andOnCondition(['module_name' => ['tbl_user_attendance_in', 'tbl_user_attendance_out']]);
     }
 
     public function getAttendanceRecords() {
@@ -159,6 +160,10 @@ class TblUserAttendance extends \app\models\ChildModel {
 
     public function getAreaBmcMapping() {
         return $this->hasOne(TblAreaBmcMapping::class, ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDepartmentCode() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

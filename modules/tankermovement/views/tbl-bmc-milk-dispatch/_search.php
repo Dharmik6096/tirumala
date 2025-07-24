@@ -43,11 +43,11 @@ $depend = 'tblbmcmilkdispatchsearch';
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, $depend . '-f_mcc_code', 'f_bmc_code', 'BMC'); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, $depend . '-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
     </div>
     <div class="col-sm-2">
         <?= Html::hiddenInput('trip_type', 'alltrip', ['id' => 'trip_type']); ?>
-        <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblbmcmilkdispatchsearch-vehicle_code,tblbmcmilkdispatchsearch-from_date,tblbmcmilkdispatchsearch-to_date', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
+        <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatchsearch-vehicle_code,trip_type,tblbmcmilkdispatchsearch-from_date,tblbmcmilkdispatchsearch-to_date', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
     </div>
     <div class="col-sm-2 mt20">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

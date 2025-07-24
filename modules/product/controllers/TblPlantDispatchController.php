@@ -4,11 +4,13 @@ namespace app\modules\product\controllers;
 
 use Yii;
 use app\modules\product\models\TblPlantDispatch;
+use app\modules\product\models\TblPlantDispatchHistory;
 use app\modules\product\models\TblPlantDispatchSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\product\models\TblPlantDispatchTxn;
+use app\modules\product\models\TblPlantDispatchTxnHistory;
 use app\modules\product\models\TblProduct;
 use yii\web\Response;
 use yii\helpers\Json;
@@ -69,8 +71,8 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
             $model->document_date = Yii::$app->formatter->asDate($model->document_date, DATE_FORMAT);
 
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
-            if($batchNoWiseInventory)
-                  $batchNo = $txnData['sap_batch_no'];
+            if ($batchNoWiseInventory)
+                $batchNo = $txnData['sap_batch_no'];
 //            $model->sap_batch_no = $batchNo;
             $saveModel[] = $model;
             unset($txnData['product_code']);
@@ -89,7 +91,7 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 $txModel->rate = $product['rate'];
                 $txModel->amount = $product['amount'];
                 $txModel->unit_code = $product['unit_code'];
-                if($batchNoWiseInventory)
+                if ($batchNoWiseInventory)
                     $txModel->sap_batch_no = $product['sap_batch_no'];
                 $txModel->lr_no = $product['lr_no'];
                 $txModel->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($txModel, $i);
@@ -148,10 +150,29 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
+    public function actionDelete() {
+        $saveModel = [];
+        $dispatchCode = Yii::$app->request->post('id');
 
-        return $this->redirect(['index']);
+        $this->model = $this->findModel($dispatchCode);
+        $saveModel[] = $this->model;
+
+        $dispatchTxns = TblPlantDispatchTxn::findAll(['plant_dispatch_code' => $dispatchCode]);
+
+        foreach ($dispatchTxns as $txn) {
+            $txnHistory = new TblPlantDispatchTxnHistory();
+            Yii::$app->operation->history($txn, $txnHistory, DELETE);
+            $saveModel[] = $txnHistory;
+            $saveModel[] = $txn;
+        }
+
+        $dispatchHistory = new TblPlantDispatchHistory();
+        Yii::$app->operation->history($this->model, $dispatchHistory, DELETE);
+        $saveModel[] = $dispatchHistory;
+
+        $result = $this->generalModel->deleteTransaction($saveModel);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Json::encode($result);
     }
 
     /**
@@ -208,15 +229,14 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionCheckUniqueSapNo() {
-        $sapNo = Yii::$app->request->post('sapNo');
-        $Model = new TblPlantDispatchTxn();
-        $data = $Model->find()->where(['sap_batch_no' => $sapNo])->one();
-        if (empty($data)) {
-            return Json::encode(['status' => 'success']);
-        } else {
-            return Json::encode(['status' => 'error']);
-        }
-    }
-
+    /* public function actionCheckUniqueSapNo() {
+      $sapNo = Yii::$app->request->post('sapNo');
+      $Model = new TblPlantDispatchTxn();
+      $data = $Model->find()->where(['sap_batch_no' => $sapNo])->one();
+      if (empty($data)) {
+      return Json::encode(['status' => 'success']);
+      } else {
+      return Json::encode(['status' => 'error']);
+      }
+      } */
 }

@@ -60,7 +60,7 @@ class TblDistricts extends ChildModel {
             [['district_code'], 'unique'],
             [['district_code'], 'validateCode', 'on' => ['importCsv']],
             ['district_code', 'compare', 'compareValue' => '000', 'operator' => '!=', 'type' => 'number', 'message' => Yii::t('app/validation', '{attribute} can not be "000".')],
-            [['created_at', 'updated_at', 'is_active'], 'safe'],
+            [['created_at', 'updated_at', 'is_active', 'ref_code'], 'safe'],
             [['district_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "001"')],
             [['district_code'], 'string', 'max' => 3, 'min' => 3, 'tooLong' => Yii::t('app/validation', '{attribute} must be of 3 digit. e.g."001"'),
                 'tooShort' => Yii::t('app/validation', '{attribute} must be of 3 digit. e.g."001"')],

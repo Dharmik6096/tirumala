@@ -24,15 +24,20 @@ if ($model->is_active == 1) {
                             [
                             'attribute' => 'union_code',
                             'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'dcs_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                     [
                     'columns' => [
                             [
-                            'attribute' => 'dcs_code',
-                            'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'attribute' => 'dcs_ref_code',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->ref_code : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
@@ -243,7 +248,7 @@ if ($model->is_active == 1) {
                         ],
                             [
                             'attribute' => 'applicant_relation',
-                            'value' => !empty(($model->applicant_relation)) ? Yii::$app->dropdown->getRecords('applicant_relation')['data'][$model->applicant_relation] : '',
+                            'value' => Yii::$app->general->getforeignkey($model->applicantRelationship, 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -253,6 +258,18 @@ if ($model->is_active == 1) {
                             [
                             'attribute' => 'is_email_verify',
                             'value' => ($model->is_email_verify == 0) ? 'Pending' : ($model->is_email_verify == 1 ? 'Verify' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'witness_name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'place',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],

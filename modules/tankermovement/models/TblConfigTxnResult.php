@@ -45,11 +45,11 @@ class TblConfigTxnResult extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['config_code', 'config_for', 'ref_code'], 'required'],
-            [['config_txn_result_code', 'config_result', 'config_for', 'ref_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['config_code', 'originating_type'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['union_code'], 'required', 'except' => ['androidsync']],
+                [['config_code', 'config_for', 'ref_code'], 'required'],
+                [['config_txn_result_code', 'config_result', 'config_for', 'ref_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_table'], 'safe'],
+                [['config_code', 'originating_type'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['union_code'], 'required', 'except' => ['androidsync']],
         ];
     }
 

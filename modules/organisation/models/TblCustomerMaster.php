@@ -55,6 +55,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
     public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route, $beneficiary_name, $prefix, $file_name;
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -70,7 +71,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $main_rules = [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
                 [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc'], 'safe'],
+                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc', 'pan_no'], 'safe'],
                 [['route'], 'required', 'on' => ['importCsv']],
                 [['is_active', 'animal_type_code'], 'integer'],
                 [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
@@ -135,7 +136,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number']
+                [['ts_code_m', 'ts_code_e'], 'number'],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblCustomerMaster', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -284,15 +288,20 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
+            }
+        }
+        if (!empty($this->set_master_hierarchy) && $flag == 'INSERT') {
+            foreach ($this->set_master_hierarchy as $hierarchy) {
+                $hierarchy->save();
             }
         }
     }
@@ -400,7 +409,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
     }
-    
+
     public function getActivateCustomerCodeList($union_code, $bmc, $type, $dateFilter) {
         $deactivateList = new TblCustomerDeactive();
         $deactivatedCustomer = $deactivateList->getDeactiveCustomer($type, $dateFilter);
@@ -594,4 +603,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function getAnimalTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'animal_type_code']);
     }
+
+    public function resetData() {
+        $this->aadhaar_no = null;
+    }
+
 }

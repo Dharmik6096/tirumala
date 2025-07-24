@@ -157,7 +157,7 @@ class FormulaMasterController extends \app\controllers\ChildController {
 
             $status = !empty($formula) ? 'success' : 'error';
         }
-        echo \yii\helpers\Json::encode(['status' => $status, 'data' => $formula]);
+        return \yii\helpers\Json::encode(['status' => $status, 'data' => $formula]);
     }
 
     public function actionCreateTextFormula() {

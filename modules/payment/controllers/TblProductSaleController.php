@@ -42,13 +42,15 @@ use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblMilkCollection;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
+use app\modules\payment\models\TblMonthlyCreditLimit;
+use app\modules\product\models\TblProduct;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
  */
 class TblProductSaleController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate', 'get-available-stock'];
+    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate', 'get-available-stock', 'get-tax'];
 
     /**
      * Lists all TblProductSale models.
@@ -414,10 +416,14 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $data = '';
                 }
             }
-        } else if (!empty($type) && strtolower($type) != 'dcs') {
+        } else if (!empty($type) && strtolower($type) != 'dcs' && strtolower($type) != 'party') {
             $headModel->customer_code = $customer_code;
             $data = Yii::$app->general->validateCustomerCode($headModel);
             $headModel->customer_code = $data;
+        } else if(!empty($type) && strtolower($type) == 'party') {
+            $headModel->customer_code = $customer_code;
+            $data = Yii::$app->general->validateGeneratePartyMasterCode($headModel);
+            $name = $data;
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($customer_code, $bmc);
@@ -429,7 +435,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $headModel->customer_code = $data;
         }
         if (!empty($data)) {
-            $name = Yii::$app->general->getCustomer($headModel, $type);
+            $name = !empty($name) ? $name : Yii::$app->general->getCustomer($headModel, $type);
             $response['status'] = 'success';
             $response['data'] = $name;
             $response['code'] = $headModel->customer_code;
@@ -680,11 +686,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 }
             }
         } else {
-            return $this->render('_bulk_delete',
-                            [
-                                'searchModel' => $searchModel,
-                                'dataProvider' => $dataProvider,
-                                'type' => $type,
+            return $this->render('_bulk_delete', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => $type,
             ]);
         }
     }
@@ -724,11 +729,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 }
             }
         } else {
-            return $this->render('_bulk_delete',
-                            [
-                                'searchModel' => $searchModel,
-                                'dataProvider' => $dataProvider,
-                                'type' => $type,
+            return $this->render('_bulk_delete', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => $type,
             ]);
         }
     }
@@ -743,7 +747,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $model->product_code = $detailModel->product_code;
 //            $model->sale_type = 'DCS';
             $saleDate = date('Y-m-d', strtotime($model->invoice_date));
-            $model->invoice_date = $saleDate;              
+            $model->invoice_date = $saleDate;
             if ($model->validate() && $detailModel->validate()) {
                 $master = [];
                 $child = [];
@@ -756,9 +760,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $model->paid_amount = $model->payment_mode == 1 ? 0 : $model->amount_due;
                 $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
                 $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
-                if($model->payment_mode==1 && !empty($model->deduction_start_date))
-                {
-                    $dedStartDate =  date('Y-m-d', strtotime($model->deduction_start_date));
+                if ($model->payment_mode == 1 && !empty($model->deduction_start_date)) {
+                    $dedStartDate = date('Y-m-d', strtotime($model->deduction_start_date));
                     $model->deduction_start_date = $dedStartDate;
                 }
                 $detailModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code);
@@ -1071,17 +1074,49 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $pay_mode = Yii::$app->request->post('pay_mode');
         $amount_due = Yii::$app->request->post('amount_due');
         $no_of_installment = Yii::$app->request->post('noi');
+        $creditLimitCheckMonthly = Yii::$app->general->getUnionConfiguration($union, 'credit_limit_check_monthly', 'PORTAL');
         if (!empty($date) && $pay_mode == 1) {
+            $creditAmount = 0;
+            if ($creditLimitCheckMonthly == 1) {
+                $model = new TblMonthlyCreditLimit();
+                $model->customer_type = $type;
+                $model->customer_code = $code;
+                $model->union_code = $union;
+                $modelData = $model->getMonthlyCreditLimit(date('Y-m-d', strtotime($date)));
+                if (!empty($modelData->final_amount)) {
+                    $creditAmount = $modelData->final_amount;
+                }
+                list($fromDate, $toDate) = Yii::$app->general->getMonthStartEndDate($date, 'current');
+            } else {
+                $model = new TblPaymentCycleApplicability();
+                $model->applicable_type = strtolower($type) == 'member' ? 'DCS' : $type;
+                $model->applicable_code = $bmc;
+                $model->applicable_for = 'BMC';
+                $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
+                if (!empty($modelData)) {
+                    $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                    $toDate = date('Y-m-d', strtotime($modelData->to_date));
 
-            $model = new TblPaymentCycleApplicability();
-            $model->applicable_type = strtolower($type) == 'member' ? 'DCS' : $type;
-            $model->applicable_code = $bmc;
-            $model->applicable_for = 'BMC';
-            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
-            if (!empty($modelData)) {
+                    $model = new TblBmcCollection();
+                    $collWhere = [];
+                    $collWhere = ['customer_type' => $type, 'customer_code' => $code];
+                    if (strtolower($type) == 'member') {
+                        $model = new TblMilkCollection();
+                        $collWhere = ['member_code' => $code];
+                    }
 
-                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
-                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                    $modelData = $model->find()
+                            ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                            ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                            ->andWhere($collWhere)
+                            ->one();
+
+                    if (!empty($modelData->amount)) {
+                        $creditAmount = $modelData->amount;
+                    }
+                }
+            }
+            if (!empty($fromDate)) {
                 $saledAmount = 0;
                 $where = [];
                 $where = ['payment_mode' => $pay_mode, 'customer_type' => $type, 'customer_code' => $code];
@@ -1091,26 +1126,11 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
                         ->andWhere($where)
                         ->one();
+
                 if (!empty($data->amount_due)) {
                     $saledAmount = $data->amount_due;
                 }
-                $model = new TblBmcCollection();
-                $collWhere = [];
-                $collWhere = ['customer_type' => $type, 'customer_code' => $code];
-                if (strtolower($type) == 'member') {
-                    $model = new TblMilkCollection();
-                    $collWhere = ['member_code' => $code];
-                }
 
-                $modelData = $model->find()
-                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
-                        ->andWhere($collWhere)
-                        ->one();
-                $creditAmount = 0;
-                if (!empty($modelData->amount)) {
-                    $creditAmount = $modelData->amount;
-                }
                 $availableCredit = $creditAmount - $saledAmount;
                 return Json::encode(['status' => 'success', 'credit' => $availableCredit]);
             } else {
@@ -1143,4 +1163,34 @@ class TblProductSaleController extends \app\controllers\ChildController {
             ]);
         }
     }
+
+    public function actionRfcRePush($id) {
+        $this->model = TblProductSaleTransaction::findOne($id);
+        $historyModel = new TblProductSaleTransactionHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->send_status = 0;
+        $record = [];
+        if ($this->model->save(true, false)) {
+            $historyModel->save();
+            $record = ['status' => 'success', 'msg' => 'Product Sale Transaction re-pushed successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Failed to re-push Product Sale Transaction.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionGetTax() {
+        $data = [];
+        $data['status'] = 'error';
+        if (!empty($_POST['productCode']) && !empty($_POST['unionCode'])) {
+            $tax_code = TblProduct::find()->select('tax_code')->where(['product_code' => $_POST['productCode'], 'union_code' => $_POST['unionCode']])->one();
+            if (!empty($tax_code)) {
+                $data['status'] = 'success';
+                $data['tax_code'] = $tax_code['tax_code'];
+            }
+        }
+        return Json::encode($data);
+    }
+
 }

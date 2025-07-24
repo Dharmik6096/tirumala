@@ -61,4 +61,24 @@ class TblMemberProvisionalFamilyDetailsSearch extends TblMemberProvisionalFamily
         return $dataProvider;
     }
 
+    public function searchFamilyData($params) {
+        $query = TblMemberProvisionalFamilyDetails::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'member_provisional_family_detail_code' => $this->member_provisional_family_detail_code,
+        ]);
+
+        return $dataProvider;
+    }
+
 }

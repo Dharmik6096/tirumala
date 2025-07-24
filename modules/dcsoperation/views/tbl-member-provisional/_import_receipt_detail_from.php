@@ -8,23 +8,26 @@ use yii\helpers\Html;
 use zainiafzan\widget\Dropzone;
 
 $form = ActiveForm::begin([
-    'id' => 'import-provisional-member-bank-receipt-form',
-    'validateOnBlur' => true,
-    'errorCssClass' => 'error',
-    'fieldConfig' => [
-        'errorOptions' => ['class' => 'help-block'],
-        'options' => [
-            'class' => 'form-group col-md-12',
-            'id' => 'main_form'
-        ],
-    ],
-]);
+            'id' => 'import-provisional-member-bank-receipt-form',
+            'validateOnBlur' => true,
+            'errorCssClass' => 'error',
+            'fieldConfig' => [
+                'errorOptions' => ['class' => 'help-block'],
+                'options' => [
+                    'class' => 'form-group col-md-12',
+                    'id' => 'main_form'
+                ],
+            ],
+        ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-12 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('mode_of_payment', $model, $form, 'form-group', $model->getAttributeLabel('mode_of_payment'), false, 'mode_of_payment', false); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'amount_payable')->textInput() ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'bank_name')->textInput() ?>
@@ -106,11 +109,6 @@ $form = ActiveForm::begin([
                                         $(".error-summary ul").append("<li>"+val+"</li>");
                                     });
                                     $(".error-summary").show();
-                                    //  var cnt=0;
-                                    // $.each(data, function(key, val) {
-                                    //     $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
-                                    //     $("#"+key).closest(".form-group").addClass("error");
-                                    // });
                                     // if(cnt==0 && typeof data.message != "undefined") 
                                     //     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+data.message+"</span></div></div>");
                                 }

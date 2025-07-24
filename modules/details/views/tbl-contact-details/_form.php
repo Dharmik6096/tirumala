@@ -3,10 +3,11 @@
 use yii\helpers\Html;
 
 $mail_info = !empty($mail_info) ? $mail_info : FALSE;
+$show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : FALSE;
 ?>
 
 <!--<div class="col-sm-3">
-    <? = $form->field($model, 'contact_person')->textInput() ?>
+    <? // $form->field($model, 'contact_person')->textInput() ?>
 </div>-->
 <div class="col-sm-2">
     <?= $form->field($model, 'firstname')->textInput() ?>
@@ -21,7 +22,7 @@ $mail_info = !empty($mail_info) ? $mail_info : FALSE;
     <?= $form->field($model, 'email')->textInput() ?>
 </div>
 <!--<div class="col-sm-2">
-    <? = $form->field($model, 'local_contact_person')->textInput() ?>
+    <? // $form->field($model, 'local_contact_person')->textInput() ?>
 </div>-->
 <div class="col-sm-2">
     <?= $form->field($model, 'local_firstname')->textInput() ?>
@@ -50,4 +51,17 @@ $mail_info = !empty($mail_info) ? $mail_info : FALSE;
         <?= $form->field($model, 'email_bcc')->textInput() ?>
     </div>
 <?php } ?>
-
+<?php if ($show_optional_fields) { ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('primary_parent'), false, 'primary_parent'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('secondary_parent'), false, 'secondary_parent'); ?>
+    </div>
+<?php } ?>

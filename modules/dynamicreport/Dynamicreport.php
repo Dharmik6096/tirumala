@@ -41,6 +41,7 @@ class Dynamicreport extends \yii\base\Module {
             $data['sp_name'] = $report_model->sp_name;
             $data['sp_param'] = $report_model->sp_param;
             $data['report_rule'] = json_decode($report_model->report_rule);
+            $data['config'] = json_decode($report_model->config);
         }
         return $data;
     }

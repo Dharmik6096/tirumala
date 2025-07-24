@@ -2,6 +2,7 @@
 
 namespace app\modules\payment\models;
 
+use app\modules\organisation\models\TblDcsBmc;
 use Yii;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblMccPlant;
@@ -43,11 +44,10 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
-            [['bmc_code'], 'required', 'on' => 'processpayment'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code', 'from_datetime', 'to_datetime'], 'required'],
 //            [['from_datetime'], function ($attribute, $params) {
 //                    return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
 //                }, 'skipOnError' => true, 'on' => 'processpayment'],
@@ -94,19 +94,35 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
             return false;
         }
+
         $query = TblMccRemunerationSummary::find()
-                ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
+                ->where(['union_code' => $this->union_code]);
+        if (empty($this->bmc_code)) {
+            $this->bmc_code = Yii::$app->session->get('BMC') ?? explode(',', Yii::$app->session->get('BMC'));
+            if (empty($this->bmc_code)) {
+                if (empty($this->mcc_plant_code)) {
+                    $this->mcc_plant_code = Yii::$app->session->get('MCC') ?? explode(',', Yii::$app->session->get('MCC'));
+                }
+                $this->bmc_code = TblDcsBmc::find()->select('bmc_code')
+                        ->where(['plant_code' => $this->plant_code, 'is_active' => 1])
+                        ->andFilterWhere(['mcc_plant_code' => $this->mcc_plant_code])
+                        ->andFilterWhere(['bmc_code' => $this->bmc_code])
+                        ->column();
+            }
+        }
+        $query->andWhere(['bmc_code' => $this->bmc_code]);
+
         if ($process_alert) {
             $query->andWhere(['in', 'status', ['processed']]);
         } else {
             $query->andWhere(['not in', 'status', ['processed']]);
         }
         $count = $query->andWhere(['or',
-                    ['or',
-                        ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
-                        ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
+                        ['or',
+                            ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
+                            ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
                     ],
-                    ['or',
+                        ['or',
                         "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
                         "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
             ]])->count();
@@ -120,11 +136,11 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
                 $pending_disburse = $this->find()
                                 ->where(['status' => 'processed', 'bmc_code' => $this->bmc_code])
                                 ->andWhere(['or',
-                                    ['or',
-                                        ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
-                                        ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
+                                        ['or',
+                                            ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
+                                            ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
                                     ],
-                                    ['or',
+                                        ['or',
                                         "'$from_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
                                         "'$to_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
                             ]])->one();

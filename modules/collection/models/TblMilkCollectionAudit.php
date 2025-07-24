@@ -3,6 +3,15 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_milk_collection_audit".
@@ -115,6 +124,8 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
+    public $dcs_name;
+
     public static function tableName() {
         return 'tbl_milk_collection_audit';
     }
@@ -124,27 +135,30 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved', 'ftp_txn_log_id', 'originating_type', 'converted_qty_mode', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'send_status', 'is_provisional', 'txfarmer_id', 'is_rate_recalc'], 'safe'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'adt_value', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount'], 'safe'],
-                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime', 'received_timestamp'], 'safe'],
-                [['remarks', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'safe'],
-                [['member_code', 'version_no'], 'safe'],
-                [['dcs_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'safe'],
-                [['name'], 'safe'],
-                [['mobile_no', 'sms_mobile', 'resp_status', 'resp_desc', 'ftp_txn_file_name', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'adt_param'], 'safe'],
-                [['auto_flag', 'soc_bmc_flag'], 'safe'],
-                [['shift_code'], 'safe'],
-                [['village_code'], 'safe'],
-                [['type_of_data_receive', 'error_log', 'sms_msgid', 'data_inserted_from'], 'safe'],
-                [['purchase_rate_code', 'purchase_rate_code_old'], 'safe'],
-                [['sms_status', 'route_code', 'tag_1', 'tag_2', 'own_bmc_code', 'own_mcc_plant_code'], 'safe'],
-                [['sms_errorlog'], 'safe'],
-                [['status'], 'safe'],
-                [['created_by', 'updated_by'], 'safe'],
-                [['data_post_id'], 'safe'],
-                [['last_edited_type', 'sync_status'], 'safe'],
-                [['union_code'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
+            [['milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved', 'ftp_txn_log_id', 'originating_type', 'converted_qty_mode', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'send_status', 'is_provisional', 'txfarmer_id', 'is_rate_recalc'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'adt_value', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime', 'received_timestamp'], 'safe'],
+            [['remarks', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'safe'],
+            [['member_code', 'version_no', 'dcs_name'], 'safe'],
+            [['dcs_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'safe'],
+            [['name'], 'safe'],
+            [['mobile_no', 'sms_mobile', 'resp_status', 'resp_desc', 'ftp_txn_file_name', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'adt_param'], 'safe'],
+            [['auto_flag', 'soc_bmc_flag'], 'safe'],
+            [['shift_code'], 'safe'],
+            [['village_code'], 'safe'],
+            [['type_of_data_receive', 'error_log', 'sms_msgid', 'data_inserted_from'], 'safe'],
+            [['purchase_rate_code', 'purchase_rate_code_old'], 'safe'],
+            [['sms_status', 'route_code', 'tag_1', 'tag_2', 'own_bmc_code', 'own_mcc_plant_code'], 'safe'],
+            [['sms_errorlog'], 'safe'],
+            [['status'], 'safe'],
+            [['created_by', 'updated_by'], 'safe'],
+            [['data_post_id'], 'safe'],
+            [['last_edited_type', 'sync_status'], 'safe'],
+            [['union_code'], 'safe'],
+            [['originating_org_code', 'originating_org_type'], 'safe'],
+            [['cannumber', 'is_sms_sent', 'antibiotic', 'is_antibiotic', 'scheme_rate', 'scheme_rate_code', 'actual_rate', 'x_col6'], 'safe'],
+            [['union_code'], 'required', 'on' => ['androidsync']],
+            [['send_status'], 'default', 'value' => 0],
         ];
     }
 
@@ -255,7 +269,44 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
             'received_timestamp' => Yii::t('app', 'Received Timestamp'),
             'is_rate_recalc' => Yii::t('app', 'Is Rate Recalc'),
             'purchase_rate_code_old' => Yii::t('app', 'Purchase Rate Code Old'),
+            'dcs_name' => Yii::t('app', 'Society Name'),
         ];
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getMilkQualityCode() {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+    
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+    
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+    
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
 }

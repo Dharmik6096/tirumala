@@ -68,23 +68,21 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblBmcMilkDispatchTxnHistory extends \yii\db\ActiveRecord
-{
+class TblBmcMilkDispatchTxnHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_milk_dispatch_txn_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'safe'],
+            [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type', 'test_report_no', 'shift_of_milk'], 'safe'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'safe'],
             [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code'], 'safe'],
@@ -103,8 +101,7 @@ class TblBmcMilkDispatchTxnHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'bmc_milk_dispatch_txn_code' => Yii::t('app', 'Bmc Milk Dispatch Txn Code'),
@@ -168,4 +165,5 @@ class TblBmcMilkDispatchTxnHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }

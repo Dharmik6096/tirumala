@@ -30,6 +30,8 @@ use app\modules\document\controllers\TblAttachmentController;
 use app\modules\organisation\models\TblBmcChillerInfo;
 use app\modules\organisation\models\TblBmcChillerInfoSearch;
 use app\modules\organisation\models\TblBmcChillerInfoHistory;
+use app\modules\organisation\models\TblPlant;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -39,7 +41,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc', 'union-bmc-list'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc', 'union-bmc-list', 'get-plant-bmc-with-party'];
 
     /**
      * Lists all TblDcsBmc models.
@@ -109,6 +111,7 @@ class TblDcsBmcController extends \app\controllers\ChildController
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $this->contactDetails->form_validation_type = 'bmc-create';
+        $this->contactDetails->department = 'bmc_operator';
         $validate = 1;
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
@@ -531,12 +534,47 @@ class TblDcsBmcController extends \app\controllers\ChildController
     public function actionGetPlantBmc()
     {
         $plantList = [];
+        $mappedPartyList = [];
         if (!empty($_POST['plant_code'])) {
             $plant = explode(',', $_POST['plant_code']);
             $model = new TblDcsBmc();
             $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant, 'BMC');
         }
-        return Json::encode(['status' => 'success', 'data' => $plantList]);
+        $partyList = [];
+        if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
+            $union_code = $_POST['union_code'];
+            $model = new TblPartyMaster();
+            $partyList = $model->getUnionPartyList($union_code);
+            $mappedPartyList = $model->getMappedPartyList($union_code);
+        }
+        $result = $plantList + $partyList + $mappedPartyList;
+        return Json::encode(['status' => 'success', 'data' => $result]);
+    }
+
+    public function actionGetPlantBmcWithParty()
+    {
+        $plantList = [];
+        $mappedPartyList = [];
+        if (!empty($_POST['plant_code'])) {
+            $plant = explode(',', $_POST['plant_code']);
+            $model = new TblPlant();
+            $plantList = $model->getPlantData($plant);
+        }
+        $bmcList = [];
+        if (!empty($_POST['plant_code'])) {
+            $plant = explode(',', $_POST['plant_code']);
+            $model = new TblDcsBmc();
+            $bmcList = $model->getBMCList([], 'FALSE', false, false, [], $plant, 'BMC');
+        }
+        $partyList = [];
+        if (!empty($_POST['action_type']) && $_POST['action_type'] == 'party' && !empty($_POST['union_code'])) {
+            $union_code = $_POST['union_code'];
+            $model = new TblPartyMaster();
+            $partyList = $model->getUnionPartyList($union_code);
+            $mappedPartyList = $model->getMappedPartyList($union_code);
+        }
+        $result = $plantList + $bmcList + $partyList + $mappedPartyList;
+        return Json::encode(['status' => 'success', 'data' => $result]);
     }
 
     public function actionUnionBmcList()

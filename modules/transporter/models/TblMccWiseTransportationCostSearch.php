@@ -50,8 +50,10 @@ class TblMccWiseTransportationCostSearch extends TblMccWiseTransportationCost {
             'query' => $query,
         ]);
 
+        $this->from_date = date('Y-m-d', strtotime('-30 days'));
+        $this->to_date = date('Y-m-d');
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_wise_transportation_cost');
+        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_wise_transportation_cost', 'tbl_mcc_wise_transportation_cost');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

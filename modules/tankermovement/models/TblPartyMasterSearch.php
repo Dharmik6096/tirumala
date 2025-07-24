@@ -18,7 +18,7 @@ class TblPartyMasterSearch extends TblPartyMaster
     public function rules()
     {
         return [
-            [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'sap_vendor_code', 'is_sales_office'], 'safe'],
             [['is_active', 'originating_type'], 'integer'],
         ];
     }
@@ -71,7 +71,8 @@ class TblPartyMasterSearch extends TblPartyMaster
             ->andFilterWhere(['like', 'party_contact_no', $this->party_contact_no])
             ->andFilterWhere(['like', 'owner_name', $this->owner_name])
             ->andFilterWhere(['like', 'owner_contact_no', $this->owner_contact_no])
-            ->andFilterWhere(['like', 'owner_email', $this->owner_email]);
+            ->andFilterWhere(['like', 'owner_email', $this->owner_email])
+            ->andFilterWhere(['like', 'sap_vendor_code', $this->sap_vendor_code]);
 
         return $dataProvider;
     }

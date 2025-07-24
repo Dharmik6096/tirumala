@@ -1,0 +1,28 @@
+<?php
+$this->title = Yii::t('app', 'Indent Dispatch');
+?>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= $this->title; ?>           
+    </div>
+    <div class="panel-body">
+        <div class="row theme_border_left theme_border_right theme_border_bottom">
+            <div class="col-md-12 padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Indent Dispatch</h4>
+                </div>
+                <div class="large-search hidden-print">
+                    <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider, 'stock_detail' => $stock_detail]); ?>
+                    <div class="col-sm-12" id="document_grid">
+                        <?php
+                        if(!empty($searchModel->group_by)) {
+                            echo $this->render('_dispatch_grid_other_group_wise', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dispatchModel' => $dispatchModel]);
+                        } else {
+                            echo $this->render('_dispatch_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'dispatchModel' => $dispatchModel]);
+                        } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -26,7 +26,7 @@ class TblProductStockController extends \app\controllers\ChildController {
                 $product = new TblProductStock();
                 $data = $product->getProductBatchList($parents[0], $parents[1], $parents[2], $check_is_mcc);
                 foreach ($data as $key => $val) {
-                    $out[] = array('id' => $key, 'name' => $val);
+                    $out[] = array('id' => (string)$key, 'name' => $val);
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }
@@ -43,7 +43,7 @@ class TblProductStockController extends \app\controllers\ChildController {
                 $product = new TblProductStock();
                 $data = $product->getProductBatchListLastSixMonth($parents[0], $parents[1], $parents[2], $check_is_mcc);
                 foreach ($data as $key => $val) {
-                    $out[] = array('id' => $key, 'name' => $val);
+                    $out[] = array('id' => (string)$key, 'name' => $val);
                 }
                return  Json::encode(['output' => $out, 'selected' => '']);
             }

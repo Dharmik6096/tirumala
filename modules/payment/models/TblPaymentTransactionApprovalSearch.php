@@ -94,4 +94,28 @@ class TblPaymentTransactionApprovalSearch extends TblPaymentTransactionApproval
 
         return $dataProvider;
     }
+
+    public function searchReinitiate($params) {
+        $query = TblPaymentTransactionApproval::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['created_at' => SORT_ASC]],
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $approval = new TblProcessApproval();
+        $subQuery = $approval->getApproveLavel('tbl_payment_transaction_approval', 2);
+        $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_payment_transaction_approval.payment_transaction_approval_code) = convert(varchar(max),ap.process_code)')
+                ->addSelect(['tbl_payment_transaction_approval.*', 'ap.process_approval_code as process_approval_code'])
+                ->where(['tbl_payment_transaction_approval.approval_status' => ['Reject']]);
+
+        return $dataProvider;
+    }
 }

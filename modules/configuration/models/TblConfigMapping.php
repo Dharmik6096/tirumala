@@ -35,7 +35,7 @@ use app\modules\configuration\models\TblConfigResult;
  */
 class TblConfigMapping extends \app\models\ChildModel {
 
-    public $config_for, $process_name;
+    public $config_for, $process_name, $config_type;
 
     /**
      * @inheritdoc
@@ -51,7 +51,7 @@ class TblConfigMapping extends \app\models\ChildModel {
         return [
                 [['config_code', 'originating_type'], 'integer'],
                 [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-                [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'config_for'], 'safe'],
+                [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'config_for', 'config_type'], 'safe'],
                 [['plant_code', 'union_code'], 'required', 'except' => ['savemapping']],
                 [['bmc_code'], 'required', 'when' => function ($model) {
                     return $model->config_for == 'BMC';
@@ -101,6 +101,7 @@ class TblConfigMapping extends \app\models\ChildModel {
         $config = $model->find()
                 ->select('config_code')
                 ->where(['config_for' => $this->org_type, 'process_name' => $this->process_name])
+                ->andWhere(['ISNULL(is_input_config,0)' => 0])
                 ->all();
         if (!empty($config)) {
             $codes = [];

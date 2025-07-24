@@ -70,15 +70,28 @@ $form = ActiveForm::begin([
         <div class="col-sm-2" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
         </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tbldcsprovisional-union_code', 'plant_code', true, false, '', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbldcsprovisional-plant_code', 'mcc_plant_code', true, false, '', $readonly); ?>
+        </div>
         <?php if ($showIsBMC == 1) { ?>
             <?= Html::activeTextInput($model, 'is_bmc') ?>
         <?php } ?>
         <?= Html::activeHiddenInput($model, 'destination_type') ?>
         <?= Html::activeHiddenInput($model, 'destination_code') ?>
-        <?= Html::activeHiddenInput($model, 'route_code') ?>
-
         <div class="col-sm-2 <?= $bmcDisable ?>">
-            <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcsprovisional-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $readonly); ?>
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldcsprovisional-mcc_plant_code', 'bmc_code', true, false, '', '', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->all_routes($model, $form, 'tbldcsprovisional-plant_code,tbldcsprovisional-mcc_plant_code,tbldcsprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'supervisor_employee_id')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_dcs');
@@ -120,11 +133,13 @@ $form = ActiveForm::begin([
         <!--<div class="col-sm-2">-->
         <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
         <!--</div>-->
-        <?php if ($type == 'create') { ?>
+        <?php /*
+        if ($type == 'create') { ?>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbldcsprovisional-union_code', 'rate_chart_member', $model->getAttributeLabel('rate_chart_member')); ?>
             </div>
-        <?php } ?>
+        <?php } */
+        ?>
 
         <div class="col-sm-2">
             <?= $form->field($model, 'registration_code')->textInput(['maxlength' => true]) ?>
@@ -183,6 +198,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'fssi_expiry_date', '', FALSE, date('Y-m-d')); ?>
+        </div>
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', $model->getAttributeLabel('gender')); ?>
         </div>
         <div class="col-sm-2">
@@ -228,7 +246,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
         <!--    <div class="col-sm-2">
-                <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
             </div>-->
         <div class="col-sm-2">
             <div class="col-sm-12">
@@ -284,7 +302,6 @@ $form = ActiveForm::begin([
         </div> -->
 
         <div class="clearfix"></div>
-        <?php if ($type == 'create') { ?>
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Contact Details</h4>
             </div>
@@ -301,7 +318,7 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'email')->textInput() ?>
             </div>
             <!--<div class="col-sm-2">
-                <? = $form->field($model, 'local_contact_person')->textInput() ?>
+                <?php // $form->field($model, 'local_contact_person')->textInput() ?>
             </div>-->
             <div class="col-sm-2">
                 <?= $form->field($model, 'local_firstname')->textInput() ?>
@@ -346,7 +363,6 @@ $form = ActiveForm::begin([
             <!--<div class="col-sm-2">
             <?= $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div>-->
-        <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
         <div class="col-sm-2 mt10">
@@ -411,6 +427,9 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <div class="col-sm-2 mt10">
+        <?= Yii::$app->controls->active($model, $form); ?>
+    </div>
+    <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_security_cheque', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="col-sm-2 mt10 security_cheque">
@@ -419,8 +438,17 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt10 number-validate security_cheque">
         <?= $form->field($model, 'cheque_amount')->textInput() ?>   
     </div>
-    <div class="col-sm-2 mt10">
-        <?= Yii::$app->controls->active($model, $form); ?>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= $form->field($model, 'cheque_bank')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= Yii::$app->controls->date($model, $form, 'security_return_date'); ?>
+    </div>
+    <div class="col-sm-2 mt10 number-validate security_cheque">
+        <?= $form->field($model, 'security_return_amt')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= Yii::$app->dropdown->dropdownStatic('security_return_mode', $model, $form, '', $model->getAttributeLabel('security_return_mode'), false); ?>
     </div>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="row">
@@ -436,6 +464,14 @@ $form = ActiveForm::begin([
 
     <?php
     $script = "
+    var supervisorId = '$model->supervisor_employee_id';
+    var supervisorName = '$model->supervisor_employee_name';
+    if(supervisorId != '' && supervisorId != null){
+        $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+    }
+    if(supervisorName != '' && supervisorName != null){
+        $('.field-tbldcsprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+    } 
     var delay=2000;
     securityCheque($('#tbldcsprovisional-is_security_cheque').prop('checked'));	
     $('#tbldcsprovisional-is_security_cheque').on('change', function() {
@@ -568,6 +604,41 @@ $form = ActiveForm::begin([
     }
     $('#tbldcsprovisional-bank_code').on('change',function(){
         $('#tbldcsprovisional-ifsc').val('');
+    });
+    $('#tbldcsprovisional-route_code').on('change', function(e) {
+        var module_code = $(this).val();
+        var module_name = 'routeMapping';
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/details/tbl-contact-details/contact-details']) . "',
+            data: 'module_code='+module_code+'&module_name='+module_name,
+            success: function(response) {
+                var obj1 = $.parseJSON(response);
+                var data = obj1.data;
+                if(data){
+                    if(supervisorName != '' && supervisorName != null){
+                        $('.field-tbldcsprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                    } else {
+                        $('#tbldcsprovisional-supervisor_employee_name').val(data.firstname);
+                        if(data.firstname != '' && data.firstname != null){
+                            $('.field-tbldcsprovisional-supervisor_employee_name').addClass('disabled no_pointer');
+                        }
+                    }
+                    if(supervisorId != ''  && supervisorId != null){
+                        $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                    } else {
+                        $('#tbldcsprovisional-supervisor_employee_id').val(data.employee_code);
+                        if(data.employee_code != '' && data.employee_code != null){
+                        alert('vivek');
+                            $('.field-tbldcsprovisional-supervisor_employee_id').addClass('disabled no_pointer');
+                        }
+                    }
+                }                               
+            },
+            error:function(data){
+                //alert('Your data has not been submitted..Please try again');
+            }
+        });
     });
 ";
     $this->registerJs($script, View::POS_END, 'union-select');

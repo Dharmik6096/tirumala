@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
 use app\modules\installation\models\TblUserDownloadAck;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_user_android".
@@ -46,6 +47,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
     public $toEncrypt = ['password'];
     public $org_type, $org_code, $repeat_password, $role_code;
     public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code;
+    public $form_validation_type = 'default';
 
     /**
      * @inheritdoc
@@ -58,8 +60,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation', 'importCsv']],
+        $main_rules = [
+                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code'], 'required', 'except' => ['installation', 'importCsv']],
                 [['username', 'name', 'password', 'repeat_password', 'mobile_no', 'org_type', 'org_code'], 'required', 'on' => 'importCsv'],
                 [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no', 'device_id'], 'safe'],
                 [['originating_type'], 'integer'],
@@ -72,8 +74,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 [['union_code'], 'string', 'max' => 3],
                 [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['email'], 'email'],
-                [['org_code'], 'setData', 'on' => 'importCsv'],
+            // [['email'], 'email'],
+            [['org_code'], 'setData', 'on' => 'importCsv'],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
@@ -86,7 +88,11 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => ['importCsv']],
                 [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
                 [['role_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRole::className(), 'targetAttribute' => ['role_code' => 'role_code'], 'on' => ['importCsv']],
+                [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => ['importCsv']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblUserAndroid', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -124,7 +130,9 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public function getExistData($org_type, $data, $notIn = '') {
         $query = $this->find()->where(['union_code' => $data->union_code, 'is_active' => 1]);
-        if (strtoupper($org_type == 'MCC')) {
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['plant_code' => $data->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
+        } elseif (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
@@ -146,6 +154,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return 'BMC';
             } elseif (!empty($data->mcc_plant_code)) {
                 return 'MCC';
+            } elseif (!empty($data->plant_code)) {
+                return 'PLANT';
             }
         } elseif ($return == 'name') {
             if (!empty($data->dcs_code)) {
@@ -154,6 +164,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return Yii::$app->general->getforeignkey($data->bmcCode, 'bmc_name');
             } elseif (!empty($data->mcc_plant_code)) {
                 return Yii::$app->general->getforeignkey($data->mccCode, 'name');
+            } elseif (!empty($data->plant_code)) {
+                return Yii::$app->general->getforeignkey($data->plantCode, 'name');
             }
         } else {
             if (!empty($data->dcs_code)) {
@@ -162,6 +174,8 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return $data->bmc_code;
             } elseif (!empty($data->mcc_plant_code)) {
                 return $data->mcc_plant_code;
+            } elseif (!empty($data->plant_code)) {
+                return $data->plant_code;
             }
         }
     }
@@ -169,7 +183,9 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
     public function getContactDetails($org_type, $data) {
         $contactModel = new TblContactDetails();
         $query = $contactModel->find()->where(['is_active' => 1, 'is_default' => 1]);
-        if (strtoupper($org_type == 'MCC')) {
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['module_code' => $data->plant_code, 'module_name' => 'plant']);
+        } elseif (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['module_code' => $data->mcc_plant_code, 'module_name' => 'mccPlant']);
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['module_code' => $data->bmc_code, 'module_name' => 'bmc']);
@@ -282,10 +298,12 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public function getMainExistData($org_type, $data, $username) {
         $query = $this->find()->where(['union_code' => $data->union_code, 'username' => $username]);
-        if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code]);
+        if (strtoupper($org_type == 'PLANT')) {
+            $query->andWhere(['plant_code' => $data->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
+        } elseif (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code]);
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['dcs_code' => $data->dcs_code]);
         }
@@ -331,10 +349,17 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 $this->mcc_plant_code = $this->org_code;
                 $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
                 $this->plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+            } else if (strtoupper($this->org_type) == 'PLANT') {
+                $this->plant_code = $this->org_code;
+                $this->union_code = Yii::$app->general->getforeignkey($this->plantCode, 'union_code');
             } else {
                 $this->addError('org_type', Yii::t('app/validation', 'Invalide Org Type'));
             }
         }
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }

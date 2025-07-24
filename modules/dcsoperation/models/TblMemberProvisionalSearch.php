@@ -13,15 +13,16 @@ use app\modules\general\models\TblProcessApproval;
  */
 class TblMemberProvisionalSearch extends TblMemberProvisional {
 
-    public $mobile_no, $federation_code, $ifsc, $union_code, $plant_code, $mcc_plant_code, $bmc_code, $approved_status, $from_date, $to_date, $as_on_date;
+    public $mobile_no, $federation_code, $ifsc, $union_code, $plant_code, $mcc_plant_code, $bmc_code, $approved_status, $from_date, $to_date, $as_on_date, $payment_type, $recipt_ref_no;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status', 'remarks', 'land_class', 'bank_name', 'branch_name', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'approved_at', 'from_date', 'to_date', 'approved_status', 'employee_code', 'employee_name', 'region_code', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no'], 'safe'],
-                [['union_code','plant_code', 'mcc_plant_code', 'as_on_date'], 'required', 'on' => ['export_search']]
+                [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status', 'remarks', 'land_class', 'bank_name', 'branch_name', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'approved_at', 'from_date', 'to_date', 'approved_status', 'employee_code', 'employee_name', 'region_code', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'witness_name', 'place', 'payment_type', 'recipt_ref_no', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'as_on_date'], 'required', 'on' => ['export_search']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['bulk_approval']]
         ];
     }
 
@@ -66,7 +67,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         return $dataProvider;
     }
 
-    public function search($params, $pending_approval = false) {
+    public function search($params, $pending_approval = false, $date_search = false) {
         $query = TblMemberProvisional::find();
 
         $dataProvider = new ActiveDataProvider([
@@ -75,7 +76,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
 
         $this->load($params);
 
-        $query->joinWith(['memberTypeCode', 'dcsCode', 'regionCode', 'userName']);
+        $query->joinWith(['memberTypeCode', 'dcsCode', 'regionCode', 'userName', 'shareCode']);
 
         if ($pending_approval) {
             $approval = new TblProcessApproval();
@@ -87,6 +88,13 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         }
 
         Yii::$app->general->filterByOrg($query, $this);
+
+        if ($date_search) {
+            $query->andWhere([
+                'tbl_member_provisional.plant_code' => $this->plant_code,
+                'tbl_member_provisional.mcc_plant_code' => $this->mcc_plant_code,
+                'tbl_member_provisional.bmc_code' => $this->bmc_code,]);
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -100,11 +108,13 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
 
         // grid filtering conditions
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'CAST(tbl_member_provisional.created_at as date)', $from_date]);
+        if (!$date_search) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'CAST(tbl_member_provisional.created_at as date)', $from_date]);
 
-        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'CAST(tbl_member_provisional.created_at as date)', $to_date]);
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'CAST(tbl_member_provisional.created_at as date)', $to_date]);
+        }
 
         $query->andFilterWhere([
             'tbl_member_provisional.is_active' => $this->is_active,
@@ -114,6 +124,9 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             'tbl_member_provisional.is_approved' => $this->approved_status,
         ]);
 
+        if (!$pending_approval) {
+            $query->andFilterWhere(['tbl_member_provisional.provisional_status' => $this->provisional_status]);
+        }
         $query->andFilterWhere(['like', 'tbl_member_provisional.member_code', $this->member_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional.member_name', $this->member_name])
@@ -123,7 +136,9 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_member_provisional.employee_name', $this->employee_name])
                 ->andFilterWhere(['like', 'tbl_member_provisional.employee_code', $this->employee_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional.application_no', $this->application_no])
-                ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_code]);
+                ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional_share_details.ref_no', $this->recipt_ref_no])
+                ->andFilterWhere(['like', 'tbl_member_provisional_share_details.mode_of_payment', $this->payment_type]);
         $query->orderBy(['tbl_member_provisional.created_at' => SORT_DESC]);
         return $dataProvider;
     }

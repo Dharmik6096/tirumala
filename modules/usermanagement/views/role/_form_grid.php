@@ -29,12 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $attribute = [
     [
         'attribute' => 'description',
-        'value' => function(Role $model) {
-            if ($model->checkNotVendor())
-                return Html::a($model->description, ['view', 'id' => $model->name], ['data-pjax' => 0]);
-            else
-                return $model->description;
-        },
         'format' => 'raw',
     ],
     'name',
@@ -46,19 +40,15 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'views' => function($url, $model) {
-            $class = $model->checkNotVendor() ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Permission Group', 'class' => $class];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Permission Group'];
             return Html::a('<i class="fa fa-key"></i>', ['/user-management/role/view', 'id' => $model->name], $options);
         },
         'edit' => function($url, $model) {
-            $class = $model->checkNotVendor() ? '' : 'link-disable';
             $url = str_replace('edit', 'update', $url);
             $url = ['/user-management/role/update', 'id' => $model->name];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update'];
             return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        //'update' => true,
-        'delete' => ['option' => 'name,name,/user-management/role/delete,checkNotVendor()'],
     ]
 ];
 

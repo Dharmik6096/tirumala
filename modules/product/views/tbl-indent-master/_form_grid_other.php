@@ -37,6 +37,9 @@ $attribute = [
         ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code Ex'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
+        }, 'visible' => TRUE, 'filter' => false],
         ['attribute' => 'warehouse_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
         }, 'filter' => false],
@@ -71,7 +74,7 @@ $attribute = [
         ['attribute' => 'dispatch_qty',
         'label' => Yii::t('app', 'Dispatch Amount'),
         'value' => function($model) {
-            return (!empty($model->amount) && !empty($model->dispatch_qty)) ? $model->amount * $model->dispatch_qty : '0';
+            return (!empty($model->rate) && !empty($model->dispatch_qty)) ? $model->rate * $model->dispatch_qty : '0';
         }, 'filter' => false],
         ['attribute' => 'created_at', 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'created_by', 'value' => function($model) {

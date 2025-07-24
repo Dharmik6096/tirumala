@@ -10,6 +10,7 @@ use app\modules\sms\models\TblBulkNotification;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\models\GeneralModel;
 use app\modules\sms\models\TblBulkNotificationApplicability;
+use app\modules\sms\models\TblAlertNotificationPortal;
 
 /**
  * Default controller for the `sms` module
@@ -45,12 +46,17 @@ class DefaultController extends Controller {
                             $cc = !empty($otherReceiver) ? $otherReceiver : $token;
                             $bcc = '';
                             if ($row->has_attachment == 1) {
-                                $controls = [];
-                                $controls['dcs_milk_dispatch_code'] = $row->parent_code;
-                                $controls['p_report_name'] = $row->filename;
+                                if (empty($row->file_param)) {
+                                    $controls = [];
+                                    $controls['dcs_milk_dispatch_code'] = $row->parent_code;
+                                    $controls['p_report_name'] = $row->filename;
+                                    $filename = $row->filename . '-' . $row->parent_code . '.pdf';
+                                } else {
+                                    $controls = json_decode($row->file_param, TRUE);
+                                    $filename = $row->filename;
+                                }
                                 $path = $row->file_path;
-                                $filename = $row->filename . '-' . $row->parent_code . '.pdf';
-                                $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail');
+                                $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail', FALSE);
                             } elseif ($row->has_attachment == 2) {
                                 $filename = $row->filename;
                                 $filepath = $row->file_path;
@@ -68,6 +74,11 @@ class DefaultController extends Controller {
                     } catch (\yii\db\Exception $e) {
                         $row->send_status = 3;
                         $row->save(FALSE);
+                    } catch (\Throwable $ex) {
+                        $row->response_datetime = date('Y-m-d H:i:s');
+                        $row->response_status = substr($ex->getMessage(), 0, 254);
+                        $row->send_status = 3;
+                        $row->save(FALSE);
                     }
                 } else {
                     $row->send_status = 3;
@@ -77,6 +88,54 @@ class DefaultController extends Controller {
         } catch (\yii\db\Exception $e) {
             print "Error!: " . $e->getMessage() . "<br/>";
         }
+    }
+
+    public function actionGetLatestNotification() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $userId = Yii::$app->user->id;
+
+        $notifications = TblAlertNotificationPortal::find()
+                ->where([
+            'receiver_type' => 'PORTAL_NOTIFICATION',
+            'receiver_detail' => $userId,
+        ]);
+        if (!empty($_GET['shown'])) {
+            $notifications = $notifications->andWhere(['NOT IN', 'alert_notification_id', $_GET['shown']]);
+        }
+        $notifications = $notifications->andWhere(['between', 'cast(entry_datetime as date)', date('Y-m-d', strtotime('-10 days')), date('Y-m-d')])
+                ->andWhere(['in', 'send_status', [0, 1]])
+                ->orderBy(['entry_datetime' => SORT_DESC])
+                ->limit(20)
+                ->all();
+
+        $response = array_map(function ($n) {
+            return [
+                'id' => $n->alert_notification_id,
+                'message' => $n->message,
+                'datetime' => $n->entry_datetime,
+                'send_status' => $n->send_status
+            ];
+        }, $notifications);
+
+        if (Yii::$app->request->isPost) {
+            foreach ($notifications as $noti) {
+                $noti->send_status = 1;
+                $noti->save(false);
+            }
+        }
+        return $response;
+    }
+
+    public function actionDeleteNotification($id) {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $notification = TblAlertNotificationPortal::findOne($id);
+        if ($notification && $notification->receiver_detail == Yii::$app->user->id) {
+            $notification->send_status = 2;
+            $notification->response_datetime = date('Y-m-d H:i:s');
+            $notification->save(false);
+            return ['success' => true];
+        }
+        return ['success' => false];
     }
 
     public function actionBulkNotification() {

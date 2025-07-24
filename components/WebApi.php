@@ -15,9 +15,10 @@ class WebApi {
     ];
     public $apiurl = '';
     public $body = [];
-    public $vendor_code = 'STELLAPPS';
+    public $vendor_code = 'EIPL';
     public $header_info = [];
     public $return_actual = FALSE;
+    public $is_header_merge = TRUE;
 
     public function POSTDATA() {
         if ($this->authentication) {
@@ -27,19 +28,53 @@ class WebApi {
         //  return $this->GuzzleCURL();
     }
 
-    public function GuzzleCURL() {
+    public function GuzzleCURL($method = 'POST') {
         $url = $this->serverUrl . $this->apiurl;
         $client = new GuzzleHttp\Client();
         $data = json_encode($this->body);
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
-        $header = array_merge($main_header, $this->header_info);
+        $header = $this->header_info;
+        if ($this->is_header_merge) {
+            $header = array_merge($main_header, $this->header_info);
+        }
         //var_dump($header);die;
         $postData = [
-            RequestOptions::JSON => $this->body,
             RequestOptions::HEADERS => $header
         ];
-        $resp = $client->request('POST', $url, $postData);
-        //var_dump(resp);die;
+        if ($method == 'POST') {
+            $postData = [
+                RequestOptions::JSON => $this->body,
+                RequestOptions::HEADERS => $header
+            ];
+        }
+        $resp = null;
+        $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
+        $log_model->vendor_code = $this->vendor_code;
+        $log_model->url = $url;
+        $log_model->request = $data;
+        try {
+            $resp = $client->request($method, $url, $postData);
+            $log_model->response = json_encode($resp->getBody()->getContents());
+            $resp->getBody()->rewind();
+            $log_model->save();
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $responseData = '';
+            if (!empty($e->getResponse())) {
+                $responseData = json_decode($e->getResponse()->getBody()->getContents());
+                $e->getResponse()->getBody()->rewind();
+            }
+            $log_model->response = !empty($responseData->message) ? $responseData->message : '';
+            $log_model->save();
+            throw $e;
+        } catch (\Throwable $ex) {
+            $log_model->response = !empty($ex->getMessage()) ? $ex->getMessage() : '';
+            $log_model->save();
+        }
+
+        if ($this->return_actual) {
+            return $resp;
+        }
         return $resp->getBody();
     }
 
@@ -54,6 +89,8 @@ class WebApi {
 //    }
 
     public function PHPCURL() {
+        $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $url = $this->serverUrl . $this->apiurl;
         $data = $this->body;
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
@@ -67,16 +104,16 @@ class WebApi {
         if ($this->return_actual) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         }  // Skip SSL Verification
-        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
+        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Everest\Apache2454\conf\sapcerts\cacert.pem');
         $result = curl_exec($ch);
         curl_close($ch);
         $res = json_decode($result);
-        $log_model = new TblPortalDataPostLog();
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;
         $log_model->request = $data;
         $log_model->response = $result;
+        $log_model->updated_at = date('Y-m-d H:i:s');
         $log_model->save();
         if ($this->return_actual) {
             return $result;
@@ -118,6 +155,7 @@ class WebApi {
 //        die;
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
+        $log_model->created_at = date('Y-m-d H:i:s');
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;

@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * TblVehicleTripSearch represents the model behind the search form about `app\modules\tankermovement\models\TblVehicleTrip`.
@@ -19,8 +20,8 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active'], 'safe'],
-                [['is_active'], 'integer'],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe'],
+            [['is_active'], 'integer'],
         ];
     }
 
@@ -40,8 +41,8 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code',
+        $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status', 't.driver_name', 't.mobile_no',
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip',
             'challan_no' => "STUFF((
           SELECT ',' + d.challan_no
           FROM tbl_bmc_milk_dispatch d WHERE d.trip_code=t.trip_code
@@ -64,7 +65,33 @@ class TblVehicleTripSearch extends TblVehicleTrip {
 
         $this->load($params);
         $query->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcMilkDispatchCode', 'bmcMilkDispatchCode.bmcMilkDispatchTxnCode']);
-        Yii::$app->general->filterByOrg($query, $this, 't', 't', 't');
+
+        $plants = !empty($this->f_plant_code) ? $this->f_plant_code : (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : '');
+        $mccs = !empty($this->f_mcc_code) ? $this->f_mcc_code : (!empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : '');
+        $bmcs = !empty($this->f_bmc_code) ? $this->f_bmc_code : (!empty(Yii::$app->session->get('BMC')) ? explode(',', Yii::$app->session->get('BMC')) : '');
+
+        if (!empty($bmcs) || !empty($mccs) || !empty($plants)) {
+            $conditions = ['or'];
+            if (!empty($bmcs)) {
+                $conditions[] = ['and', ['in', 'source_org_code', $bmcs], ['source_org_type' => 'bmc']];
+            } else if (!empty($mccs)) {
+                $bmcData = TblDcsBmc::find()->select('bmc_code')->where(['mcc_plant_code' => $mccs])->column();
+                $conditions[] = ['and', ['in', 'source_org_code', $bmcData], ['source_org_type' => 'bmc']];
+            } else if (!empty($plants)) {
+                $conditions[] = ['and', ['in', 'source_org_code', $plants], ['source_org_type' => 'plant']];
+            }
+
+            $subQuery = TblVehicleTripDetail::find()
+                    ->select(new \yii\db\Expression(1))
+                    ->where('tbl_vehicle_trip_detail.vehicle_trip_code = t.vehicle_trip_code')
+                    ->andWhere($conditions);
+
+            $query->andWhere(['exists', $subQuery]);
+        }
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['t.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+        $query->andFilterWhere(['t.union_code' => $this->f_union_code]);
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -74,16 +101,25 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $query->andFilterWhere(['<=', 't.transaction_date', $to_date]);
         }
+        if(empty($this->trip_status)){
+            $query->andWhere(['not', ['t.trip_status' => 'closed']]);
+        }
+
         $query->andFilterWhere(['=', 't.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);
         $query->andFilterWhere([
             't.is_active' => $this->is_active,
+            'tbl_transporter.transporter_code' => $this->transporter_code,
+            't.vehicle_code' => $this->vehicle_code,
+            't.is_auto_trip' => $this->is_auto_trip,
+            't.trip_status' => $this->trip_status,
         ]);
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
-                ->andFilterWhere(['like', 't.trip_status', $this->trip_status])
-                ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode]);
+                ->andFilterWhere(['like', 't.trip_sub_status', $this->trip_sub_status])
+                ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode])
+                ->andFilterWhere(['like', 't.driver_name', $this->driver_name]);
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code']);
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name' , 't.mobile_no']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);
         return $dataProvider;
     }

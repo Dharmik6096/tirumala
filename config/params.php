@@ -37,7 +37,8 @@ $eipl_params = [
     'client_url' => 'http://clients.everestinstruments.com/clients/',
     'soap_api_url' => 'http://103.210.72.119/AMCUService/Service.asmx?WSDL',
     'FTPDirPath' => '/SAPFILES/',
-    'google_map_api_key' => 'AIzaSyD78APuRJaxdjFBBSJjKag_CD2tWXSrjhE',
+    //'google_map_api_key' => 'AIzaSyD78APuRJaxdjFBBSJjKag_CD2tWXSrjhE',
+    'google_map_api_key' => 'AIzaSyAKI  qWEqIqqF-IZt8_7WqRjxIUUDR0yKjc',
     'data_exchange_vendor_code' => 'EIPLMDPL',
     'attachment_server' => 'localhost',
     'data_exchange_un' => 'umang-admin',
@@ -45,6 +46,10 @@ $eipl_params = [
     'document_upload' => 'web/document_upload/',
     'banner_upload' => 'web/uploads/banner_upload/',
     'import_path' => 'web/import/',
+    'feedback_upload' => '/web/uploads/feedback_upload/',
+    'sap_data_files' => '/web/sap_data_files/',
+    'payment_xml_upload' => '/web/uploads/payment_xml_upload/',
+    'data_exchange_url' => 'http://www.w3.org/2003/05/soap-envelope',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */
 

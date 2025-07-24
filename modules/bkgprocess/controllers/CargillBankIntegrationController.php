@@ -25,7 +25,7 @@ class CargillBankIntegrationController extends Controller {
     }
 
     public function actionUploadPaymentData() {
-
+        $error = ['system error', 'no merchant', 'insufficient funds'];
         $master_data = [];
         $paymentTransaction = new TblPaymentTransaction();
         $paymentTransactiondata = $paymentTransaction->getCargillPendingData();
@@ -57,14 +57,20 @@ class CargillBankIntegrationController extends Controller {
                     $api->body = $body;
                     $api->return_actual = TRUE;
                     $api->header_info = $main_header;
-                    $curl = $api->ExchangeDataCurl();
-
-                    $response = json_decode($curl, true);
+                    $retry_count = 0;
+                    for ($i=0; $i <= 2; $i++) { 
+                        $curl = $api->ExchangeDataCurl();
+                        $response = json_decode($curl, true);
+                        $retry_count++;
+                        if(!in_array(strtolower($response['statusDescription']), $error)){
+                            break;
+                        }
+                    }
                     if (strtolower($type) != 'slips') {
                         $this->ReverseUpdate($response, $payment);
                     } else {
                         $condition = ['file_path' => $payment['TransactionID'], 'union_bank_payment_code' => $payment['union_bank_payment_code'], 'file_name' => $fileName, 'status' => 1];
-                        $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank'];
+                        $updateData = ['status' => 2, 'file_status' => 'success', 'file_status_desc' => 'transaction sent to bank', 'retry_count' => $retry_count];
                         $bank_log->updateStatus($condition, $updateData);
                     }
                 } catch (\Throwable $ex) {
@@ -112,7 +118,7 @@ class CargillBankIntegrationController extends Controller {
                     $this->ReverseUpdate($response, $data);
                 } catch (\Throwable $ex) {
                     //$logData->save(false);
-                  //  var_dump($ex);
+                    //  var_dump($ex);
                 }
             }
         }
@@ -143,6 +149,12 @@ class CargillBankIntegrationController extends Controller {
     }
 
     public function prepareJson($payment) {
+        $PTR = 'AMCS ' . $payment['bmc_short_name'] . ' ' . $payment['month_name'] . ' ' . $payment['pay_cycle'];
+        $CusNarration = 'CargMilk ' . $payment['month_name'] . ' ' . $payment['pay_cycle'];
+        if ($payment['TransactionType'] != 'SLIPS') {
+            $PTR .= ' ' . $payment['TransactionID'];
+            $CusNarration .= ' ' . $payment['TransactionID'];
+        }
         $params = yii::$app->params['CARGILL_BANK_INTEGRATION'];
         $body = [];
         $body['SecurityToken'] = $params['security_token'];
@@ -161,8 +173,9 @@ class CargillBankIntegrationController extends Controller {
         $body['DebitAccName'] = $payment['DebitAccName'];
         $body['ValueDate'] = $payment['ValueDate'];
         $body['TransactionType'] = $payment['TransactionType'];
-        $body['PTR'] = 'Fund Transfer';
+        $body['PTR'] = $PTR;
         $body['SecNo'] = 'SEC_1';
+        $body['CusNarration'] = $CusNarration;
 
         $request_json = json_encode($body);
 

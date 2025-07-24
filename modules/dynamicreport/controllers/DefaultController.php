@@ -8,6 +8,7 @@ use app\modules\dynamicreport\Dynamicreport;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Json;
+use app\modules\usermanagement\models\User;
 
 /**
  * Default controller for the `dynamicreport` module
@@ -70,6 +71,10 @@ class DefaultController extends \app\controllers\ChildController {
     }
 
     private function LoadReport($model) {
+        $config = is_object($this->data['config']) ? (array) $this->data['config'] : $this->data['config'];
+        if (!empty($config['bkg_export']) && empty($this->data['output_type']) && !User::canRoute('misreports/reports/dynamic-live-report-generation')) {
+            $this->data['output_type'] = $model->output_type = 'BACKGROUND';
+        }
         if (isset($model->union_code) && empty($model->union_code)) {
             $model->union_code = !empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : 0;
         }
@@ -100,23 +105,31 @@ class DefaultController extends \app\controllers\ChildController {
             $controls[$value] = empty($model->{$value}) ? '0' : $model->{$value};
         }
         $sp_name = $this->data['sp_name'];
-        $output = \Yii::$app->general->getSpData($sp_name, $controls);
-        $this->output = $output;
-        if (!empty($output)) {
-            $attr = '';
-            foreach ($output[0] as $att => $value) {
-                $attr .= "'" . $att . "',";
-            }
-            $this->dataProvider = new ArrayDataProvider([
-                'allModels' => $output,
-                'pagination' => false,
-                'sort' => [
-                    'defaultOrder' => [],
-                    'attributes' => [
-                        $attr
+        if ($model->output_type != 'BACKGROUND') {
+            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            $this->output = $output;
+            if (!empty($output)) {
+                $attr = '';
+                foreach ($output[0] as $att => $value) {
+                    $attr .= "'" . $att . "',";
+                }
+                $this->dataProvider = new ArrayDataProvider([
+                    'allModels' => $output,
+                    'pagination' => false,
+                    'sort' => [
+                        'defaultOrder' => [],
+                        'attributes' => [
+                            $attr
+                        ],
                     ],
-                ],
-            ]);
+                ]);
+            }
+        } else {
+            if ($this->RegisterReportRequest('mis', $this->data, $controls)) {
+                $this->output = 'Your Request has been submitted for Report Data.<br/>You can download the file from My Report Request screen after some time.';
+            } else {
+                $this->output = 'Error While Request Submit.';
+            }
         }
         if (isset($model->output_type) && $model->output_type == 'DOWNLOAD') {
             $this->downloadData();
@@ -218,6 +231,10 @@ class DefaultController extends \app\controllers\ChildController {
         }
         echo "</table>";
         exit();
+    }
+
+    public function actionDynamicLiveReportGeneration() {
+        
     }
 
 }

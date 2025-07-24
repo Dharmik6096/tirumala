@@ -79,6 +79,8 @@ class Applicability extends \yii\base\Module {
     public $with_wef_date = true;
     public $update_applicability = FALSE;
     public $rateMccCode = [];
+    public $with_applicable_code = false;
+    public $load_data_on_apply_to_checkbox = false;
 
     /**
      * @inheritdoc
@@ -201,6 +203,7 @@ class Applicability extends \yii\base\Module {
                     'login_type' => $this->login_type,
                     'is_bulk_notification' => $this->is_bulk_notification,
                     'periodic_applicability' => $this->periodic_applicability,
+                    'load_data_on_apply_to_checkbox' => $this->load_data_on_apply_to_checkbox,
         ]);
     }
 
@@ -609,7 +612,7 @@ class Applicability extends \yii\base\Module {
 
     public function loadUnionDcs($dcs = [], $union_code, $returnQuery = false) {
         //var_dump($dcs); exit;
-        $dcsList = TblDcs::find()->joinWith(['societyCodes'])->where(['tbl_dcs.union_code' => $union_code, 'is_active' => 1])->andWhere(['not in', 'tbl_dcs.dcs_code', $dcs])->andWhere(['not', ['tbl_society_codes.bmc_code' => 0]])->andWhere(['not', ['tbl_society_codes.bmc_code' => null]]);
+        $dcsList = TblDcs::find()->leftJoin('tbl_society_codes', 'tbl_society_codes.dcs_code = tbl_dcs.dcs_code')->where(['tbl_dcs.union_code' => $union_code, 'is_active' => 1])->andWhere(['not in', 'tbl_dcs.dcs_code', $dcs])->andWhere(['not', ['tbl_society_codes.bmc_code' => 0]])->andWhere(['not', ['tbl_society_codes.bmc_code' => null]]);
         if (!empty(Yii::$app->session->get('Dcs'))) {
             $dcsList->andWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
@@ -1098,9 +1101,14 @@ class Applicability extends \yii\base\Module {
         $field_name = $this->field_name;
         if ($this->is_bulk_notification) {
             $mcc_field_name = $this->mcc_field_name;
+        } else if ($this->with_applicable_code) {
+            $mcc_field_name = $this->mcc_field_name;
         } else
             $mcc_field_name = ($model->hasAttribute('dcs_code')) ? 'dcs_code' : $this->mcc_field_name;
-        $query = $this->model->find()->where([$mcc_field_name => $model->{$mcc_field_name}, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
+        $query = $this->model->find()->where([$mcc_field_name => $model->{$mcc_field_name}, $field_name => $this->field_value]);
+        if ($this->with_wef_date) {
+            $query->andWhere(['wef_date' => $model->wef_date]);
+        }
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
                 $query->andWhere([$key => $model->{$key}]);

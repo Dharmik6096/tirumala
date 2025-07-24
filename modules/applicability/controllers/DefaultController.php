@@ -16,6 +16,8 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\payment\models\TblPaymentCycleApplicability;
+use yii\db\Query;
 
 /**
  * Default controller for the `applicability` module
@@ -119,6 +121,7 @@ class DefaultController extends Controller {
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
         $isCheck = Yii::$app->request->post('checkdate');
         $periodic_applicability = Yii::$app->request->post('periodic_applicability');
+        $is_bulk_notification = Yii::$app->request->post('is_bulk_notification');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
             if ($model->hasAttribute('wef_date')) {
@@ -166,7 +169,11 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['USER']):
                 $userModel = new User();
-                $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
+                if (isset($is_bulk_notification) && ($is_bulk_notification == TRUE)) {
+                    $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes);
+                } else {
+                    $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
+                }
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();
@@ -200,4 +207,42 @@ class DefaultController extends Controller {
         return Json::encode(['status' => 'success', 'data' => $routeList]);
     }
 
+    public function actionLoadBmc() {
+        $post = Yii::$app->request->post();
+        $className = Yii::$app->path->getModel($post['class_name']);
+        $tableName = $className::tableName();
+        $unionCode = $post['union_code'] ? $post['union_code'] : '';
+        $bmcList = [];
+        if (!empty($post['selected_apply_to'])) {
+            $selectedApplyTo = json_decode($post['selected_apply_to']);
+                $query = (new Query())
+                    ->select('B.*')
+                    ->from(['B' => 'tbl_bmc'])
+                    ->innerJoin(
+                        ['ct' => (new Query())
+                            ->select(['customer_type', 'union_code'])
+                            ->from('tbl_customer_type')
+                            ->where(['is_applicability' => 1])
+                            ->andWhere(['union_code' => $unionCode])
+                            ->andWhere(['in', 'customer_type', $selectedApplyTo])
+                        ],
+                        'ct.union_code = B.union_code'
+                    )
+                    ->leftJoin(
+                        ['A' => $tableName],
+                        'B.bmc_code = A.applicable_code AND A.' . $post['field_name'] . ' = \'' . addslashes($post['field_code']) . '\' AND A.applicable_type = ct.customer_type'
+                    )
+                    ->where(['A.applicable_code' => null]);
+                    foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
+                        if ($value = Yii::$app->session->get($sessionKey)) {
+                            $query->andWhere(["B.$column" => explode(',', $value)]);
+                        }
+                    }
+                    $bmcList = $query->all();
+                    $bmcList = ArrayHelper::map($bmcList, 'bmc_code', function($bmcList) {
+                        return ($bmcList['ref_code'] . ' - ') . $bmcList['bmc_name'];
+                    });
+        }
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
+    }
 }

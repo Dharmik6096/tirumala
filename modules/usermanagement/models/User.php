@@ -6,8 +6,12 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use webvimark\modules\UserManagement\UserManagementModule;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblFederations;
 
 class User extends \webvimark\modules\UserManagement\models\User {
+
+    public $otp_code;
 
     /**
      * @inheritdoc
@@ -18,13 +22,13 @@ class User extends \webvimark\modules\UserManagement\models\User {
             [['role'], 'required', 'on' => ['newUser']],
             [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
 //			['username', 'unique'],
-            ['user_code', 'unique'],
+            [['user_code', 'employee_id'], 'unique'],
             ['username', 'trim'],
             [['status', 'email_confirmed', 'is_active'], 'integer'],
             ['email', 'email', 'except' => ['DeactiveUser']],
             ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
             ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id'], 'safe'],
+            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code', 'last_password_updated_at', 'date_of_joining'], 'safe'],
             ['bind_to_ip', 'trim'],
             [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
             [['mobile_no'], function ($attribute, $params) {
@@ -35,6 +39,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
 //            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
             ['password', 'match', 'pattern' => '/^\S*$/', 'message' => Yii::t('app', 'Space not allowed in Password.')],
             ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
+            ['password', 'validatePasswordStrength', 'on' => ['newUser', 'passwordReset']],
             ['repeat_password', 'compare', 'compareAttribute' => 'password'],
             [['allow_app_login'], 'default', 'value' => 0],
             [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
@@ -52,6 +57,8 @@ class User extends \webvimark\modules\UserManagement\models\User {
                             return $('#user-secondary_parent').val() != ''; 
                         }"],
             [['employee_id'], 'string', 'max' => 14],
+            [['username', 'password', 'repeat_password', 'otp_code'], 'required', 'on' => 'verifyOtp'],
+            [['username'], 'required', 'on' => 'forgetPsd'],
         ];
     }
 
@@ -85,6 +92,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             'portal_type' => UserManagementModule::t('back', 'Portal Type'),
             'designation_code' => UserManagementModule::t('back', 'Designation'),
             'employee_id' => UserManagementModule::t('back', 'Employee Id'),
+            'date_of_joining' => UserManagementModule::t('back', 'Date Of Joining'),
         ];
     }
 
@@ -94,6 +102,22 @@ class User extends \webvimark\modules\UserManagement\models\User {
                     return $array['name'] . '-' . $array['department'];
                 });
         return $list;
+    }
+
+    public function validatePasswordStrength($attribute, $params) {
+         if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
+             $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
+         } 
+        if ($this->scenario === 'passwordReset') {
+            if($this->validatePassword($this->password)){
+                $this->addError('password', 'New password cannot be the same as the old password.');
+                return;
+            }
+            if($this->password === preg_replace('/^01#/', '', $this->username)){
+                $this->addError('password', 'New password cannot be the same as the username.');
+                return;
+            }
+        }
     }
 
     public function getLoginDetails() {
@@ -165,7 +189,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
                     $mobileNo = !empty($data->mobile_no) ? $data->mobile_no : '';
                     return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '');
                 });
-                
+
         return $user;
     }
 
@@ -177,6 +201,43 @@ class User extends \webvimark\modules\UserManagement\models\User {
                 });
 
         return $user;
+    }
+
+    public function getUserId($id, $type) {
+        $query = $this->find()
+                ->where(['is_active' => 1])
+                ->andWhere(['or', ['id' => $id], ['user_code' => $id], ['employee_id' => $id]]);
+        if ($type == 'DCS') {
+            $query->andWhere(['user_type_id' => 7]);
+        }
+        $userData = $query->one();
+        return $userData ?: null;
+    }
+
+    public static function getUserOrganizations($userID) {
+        $org = \app\models\TblUserOrganizationMapping::find()->where(['user_id' => $userID])->all();
+        $values = [];
+        foreach ($org as $val) {
+            switch ($val->organization_type) {
+                case 'UNION' :
+                    $union = TblUnions::find()->where(['union_code' => $val->organization_code])->select('union_name')->one();
+                    $values[$val->organization_code] = $union->union_name;
+                    break;
+                case 'DCS' :
+                    $dcs = TblDcs::find()->where(['dcs_code' => $val->organization_code])->select('dcs_name')->one();
+                    $values[$val->organization_code] = $dcs->dcs_name;
+                    break;
+                case 'FEDERATION' :
+                    $fed = TblFederations::find()->where(['federation_code' => $val->organization_code])->select('federation_name')->one();
+                    $values[$val->organization_code] = $fed->federation_name;
+                    break;
+                default:
+                    //$national = \app\models\TblNational::find()->where(['national_code'=>$val->organization_code])->select('national_name')->one();
+                    $values[$val->organization_code] = 'PCDF';
+                    break;
+            }
+        }
+        return $values;
     }
 
 }

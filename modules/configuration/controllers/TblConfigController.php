@@ -89,6 +89,7 @@ class TblConfigController extends \app\controllers\ChildController {
         $configModel = new TblConfig();
         $masterData = $configModel->getConfigData($code);
         $model = [];
+        $saveModel = [];
         foreach ($masterData as $m) {
             $saveModel = new TblUnionConfigResult();
             $saveModel->config_code = $m->config_code;
@@ -148,11 +149,14 @@ class TblConfigController extends \app\controllers\ChildController {
                 return Json::encode(ActiveForm::validate($saveModel));
             }
         }
-        return $this->renderAjax('_input_form', [
-                    'masterData' => $masterData,
-                    'saveModel' => $saveModel,
-                    'model' => $model,
-        ]);
+        if(!empty($model)){
+            return $this->renderAjax('_input_form', [
+                        'masterData' => $masterData,
+                        'saveModel' => $saveModel,
+                        'model' => $model,
+            ]); 
+        }
+       
     }
 
     public function actionConfigProcessList() {
@@ -160,9 +164,10 @@ class TblConfigController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
+                $configFor = explode(',', $parents[0]);
                 $inputAllow = isset($parents[1]) ? $parents[1] : '';
                 $config = new TblConfig();
-                $data = $config->getProcessList($parents[0], $inputAllow);
+                $data = $config->getProcessList($configFor, $inputAllow);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -176,7 +181,7 @@ class TblConfigController extends \app\controllers\ChildController {
     public function actionPaymentConfigCreate($id) {
         $this->model = new TblConfig();
         $this->model->union_code = $id;
-        $this->model->config_for = 'BMC';
+        $this->model->config_for = 'BMC,PLANT';
         $this->viewFile = 'payment_create';
         $this->model->scenario = 'PaymentConfig';
         if ($this->model->load(Yii::$app->request->post())) {
@@ -185,7 +190,10 @@ class TblConfigController extends \app\controllers\ChildController {
                 return $this->{$transaction}();
             }
         }
-        return $this->customRender();
+        return $this->render('payment_create', [
+                    'model' => $this->model,
+                    'config_param' => $this->model->config_for
+        ]);
     }
 
     public function actionPaymentConfigData() {
@@ -195,23 +203,25 @@ class TblConfigController extends \app\controllers\ChildController {
         $plant = Yii::$app->request->get('plant');
         $mcc = Yii::$app->request->get('mcc');
         $bmc = Yii::$app->request->get('bmc');
+        $org_code = $code == 'BMC' ? $bmc : $plant;
         $configModel = new TblConfig();
         $configModel->config_for = $code;
-        $configModel->config_type = 'CONTROL';
+        $configModel->config_type = array('CONTROL', 'CONFIG');
         $configModel->process_name = $process;
         $configModel->is_input_config = 1;
         $masterData = $configModel->getConfigDetail();
         $saveModel = [];
         $model = [];
+
         foreach ($masterData as $m) {
             $saveModel = new TblConfigMapping();
             $saveModel->config_code = $m->config_code;
             $saveModel->union_code = $unionCode;
             $saveModel->plant_code = $plant;
-            $saveModel->mcc_plant_code = $mcc;
-            $saveModel->bmc_code = $bmc;
-            $saveModel->org_code = $bmc;
-            $saveModel->org_type = 'BMC';
+            $saveModel->mcc_plant_code = !empty($mcc) ? $mcc : '';
+            $saveModel->bmc_code = !empty($bmc) ? $bmc : '';
+            $saveModel->org_code = $org_code;
+            $saveModel->org_type = $code;
             $saveModelData = $saveModel->getExistConfig();
             if (!empty($saveModelData)) {
                 $model[] = $saveModelData;
@@ -245,8 +255,9 @@ class TblConfigController extends \app\controllers\ChildController {
                 $saveModel->plant_code = $value['plant_code'];
                 $saveModel->mcc_plant_code = $value['mcc_plant_code'];
                 $saveModel->bmc_code = $value['bmc_code'];
-                $saveModel->org_code = $value['bmc_code'];
-                $saveModel->org_type = 'BMC';
+                $saveModel->org_code = $value['org_code'];
+                $saveModel->org_type = $value['org_type'];
+                $saveModel->config_for = $value['org_type'];
 
                 $master[] = $saveModel;
             }

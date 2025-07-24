@@ -58,7 +58,12 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }, 'filter' => false],
-        ['attribute' => 'vendor_name'],
+        ['attribute' => 'vendor_master_code','label' => Yii::t('app', 'Vendor Code'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_code');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'vendor_master_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name');
+        }, 'visible' => true, 'filter' => true],
 ];
 
 $grid_option = [
@@ -67,6 +72,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'delete' => ['option' => 'plant_dispatch_code,plant_dispatch_code,/product/tbl-plant-dispatch/delete,checkStatus()'],
     ]
 ];
 

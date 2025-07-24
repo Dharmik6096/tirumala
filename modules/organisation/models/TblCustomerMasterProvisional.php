@@ -115,6 +115,7 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'customer_code', 'firstname', 'mobile_no', 'customer_name', 'plant_code', 'mcc_plant_code', 'address', 'customer_type', 'bmc_code'], 'required'],
                 [['customer_name', 'address', 'state_code', 'process_approval_code', 'district_code', 'rate_chart_code', 'billing_payment_cycle', 'detail_code', 'over_head', 'ccenter_code', 'customer_code', 'bmc_code', 'old_bmc_code', 'bank_code', 'sub_district_code', 'old_mcc_plant_code', 'village_code', 'hamlet_code', 'vendor_code', 'local_name', 'local_firstname', 'local_lastname', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'remarks', 'animal_type_code', 'distance_from_mcc', 'created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'old_route_code', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix', 'contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code', 'x_col2', 'data_post_id', 'data_post_status', 'status', 'picked_datetime', 'resp_status', 'resp_desc', 'branch_code', 'response_datetime', 'morning_kms', 'evening_kms', 'originating_type', 'firstname', 'lastname'], 'safe'],
+                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
                 [['animal_type_code', 'auto_code'], 'integer'],
                 [['status'], 'default', 'value' => 'Pending'],
                 [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
@@ -152,6 +153,9 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => true],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE],
                 [['ts_code_m', 'ts_code_e'], 'number', 'max' => 10],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
     }
 
@@ -236,6 +240,8 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'), 
+            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
         ];
     }
 

@@ -22,6 +22,15 @@ class Clienterp extends \yii\base\Module {
             'vka' => [
                 'class' => 'app\modules\clienterp\vka\Vka',
             ],
+            'cargill' => [
+                'class' => 'app\modules\clienterp\cargill\Cargill',
+            ],
+            'devmilk' => [
+                'class' => 'app\modules\clienterp\devmilk\Devmilk',
+            ],
+            'nddb' => [
+                'class' => 'app\modules\clienterp\nddb\Nddb',
+            ],
         ];
     }
 

@@ -9,7 +9,6 @@ use yii\web\View;
 /* @var $form yii\widgets\ActiveForm */
 
 $readonly = $type == 'create' ? FALSE : TRUE;
-$readonlyClass = $type == 'create' ? '' : 'disabled';
 ?>
 
 <?php
@@ -42,18 +41,23 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilktransfer-destination_type,tblmilktransfer-union_code,tblmilktransfer-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
     </div>
-    <div class="col-sm-2 <?= $readonlyClass ?>">
-        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, FALSE, $readonly); ?>
     </div>
-    <div class="col-sm-1 shift">
+    <div class="col-sm-1">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift', true, $readonly, 'from_shift'); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-2 receipt_hide  <?= $readonlyClass ?>">
-        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, FALSE, $readonly); ?>
     </div>
-    <div class="col-sm-1 receipt_hide shift">
+    <div class="col-sm-1">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift', true, $readonly, 'to_shift'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'transaction_datetime', '', date('d-m-Y'), FALSE, $readonly); ?> 
+    </div>
+    <div class="col-sm-1">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
     </div>
     <div class="col-sm-1">
         <?= $form->field($model, 'vehicle_no')->textInput(['readOnly' => $readonly]) ?>
@@ -73,6 +77,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'remarks')->textInput() ?>
     </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'is_rechilling', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -83,15 +90,3 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<?php
-$script = "
-    $('.receipt_hide').hide();
-    $(document).on('change','#tblmilktransfer-transfer_type', function() {
-    $('.receipt_hide').hide();
-    var receipt=$('#tblmilktransfer-transfer_type').val();
-        if(receipt !='' && receipt=='0'){
-         $('.receipt_hide').show();
-        } 
-    });";
-$this->registerJs($script, View::POS_END, 'panel-before-hide');
-?>

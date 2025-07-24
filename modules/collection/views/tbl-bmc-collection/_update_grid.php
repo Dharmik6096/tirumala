@@ -85,21 +85,21 @@ $form = ActiveForm::begin([
             ['attribute' => 'milk_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
-                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
+                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE) . '</span>';
             },
         ],
             ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
-                return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
+                return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE) . '</span>';
             },
         ],
         //        ['attribute' => 'milkqtype', 'filter' => false],
         ['attribute' => 'qty',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
-            },'options' => ['class' => 'w9'],
+                return '<span class=\'rtpl_validate qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+            }, 'options' => ['class' => 'w9'],
         ],
             ['attribute' => 'fat',
             'format' => 'raw',
@@ -252,13 +252,14 @@ $script = "
          var milk_quality_type = $('#tblbmccollection-'+tr_key+'-milk_quality_type_code').val();
          var union = $('#tblbmccollection-'+tr_key+'-union_code').val();
          var bmc = $('#tblbmccollection-'+tr_key+'-bmc_code').val();
+         var qty = $('#tblbmccollection-'+tr_key+'-qty').val();
          var valid_code= code;
          
-        if(code != '' && type != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != '' && milk_quality_type !=''){
+        if(code != '' && type != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != '' && milk_quality_type !='' && qty !=''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':code,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'valid_code':valid_code},
+                data: {'dcs_code':code,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'valid_code':valid_code,'qty':qty},
                 success: function(data) {   
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success')
@@ -313,13 +314,15 @@ $script = "
         var fat = $('#tblbmccollection-'+tr_key+'-fat').val();
         var snf = $('#tblbmccollection-'+tr_key+'-snf').val();
         var clr = $('#tblbmccollection-'+tr_key+'-clr').val();
+        var bmcCode = $('#tblbmccollectionsearch-bmc_code').val();
         var is_clr_input = $('#tblbmccollection-'+tr_key+'-is_clr_input').val();
+         var type = $('#tblbmccollection-'+tr_key+'-customer_type').val();
 
             if((is_clr_input ==0 && fat !='' && snf !='') || (is_clr_input ==1 && fat !='' && clr !='')){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input},
+                    data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode,'customer_type':type},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')                       
@@ -327,7 +330,7 @@ $script = "
                             if(is_clr_input==0){
                                 $('#tblbmccollection-'+tr_key+'-clr').val(obj.data.toFixed(2));
                             }else{
-                                $('#tblbmccollection-'+tr_key+'-snf').val(obj.data.toFixed(2));
+                                $('#tblbmccollection-'+tr_key+'-snf').val(obj.data);
                             }
                             rtpl(tr_key);
                         }

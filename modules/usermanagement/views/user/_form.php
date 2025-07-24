@@ -46,18 +46,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
     </div>
-    <?php if (User::hasPermission('editUserEmail')): ?>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
-        </div>
-    <?php endif; ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
+    </div>
 
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
     </div>
     <?php if ($isNewRecord): ?>
         <div class="col-sm-2">
-            <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+            <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off', 'class' => 'form-control check_password_strength']) ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
@@ -114,6 +112,7 @@ $form = ActiveForm::begin([
           ]
           ])->label(true); */
         ?>
+        <div class="clearfix"></div>
         <div class="col-sm-2 multiple">
             <?php
             echo $form->field($model, 'role')
@@ -123,6 +122,9 @@ $form = ActiveForm::begin([
     <?php endif; ?>
     <div class="col-sm-2">
         <?= $form->field($model, 'employee_id')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'date_of_joining'); ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

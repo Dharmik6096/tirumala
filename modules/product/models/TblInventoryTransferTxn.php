@@ -33,6 +33,8 @@ use app\modules\globalmaster\models\TblUnits;
  */
 class TblInventoryTransferTxn extends \app\models\ChildModel {
 
+    public $sap_vendor_code;
+
     /**
      * @inheritdoc
      */
@@ -46,7 +48,7 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
     public function rules() {
         return [
             [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
-            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no'], 'safe'],
+            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted', 'sap_vendor_code'], 'safe'],
             [['available_stock', 'qty'], 'number'],
             [['unit_code', 'originating_type'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
@@ -62,6 +64,13 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     return $batchNoWiseInventory == 1;
                 },
+            ],
+            [['product_code'],
+                'unique',
+                'targetAttribute' => array_merge(
+                        ['inventory_transfer_code', 'product_code'], Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? ['sap_batch_no'] : []
+                ),
+                'message' => 'Product already exists for this transaction.'
             ],
         ];
     }
@@ -89,6 +98,7 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'is_stock_posted' => Yii::t('app', 'Is Stock Posted'),
         ];
     }
 

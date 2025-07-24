@@ -96,14 +96,23 @@ class TblWeightCollection extends \app\models\ChildModel {
                 [['rtpl', 'amount', 'purchase_rate_code'], 'safe'],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc']);
+                        if (strtoupper($this->customer_type) == 'MEMBER') {
+                            Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member', 'sync_lock_member']);
+                        } else {
+                            Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc']);
+                        }
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync']],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'bmc_lock');
+                        if (strtoupper($this->customer_type == 'MEMBER')) {
+                            Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
+                        } else {
+                            Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'bmc_lock');
+                        }
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync']],
+                [['date_time_of_collection'], 'pastDateValidate', 'on' => ['androidsync']],
         ];
     }
 
@@ -250,6 +259,13 @@ class TblWeightCollection extends \app\models\ChildModel {
             $routeCode = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
         }
         $this->route_code = !empty($routeCode) && $routeCode != 'N/A' ? $routeCode : $this->route_code;
+    }
+
+    public function pastDateValidate($attribute, $params) {
+        $date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : NULL;
+        if (!empty($date_time_of_collection) && ($date_time_of_collection > date('Y-m-d'))) {
+            $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
+        }
     }
 
 }

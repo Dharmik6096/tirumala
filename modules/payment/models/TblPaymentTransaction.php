@@ -2,6 +2,17 @@
 
 namespace app\modules\payment\models;
 
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
+use app\modules\payment\models\TblMemberPayment;
+use app\modules\payment\models\TblVspPayment;
+use app\modules\payment\models\TblMemberPaymentHistory;
+use app\modules\payment\models\TblVspPaymentHistory;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcs;
 use Yii;
 use yii\db\Expression;
 
@@ -59,10 +70,11 @@ class TblPaymentTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
-            [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'created_by', 'updated_by', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
-            [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
-            [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'created_at', 'updated_at', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code'], 'safe'],
+                [['dcs_payment_cycle_applicabilty_code', 'ack', 'dcs_payment_cycle_code', 'is_verified', 'member_count'], 'integer'],
+                [['union_code', 'code', 'type', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no'], 'string'],
+                [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate'], 'number'],
+                [['payment_transaction_code', 'name', 'is_file', 'file_id', 'file_datetime', 'disburse_date', 'payment_date', 'mobile_no', 'sms_log', 'sms_status', 'sms_timestamp', 'sms_msgid', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_approval_code', 'is_approved', 'approved_at', 'union_bank_payment_code', 'created_by', 'updated_by'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'file_name', 'ref_file_name'], 'safe'],
         ];
     }
 
@@ -107,6 +119,11 @@ class TblPaymentTransaction extends \app\models\ChildModel {
             'bank_account_no' => Yii::t('app', 'Bank Account No'),
             'is_verified' => Yii::t('app', 'Is Verified'),
             'member_count' => Yii::t('app', 'Member Count'),
+            'plant_code' =>  Yii::t('app', 'PLANT'), 
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'from_date' => Yii::t('app', 'From Date'),
+            'to_date' => Yii::t('app', 'To Date'),
         ];
     }
 
@@ -168,9 +185,9 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'right(pt.payment_transaction_code,2) as TxnCode',
                             'pt.final_amount as TxnAmount',
                             'ubp.bank_code as DebitBankCode',
-                            'ubp.branch_code as DebitBranchCode',
-                            'ubp.bank_account_no as DebitAccountNo',
-                            'ubp.account_holder_name as DebitAccName',
+                            'dbd.branch_code as DebitBranchCode',
+                            'dbd.bank_account_no as DebitAccountNo',
+                            'dbd.account_holder_name as DebitAccName',
                             'convert(varchar, getdate(), 12) ValueDate',
                             'case when b.old_bank_code=ubp.bank_code then \'CARG\' when lower(ISNULL(ubp.corporate_code,\'slips\'))=\'ceft\' then \'CEFT\' else \'SLIPS\' end as TransactionType',
                             'ba.auth_url',
@@ -180,9 +197,15 @@ class TblPaymentTransaction extends \app\models\ChildModel {
                             'ubp.corporate_code',
                             'pt.type',
                             'pt.union_bank_payment_code',
-                            'pt.union_code'
+                            'pt.union_code',
+                            'LEFT(CASE WHEN ISNULL([bmc].[bmc_short_name],\'\')=\'\' THEN [bmc].[bmc_name] ELSE [bmc].[bmc_short_name] END,4) as bmc_short_name',
+                            'LEFT(DATENAME(MONTH, pap.from_date), 3) as month_name',
+                            'CASE WHEN DAY(pap.from_date)=1 THEN \'1\' WHEN DAY(pap.from_date) in (11,16) THEN \'2\' ELSE \'3\' END AS pay_cycle',
                         ])
+                        ->innerJoin('tbl_payment_transaction_approval as pap', 'pap.payment_transaction_approval_code = pt.payment_transaction_approval_code and lower(approval_status)=\'approve\'')
+                        ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pap.bmc_code')
                         ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+                        ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.union_bank_payment_code = pt.union_bank_payment_code AND dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
                         ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
                         ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
                         ->where([
@@ -223,21 +246,134 @@ class TblPaymentTransaction extends \app\models\ChildModel {
 //                $memberPaymentModel->dcs_code = $data->dcs_code;
 //                $memberPaymentModel->union_code = $data->union_code;
                 $disburseCount = $memberPaymentModel->find()->select('count(*) as count,payment_status')
-                                ->where(['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
+                                ->where(['union_code' => $data->union_code, 'payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code])
                                 ->groupBy(['payment_status'])->asArray()->all();
                 $count = count($disburseCount);
-                if ($count == 1 && lower($disburseCount[0]['payment_status']) == 'disburse') {
+                if ($count == 1 && strtolower($disburseCount[0]['payment_status']) == 'disburse') {
                     Yii::$app->db->createCommand()
                             ->update('tbl_member_payment_summary', [
                                 'disburse_amount' => new Expression('final_amount'),
                                 'disburse_date' => $date,
                                 'payment_status' => 'Disburse',
-                                    ], ['union_code' => $data->union_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code, new Expression('LOWER(payment_status) = "sent"')])
+                                    ], ['union_code' => $data->union_code, 'payment_cycle_code' => $data->dcs_payment_cycle_code, 'dcs_code' => $data->dcs_code,'LOWER(payment_status)'  => "sent"])
                             ->execute();
                 }
             }
         }
         return;
     }
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
 
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+    
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'code']);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'code']);
+    }
+
+    public function updatePaymentMasterData($oldTransaction, $newPaymentTransaction, &$saveModel) {
+        if (!empty($oldTransaction)) {
+            $modelClass = strtolower($oldTransaction->type) === 'member' ? TblMemberPayment::class : TblVspPayment::class;
+            $HistoryModelClass = strtolower($oldTransaction->type) === 'member' ? TblMemberPaymentHistory::class : TblVspPaymentHistory::class;
+            $masterModel = $modelClass::find()->where(['payment_transaction_code' => $oldTransaction->payment_transaction_code])->one();
+            if(!empty($masterModel)){ 
+                $historyModel = new $HistoryModelClass();
+                Yii::$app->operation->history($masterModel, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $masterModel->payment_transaction_code = $newPaymentTransaction->payment_transaction_code;
+                $masterModel->beneficiary_name = $newPaymentTransaction->name;
+                $masterModel->bank_account_no = $newPaymentTransaction->bank_account_no;
+                $masterModel->disburse_date = NULL;
+                $masterModel->bank_status = NULL;
+                $masterModel->utr_no = NULL;
+                $saveModel[] = $masterModel;
+            }
+        }
+        return;
+    }
+    public function getTransactionPendingData()
+    {
+        $transactionGroup = $this->find()->alias('pt')
+            ->select([
+                'max(ubp.ftp_type) as ftp_type',
+                'max(ubp.ftp_server) as ftp_host',
+                'max(ubp.ftp_username) as ftp_username',
+                'max(ubp.ftp_password) as ftp_password',
+                'max(ubp.ftp_port) as ftp_port',
+                'max(ubp.reverse_ftp_path) as ftp_path',
+                'max(pt.union_code) as union_code',
+                'FORMAT(GETDATE(), \'yyyy-MM-dd\THH:mm:ss\') AS CrtDt',
+                'pt.file_name as FileID',
+                'max(ubp.corporate_code) as ClientId',
+                'count(payment_transaction_code) as NbOfTxs',
+                'sum(pt.final_amount) as CtrlSum',
+                'max(ubp.org_code) as OrgId'
+            ])
+            ->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = pt.bmc_code')
+            ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+            ->innerJoin('tbl_debit_bank_detail AS dbd', 'dbd.union_bank_payment_code = pt.union_bank_payment_code AND dbd.module_code = bmc.mcc_plant_code AND dbd.module_name = \'mcc\'')
+            ->innerJoin('tbl_bank_api_detail as ba', 'ubp.union_bank_payment_code = ba.union_bank_payment_code')
+            ->innerJoin('tbl_banks as b', 'b.bank_code = pt.bank_code')
+            ->where([
+                'pt.is_file' => 0,
+                'UPPER(ubp.integration_mode)' => 'XML',
+                'ubp.is_active' => 1,
+                'ba.is_active' => 1,
+                'pt.is_approved' => 1
+            ])
+            ->andWhere(['NOT', ['ISNULL(pt.file_name, \'\')' => '']])
+            ->orderBy(['pt.file_name' => SORT_DESC])
+            ->groupBy(['pt.file_name'])
+            ->limit(1)
+            ->asArray()
+            ->all();
+        return $transactionGroup;
+    }
+
+    public function getTransactionData($fileID){
+        return $this->find()
+            ->alias('pt')
+            ->select([
+                'pt.file_name as FileName',
+                'pt.code as ConsumerID',
+                'pt.payment_transaction_code as TransactionNo',
+                'pt.bank_account_no as CdtrAcct',
+                'pt.ifsc as CdtrIFSC',
+                'pt.name as CdtrName',
+                'COALESCE(\'\', \'\') as Remarks',
+                'COALESCE(\'\', \'\') as ActivityHeadCode',
+                'cast(pt.payment_date as date) as PmtDt',
+                'pt.final_amount as GrossAmt',
+                'pt.final_amount as NetAmt',
+            ])
+            ->innerJoin('tbl_union_bank_payment as ubp', 'ubp.union_bank_payment_code = pt.union_bank_payment_code')
+            ->where([
+                'pt.file_name' => $fileID,
+                'pt.is_file' => 0,
+                'UPPER(ubp.integration_mode)' => 'XML',
+                'ubp.is_active' => 1,
+                'pt.is_approved' => 1
+            ])
+            ->asArray()
+            ->all();
+    }
 }

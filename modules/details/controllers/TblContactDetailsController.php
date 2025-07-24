@@ -19,7 +19,7 @@ use app\modules\usermanagement\models\User;
  */
 class TblContactDetailsController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-contact-details'];
+    public $freeAccessActions = ['get-contact-details', 'contact-details-list'];
 
     /**
      * Lists all TblContactDetails models.
@@ -70,6 +70,8 @@ class TblContactDetailsController extends \app\controllers\ChildController {
             if (!$update) {
                 $this->model->setModel($module, $id, 0);
             }
+            $this->model->from_date = !empty($this->model->from_date) ? date('Y-m-d', strtotime($this->model->from_date)) : NULL;
+            $this->model->to_date = !empty($this->model->to_date) ? date('Y-m-d', strtotime($this->model->to_date)) : NULL;
             $modelSave[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['Contact Details', ($update) ? 'edit' : 'create']);
             if ($transaction == 'customRedirect') {
@@ -269,6 +271,44 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($data);
+    }
+
+    public function actionContactDetails(){
+        $response = [];
+        $module_code = Yii::$app->request->post()['module_code'];
+        $module_name = Yii::$app->request->post()['module_name'];
+        $contactDetail = TblContactDetails::find()->where(['module_code' => $module_code, 'module_name' => $module_name, 'is_default' => 1, 'is_active' => 1])->one();
+        if (!empty($contactDetail)) {
+            $response['status'] = 'success';
+            $response['data'] = $contactDetail;
+        }
+        return Json::encode($response);
+    }
+    
+    public function actionIndexOther() {
+        $searchModel = new TblContactDetailsSearch();
+        $dataProvider = $searchModel->searchcontact(Yii::$app->request->queryParams);
+
+        return $this->render('index_other', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionContactDetailsList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $this->model = new TblContactDetails();
+                $data = $this->model->contactDetailList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

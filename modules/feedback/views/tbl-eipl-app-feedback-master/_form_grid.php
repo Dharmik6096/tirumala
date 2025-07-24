@@ -12,21 +12,29 @@ $attribute = [
     ['attribute' => 'activityStatus', 'label' => '', 'visible' => true, 'value' => function ($model) {
             return Yii::$app->general->generateActivityStatus($model, 'created_at', 'Feedback Activity');
         }, 'format' => 'raw', 'contentOptions' => ['class' => 'sticky-column']],
-    ['attribute' => 'user_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->userCodeById, 'name');
-        }],
+    ['attribute' => 'eipl_app_feedback_master_code', 'filter' => FALSE],
+    ['attribute' => 'name'],
+    ['label' => Yii::t('app', 'MCC') . ' Ref Code', 'attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccCode, 'ref_code');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => TRUE],
     ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccCode, 'name');
         }, 'filter' => false],
+    ['label' => Yii::t('app', 'BMC') . ' Ref Code', 'attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => false],
+    ['label' => Yii::t('app', 'DCS') . ' Ref Code', 'attribute' => 'dcs_code', 'value' => function($model) {
+            return (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code') : '';
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return (strtolower($model->user_type) == 'vsp' || strtolower($model->user_type) == 'farmer') ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '';
         }, 'filter' => false],
-    ['attribute' => 'member_code', 'value' => function($model) {
-            return strtolower($model->user_type) == 'farmer' ? Yii::$app->general->getforeignkey($model->userCodeById, 'name') : '';
-        }, 'filter' => false],
+    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code Ex'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
+        }, 'filter' => TRUE],
     ['attribute' => 'eipl_app_feedback_item_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->eiplAppFeedbackItemCode, 'feedback_item_name');
         }],

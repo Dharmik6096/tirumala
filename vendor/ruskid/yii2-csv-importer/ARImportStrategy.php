@@ -42,6 +42,8 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
     public $saveChild = '';
     public $details;
     public $file_path, $file_name;
+    public $saveDeleteChild = '';
+    public $unlinkFile = '';
 
     /**
      * @throws Exception
@@ -101,6 +103,10 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 $trans = \Yii::$app->db->beginTransaction();
                 /* @var $model \yii\db\ActiveRecord */
                 $modelList = [];
+                $deleteModelList = [];
+                $unlink_files = [];
+                $attachments = [];
+                $masterdoc = [];
                 $model = new $this->className;
                 if (!empty($this->scenario))
                     $model->scenario = $this->scenario;
@@ -212,8 +218,9 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                         foreach ($exclude as $val) {
                             $excludes[] = $val;
                         }
+                        $scenario = $model->scenario;
                         $model = $existData;
-                        $model->scenario = 'importCsv';
+                        $model->scenario = $scenario;
                         $history = !empty($this->details['historyClass']) ? $this->details['historyClass'] : NULL;
                         if (!empty($history)) {
                             $history = Yii::$app->path->define($history);
@@ -251,15 +258,40 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 if (isset($this->saveChild) && $this->saveChild && empty($model->getErrors()) && $model->validate()) {
                     $model->setChildTable($model, $modelList, $errors);
                 }
-                if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
-                    $modelList[] = $model;
 
+                if (isset($this->saveDeleteChild) && $this->saveDeleteChild && empty($model->getErrors()) && $model->validate()) {
+                    $model->setChildTableSaveDelete($model, $modelList, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
+                }
+
+                if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
+                    if(!empty($model->auto_key_config)){
+                        $model->save();
+                    } else {
+                     //   $modelList[] = $model;
+                        $master[] = $model->save();
+                    }
                     foreach ($modelList as $modelRow) {
+                        if(!empty($model->auto_key_config)){
+                            $m_name = $modelRow::className();
+                            $m_name = explode("\\", $m_name);
+                            $m_name = $m_name[count($m_name) - 1];
+                            if (!empty($model->auto_key_config[$m_name])) {
+                                foreach ($model->auto_key_config[$m_name] as $key_config) {
+                                    $modelRow->{$key_config['self_key']} = $model->{$key_config['parent_key']};
+                                }
+                            }
+                        }
                         $master[] = $modelRow->save();
+                    }
+                    foreach ($deleteModelList as $modelRow) {
+                        $master[] = $modelRow->delete();
                     }
                     if (!in_array(FALSE, $master)) {
                         $trans->commit();
                         $count++;
+                        if (isset($this->unlinkFile) && $this->unlinkFile && isset($this->saveDeleteChild) && $this->saveDeleteChild) {
+                            $model->moveFiles($unlink_files, $attachments, $masterdoc);
+                        }
                     } else {
                         $trans->rollback();
                         $message = '';

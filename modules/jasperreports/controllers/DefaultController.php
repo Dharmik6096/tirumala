@@ -23,6 +23,12 @@ class DefaultController extends \app\controllers\ChildController {
         $model = new ReportsModel();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (!empty($client_code) && isset($this->getLabels($this->report)['path'][$client_code])) {
+                $this->data['path'] = $this->getLabels($this->report)['path'][$client_code];
+            } else if (isset($this->getLabels($this->report)['path']['EIPLCOMMON'])) {
+                $this->data['path'] = $this->getLabels($this->report)['path']['EIPLCOMMON'];
+            }
             $model->scenario = $this->data['scenario'];
             if (strpos($this->data['param'], 'p_milk_type') !== FALSE) {
                 $model->p_milk_type = 0;
@@ -250,6 +256,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'SHUDDH') {
             $this->report = 'VendorMilkPaymentShuddh';
         }
+        if ($client_code == 'PARAM') {
+            $this->report = 'VendorMilkPaymentShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -259,7 +268,11 @@ class DefaultController extends \app\controllers\ChildController {
     }
 
     public function actionVendorMilkBill() {
+        $client_code = \Yii::$app->session->get('eiplCode');
         $this->report = 'VendorMilkBill';
+        if ($client_code == 'SHUDDH') {
+            $this->report = 'VendorMilkBillShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -392,19 +405,139 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorMilkBillSummaryGLT';
         return $this->actionIndex();
     }
-    
+
     public function actionMemberPaymentVrs() {
         $this->report = 'MemberPaymentVrs';
         return $this->actionIndex();
     }
-    
+
     public function actionVspPaymentVrs() {
         $this->report = 'VspPaymentVrs';
         return $this->actionIndex();
     }
-    
+
     public function actionVspPaymentOnlineVrs() {
         $this->report = 'VspPaymentOnlineVrs';
+        return $this->actionIndex();
+    }
+
+    public function actionProvisionalMemberRegister() {
+        $this->report = 'ProvisionalMemberRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkChillBillCenterWise() {
+        $this->report = 'MilkChillBillCenterWise';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkChillingBillLrNoWise() {
+        $this->report = 'MilkChillingBillLrNoWise';
+        return $this->actionIndex();
+    }
+
+    public function actionRptMemberRegisterAll() {
+        $this->report = 'RptMemberRegisterAll';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorBillElanad() {
+        $this->report = 'VendorBillElanad';
+        return $this->actionIndex();
+    }
+
+    public function actionMppSurvey() {
+        $this->report = 'MppSurvey';
+        return $this->actionIndex();
+    }
+
+    public function actionVcgMeeting() {
+        $this->report = 'VcgMeeting';
+        return $this->actionIndex();
+    }
+
+    public function actionMccChillingBill() {
+        $this->report = 'MccChillingBill';
+        return $this->actionIndex();
+    }
+
+    public function actionMccChillingBillInvoice() {
+        $this->report = 'MccChillingBillInvoice';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPaymentNawasa() {
+        $this->report = 'MemberPaymentNawasa';
+        return $this->actionIndex();
+    }
+
+    public function actionVspPaymentNawasa() {
+        $this->report = 'VspPaymentNawasa';
+        return $this->actionIndex();
+    }
+
+    public function actionVspPaymentOnlineNawasa() {
+        $this->report = 'VspPaymentOnlineNawasa';
+        return $this->actionIndex();
+    }
+
+    public function actionBankAdvice() {
+        $this->report = 'BankAdvice';
+        return $this->actionIndex();
+    }
+
+    public function actionMpgBillStatement() {
+        $this->report = 'MpgBillStatement';
+        return $this->actionIndex();
+    }
+
+    public function actionProductSaleInvoice() {
+        $this->report = 'ProductSaleInvoice';
+        return $this->actionIndex();
+    }
+
+    public function actionPrimaryTransporterMonthlyBill() {
+        $this->report = 'PrimaryTransporterMonthlyBill';
+        return $this->actionIndex();
+    }
+
+    public function actionPartyPaymentBill() {
+        $this->report = 'PartyPaymentBill';
+        return $this->actionIndex();
+    }
+
+    public function actionShiftWiseBill() {
+        $this->report = 'ShiftWiseBill';
+        return $this->actionIndex();
+    }
+    
+    public function actionCompleteTrip() {
+        $this->report = 'CompleteTrip';
+        return $this->actionIndex();
+    }
+    
+    public function actionCcTruckSlip() {
+        $this->report = 'CcTruckSlip';
+        return $this->actionIndex();
+    }
+    
+    public function actionDmrReport() {
+        $this->report = 'DmrReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionCcSubStandardMrg() {
+        $this->report = 'CcSubStandardMrg';
+        return $this->actionIndex();
+    }
+    
+    public function actionDmrCheckList() {
+        $this->report = 'DmrCheckList';
+        return $this->actionIndex();
+    }
+
+    public function actionDmrWeightedAverage() {
+        $this->report = 'DmrWeightedAverage';
         return $this->actionIndex();
     }
 
@@ -454,12 +587,15 @@ class DefaultController extends \app\controllers\ChildController {
                 }
             }
             //$controls['locale'] = Yii::$app->session->get('LanguageCode');
-            $controls['locale'] = 'en';
+            $controls['locale'] = !empty($model->locale) ? $model->locale : 'en';
             //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-            $controls['REPORT_LOCALE'] = 'en';
+            $controls['REPORT_LOCALE'] = (!empty($model->locale) ? $model->locale : 'en') . '_IN';
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
-            $controls['digit_config'] = 0;
-
+            if (isset(Yii::$app->params['language_mapping']) && isset(Yii::$app->params['language_mapping'][$controls['locale']])) {
+                $controls['locale'] = Yii::$app->params['language_mapping'][$controls['locale']];
+                $controls['REPORT_LOCALE'] = $controls['locale'] . '_IN';
+            }
+            $controls['digit_config'] = !empty($model->digit_config) ? $model->digit_config : 0;
 //                  var_dump($controls);die;
             if (!isset($this->data['bkg_export']) || User::canRoute('jasperreports/default/jasper-live-report-generation')) {
                 $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
@@ -469,18 +605,15 @@ class DefaultController extends \app\controllers\ChildController {
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Description: File Transfer');
-                    header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
+                    $filename = !empty($this->data['filename']) ? $this->data['filename'] : $this->report;
+                    header('Content-Disposition: attachment; filename=' . $filename . '.' . $this->type);
                     header('Content-Transfer-Encoding: binary');
                     header('Content-Length: ' . strlen($this->output));
                     header('Content-Type: application/' . $this->type);
                     echo $this->output;
                 }
             } else {
-                if ($this->RegisterReportRequest('jasper', $this->data, $controls)) {
-                    $msg = 'Your Request has been submitted For Report Data. <br/>You can download file from My Report Request screen after sometime.';
-                } else {
-                    $msg = 'Error While Request Submit.';
-                }
+                $msg = $this->RegisterReportRequest('jasper', $this->data, $controls);
                 $this->output = '<p><center><b>' . $msg . '<b/></center><p/>';
             }
         } else {
@@ -491,6 +624,12 @@ class DefaultController extends \app\controllers\ChildController {
                 } else {
                     \Yii::$app->pdf->generatePdfMMdTwo($model);
                 }
+            } else if (strtolower($client_code) == 'elanad') {
+                if (!in_array($this->type, ['tcpdf'])) {
+                    \Yii::$app->pdf->generatePdfAtmos($model);
+                } else {
+                    \Yii::$app->pdf->generatePdfElanad($model);
+                }
             } else {
                 \Yii::$app->pdf->generatePdfAtmos($model);
             }
@@ -500,7 +639,7 @@ class DefaultController extends \app\controllers\ChildController {
 
     /* Reports Configuration */
 
-    private function getLabels($l) {
+    public static function getLabels($l) {
         $label = [
             'MemberMilkCollectionSummary' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
@@ -766,7 +905,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'MemberMilkPayment' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
-                'path' => 'vsp/MemberPaymentBill',
+                'path' => ['EIPLCOMMON' => 'vsp/MemberPaymentBill', 'DHAMALE' => 'vsp/MemberPaymentBillDhamale'],
                 'scenario' => 'MemberMilkPayment',
                 'title' => '605 - Member Milk Payment',
                 'bkg_export' => TRUE,
@@ -959,6 +1098,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPaymentVrs',
                 'title' => 'Member Payment',
                 'bkg_export' => TRUE,
+                'filename' => 'MemberPayment',
             ],
             'VspPaymentVrs' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
@@ -974,11 +1114,175 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Vsp Payment Online',
                 'bkg_export' => TRUE,
             ],
+            'VendorMilkBillShuddh' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillShuddh',
+                'scenario' => 'VendorMilkBill',
+                'title' => '609 - Vendor Milk Bill',
+                'bkg_export' => TRUE,
+            ],
+            'ProvisionalMemberRegister' => [
+                'param' => 'p_provisional_member_code,p_lang_code,locale,digit_config',
+                'path' => 'MemberRegister',
+                'scenario' => 'ProvisionalMemberRegister',
+                'title' => 'Provisional Member Register',
+            ],
             'VendorMilkPaymentShuddh' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
-                'path' => 'vsp/VendorMilkBillShuddh',
+                'path' => 'vsp/VspPaymentBillShuddh',
                 'scenario' => 'VendorMilkPayment',
                 'title' => '604 - Vendor Milk Payment',
+                'bkg_export' => TRUE,
+            ],
+            'MilkChillBillCenterWise' => [
+                'param' => 'p_date,p_lr_no,p_vehicle_no',
+                'path' => 'vsp/MilkChillBillCenterWise',
+                'scenario' => 'MilkChillBillCenterWise',
+                'title' => 'Milk Chill Bill Center Wise',
+            ],
+            'MilkChillingBillLrNoWise' => [
+                'param' => 'p_date,p_lr_no,p_vehicle_no',
+                'path' => 'vsp/MilkChillingBillLrNoWise',
+                'scenario' => 'MilkChillingBillLrNoWise',
+                'title' => 'Milk Chilling Bill Lr No Wise',
+            ],
+            'RptMemberRegisterAll' => [
+                'param' => 'p_from_date:string,p_to_date:string,p_lang_code,locale,digit_config',
+                'path' => 'MemberRegisterAll',
+                'scenario' => 'RptMemberRegisterAll',
+                'title' => 'Approve Farmer Data PDF',
+                'bkg_export' => TRUE,
+            ],
+            'VendorBillElanad' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:all_routes,p_dcsc_code:route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/VendorBillFormated',
+                'scenario' => 'VendorBillElanad',
+                'title' => '633 - Member and Vendor Milk Bill',
+                'tcpdf' => true,
+            ],
+            'MppSurvey' => [
+                'param' => 'p_mpp_survey_id,p_lang_code,locale,digit_config',
+                'path' => 'MPPSurveyForm',
+                'scenario' => 'MppSurvey',
+                'title' => 'MPP Survey',
+            ],
+            'VcgMeeting' => [
+                'param' => 'p_VCG_M_Id,p_lang_code,locale,digit_config',
+                'path' => 'VCGMeeting',
+                'scenario' => 'VcgMeeting',
+                'title' => 'VCG Meeting',
+            ],
+            'MccChillingBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/MCCChillingBill',
+                'scenario' => 'MccChillingBill',
+                'title' => 'Chilling Bill',
+            ],
+            'MccChillingBillInvoice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/MCCChillingBillInvoice',
+                'scenario' => 'MCCChillingBillInvoice',
+                'title' => 'MCC Chilling Bill Invoice',
+            ],
+            'MemberPaymentNawasa' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/MemberPaymentNawasa',
+                'scenario' => 'MemberPaymentNawasa',
+                'title' => 'Member Payment',
+            ],
+            'VspPaymentNawasa' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentNawasa',
+                'scenario' => 'VSPPaymentNawasa',
+                'title' => 'Vsp Payment',
+            ],
+            'VspPaymentOnlineNawasa' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/VSPPaymentOnlineNawasa',
+                'scenario' => 'VSPPaymentOnlineNawasa',
+                'title' => 'Vsp Payment Online',
+            ],
+            'BankAdvice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/BankAdvice',
+                'scenario' => 'BankAdvice',
+                'title' => '634 - Bank Advice',
+                'bkg_export' => TRUE,
+            ],
+            'MpgBillStatement' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/MPGBillStatement',
+                'scenario' => 'MpgBillStatement',
+                'title' => 'MPG Bill Statement',
+                'bkg_export' => TRUE,
+            ],
+            'ProductSaleInvoice' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/ProductSaleInvoice',
+                'scenario' => 'ProductSaleInvoice',
+                'title' => 'Total Sale Invoice',
+                'bkg_export' => TRUE,
+            ],
+            'PrimaryTransporterMonthlyBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_transporter_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/PrimaryTransporterMonthlyBill',
+                'scenario' => 'PrimaryTransporterMonthlyBill',
+                'title' => 'TPT Bill',
+                'bkg_export' => TRUE,
+            ],
+            'PartyPaymentBill' => [
+                'param' => 'p_union_code,p_party_master_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/PartyPaymentBill',
+                'scenario' => 'PartyPaymentBill',
+                'title' => 'TP Bill',
+                'bkg_export' => TRUE,
+            ],
+            'ShiftWiseBill' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:union_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_lang_code,locale,digit_config',
+                'path' => ['ELANAD' => 'vsp/ShiftWiseBill'],
+                'scenario' => 'ShiftWiseBill',
+                'title' => 'Shift Wise Bill',
+                'bkg_export' => TRUE,
+            ],
+            'CompleteTrip' => [
+                'param' => 'p_vehicle_code,p_trip_code:p_vehicle_code,p_from_date:string,p_to_date:string',
+                'path' => 'vsp/CompleteTrip',
+                'scenario' => 'CompleteTrip',
+                'title' => 'Complete Trip Details',
+                'bkg_export' => TRUE,
+            ],
+            'CcTruckSlip' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/CCTruckSlip',
+                'scenario' => 'CcTruckSlip',
+                'title' => 'CC Truck Slip',
+                'bkg_export' => TRUE,
+            ],
+            'DmrReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DRMReport',
+                'scenario' => 'DmrReport',
+                'title' => 'DMR Report ',
+                'bkg_export' => TRUE,
+            ],
+            'CcSubStandardMrg' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_qty_from,p_qty_to,p_fat_from,p_fat_to,p_snf_from,p_snf_to',
+                'path' => 'vsp/CCSubStandardMrg',
+                'scenario' => 'CcSubStandardMrg',
+                'title' => 'MRG Report ',
+                'bkg_export' => TRUE,
+            ],
+            'DmrCheckList' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DMRCheckList',
+                'scenario' => 'DmrCheckList',
+                'title' => 'BMC Check List',
+            ],
+            'DmrWeightedAverage' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DMRWeightedAverage',
+                'scenario' => 'DmrWeightedAverage',
+                'title' => 'Route wise Weighted Average',
             ],
         ];
         return $label[$l];

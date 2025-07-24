@@ -32,7 +32,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $bmc_code, $route_ref_code, $parsing_no;
+    public $bmc_code, $route_ref_code, $parsing_no, $plant_code, $mcc_plant_code;
 
     public static function tableName() {
         return 'tbl_vehicle_km_info';
@@ -55,7 +55,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                 [['data_lock'], 'default', 'value' => 0],
                 [['is_active'], 'default', 'value' => 1],
                 [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
-                [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock'], 'safe'],
+                [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock', 'plant_code', 'mcc_plant_code', 'route_ref_code'], 'safe'],
                 [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'morning_grace_time', 'evening_grace_time'], 'number', 'min' => 0],
                 [['morning_arrival_time', 'evening_arrival_time'], 'date', 'format' => 'php:H:i'],
                 [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
@@ -111,6 +111,9 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
             'evening_grace_time' => Yii::t('app', 'Grace Time(E)(Min)'),
             'parsing_no' => Yii::t('app', 'Parsing No.'),
             'route_ref_code' => Yii::t('app', 'Route Ref Code'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'Mcc'),
+            'bmc_code' => Yii::t('app', 'Bmc'),
         ];
     }
 
@@ -274,6 +277,17 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                     return $data['transporter_name'] . '(' . $data['vendor_code'] . ')';
                 });
         return $array;
+    }
+
+    public function getLatestVehicleData($bmcCode) {
+        return $this->find()
+                        ->alias('v')
+                        ->select(['v.vehicle_code'])
+                        ->innerJoin('tbl_route_mapping r', 'r.route_code = v.route_code')
+                        ->where(['r.to_type' => 'bmc', 'r.to_dest' => $bmcCode, 'v.vehicle_code' => $this->vehicle_code, 'r.is_active' => 1])
+                        ->andWhere(['<=', 'v.created_at', date('Y-m-d H:i:s')])
+                        ->orderBy(['v.created_at' => SORT_DESC])
+                        ->one();
     }
 
 }

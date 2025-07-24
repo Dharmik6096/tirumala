@@ -20,6 +20,7 @@ use app\modules\collection\models\TblMccShiftLockStagingHistory;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\sms\models\TblApiMaster;
+use yii\helpers\Url;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -358,7 +359,12 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     public function actionIndexOther() {
         $searchModel = new TblMccShiftLockSearch();
         $searchModel->scenario = 'shiftLock';
-        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_other');
+        $client_code = \Yii::$app->session->get('eiplCode');
+        $sp = 'portal_mcc_shift_lock_data_other';
+        if ($client_code == 'NIFPL') {
+            $sp = 'portal_mcc_shift_lock_data_nif';
+        }
+        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, $sp);
 
         return $this->render('index_other', [
                     'searchModel' => $searchModel,
@@ -454,7 +460,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             if ($setErp && Yii::$app->session->get('eiplCode') == 'MMD') {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => 'Transit Reovery Not Available.']);
-                return $this->redirect([$url]);
+                if ($url != 'api_response') {
+                    return $this->redirect([$url]);
+                }
             }
         }
         if (Yii::$app->session->get('eiplCode') == 'UMANG' && $updateField == 'bmc_lock' && $val == 1) {
@@ -485,7 +493,11 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
         }
-        return $this->redirect([$url]);
+        if ($url == 'api_response') {
+            return $record;
+        } else {
+            return $this->redirect(Url::previous());
+        }
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
@@ -494,6 +506,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         }
         if (Yii::$app->session->get('eiplCode') == 'DODLA') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_dodla_WQ', TRUE);
+        }
+        if (Yii::$app->session->get('eiplCode') == 'ANANDA') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_Ananda');
         }
 
         if (Yii::$app->session->get('eiplCode') == 'MMD') {

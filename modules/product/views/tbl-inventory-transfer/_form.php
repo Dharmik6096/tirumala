@@ -53,6 +53,7 @@ var userType = '$userType';
         $('#to_mcc').hide(); 
         $('#to_bmc').hide(); 
         $('#to_dcs').hide();
+        $('#to_dcs_sap_vendor').hide();
         if(userType == 5){
             $('#tblinventorytransfer-from_type').val('BMC');
             $('#tblinventorytransfer-from_type').trigger('select2:select');
@@ -106,10 +107,10 @@ var userType = '$userType';
        var f_mcc =$('#tblinventorytransfer-from_mcc_plant_code').val();
        var f_bmc =$('#tblinventorytransfer-from_bmc_code').val();
        var f_dcs =$('#tblinventorytransfer-from_dcs_code').val();
-        if(type =='BMC'){
+        if(type =='BMC' && setData(f_bmc)){
             $('#f_code').val(f_bmc);
              $('#f_code').trigger('change');
-        }else if(type =='DCS'){
+        }else if(type =='DCS' && setData(f_dcs)){
             $('#f_code').val(f_dcs);
              $('#f_code').trigger('change');
         }
@@ -127,6 +128,7 @@ var userType = '$userType';
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').hide();
+            $('#to_dcs_sap_vendor').hide();
             
             if(setData(f_mcc)){
                 $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
@@ -159,17 +161,22 @@ var userType = '$userType';
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').show();
+            $('#to_dcs_sap_vendor').show();
             
             if(setData(f_mcc)){
+            setTimeout(function() {
                 $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
                 $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
                 $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+                }, 600);
             }
             if(setData(f_bmc)){
                 $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                setTimeout(function() {
                     $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
                     $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
                     $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                    }, 800);
                 });
             }else{
                 $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
@@ -191,15 +198,18 @@ var userType = '$userType';
             }
             if(setData(f_dcs)){
                 $('#tblinventorytransfer-to_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                setTimeout(function() {
                     $('#tblinventorytransfer-to_dcs_code').val(f_dcs);
                     $('#tblinventorytransfer-to_dcs_code').trigger('select2:select');
                     $('#tblinventorytransfer-to_dcs_code').trigger('change');
+                    }, 1000);
                 });
             }
         }else{
             $('#to_mcc').hide(); 
             $('#to_bmc').hide(); 
             $('#to_dcs').hide();
+            $('#to_dcs_sap_vendor').hide();
         }
     });
     
@@ -211,6 +221,7 @@ var userType = '$userType';
     });
     $('#tblinventorytransfer-to_dcs_code').on('change', function(){
         setToCode();
+        setSapVendorCode();
     });
     function setToCode(){
        var t_type =$('#tblinventorytransfer-to_type').val();
@@ -218,9 +229,9 @@ var userType = '$userType';
        var t_bmc =$('#tblinventorytransfer-to_bmc_code').val();
        var t_dcs =$('#tblinventorytransfer-to_dcs_code').val();
       
-        if(t_type =='BMC'){
+        if(t_type =='BMC' && setData(t_bmc)){
             $('#t_code').val(t_bmc);
-        }else if(t_type =='DCS'){
+        }else if(t_type =='DCS' && setData(t_dcs)){
             $('#t_code').val(t_dcs);
         }
     }
@@ -315,6 +326,28 @@ var userType = '$userType';
                     },
                     error:function(data){
 
+                    }
+                });
+        } 
+    
+    }
+
+    function setSapVendorCode(){
+        var dcs = $('#tblinventorytransfer-to_dcs_code').val();
+        $('#tblinventorytransfertxn-sap_vendor_code').val('');
+         if(setData(dcs)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['get-sap-vendor-code']) . "',
+                    data: {'dcs':dcs},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblinventorytransfertxn-sap_vendor_code').val(obj.sap_vendor_code);
+                        }
+                    },
+                    error:function(data){
                     }
                 });
         } 

@@ -111,20 +111,24 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
                         ->all();
     }
 
-    public function setApprovalData($union_code, $process, $processCode, &$modelSave, &$approval_stages) {
+    public function setApprovalData($union_code, $process, $processCode, &$modelSave, &$approval_stages, $create_level = FALSE) {
         $approval_stages = $this->approvalStages($union_code, $process);
-        $i = 1;
-        foreach ($approval_stages as $stage) {
-            $stage_model = new TblProcessApproval();
-            $stage_model->setAttributes($stage);
-//            $stage_model->process_approval_code = Yii::$app->general->getCodeAutoIncrement($stage_model, $i);
-            $stage_model->process_code = $processCode;
-            $stage_model->process_name = $process;
-            $stage_model->status = 0;
-            unset($stage_model->created_at);
-            unset($stage_model->created_by);
-            $modelSave[] = $stage_model;
-            $i++;
+        $processCode = (string) $processCode;
+        $existDataApproval = TblProcessApproval::find()->where(['process_code' => $processCode, 'process_name' => $process])->count();
+        if ($existDataApproval == 0 || $create_level) {
+            $i = 1;
+            foreach ($approval_stages as $stage) {
+                $stage_model = new TblProcessApproval();
+                $stage_model->setAttributes($stage);
+                //  $stage_model->process_approval_code = Yii::$app->general->getCodeAutoIncrement($stage_model, $i);
+                $stage_model->process_code = $processCode;
+                $stage_model->process_name = $process;
+                $stage_model->status = 0;
+                unset($stage_model->created_at);
+                unset($stage_model->created_by);
+                $modelSave[] = $stage_model;
+                $i++;
+            }
         }
     }
 
@@ -140,6 +144,35 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
             $levels[$i] = $i;
         }
         return $levels;
+    }
+
+    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE, $parent_key = '', $created_by = '') {
+        $approvalStage = $this->approvalStages($unionCode, $processName);
+        $errorMessage = '';
+        $approvalModel->approval_status = 'Pending';
+        $saveModel[] = $approvalModel;
+        $parent_index = $i;
+        if (!empty($approvalStage)) {
+            foreach ($approvalStage as $key => $stage) {
+                $i++;
+                $stage_model = new TblProcessApproval();
+                $stage_model->setAttributes($stage);
+                $stage_model->process_name = $processName;
+                $stage_model->status = 0;
+                unset($stage_model->created_at);
+                unset($stage_model->created_by);
+                if (isset($created_by) && !empty($created_by)) {
+                    $stage_model->originating_org_type = 'MOBILE';
+                    $stage_model->created_by = $created_by;
+                }
+                $saveModel[] = $stage_model;
+                if ($processFlag) {
+                    $auto_key_config[$i] = ['self_key' => 'process_code', 'parent_key' => $parent_key, 'parent_index' => $parent_index];
+                }
+            }
+        } else {
+            $errorMessage = "No approval stages found.";
+        }
     }
 
 }
