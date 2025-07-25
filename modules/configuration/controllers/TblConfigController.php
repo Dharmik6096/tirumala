@@ -109,6 +109,7 @@ class TblConfigController extends \app\controllers\ChildController {
 
             $master = [];
             $childModel = [];
+            $isValid = true;
             foreach ($postData as $value) {
                 $saveModel = new TblUnionConfigResult();
                 if (!empty($value['config_txn_code'])) {
@@ -131,10 +132,13 @@ class TblConfigController extends \app\controllers\ChildController {
                 $saveModel->config_result_code = !empty($droptKey) ? $droptKey : $textKey;
                 $saveModel->config_result = !empty($droptKey) ? $dropName : $value['config_result_key'];
                 $saveModel->union_code = $value['union_code'];
-
+                if (!$saveModel->validate()) {
+                    $isValid = false;
+                    break;
+                }
                 $master[] = $saveModel;
             }
-            if ($saveModel->validate()) {
+            if ($isValid) {
                 $transaction = $this->generalModel->saveTransaction($master, $childModel, ['Config', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['/organisation/tbl-unions/index']);
@@ -149,14 +153,13 @@ class TblConfigController extends \app\controllers\ChildController {
                 return Json::encode(ActiveForm::validate($saveModel));
             }
         }
-        if(!empty($model)){
+        if (!empty($model)) {
             return $this->renderAjax('_input_form', [
                         'masterData' => $masterData,
                         'saveModel' => $saveModel,
                         'model' => $model,
-            ]); 
+            ]);
         }
-       
     }
 
     public function actionConfigProcessList() {

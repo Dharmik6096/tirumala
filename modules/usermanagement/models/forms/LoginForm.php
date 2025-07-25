@@ -499,7 +499,9 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
                 }
                 if ($maxLoginAttemptsConfig > 0 && !empty($user) && $user->max_login_attempts <= 2) {
                     $showError = FALSE;
-                    $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password. You have ' . $user->max_login_attempts . ' attempts remaining'));
+                    if ($user->max_login_attempts != 0) {
+                        $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password. You have ' . $user->max_login_attempts . ' attempts remaining'));
+                    }
                 }
                 if ($showError) {
                     $this->addError('password', UserManagementModule::t('front', 'Incorrect username or password.'));
