@@ -380,12 +380,15 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
     }
 
     public function validateQualityRange($attribute, $params) {
-        if (!empty($this->bmc_code) && $this->is_clr_input != '') {
+        if ($this->is_clr_input != '') {
+            $for = $this->bmc_code ? 'BMC' : 'PLANT';
+            $processName = $this->bmc_code ? 'BMC_MILK_DISPATCH' : 'PLANT_MILK_DISPATCH';
+            $orgCode = $this->bmc_code ? $this->bmc_code : $this->plant_code;
             $milkQualityParamRangeModel = new TblMilkQualityParamRange();
             $milkQualityParamRangeModel->union_code = $this->union_code;
-            $milkQualityParamRangeModel->process_name = 'BMC_MILK_DISPATCH';
-            $milkQualityParamRangeModel->org_type = 'BMC';
-            $milkQualityParamRangeModel->org_code = $this->bmc_code;
+            $milkQualityParamRangeModel->process_name = $processName;
+            $milkQualityParamRangeModel->org_type = $for;
+            $milkQualityParamRangeModel->org_code = $orgCode;
             $milkQualityParamRangeModel->animal_type_code = $this->milk_type_code;
             $range = $milkQualityParamRangeModel->getQualityRange();
             if (!empty($range)) {
