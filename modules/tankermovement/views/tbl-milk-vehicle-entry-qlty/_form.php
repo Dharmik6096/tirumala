@@ -250,6 +250,52 @@ $script = "
             return false;
         }
     }
+    
+    $(document).on('change', '#tblmilkvehicleentryqlty-chamber_no', function() {
+        fillData();
+    });
+    
+    function fillData() {
+        var chamber_no = $('#tblmilkvehicleentryqlty-chamber_no').val(); 
+        if(setData(chamber_no)){
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['get-quality-data']) . "',
+                data: {'id' : chamber_no},
+                success: function(data) {
+                    var obj1 = $.parseJSON(data);
+                    if(obj1.status == 'success'){
+                    var modelData = obj1.data.model; 
+                    var configList = obj1.data.config_list;
+                        $('#tblmilkvehicleentryqlty-record_status').val(modelData.record_status).trigger('change');
+                        const modelFields = [
+                            'acidity', 'mbrt','fat','snf','clr', 'water','density','protein','lactose','freezing_point', 'temp', 'tested_by', 'verified_by'
+                        ];
+                        modelFields.forEach(function(fieldName) {
+                            $('#tblmilkvehicleentryqlty-' + fieldName).val(modelData[fieldName] || '');
+                        });
+                         if (modelData.sample_datetime) {
+                            const dateTimeParts = modelData.sample_datetime.split(' ');
+                            const [year, month, day] = dateTimeParts[0].split('-');
+                            const formattedDate = day+'-'+month+'-'+year; 
+                            const formattedTime = dateTimeParts[1].substring(0, 5);
+                            $('#tblmilkvehicleentryqlty-sample_datetime').val(formattedDate);
+                            $('#tblmilkvehicleentryqlty-sample_time').val(formattedTime);
+                        } else {
+                            $('#tblmilkvehicleentryqlty-sample_datetime').val('');
+                            $('#tblmilkvehicleentryqlty-sample_time').val('');
+                        }
+                        var index = 1;
+                        $('.config_class').val('').trigger('change');
+                        $.each(configList, function(key,val) {
+                            $('#tblconfigtxnresult-'+index+'-config_result').val(val.config_result || '').trigger('change');
+                            index++;
+                        });
+                    }
+                },
+            });
+        }
+    }
 ";
 $this->registerJs($script, View::POS_END, 'milk-vehicle-entry-qlty-script');
 ?>
