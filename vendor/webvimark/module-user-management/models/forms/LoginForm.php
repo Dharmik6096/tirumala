@@ -153,9 +153,6 @@ class LoginForm extends Model {
                     if ($minutesLeft == 0 && $secondsLeft > 0) {
                         $minutesLeft = 1;
                     }
-                    // echo '<pre>';
-                    // print_r($minutesLeft);
-                    // die;
                     $maxLoginAttempts = $minutesLeft;
                 } else {
                     $user->max_login_attempts = $user->suspension_datetime = NULL;
