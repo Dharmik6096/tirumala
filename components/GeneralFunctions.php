@@ -2990,11 +2990,11 @@ class GeneralFunctions extends Component {
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
-    public function calculateData($config, $union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '') {
+    public function calculateData($config, $union = '', $orgCode = '', $fat = '', $snf = '', $clr = '', $orgType = '', $is_clr_input = '') {
         $response = [];
 
-        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, $customer_type, $config);
-        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, $customer_type, $config);
+        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $orgCode, $orgType, $config);
+        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $orgCode, $orgType, $config);
         if ($lr1 == '' || $lr2 == '') {
             $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
             $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');

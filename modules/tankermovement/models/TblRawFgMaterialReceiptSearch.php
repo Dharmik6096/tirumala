@@ -52,10 +52,10 @@ class TblRawFgMaterialReceiptSearch extends TblRawFgMaterialReceipt {
         $query->joinWith(['partyMaster', 'materialCode']);
 
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'tbl_raw_fg_material_receipt.receipt_datetime', $from_date]);
+        $query->andFilterWhere(['>=', 'cast(tbl_raw_fg_material_receipt.receipt_datetime as date)', $from_date]);
 
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'tbl_raw_fg_material_receipt.receipt_datetime', $to_date]);
+        $query->andFilterWhere(['<=', 'cast(tbl_raw_fg_material_receipt.receipt_datetime as date)', $to_date]);
 
         if (!empty($this->document_date)) {
             $query->andFilterWhere(['like', 'cast(tbl_raw_fg_material_receipt.document_date as date)', date('Y-m-d', strtotime($this->document_date))]);

@@ -274,7 +274,7 @@ $script = "
                         modelFields.forEach(function(fieldName) {
                             $('#tblmilkvehicleentryqlty-' + fieldName).val(modelData[fieldName] || '');
                         });
-                         if (modelData.sample_datetime) {
+                        if (modelData.sample_datetime) {
                             const dateTimeParts = modelData.sample_datetime.split(' ');
                             const [year, month, day] = dateTimeParts[0].split('-');
                             const formattedDate = day+'-'+month+'-'+year; 
@@ -282,8 +282,17 @@ $script = "
                             $('#tblmilkvehicleentryqlty-sample_datetime').val(formattedDate);
                             $('#tblmilkvehicleentryqlty-sample_time').val(formattedTime);
                         } else {
-                            $('#tblmilkvehicleentryqlty-sample_datetime').val('');
-                            $('#tblmilkvehicleentryqlty-sample_time').val('');
+                            const now = new Date();
+                            const padZero = (num) => String(num).padStart(2, '0');
+                            const day = padZero(now.getDate());
+                            const month = padZero(now.getMonth() + 1);
+                            const year = now.getFullYear();
+                            const hours = padZero(now.getHours());
+                            const minutes = padZero(now.getMinutes());
+                            const formattedDate = day+'-'+month+'-'+year; 
+                            const formattedTime = hours+':'+minutes; 
+                            $('#tblmilkvehicleentryqlty-sample_datetime').val(formattedDate);
+                            $('#tblmilkvehicleentryqlty-sample_time').val(formattedTime);
                         }
                         var index = 1;
                         $('.config_class').val('').trigger('change');
