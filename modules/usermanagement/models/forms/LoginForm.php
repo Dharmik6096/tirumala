@@ -481,6 +481,10 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
                         } else if ($suspensionDatetime > $currentDateTime) {
                             $interval = $currentDateTime->diff($suspensionDatetime);
                             $minutesLeft = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+                            $secondsLeft = $interval->s;
+                            if ($minutesLeft == 0 && $secondsLeft > 0) {
+                                $minutesLeft = 1;
+                            }
                             $maxLoginAttempts = $minutesLeft;
                         }
                     } else if ($user->max_login_attempts > 0) {
@@ -535,6 +539,10 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
                 if ($user->max_login_attempts == 0 && !empty($user->suspension_datetime) && $suspensionDatetime > $currentDateTime) {
                     $interval = $currentDateTime->diff($suspensionDatetime);
                     $minutesLeft = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+                    $secondsLeft = $interval->s;
+                    if ($minutesLeft == 0 && $secondsLeft > 0) {
+                        $minutesLeft = 1;
+                    }
                     $maxLoginAttempts = $minutesLeft;
                 } else {
                     $user->max_login_attempts = $user->suspension_datetime = NULL;
