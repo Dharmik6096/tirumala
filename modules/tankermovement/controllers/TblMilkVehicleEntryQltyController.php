@@ -380,7 +380,9 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $config_list = TblConfigTxnResult::find()->where(['ref_code' => (string) Yii::$app->request->post('id'), 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         if (!empty($model) || !empty($config_list)) {
-            return Json::encode(['status' => 'success', 'data' => ['model' => $model, 'config_list' => $config_list]]);
+            $model->sample_time = !empty($model->sample_datetime) ? date('H:i',strtotime($model->sample_datetime)) : date('H:i');
+            $model->sample_datetime = !empty($model->sample_datetime) ? date('d-m-Y', strtotime($model->sample_datetime)) : date('d-m-Y');
+            return Json::encode(['status' => 'success', 'data' => ['model' => $model, 'config_list' => $config_list, 'sample_time' => $model->sample_time]]);
         } else {
             return Json::encode(['status' => 'error', 'data' => []]);
         }
