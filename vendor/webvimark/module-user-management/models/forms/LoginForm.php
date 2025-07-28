@@ -80,6 +80,8 @@ class LoginForm extends Model {
             $user = $this->getUser();
             $unionCode = TblUnions::find()->select('union_code')->where(['is_active' => 1])->scalar();
             $maxLoginAttemptsConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_max_login_attempts', 'PORTAL');
+            $loginSuspensionTimeConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_login_suspension_time', 'PORTAL');
+
             if (!$user || !$user->validatePassword($this->password)) {
                 if ($maxLoginAttemptsConfig > 0 && $isExpired && $callCount < 2 && !empty($user)) {
                     $failedAttempt = new TblFailedPasswordAttempts();
@@ -90,18 +92,12 @@ class LoginForm extends Model {
                             $user->suspension_datetime = NULL;
                         } else if ($suspensionDatetime > $currentDateTime) {
                             $interval = $currentDateTime->diff($suspensionDatetime);
-                            $minutesLeft = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
-                            $secondsLeft = $interval->s;
-                            if ($minutesLeft == 0 && $secondsLeft > 0) {
-                                $minutesLeft = 1;
-                            }
-                            $maxLoginAttempts = $minutesLeft;
+                            $maxLoginAttempts = min((($interval->days * 1440) + ($interval->h * 60) + $interval->i + 1), $loginSuspensionTimeConfig);
                         }
                     } else if ($user->max_login_attempts > 0) {
                         $user->suspension_datetime = NULL;
                         $user->max_login_attempts--;
                         if ($user->max_login_attempts === 0) {
-                            $loginSuspensionTimeConfig = (int) Yii::$app->general->getUnionConfiguration($unionCode, 'portal_login_suspension_time', 'PORTAL');
                             $user->suspension_datetime = date('Y-m-d H:i:s', strtotime('+' . $loginSuspensionTimeConfig . ' minutes'));
                         }
                     } else {
@@ -148,12 +144,7 @@ class LoginForm extends Model {
                 $suspensionDatetime = new \DateTime($user->suspension_datetime);
                 if ($user->max_login_attempts == 0 && !empty($user->suspension_datetime) && $suspensionDatetime > $currentDateTime) {
                     $interval = $currentDateTime->diff($suspensionDatetime);
-                    $minutesLeft = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
-                    $secondsLeft = $interval->s;
-                    if ($minutesLeft == 0 && $secondsLeft > 0) {
-                        $minutesLeft = 1;
-                    }
-                    $maxLoginAttempts = $minutesLeft;
+                    $maxLoginAttempts = min((($interval->days * 1440) + ($interval->h * 60) + $interval->i + 1), $loginSuspensionTimeConfig);
                 } else {
                     $user->max_login_attempts = $user->suspension_datetime = NULL;
                     $failedAttempt = new TblFailedPasswordAttempts();
