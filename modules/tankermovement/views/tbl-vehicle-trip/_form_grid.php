@@ -188,6 +188,10 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Map', 'data-val' => $model->trip_code];
             return GhostHtml::a('<i class="fa fa-map-marker"></i>', ['/tankermovement/tbl-vehicle-trip/map', 'trip_code' => $model->trip_code], $options);
         },
+        'vertical-chart' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Map', 'data-val' => $model->trip_code];
+            return GhostHtml::a('<i class="fa fa-bar-chart"></i>', ['/tankermovement/tbl-vehicle-trip/vertical-chart', 'trip_code' => $model->trip_code], $options);
+        },
     ]
 ];
 

@@ -95,7 +95,7 @@ $(document).ready(function () {
                         $('.first-input').closest('.form-group').addClass('has-error').find('.help-block').html('<ul><li>' + msg + '</li></ul>').show();
                     } else {
                         $('#TripDetailModal').modal('hide');
-                        location.reload();
+//                        location.reload();
                     }
             },
             error: function (xhr) {

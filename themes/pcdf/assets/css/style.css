@@ -6165,3 +6165,209 @@ tr.highlightRow {
 div#dashboardFarmerPopup {
     z-index: 99999 !important;
 }
+.timeline {
+    position: relative;
+    background: white;
+    margin-bottom: 50px;
+    padding-bottom: 5px;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: #ccc;
+    top: 0;
+    bottom: 0;
+    left: 355px;
+}
+
+.containers {
+    position: relative;
+    width: 50%;
+    left: 159px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.containers::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: 7px;
+    background-color: white;
+    border: 4px solid #ccc;
+    top: 20px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.selected::after {
+    background-color: #00a3de;
+    border-color: white;
+}
+.timeline-highlight
+{
+    position: absolute;
+    width: 6px;
+    background-color: #00a3de;
+    left: 355px;
+    z-index: 1;
+    transition: height 2s ease-in-out;
+}
+.content p{
+    margin-bottom: 0px;
+    margin-left: 20px;
+}
+.collapsible p{
+    font-size: 12px;
+    color: #607188;
+    margin-bottom: 0px;
+    margin-left: 20px;
+}
+.image-container {
+    position: absolute;
+    left: 0px;
+    margin-top: 20px;
+    z-index: 99;
+}
+
+.image-container img {
+    width: 40px;
+    height: auto;
+    border-radius: 6px;
+}
+.content h5{
+    left: -150px;
+    position: absolute;
+}
+.collapsible-container h5{
+    left: -150px;
+    position: absolute;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    padding: 8px;
+}
+table {
+    width: 100%;
+}
+.detail-box {
+    margin-left: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    margin-top: 190px;
+}
+.modal-cont {
+    background-color: #fefefe;
+    margin-top: 10px;
+    padding: 20px;
+    border: 1px solid #888;
+    width: auto;
+    max-width: 400px;  
+}
+.collapsible-container {
+    width: 50%;
+}
+
+.collapsible {
+    color: #444;
+    cursor: pointer;
+    padding-bottom: 0px;
+    font-size: 15px;
+}
+
+.collapsible-icon {
+    margin-right: 10px;
+    transition: transform 0.3s;
+    left: 110px;
+    position: absolute;
+}
+.contents {
+    padding: 0px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    left: -230px;
+    position: relative;
+    max-width: 70%;
+}
+.div_block
+{
+    width: 95%;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    padding: 5px;
+}
+.fa-angle-down, .fa-angle-up{
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0px 3px;
+    color: #00a3de;
+    margin-top: -2px;
+    border: 1px solid #00a3de;
+    border-radius: 50px;
+    padding: 0 3px;
+}
+.box {
+    padding: 5px;
+    display: flex;
+}
+.gray {
+    background-color: #eeeeee;
+}
+
+.minimalist-border-box p {
+    color: #666666;
+    line-height: 1.6;
+}
+/*.fa-sign-in, .fa-sign-out{
+    color: #00a3de;
+    font-size: 20px;
+    border: 1px solid #00a3de;
+    border-radius: 50px;
+    padding: 5px;
+}*/
+.trip-map-containers {
+    width: 50%;
+    padding: 20px;
+    text-align: center;
+    background: #fff;
+}
+.trip-timeline-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.scroll-button {
+    background-color: #eee;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 2.5em;
+    position: relative;
+    top: 36px;
+    transform: translateY(-50%);
+    background: transparent;
+    color: #ccc;
+    border: 1px solid #ccc;
+}
+
+.left-arrow {
+    left: 0;
+}
+
+.right-arrow {
+    right: 0;
+}
+.scroll-button:hover{
+    color: #777;
+}

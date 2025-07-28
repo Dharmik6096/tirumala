@@ -805,5 +805,25 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         return $this->customRender();
     }
+    
+    public function actionVerticalChart($trip_code) {
+        $tripTrack = TblVehicleTripTracking::find()
+                ->where(['trip_code' => $trip_code])
+                ->andWhere(['or',
+                    ['visibility_status' => null],
+                    ['visibility_status' => ['1', '2']]
+                ])
+                ->orderBy(['sub_status_time' => SORT_ASC])
+                ->all();
+
+        $parsingNo = '';
+        if (!empty($tripTrack) && isset($tripTrack[0]['vehicle_code'])) {
+            $parsingNo = TblVehicleMaster::find()->where(['vehicle_code' => $tripTrack[0]['vehicle_code']])->one();
+        }
+        return $this->render('_vertical_chart', [
+                    'tripTrack' => $tripTrack,
+                    'parsingNo' => $parsingNo,
+        ]);
+    }
 
 }
