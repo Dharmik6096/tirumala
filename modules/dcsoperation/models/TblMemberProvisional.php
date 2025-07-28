@@ -166,7 +166,7 @@ class TblMemberProvisional extends ChildModel {
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'hosync', 'hosyncUpdate', 'pro_member_sap_import']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
