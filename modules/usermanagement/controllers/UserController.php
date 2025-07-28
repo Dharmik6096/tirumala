@@ -540,7 +540,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $delete = [];
             $historyModel = new UserHistory();
             Yii::$app->operation->history($model, $historyModel, UPDATE);
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->load(Yii::$app->request->post());
+            if ($model->validate() && !empty($model->email)) {
                 if ($tableName == "{{%user}}") {
                     $model->load(Yii::$app->request->post());
                     $model->last_password_updated_at = date('Y-m-d H:i:s');
@@ -570,11 +571,15 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $master[] = $notificationModel;
                     }
                 }
-                $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['Password', 'edit']);
+            } else {
+                $model->addError('password', Yii::t('app', 'Email Is Not Available for This user'));
+                return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
+            }
 
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
-                }
+            $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['Password', 'edit']);
+
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['index']);
             }
         }
         $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
