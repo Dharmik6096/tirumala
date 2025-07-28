@@ -386,7 +386,7 @@ class TblMilkVehicleEntryQltyController extends ChildController {
 
     public function actionGetQualityData() {
         $model = $this->findModel(Yii::$app->request->post('id'));
-        $config_list = TblConfigTxnResult::find()->where(['ref_code' => (string) Yii::$app->request->post('id'), 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
+        $config_list = TblConfigTxnResult::find()->select(['config_code', 'config_result'])->where(['ref_code' => (string) Yii::$app->request->post('id'), 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty'])->all();
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         if (!empty($model) || !empty($config_list)) {
             $model->sample_time = !empty($model->sample_datetime) ? date('H:i', strtotime($model->sample_datetime)) : date('H:i');
