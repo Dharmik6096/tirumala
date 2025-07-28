@@ -20,9 +20,10 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
      */
     public function rules() {
         return [
-                [['insurance_detail_code', 'insurance_master_code', 'age', 'is_delete', 'originating_type', 'sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'date_of_joining_scheme', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'f_insurance_status'], 'safe'],
-                [['insurance_master_code'], 'required'],
+            [['insurance_detail_code', 'insurance_master_code', 'age', 'is_delete', 'originating_type', 'sys_updated_by'], 'safe'],
+            [['sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'date_of_joining_scheme', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'f_insurance_status'], 'safe'],
+            [['insurance_master_code'], 'required'],
         ];
     }
 

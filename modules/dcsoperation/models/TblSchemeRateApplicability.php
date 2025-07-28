@@ -53,7 +53,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'is_active', 'originating_type', 'approved_at', 'approved_by'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'is_active', 'originating_type', 'approved_at', 'approved_by', 'description'], 'safe'],
             [['from_shift', 'to_shift'], 'integer'],
             [['rtpl'], 'number'],
             [['rtpl'], 'number', 'on' => ['androidsync']],
@@ -97,6 +97,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'mcc_name' => Yii::t('app', 'Applicable Name'),
             'is_member_rate' => Yii::t('app', 'Is Member Rate'),
+            'description' => Yii::t('app', 'Description'),
         ];
     }
 

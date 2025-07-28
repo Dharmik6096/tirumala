@@ -83,6 +83,7 @@ class Applicability extends \yii\base\Module {
     public $with_applicable_code = false;
     public $load_data_on_apply_to_checkbox = false;
     public $save_applicability_child = false;
+    public $check_applicability_with_field_name = TRUE;
 
     /**
      * @inheritdoc
@@ -206,6 +207,7 @@ class Applicability extends \yii\base\Module {
                     'is_bulk_notification' => $this->is_bulk_notification,
                     'periodic_applicability' => $this->periodic_applicability,
                     'load_data_on_apply_to_checkbox' => $this->load_data_on_apply_to_checkbox,
+                    'check_applicability_with_field_name' => $this->check_applicability_with_field_name
         ]);
     }
 

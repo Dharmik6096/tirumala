@@ -30,28 +30,32 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblInsuranceDetailSummaryHistory extends \yii\db\ActiveRecord {
-
+class TblInsuranceDetailSummaryHistory extends \yii\db\ActiveRecord
+{
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tbl_insurance_detail_summary_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_name', 'id', 'insurance_detail_summary_code', 'insurance_master_code', 'dcs_code', 'from_date', 'to_date', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['id', 'insurance_detail_summary_code', 'insurance_master_code', 'dcs_code', 'from_date', 'to_date', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_name'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => Yii::t('app', 'ID'),
             'insurance_detail_summary_code' => Yii::t('app', 'Insurance Detail Summary Code'),
@@ -77,5 +81,4 @@ class TblInsuranceDetailSummaryHistory extends \yii\db\ActiveRecord {
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
-
 }

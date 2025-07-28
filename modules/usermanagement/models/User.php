@@ -82,6 +82,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
                 ['bind_to_ip', 'trim'],
                 [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
                 [['mobile_no'], function ($attribute, $params) {
+
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
                 ['password', 'required', 'on' => ['newUser', 'changePassword']],

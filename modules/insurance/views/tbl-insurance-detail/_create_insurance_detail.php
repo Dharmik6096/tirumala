@@ -34,19 +34,19 @@ $form = ActiveForm::begin([
             <h4><?= Yii::t('app', 'Upload file having fields in following manner') ?> :<span class="text-right "><?= Html::a('<i class="fa fa-download"></i>', ['/import/default/download-sample', 'flag' => 'insurance-detail', 'local_field' => ''], ['class' => 'btn btn-fab btn-danger btn-download pull-right', 'title' => 'Download Sample']); ?></span></h4>
             <p class="fields"><?php echo str_replace(',', ', ', 'sr_no,dcs_code,dcs_name,member_id,adhar_no,member_code,member_name,gender,dob,age,nominee_member_name,date_of_joining_scheme,nominee_adhar_no'); ?></p>
         </div>
-        <div class="row">
-            <?php
-            echo Dropzone::widget([
-                'id' => 'mainDrop',
-                'options' => [
-                    'acceptedMimeTypes' => ".xls,.xlsx",
-                    'url' => Url::to(['import-insurance-detail']),
-                    'addRemoveLinks' => true,
-                    'autoDiscover' => false,
-                    'maxFiles' => 1,
-                ],
-                'clientEvents' => [
-                    'success' => "function(file, response) {
+            <div class="row">
+                <?php
+                echo Dropzone::widget([
+                    'id' => 'mainDrop',
+                    'options' => [
+                        'acceptedMimeTypes' => ".xls,.xlsx",
+                        'url' => Url::to(['import-insurance-detail']),
+                        'addRemoveLinks' => true,
+                        'autoDiscover' => false,
+                        'maxFiles' => 1,
+                    ],
+                    'clientEvents' => [
+                        'success' => "function(file, response) {
                         var data = $.parseJSON(response);
                         if (data.status == 'success') {
                             $('#file_name').val(data.msg);
@@ -54,15 +54,15 @@ $form = ActiveForm::begin([
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>' + data.msg + '</span></div></div>');
                         }
                     }",
-                    'removedfile' => "function(file) {
+                        'removedfile' => "function(file) {
                         $('#file_name').val('');
                     }",
-                    'sending' => "function(file, xhr, formData) {
+                        'sending' => "function(file, xhr, formData) {
                         formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "');
                     }"
-                ]
-            ]);
-            ?>
+                    ]
+                ]);
+                ?>
         </div>
     </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
@@ -70,13 +70,13 @@ $form = ActiveForm::begin([
         <div class="form-group">
             <div class="col-md-12 top-bottom-15 padding-50">
                 <?php
-                AjaxSubmitButton::begin([
-                    'label' => Yii::t('app', 'Save'),
-                    'id' => 'submit',
-                    'ajaxOptions' => [
-                        'type' => 'POST',
-                        'url' => Url::to(['check-data-exists']), // Initial AJAX call to check-data-exists
-                        'beforeSend' => new JsExpression("function(data){ 
+                    AjaxSubmitButton::begin([
+                        'label' => Yii::t('app', 'Save'),
+                        'id' => 'submit',
+                        'ajaxOptions' => [
+                            'type' => 'POST',
+                            'url' => Url::to(['check-data-exists']), // Initial AJAX call to check-data-exists
+                            'beforeSend' => new JsExpression("function(data){ 
                                 var errMsg = '';
                                 if($('#file_name').val()==''){                                                                                  
                                     errMsg += 'Please Attach File.';
@@ -86,7 +86,7 @@ $form = ActiveForm::begin([
                                     return false;
                                 }
                             }"),
-                        'success' => new JsExpression('function(response) {
+                            'success' => new JsExpression('function(response) {
                                 if(response.status == "error") {
                                     if(response.type == "draft") {
                                         bootbox.confirm({
@@ -165,14 +165,14 @@ $form = ActiveForm::begin([
                                     });
                                 }
                             }'),
-                        'error' => new JsExpression('function(xhr, status, error) {
+                            'error' => new JsExpression('function(xhr, status, error) {
                                 // Handle error of the first AJAX call
                             }'),
-                    ],
-                    'options' => ['class' => 'btn btn-primary', 'type' => 'button'],
-                ]);
-                AjaxSubmitButton::end();
-                ?>
+                        ],
+                        'options' => ['class' => 'btn btn-primary', 'type' => 'button'],
+                    ]);
+                    AjaxSubmitButton::end();
+                    ?>
             </div>
         </div>
     </div>

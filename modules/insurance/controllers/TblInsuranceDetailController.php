@@ -143,9 +143,10 @@ class TblInsuranceDetailController extends ChildController {
             $DCSEditEndDate = $this->model->getdcsEditEndDate($this->model->insurance_master_code, $this->model->dcs_code);
             if ($DCSEditEndDate) {
                 $master = [];
-                if (strtolower($this->model->status) == 'publish') {
+                if (strtolower($this->model->status) == 'publish' || strtolower($this->model->status) == 'partial_finalize') {
                     $historyModel = new TblInsuranceDetailHistory();
                     Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                    $this->model->sys_updated_by = 'PORTAL';
                     $master[] = $historyModel;
                 }
                 $this->model->load(Yii::$app->request->post());
@@ -236,7 +237,7 @@ class TblInsuranceDetailController extends ChildController {
 
     public function setModel($model) {
         $today = date("Y-m-d");
-        $getInsuranceDetail = TblInsuranceDetail::find()->where(['status' => ['DRAFT', 'PUBLISH'], 'dcs_code' => $model->dcs_code])->orderBy(['member_id' => SORT_DESC])->one();
+        $getInsuranceDetail = TblInsuranceDetail::find()->where(['status' => ['DRAFT', 'PUBLISH', 'PARTIAL_FINALIZE'], 'dcs_code' => $model->dcs_code])->orderBy(['member_id' => SORT_DESC])->one();
         $dcsDetail = TblDcs::find()->where(['dcs_code' => $model->dcs_code])->one();
         $insuranceSummary = $model->checkInsuranceDetail($model->insurance_master_code, $model->dcs_code, ['PUBLISH', 'FINALIZE', 'PARTIAL_FINALIZE']);
 
@@ -689,7 +690,8 @@ class TblInsuranceDetailController extends ChildController {
     public function actionGetMemberName() {
         $member_code = Yii::$app->request->post('member_code');
         $type = Yii::$app->request->post('type');
-        $data = ($type == 'create') ? (new TblMember())->validMember($member_code) : (new TblInsuranceDetail())->validInsuranceDetailMember($member_code);
+        $member_id = Yii::$app->request->post('member_id');
+        $data = ($type == 'create') ? (new TblMember())->validMember($member_code) : (new TblInsuranceDetail())->validInsuranceDetailMember($member_code, $member_id);
         return !empty($data) ? json_encode(['status' => 'success', 'member_name' => $data->member_name]) : json_encode(['status' => 'error']);
     }
 
