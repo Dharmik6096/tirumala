@@ -28,7 +28,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             ['email', 'email', 'except' => ['DeactiveUser']],
             ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
             ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code', 'last_password_updated_at', 'date_of_joining'], 'safe'],
+            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent', 'employee_id', 'otp_code', 'last_password_updated_at', 'date_of_joining', 'max_login_attempts', 'suspension_datetime'], 'safe'],
             ['bind_to_ip', 'trim'],
             [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
             [['mobile_no'], function ($attribute, $params) {
