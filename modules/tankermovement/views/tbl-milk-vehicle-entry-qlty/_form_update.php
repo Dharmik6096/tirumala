@@ -86,7 +86,7 @@ $form = ActiveForm::begin([
             $config_mapping = $c->getConfigResultTxnList((string) $model->milk_vehicle_entry_qlty_code);
             $config_result = !empty($config_mapping->config_result) ? $config_mapping->config_result : '0';
             ?>
-            <?= $form->field($config, '[' . $index . ']config_result')->textInput(['value' => $config_result])->label(Yii::t('app', $c->config_name)); ?>
+            <?= $c->prepareControl($form, $config_mapping, $index); ?>
 
         </div>
         <?php if ($cnt == 6) { ?>

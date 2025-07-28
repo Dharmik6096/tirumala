@@ -236,9 +236,19 @@ class GeneralFunctions extends Component {
             }
     }
 
-    public function validateDiscriptiveField($model, $attribute) {
+    public function validateDiscriptiveField($model, $attribute, $has_strict_address_validation = FALSE) {
         if (!empty($model->$attribute)) {
-            if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+            $validationFailed = FALSE;
+            if ($has_strict_address_validation) {
+                if (preg_match('/[<>&"\']/', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            } else {
+                if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            }
+            if ($validationFailed) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '.'));
                 return false;
             }
