@@ -78,13 +78,12 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->dropdownStatic('record_status', $model, $form, 'form-group', $model->getAttributeLabel('record_status'), false, 'record_status', false); ?>
                 </div>
                 <?php
-                $index = 1;
                 $cnt = 1;
                 foreach ($config_list as $c) {
-                    echo Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]);
+                    echo Html::activeHiddenInput($config, '[' . $c->config_code . ']config_code', ['value' => $c->config_code]);
                     ?>
                     <div class="col-sm-2">
-                        <?= $c->prepareControl($form, $config, $index); ?>
+                        <?= $c->prepareControl($form, $config, $c->config_code); ?>
                     </div>
                     <?php if ($cnt == 6) { ?>
                         <?php
@@ -93,7 +92,6 @@ $form = ActiveForm::begin([
                     ?>
                     <?php
                     $cnt++;
-                    $index++;
                 }
                 ?>
             </div>
@@ -276,11 +274,9 @@ $script = "
                         });
                         $('#tblmilkvehicleentryqlty-sample_datetime').val(modelData.sample_datetime);
                         $('#tblmilkvehicleentryqlty-sample_time').val(obj1.data.sample_time);
-                        var index = 1;
                         $('.config_class').val('').trigger('change');
                         $.each(configList, function(key,val) {
-                            $('#tblconfigtxnresult-'+index+'-config_result').val(val.config_result || '').trigger('change');
-                            index++;
+                            $('#tblconfigtxnresult-'+val.config_code+'-config_result').val(val.config_result || '').trigger('change');
                         });
                     }
                 },

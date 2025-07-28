@@ -76,17 +76,16 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('record_status', $model, $form, 'form-group', $model->getAttributeLabel('record_status'), false, 'record_status', false); ?>
     </div>
     <?php
-    $index = 1;
     $cnt = 1;
     foreach ($config_list as $c) {
-        echo Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]);
+        echo Html::activeHiddenInput($config, '[' . $c->config_code . ']config_code', ['value' => $c->config_code]);
         ?>
         <div class="col-sm-2">
             <?php
             $config_mapping = $c->getConfigResultTxnList((string) $model->milk_vehicle_entry_qlty_code);
-            $config_result = !empty($config_mapping->config_result) ? $config_mapping->config_result : '0';
+            $config_data = !empty($config_mapping) ? $config_mapping : $config;
             ?>
-            <?= $c->prepareControl($form, $config_mapping, $index); ?>
+            <?= $c->prepareControl($form, $config_data, $c->config_code); ?>
 
         </div>
         <?php if ($cnt == 6) { ?>
@@ -96,7 +95,6 @@ $form = ActiveForm::begin([
         ?>
         <?php
         $cnt++;
-        $index++;
     }
     ?>
 </div>
