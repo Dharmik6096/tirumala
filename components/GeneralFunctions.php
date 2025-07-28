@@ -240,11 +240,11 @@ class GeneralFunctions extends Component {
         if (!empty($model->$attribute)) {
             $validationFailed = FALSE;
             if ($has_strict_address_validation) {
-                if (preg_match('/[<>&"\']/', $model->$attribute)) {
+                if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
                     $validationFailed = TRUE;
                 }
             } else {
-                if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+                if (preg_match('/[<>&"\']/', $model->$attribute)) {
                     $validationFailed = TRUE;
                 }
             }

@@ -1285,7 +1285,7 @@ class CustomValidation extends Component {
                             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['activation']],
                             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['activation']],
                             [['address'], function ($attribute, $params) {
-                                Yii::$app->general->validateDiscriptiveField($this, $attribute, TRUE);
+                                Yii::$app->general->validateDiscriptiveField($this, $attribute, FALSE);
                             }, 'except' => ['activation']],
                     ],
                 ],
