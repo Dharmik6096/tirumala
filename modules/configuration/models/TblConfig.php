@@ -5,6 +5,7 @@ namespace app\modules\configuration\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 use app\modules\tankermovement\models\TblConfigTxnResult;
+use yii\bootstrap5\Html;
 
 /**
  * This is the model class for table "tbl_config".
@@ -104,7 +105,7 @@ class TblConfig extends \app\models\ChildModel {
         if ($this->control_type == 'RADIO') {
             return $form->field($config, '[' . $index . ']config_result')->inline()->radioList($config_data, ['itemOptions' => ['class' => 'custom-radio-class']])->label(Yii::t('app', $this->config_name));
         } else if ($this->control_type == 'DROPDOWN') {
-            return $form->field($config, '[' . $index . ']config_result')->dropDownList($config_data, ['class' => 'form-control config_class', 'prompt' => Yii::t('app', 'Select')])->label(Yii::t('app', $this->config_name));
+            return Html::tag('div', $form->field($config, '[' . $index . ']config_result')->dropDownList($config_data, ['class' => 'form-control config_class', 'prompt' => Yii::t('app', 'Select')])->label(Yii::t('app', $this->config_name)) . '<span class="dropdown-icon"><i class="fa fa-angle-down"></i></span>', ['class' => 'dropdown-submenu']);
         } else if ($this->control_type == 'CHECKBOX') {
             return $form->field($config, '[' . $index . ']config_result', ['checkHorizontalTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox()->label(Yii::t('app', $this->config_name));
         } else {

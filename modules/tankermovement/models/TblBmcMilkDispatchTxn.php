@@ -339,18 +339,14 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         if ($insert) {
-            $bmcMilkDispatchData = $this->bmcMilkDispatchCode;
-            $tripTrackingModel = new TblVehicleTripTracking();
-            $tripTrackingModel->union_code = $bmcMilkDispatchData->union_code;
-            $tripTrackingModel->plant_code = $bmcMilkDispatchData->plant_code;
-            $tripTrackingModel->trip_code = $bmcMilkDispatchData->trip_code;
-            $tripTrackingModel->vehicle_code = $bmcMilkDispatchData->vehicle_code;
-            $tripTrackingModel->trip_date = date('Y-m-d');
-            $tripTrackingModel->trip_status = 'open';
-            $tripTrackingModel->trip_sub_status = 'bmc_dispatch_C' . $this->chamber_no;
-            $tripTrackingModel->sub_status_time = date('Y-m-d H:i:s');
-            $tripTrackingModel->remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
-            $tripTrackingModel->save(TRUE, FALSE);
+            $tripModel = new TblVehicleTrip();
+            $tripModel->attributes = $this->bmcMilkDispatchCode->attributes;
+            $tripModel->transaction_date = date('Y-m-d');
+            $tripModel->trip_status = 'open';
+            $tripModel->trip_sub_status = 'bmc_dispatch_C' . $this->chamber_no;
+            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
         }
     }
 
