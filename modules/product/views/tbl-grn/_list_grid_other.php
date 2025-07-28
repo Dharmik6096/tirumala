@@ -71,6 +71,7 @@ $form = ActiveForm::begin([
         ],
         ['attribute' => 'missing_qty',
             'format' => 'raw',
+            'label' => 'Pending Qty',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js number-validate'])->label(FALSE) . '</span>';
