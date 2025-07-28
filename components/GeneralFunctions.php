@@ -236,7 +236,7 @@ class GeneralFunctions extends Component {
             }
     }
 
-    public function validateDiscriptiveField($model, $attribute, $has_strict_address_validation = FALSE) {
+    public function validateDiscriptiveField($model, $attribute, $has_strict_address_validation = TRUE) {
         if (!empty($model->$attribute)) {
             $validationFailed = FALSE;
             if ($has_strict_address_validation) {

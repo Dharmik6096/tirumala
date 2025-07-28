@@ -44,10 +44,11 @@ class TblVspPaymentConfig extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'billing_based_on'], 'safe'],
             [['originating_type'], 'integer'],
-            [['dcs_code'], 'validateData'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'billing_based_on'], 'required', 'on' => ['searchModel']],
+            [['dcs_code'], 'validateData', 'on' => ['searchModel']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['searchModel']],
+            [['billing_based_on'], 'required', 'on' => ['searchModel', 'update']],
         ];
     }
 

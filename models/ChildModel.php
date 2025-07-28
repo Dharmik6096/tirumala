@@ -26,14 +26,13 @@ class ChildModel extends \yii\db\ActiveRecord {
     public $hasImport = FALSE;
     public $import_union_config;
     public $set_master_hierarchy = [];
-    public $has_strict_address_validation = TRUE;
 
     //put your code here
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
 
             if ($this->hasAttribute('address'))
-                \Yii::$app->general->validateDiscriptiveField($this, 'address', $this->has_strict_address_validation);
+                \Yii::$app->general->validateDiscriptiveField($this, 'address');
 
             if ($this->hasAttribute('description'))
                 \Yii::$app->general->validateDiscriptiveField($this, 'description');
