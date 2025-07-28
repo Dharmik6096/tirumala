@@ -2884,8 +2884,8 @@ div.crystalstyle{
 .table-bordered tr th a{
     /* background-color: ; */
     color:rgb(0, 163, 222) !important;
-/*     color: #fff;
-    background: rgb(0, 163, 222) !important; */
+    /*     color: #fff;
+        background: rgb(0, 163, 222) !important; */
 }
 /* 
 .detail-view tr th{
@@ -5870,4 +5870,11 @@ div#dashboardFarmerPopup {
 }
 .saahaj_img img {
     max-height: 350px !important;
+}
+.dropdown-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%); 
+    pointer-events: none;
 }
