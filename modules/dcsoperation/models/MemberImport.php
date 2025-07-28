@@ -37,7 +37,7 @@ class MemberImport extends TblMember {
                 [['ifsc', 'pan_no'], 'trim'],
                 [['email'], 'email'],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => TRUE],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
