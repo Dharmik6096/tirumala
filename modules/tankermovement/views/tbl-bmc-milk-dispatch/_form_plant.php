@@ -475,7 +475,7 @@ $(document).ready(function(){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':plantCode,'orgType':'PLANT','processName':'PLANT_MILK_DISPATCH'},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':plantCode,'orgType':'PLANT','processName':'PLANT_DISPATCH_CONFIG'},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
