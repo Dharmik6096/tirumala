@@ -809,10 +809,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
     public function actionVerticalChart($trip_code) {
         $tripTrack = TblVehicleTripTracking::find()
                 ->where(['trip_code' => $trip_code])
-                ->andWhere(['or',
-                    ['visibility_status' => null],
-                    ['visibility_status' => ['1', '2']]
-                ])
+                ->andWhere(['not', ['visibility_status' => 3]])
                 ->orderBy(['sub_status_time' => SORT_ASC])
                 ->all();
 

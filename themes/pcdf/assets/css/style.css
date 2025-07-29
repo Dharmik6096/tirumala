@@ -5986,7 +5986,7 @@ tr.highlightRow {
 .trip-timeline {
     display: flex;
     padding: 20px 0;
-    overflow-x: auto;
+    overflow-x: hidden;
 }
 
 .step {
@@ -6172,7 +6172,7 @@ div#dashboardFarmerPopup {
     padding-bottom: 5px;
 }
 
-.timeline::after {
+/*.timeline::after {
     content: '';
     position: absolute;
     width: 6px;
@@ -6180,14 +6180,14 @@ div#dashboardFarmerPopup {
     top: 0;
     bottom: 0;
     left: 355px;
-}
+}*/
 
 .containers {
     position: relative;
     width: 50%;
-    left: 159px;
+    /*left: 176px;*/
     padding-left: 15px;
-    margin-right: auto;
+    /*margin-right: auto;*/
     margin-left: auto;
 }
 
@@ -6196,7 +6196,7 @@ div#dashboardFarmerPopup {
     position: absolute;
     width: 25px;
     height: 25px;
-    left: 7px;
+    left: -15px;
     background-color: white;
     border: 4px solid #ccc;
     top: 20px;
@@ -6204,24 +6204,17 @@ div#dashboardFarmerPopup {
     z-index: 1;
 }
 
-.selected::after {
+.sub_status_selected::after {
     background-color: #00a3de;
     border-color: white;
-}
-.timeline-highlight
-{
     position: absolute;
-    width: 6px;
-    background-color: #00a3de;
-    left: 355px;
-    z-index: 1;
-    transition: height 2s ease-in-out;
+    left: -15px;
 }
-.content p{
+.sub_status_content p {
     margin-bottom: 0px;
     margin-left: 20px;
 }
-.collapsible p{
+.collapsible p {
     font-size: 12px;
     color: #607188;
     margin-bottom: 0px;
@@ -6229,9 +6222,14 @@ div#dashboardFarmerPopup {
 }
 .image-container {
     position: absolute;
-    left: 0px;
+    left: -20px;
     margin-top: 20px;
     z-index: 99;
+}
+.image-sub-container img{
+    width: 40px;
+    height: auto;
+    border-radius: 6px;
 }
 
 .image-container img {
@@ -6239,38 +6237,16 @@ div#dashboardFarmerPopup {
     height: auto;
     border-radius: 6px;
 }
-.content h5{
+.sub_status_content h5 {
     left: -150px;
     position: absolute;
 }
-.collapsible-container h5{
-    left: -150px;
-    position: absolute;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    padding: 8px;
-}
-table {
-    width: 100%;
-}
-.detail-box {
-    margin-left: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 6px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: none;
-    margin-top: 190px;
-}
-.modal-cont {
-    background-color: #fefefe;
-    margin-top: 10px;
+.sub_status_content {
     padding: 20px;
-    border: 1px solid #888;
-    width: auto;
-    max-width: 400px;  
+}
+.collapsible-container h5 {
+    left: -150px;
+    position: absolute;
 }
 .collapsible-container {
     width: 50%;
@@ -6278,9 +6254,9 @@ table {
 
 .collapsible {
     color: #444;
-    cursor: pointer;
     padding-bottom: 0px;
     font-size: 15px;
+    position: relative;
 }
 
 .collapsible-icon {
@@ -6289,25 +6265,16 @@ table {
     left: 110px;
     position: absolute;
 }
-.contents {
+.collapsible_contents {
     padding: 0px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
-    left: -230px;
+    left: -240px;
     position: relative;
-    max-width: 70%;
+    max-width: fit-content;
 }
-.div_block
-{
-    width: 95%;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    margin: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    padding: 5px;
-}
-.fa-angle-down, .fa-angle-up{
+.sub_status_content .fa-angle-down, .sub_status_content .fa-angle-up {
     font-size: 15px;
     font-weight: 600;
     padding: 0px 3px;
@@ -6316,12 +6283,13 @@ table {
     border: 1px solid #00a3de;
     border-radius: 50px;
     padding: 0 3px;
+    cursor: pointer;
 }
 .box {
     padding: 5px;
     display: flex;
 }
-.gray {
+.bg-gray {
     background-color: #eeeeee;
 }
 
@@ -6329,13 +6297,13 @@ table {
     color: #666666;
     line-height: 1.6;
 }
-/*.fa-sign-in, .fa-sign-out{
+.minimalist-border-box .fa-sign-in, .minimalist-border-box .fa-sign-out{
     color: #00a3de;
     font-size: 20px;
     border: 1px solid #00a3de;
     border-radius: 50px;
     padding: 5px;
-}*/
+}
 .trip-map-containers {
     width: 50%;
     padding: 20px;
@@ -6368,6 +6336,17 @@ table {
 .right-arrow {
     right: 0;
 }
-.scroll-button:hover{
+.scroll-button:hover {
     color: #777;
+}
+
+.containers.sub_status_selected {
+    border-left: 5px solid #00a3de;
+}
+.containers.sub_status_not_selected {
+    border-left: 5px solid #ccc;
+}
+.collapsible_box{
+    border: 2px solid #eeeeee;
+    border-radius: 5px;
 }
