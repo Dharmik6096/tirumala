@@ -417,7 +417,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $vehicleData = [];
         $postData = Yii::$app->request->post();
         if (!empty($postData['vehicle_code'])) {
-            $vehicleData = TblVehicleMaster::find()->select(['driver_name', 'driver_contact_no', 'transporter_code'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $vehicleData = TblVehicleMaster::find()->alias('vm')
+                ->select(['vm.driver_name', 'vm.driver_contact_no', 'vm.transporter_code', 'sum(vcd.compartment_no) as compartment_no', 'sum(vcd.capacity) as capacity'])
+                ->join('INNER JOIN', 'tbl_vehicle_compartment_detail as vcd', 'vcd.vehicle_code = vm.vehicle_code')
+                ->where(['vm.vehicle_code' => $postData['vehicle_code']])
+                ->groupBy(['vm.driver_name', 'vm.driver_contact_no', 'vm.transporter_code'])
+                ->asArray()
+                ->one();
             $status = 'success';
         }
         $record = ['status' => $status, 'data' => $vehicleData];

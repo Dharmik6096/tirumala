@@ -45,9 +45,20 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'no_of_compartment')->textInput(['readonly' => true]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'vehicle_capacity')->textInput(['readonly' => true]) ?>
+    </div>
     <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox()->label('Is Partial Trip?'); ?>
     </div>
+    <div class="col-sm-8">
+        <?= $form->field($model, 'remark')->textInput() ?>
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6">
         <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
@@ -205,13 +216,15 @@ $('#tblvehicletrip-vehicle_code').on('change', function(){
                     if(response != '' && response != null){
                         $('#tblvehicletrip-driver_name').val(response.driver_name);
                         $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                        $('#tblvehicletrip-no_of_compartment').val(response.compartment_no);
+                        $('#tblvehicletrip-vehicle_capacity').val(response.capacity);
                         $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
                     }
                 }
             }
         });
     } else {
-        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no, #tblvehicletrip-transporter_code').val(null).trigger('change');
+        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no, #tblvehicletrip-no_of_compartment, #tblvehicletrip-vehicle_capacity, #tblvehicletrip-transporter_code').val(null).trigger('change');
     }
 });
 

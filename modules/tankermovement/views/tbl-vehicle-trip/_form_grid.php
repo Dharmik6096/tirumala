@@ -102,6 +102,9 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_auto_trip');
         }
     ],
+    ['attribute' => 'no_of_compartment', 'visible' => false],
+    ['attribute' => 'vehicle_capacity', 'visible' => false],
+    ['attribute' => 'remark'],
 ];
 
 $grid_option = [
