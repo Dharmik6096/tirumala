@@ -32,49 +32,49 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
-            <?php if ($readonly) { ?>
-                <div class="col-sm-2 filldata">
-                    <?= $form->field($model, 'plant_code')->label(Yii::t('app', 'Source Plant'))->dropDownList([$model->plant_code => Yii::$app->general->getforeignkey($model->plantCode, 'name')], ['disabled' => 'disabled', 'prompt' => '']) ?>
-                </div>
-            <?php } else { ?>
-                <div class="col-sm-2 filldata">
-                    <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', Yii::t('app', 'Source Plant'), FALSE, '', $readonly); ?>
-                </div>
-            <?php } ?>
             <div class="col-sm-2 filldata">
+                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', Yii::t('app', 'Source Plant'), FALSE, '', $readonly); ?>
+            </div>
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $readonly, true); ?>
             </div>
-            <div class="col-sm-2 shift filldata">
+            <div class="col-sm-2 shift">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'from_shift_code'); ?>
             </div>
-            <div class="col-sm-2 filldata">
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
             </div>
-            <div class="col-sm-2 shift filldata">
+            <div class="col-sm-2 shift">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('type', 'plant', ['id' => 'type']); ?>
             <?php if (!$tripGenerateBtn) { ?>
-                <div class="col-sm-2 filldata" id='transactionDate'>
+                <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
-                <div class="col-sm-2 filldata"> 
-                    <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-union_code,type,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
-                </div>
+                <?php if ($readonly) { ?>
+                    <div class="col-sm-2">
+                        <?= $form->field($model, 'vehicle_code')->dropDownList([$model->vehicle_code => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no')], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                    </div>
+                <?php } else { ?>
+                    <div class="col-sm-2"> 
+                        <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-union_code,type,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                    </div>
+                <?php } ?>
             <?php } else { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
                 </div>
-                <div class="col-sm-2 filldata" id='transactionDate'>
+                <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
             <?php } ?>
             <?php if ($readonly) { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= $form->field($model, 'trip_code')->dropDownList([$model->trip_code => $model->trip_code], ['disabled' => 'disabled', 'prompt' => '']) ?>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
                     <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
                     <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
@@ -215,6 +215,8 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
+var isTransactionDetailLoad = false;
+var isTransactionFormLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
@@ -566,7 +568,7 @@ function setData(field = ''){
 
 $script .= "
     var isTxnEditable = " . json_encode($txnEdit) . ";
-    $(document).on('change','.filldata', function() {
+    $(document).off('change', '.filldata').on('change', '.filldata', function () {
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
         var plant_code = $('#tblbmcmilkdispatch-plant_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
@@ -576,22 +578,28 @@ $script .= "
     }); 
   
     function BindData(plant_code,bmc_milk_dispatch_code,union_code){
-        if(setData(plant_code)){
+        if(setData(plant_code) && !isTransactionFormLoad){
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-form']) . "',
                 data: {'process_name' : 'PLANT_DISPATCH','org_type' : 'PLANT','org_code' : plant_code,'union_code':union_code},             
                 success: function(data) {
+                    if(isSecondTransaction){
+                        isTransactionFormLoad = true;
+                    }
                     $('#transactions-from').html(data);                                                                 
                 }
             });    
         }        
-        if(setData(bmc_milk_dispatch_code)) {
+        if(setData(bmc_milk_dispatch_code) && !isTransactionDetailLoad) {
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-detail']) . "',
                 data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code,'form_type':'plant', 'txnEdit': isTxnEditable},
                 success: function(data) {
+                    if(isSecondTransaction){
+                        isTransactionDetailLoad = true;
+                    }
                     $('#transactions-detial').html(data);
                 },
                 error: function(data) {  
