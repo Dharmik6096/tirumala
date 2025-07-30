@@ -3,8 +3,6 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
-use yii\jui\DatePicker;
-use yii\helpers\Url;
 
 $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', 'Control Mapping');
@@ -25,8 +23,21 @@ $defaultToggle = true;
                     'validateOnSubmit' => true,
                     'fieldConfig' => [
         ]]);
+        if (!empty($model)) {
+                if ($model->org_type == 'PLANT') {
+                    $code = $model->plant_code;
+                    $name = Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    $refCode = Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
+                } else {
+                    $code = $model->bmc_code;
+                    $name = Yii::$app->general->getforeignkey($model->mainBmcCode, 'bmc_name');
+                    $refCode = Yii::$app->general->getforeignkey($model->mainBmcCode, 'ref_code');
+                }
+            }
+            $pro_name = (isset($model->process_name)) ? $model->process_name : '';
         ?>
         <?php echo $form->errorSummary($model); ?>
+        <div class="panel-heading"><?= $pro_name ?> > <?= $model->org_type ?> : <?= $name . '(' . $code . ')' ?>, Ref. Code: <?= $refCode ?></div>
         <div class="panel-body set_checkbox padding_top_0 tbl_border">
             <div class="grid-search search-filter padding_left_0 padding_right_0 searchBtnReport text-right beforeGridLoad">
                 <div class="btn-login btn-group btn btn-default mis_report_modal_toggle float-end"><i class="fa fa-search"></i></div>
@@ -56,89 +67,96 @@ $defaultToggle = true;
                                     <tbody>
                                         <?php for ($i = 0; $i < $first_table; $i++) { ?>
                                             <tr>
-                                                <td class='center-align center_text'>
-                                                    <?php
-                                                    $val = $data[$i]['config_code'];
-                                                    $selected = in_array($val, $selectedArray);
-                                                    echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
-                                                    ?>
-                                                </td>
-                                                <td><?= $data[$i]->config_name ?></td>
+                                                <th width='17%' height='35' class='center-align center_text'><?= Html::checkbox('allowCashCheckAll', false, ['id' => 'allowCashCheckAll', 'class' => 'checkbox', 'label' => '']) ?></th>
+                                                <th width='60%' height='35'><?php echo $model->getAttributeLabel('config_name') ?></th>
                                             </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-sm-4 ">
-                                <table class="table table-bordered table-striped table-main table-language table-rate">
-                                    <thead>
-                                        <tr>
-                                            <th width='17%' height='35'></th>
-                                            <th width='60%' height='35'><?php echo $model->getAttributeLabel('config_name') ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        for ($i = $first_table; $i < $second_table && $i < $count; $i++) {
-                                            ?>
+                                        </thead>
+                                        <tbody>
+                                            <?php for ($i = 0; $i < $first_table; $i++) { ?>
+                                                <tr>
+                                                    <td class='center-align center_text'>
+                                                        <?php
+                                                        $val = $data[$i]['config_code'];
+                                                        $selected = in_array($val, $selectedArray);
+                                                        echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
+                                                        ?>
+                                                    </td>
+                                                    <td><?= $data[$i]->config_name ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-4 ">
+                                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                                        <thead>
                                             <tr>
-                                                <td class='center-align center_text'>
-                                                    <?php
-                                                    $val = $data[$i]['config_code'];
-                                                    $selected = in_array($val, $selectedArray);
-                                                    echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
-                                                    ?>
-                                                </td>
-                                                <td><?= $data[$i]->config_name ?></td>
+                                                <th width='17%' height='35'></th>
+                                                <th width='60%' height='35'><?php echo $model->getAttributeLabel('config_name') ?></th>
                                             </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-sm-4 ">
-                                <table class="table table-bordered table-striped table-main table-language table-rate">
-                                    <thead>
-                                        <tr>
-                                            <th width='17%' height='35'></th>
-                                            <th width='60%' height='35'><?php echo $model->getAttributeLabel('config_name') ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        for ($i = $second_table; $i < $count; $i++) {
-                                            ?>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for ($i = $first_table; $i < $second_table && $i < $count; $i++) {
+                                                ?>
+                                                <tr>
+                                                    <td class='center-align center_text'>
+                                                        <?php
+                                                        $val = $data[$i]['config_code'];
+                                                        $selected = in_array($val, $selectedArray);
+                                                        echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
+                                                        ?>
+                                                    </td>
+                                                    <td><?= $data[$i]->config_name ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-4 ">
+                                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                                        <thead>
                                             <tr>
-                                                <td class='center-align center_text'>
-                                                    <?php
-                                                    $val = $data[$i]['config_code'];
-                                                    $selected = in_array($val, $selectedArray);
-                                                    echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
-                                                    ?>
-                                                </td>
-                                                <td><?= $data[$i]->config_name ?></td>
+                                                <th width='17%' height='35'></th>
+                                                <th width='60%' height='35'><?php echo $model->getAttributeLabel('config_name') ?></th>
                                             </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <?php
-                        } else {
-                            echo "<p class='text-center'>" . Yii::t('app', 'Data Not Available') . "</p>";
-                            $defaultToggle = true;
-                        }
-                        ?>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for ($i = $second_table; $i < $count; $i++) {
+                                                ?>
+                                                <tr>
+                                                    <td class='center-align center_text'>
+                                                        <?php
+                                                        $val = $data[$i]['config_code'];
+                                                        $selected = in_array($val, $selectedArray);
+                                                        echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
+                                                        ?>
+                                                    </td>
+                                                    <td><?= $data[$i]->config_name ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php
+                            } else {
+                                echo "<p class='text-center'>" . Yii::t('app', 'Data Not Available') . "</p>";
+                                $defaultToggle = true;
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                <?php if (!empty($dataProvider->getModels())) { ?>
+                    <?= Yii::$app->controls->save($button, $model); ?>
+                    <?= Yii::$app->controls->reset(); ?>
+                <?php } ?>
+            </div>
+            <?php ActiveForm::end(); ?>
         </div>
-        <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <?php if (!empty($dataProvider->getModels())) { ?>
-                <?= Yii::$app->controls->save($button, $model); ?>
-                <?= Yii::$app->controls->reset(); ?>
-            <?php } ?>
-        </div>
-        <?php ActiveForm::end(); ?>
-    </div>
     </div>
 </div>
 <?php

@@ -8,33 +8,48 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
     <div class="image_sec">
         <img src="themes\emilk\assets\images\milk_truck.jpg" alt="Food Icon" width="80" class="image">
     </div>
-    <?php if (!empty($tripTrack)) { ?>
-        <div class="trip-timeline">
-            <?php
-            foreach ($tripTrack as $index => $trip) {
-                $stepClass = ($index % 2 == 0) ? 'step-up' : 'step-down';
-                $remarks = explode('-', $trip->remarks);
-                ?>
-                <div class="step <?= $stepClass ?>">
+    <div class="trip-timeline-wrapper">
+        <button class="scroll-button left-arrow" onclick="scrollTimeline(-200)">
+            &#10094&#10094;
+        </button>
+        <div class="trip-timeline" id="tripTimeline">
+            <?php if (!empty($tripTrack)) { ?>
+                <?php
+                foreach ($tripTrack as $index => $trip) {
+                    $stepClass = ($index % 2 == 0) ? 'step-up' : 'step-down';
+                    $remarks = explode('-', $trip->remarks);
+                    ?>
+                    <div class="step <?= $stepClass ?>">
 
-                    <div class="step-content">
-                        <?php
-                        $labelMap = [
-                            'cleaning_pending' => 'Plant Lot Done',
-                            'qa_pending' => 'Cleaning Done',
-                            'tanker_qualified' => 'QA Done',
-                        ];
-                        $customLabel = isset($labelMap[$trip->trip_sub_status]) ? $labelMap[$trip->trip_sub_status] : ucwords(str_replace('_', ' ', $trip->trip_sub_status));
-                        ?>
-                        <h5><strong><?= $customLabel ?></strong></h5>
-                        <p><?= isset($remarks[0]) ? $remarks[0] : '' ?> - <?= isset($remarks[1]) ? $remarks[1] : '' ?></p>
-                        <h6><?= Yii::$app->controls->view_datetime($trip->sub_status_time) ?></h6>
-                        <p class="mt10"><?= isset($remarks[2]) ? $remarks[2] : '' ?></p>
+                        <div class="step-content">
+                            <?php
+                            $labelMap = [
+                                'cleaning_pending' => 'Plant Lot Done',
+                                'qa_pending' => 'Cleaning Done',
+                                'tanker_qualified' => 'QA Done',
+                            ];
+                            $customLabel = isset($labelMap[$trip->trip_sub_status]) ? $labelMap[$trip->trip_sub_status] : ucwords(str_replace('_', ' ', $trip->trip_sub_status));
+                            ?>
+                            <h5><strong><?= $customLabel ?></strong></h5>
+                            <p><?= isset($remarks[0]) ? $remarks[0] : '' ?> - <?= isset($remarks[1]) ? $remarks[1] : '' ?></p>
+                            <h6><?= Yii::$app->controls->view_datetime($trip->sub_status_time) ?></h6>
+                            <p class="mt10"><?= isset($remarks[2]) ? $remarks[2] : '' ?></p>
+                        </div>
                     </div>
-                </div>
+                <?php } ?>
+            <?php } else { ?>
+                <div class="emptymsg"><b>Data Not Found.</b></div>
             <?php } ?>
-        <?php } else { ?>
-            <div class="emptymsg"><b>Data Not Found.</b></div>
-        <?php } ?>
+        </div>
+        <button class="scroll-button right-arrow" onclick="scrollTimeline(200)">
+            &#10095&#10095;
+        </button>
     </div>
 </div>
+
+<script>
+    function scrollTimeline(scrollAmount) {
+        const timeline = document.getElementById('tripTimeline');
+        timeline.scrollLeft += scrollAmount;
+    }
+</script>

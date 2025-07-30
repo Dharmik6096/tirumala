@@ -36,7 +36,7 @@ use yii\helpers\ArrayHelper;
     }
     $pro_name = (isset($masterData[0]->process_name)) ? $masterData[0]->process_name : '';
     ?>
-    <div class="panel-heading"><?= $pro_name ?> > <?php $model[0]->org_type ?> : <?= $name . '(' . $code . ')' ?>, Ref. Code: <?= $refCode ?></div>
+    <div class="panel-heading"><?= $pro_name ?> > <?= $model[0]->org_type ?> : <?= $name . '(' . $code . ')' ?>, Ref. Code: <?= $refCode ?></div>
 
     <div class="panel-body">
         <div class="row">
