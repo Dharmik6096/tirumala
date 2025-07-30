@@ -133,6 +133,8 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
                 if ($totalCapacity > $vehicleCapacity['value']) {
                     $this->addError($attribute, 'Vehicle Capacity must not be more than ' . $vehicleCapacity['value'] . '.');
                 }
+            } else {
+                $this->addError($attribute, 'Please define vehicle capacity in master.');
             }
         }
     }

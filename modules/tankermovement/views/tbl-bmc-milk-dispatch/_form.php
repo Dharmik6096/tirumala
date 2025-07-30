@@ -526,7 +526,7 @@ function calculateClr(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['calculate-clr']) . "',
-            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':bmcCode,'orgType':'BMC','processName':'BMC_MILK_DISPATCH'},
+            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':bmcCode,'orgType':'BMC','processName':'BMC_DISPATCH_CONFIG'},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success') {

@@ -342,6 +342,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
+<<<<<<< HEAD
         if ($insert) {
             $tripModel = new TblVehicleTrip();
             $tripModel->trip_code = $this->trip_code;
@@ -352,6 +353,16 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
             $remarks = $chamberQuantity . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
             $trackingDetail = ['visibility_status' => 0, 'module_code' => $this->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
             Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+=======
+        if ($insert && !empty($this->tare_weight)) {
+            $tripModel = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
+            if(!empty($tripModel)){
+                $tripModel->trip_sub_status = 'milk_receipt_C' . $this->chamber_no;
+                $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+                $remarks = $this->chamber_quantity . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
+                Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+            }
+>>>>>>> d4adacea672686a581129d64ed8e7703f4e1f770
         }
     }
 
