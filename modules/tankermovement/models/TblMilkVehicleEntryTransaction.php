@@ -342,14 +342,14 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        if ($insert) {
-            $tripModel = new TblVehicleTrip();
-            $tripModel->trip_code = $this->trip_code;
-            $tripModel = $tripModel->getClosedtripData();
-            $tripModel->trip_sub_status = 'milk_receipt_C' . $this->chamber_no;
-            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
-            $chamberQuantity = (int)$this->chamber_quantity == $this->chamber_quantity ? (int)$this->chamber_quantity : $this->chamber_quantity;
-            $remarks = $chamberQuantity . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
+        if ($insert && !empty($this->tare_weight)) {
+            $tripModel = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
+            $remarks = '';
+            if(!empty($tripModel)){
+                $tripModel->trip_sub_status = 'milk_receipt_C' . $this->chamber_no;
+                $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+                $remarks = $this->chamber_quantity . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
+            }
             Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
         }
     }
