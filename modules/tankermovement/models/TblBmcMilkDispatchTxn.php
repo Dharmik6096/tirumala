@@ -340,13 +340,23 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         if ($insert) {
             $tripModel = new TblVehicleTrip();
-            $tripModel->attributes = $this->bmcMilkDispatchCode->attributes;
+            $bmcMilkDispatchCode = $this->bmcMilkDispatchCode;
+            $tripModel->attributes = $bmcMilkDispatchCode->attributes;
             $tripModel->transaction_date = date('Y-m-d');
             $tripModel->trip_status = 'open';
-            $tripModel->trip_sub_status = 'bmc_dispatch_C' . $this->chamber_no;
+            $tripModel->trip_sub_status = $bmcMilkDispatchCode['source_org_type'] . '_dispatch_C' . $this->chamber_no;
             $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
-            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
-            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');  
+            $tripDetail = TblVehicleTripDetail::find()->where([
+                    'challan_no' => $bmcMilkDispatchCode['challan_no'],
+                    'trip_code' => $bmcMilkDispatchCode['trip_code'],
+                ])->one();
+            $tripDetailCode = '';
+            if ($tripDetail !== null) {
+                $tripDetailCode = $tripDetail->vehicle_trip_detail_code;
+            }
+            $trackingDetail = ['visibility_status' => 0, 'module_code' => $tripDetailCode, 'module_type' => 'tbl_vehicle_trip_detail'];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
         }
     }
 

@@ -3040,13 +3040,16 @@ class GeneralFunctions extends Component {
                         ->one();
     }
 
-    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+    public function setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks = '') {
         if (!empty($trip)) {
             $tripTrackingModel = new TblVehicleTripTracking();
             $tripTrackingModel->attributes = $trip->attributes;
             $tripTrackingModel->trip_date = $trip->transaction_date;
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
             $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
+            $tripTrackingModel->visibility_status = $trackingDetail['visibility_status'];
+            $tripTrackingModel->module_code = $trackingDetail['module_code'];
+            $tripTrackingModel->module_type = $trackingDetail['module_type'];
             $tripTrackingModel->save(TRUE, FALSE);
         }
     }
@@ -3085,7 +3088,7 @@ class GeneralFunctions extends Component {
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 
-        $response['clr'] = $is_clr_input == 0 ? ($snf - ($fat * $lr1) - $lr2) * 4 : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
+        $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
 
         return $response;
     }

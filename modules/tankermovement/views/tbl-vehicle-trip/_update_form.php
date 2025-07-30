@@ -43,9 +43,20 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput(['readonly' => $readonly]) ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'no_of_compartment')->textInput(['readonly' => $readonly]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'vehicle_capacity')->textInput(['readonly' => $readonly]) ?>
+    </div>
     <div class="col-sm-2 mt10 mt-4">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_auto_trip', 'no_pointer'); ?>
     </div>
+    <div class="col-sm-8">
+        <?= $form->field($model, 'remark')->textInput(['readonly' => $readonly]) ?>
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6">
         <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true); ?>

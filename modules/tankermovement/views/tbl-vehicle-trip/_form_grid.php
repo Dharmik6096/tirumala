@@ -102,6 +102,9 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_auto_trip');
         }
     ],
+    ['attribute' => 'no_of_compartment', 'visible' => false],
+    ['attribute' => 'vehicle_capacity', 'visible' => false],
+    ['attribute' => 'remark'],
 ];
 
 $grid_option = [
@@ -187,6 +190,10 @@ $grid_option = [
         'map' => function ($url, $model) {
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'title' => 'View Map', 'data-val' => $model->trip_code];
             return GhostHtml::a('<i class="fa fa-map-marker-alt"></i>', ['/tankermovement/tbl-vehicle-trip/map', 'trip_code' => $model->trip_code], $options);
+        },
+        'vertical-chart' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Map', 'data-val' => $model->trip_code];
+            return GhostHtml::a('<i class="fa fa-chart-bar"></i>', ['/tankermovement/tbl-vehicle-trip/vertical-chart', 'trip_code' => $model->trip_code], $options);
         },
     ]
 ];

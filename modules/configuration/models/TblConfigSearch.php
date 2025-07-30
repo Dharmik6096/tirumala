@@ -74,11 +74,12 @@ class TblConfigSearch extends TblConfig {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE
         ]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-             $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
 
@@ -87,7 +88,7 @@ class TblConfigSearch extends TblConfig {
             'config_for' => $this->config_for,
             'process_name' => $this->process_name,
             'config_type' => $this->config_type,
-             'ISNULL(is_input_config,0)' => 0
+            'ISNULL(is_input_config,0)' => 0
         ]);
 
         return $dataProvider;
