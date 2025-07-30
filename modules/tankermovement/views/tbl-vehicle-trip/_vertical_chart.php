@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 <div class="collapsible sub_status_content">
                     <h5 style="left: -170px;">
                         <i class="fa fa-angle-down collapsible-icon"></i>
-                        <strong style="color:#00a3de"><?= !empty($lable_array[$header->trip_sub_status]) ? $lable_array[$header->trip_sub_status] : $track->trip_sub_status ?></strong>
+                        <strong style="color:#00a3de"><?= !empty($lable_array[$header->trip_sub_status]) ? $lable_array[$header->trip_sub_status] : ucwords(str_replace('_', ' ', $track->trip_sub_status)) ?></strong>
                     </h5>
                     <p><?= Yii::$app->controls->view_datetime($header->sub_status_time) ?></p>
                     <p><?= $header->remarks ?></p>
