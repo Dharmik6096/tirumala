@@ -1,12 +1,12 @@
 <?php
 $this->title = Yii::t('app', 'Vehicle Trip Map');
 ?>
-<div class="trip-map-containers col-sm-6 col-sm-offset-3">
+<div class="trip-map-containers col-sm-6 offset-sm-3">
     <h2 class="trip-title">Vehicle Trip Status</h2>
     <h4>Trip Code: <?= !empty($tripTrack[0]->trip_code) ? $tripTrack[0]->trip_code : '' ?></h4>
     <h4>Parsing No: <?= !empty($parsingNo->parsing_no) ? $parsingNo->parsing_no : '' ?></h4>
 </div>
-<div class="timeline col-sm-6 col-sm-offset-3">
+<div class="timeline col-sm-6 offset-sm-3">
     <?php
     $fixedStatuses = ['generated', 'gate_out', 'gate_in', 'plant_lot_pending', 'cleaning_pending', 'qa_pending', 'tanker_qualified'];
     $total_record = !empty($tripTrack) ? count($tripTrack) - 1 : 0;
@@ -59,14 +59,14 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 if ($index == $track_key):
                     ?>
                     <div class="image-container">
-                        <img src="themes/pcdf/assets/images/milk_truck.jpg" alt="Timeline Image">
+                        <img src="themes\emilk\assets\images\milk_truck.jpg" alt="Timeline Image">
                     </div>
                     <?php
                 endif;
                 $track_key++;
                 ?>
                 <div class="collapsible sub_status_content">
-                    <h5 style="left: -170px;">
+                    <h5 style="left: -215px;">
                         <i class="fa fa-angle-down collapsible-icon"></i>
                         <strong style="color:#00a3de"><?= !empty($lable_array[$header->trip_sub_status]) ? $lable_array[$header->trip_sub_status] : ucwords(str_replace('_', ' ', $track->trip_sub_status)) ?></strong>
                     </h5>
@@ -85,16 +85,16 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                                         <?php
                                         if (str_contains(strtolower($content->trip_sub_status), 'dispatch')):
                                             ?>
-                                            <i class="fa fa-truck"></i>
+                                            <i class="fa fa-truck transform-rotateY"></i>
                                             <?php
                                         elseif (str_contains(strtolower($content->trip_sub_status), 'receipt')):
                                             ?>
-                                            <i class="fa fa-truck transform-rotateY"></i>
+                                            <i class="fa fa-truck"></i>
                                         <?php else: ?>
                                             <?php if ($content->trip_sub_status == 'gate_in'): ?>
-                                                <i class="fa fa-sign-in"></i>
+                                                <i class="fa fa-sign-in-alt"></i>
                                             <?php elseif ($content->trip_sub_status == 'gate_out'): ?>
-                                                <i class="fa fa-sign-out"></i>
+                                                <i class="fa fa-sign-out-alt"></i>
                                             <?php else: ?>
                                                 <i class="fa fa-info-circle"></i>
                                             <?php endif; ?>
@@ -117,7 +117,7 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 if ($index == $track_key):
                     ?>
                     <div class="image-container">
-                        <img src="themes/pcdf/assets/images/milk_truck.jpg" alt="Timeline Image">
+                        <img src="themes\emilk\assets\images\milk_truck.jpg" alt="Timeline Image">
                     </div>
                     <?php
                 endif;
