@@ -6172,16 +6172,6 @@ div#dashboardFarmerPopup {
     padding-bottom: 5px;
 }
 
-/*.timeline::after {
-    content: '';
-    position: absolute;
-    width: 6px;
-    background-color: #ccc;
-    top: 0;
-    bottom: 0;
-    left: 355px;
-}*/
-
 .containers {
     position: relative;
     width: 50%;

@@ -2960,13 +2960,16 @@ class GeneralFunctions extends Component {
         return [$fromDate, $toDate];
     }
 
-    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+    public function setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks = '') {
         if (!empty($trip)) {
             $tripTrackingModel = new TblVehicleTripTracking();
             $tripTrackingModel->attributes = $trip->attributes;
             $tripTrackingModel->trip_date = $trip->transaction_date;
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
             $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
+            $tripTrackingModel->visibility_status = $trackingDetail['visibility_status'];
+            $tripTrackingModel->module_code = $trackingDetail['module_code'];
+            $tripTrackingModel->module_type = $trackingDetail['module_type'];
             $tripTrackingModel->save(TRUE, FALSE);
         }
     }

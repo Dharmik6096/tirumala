@@ -178,7 +178,8 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 if (!empty($plantData)) {
                     $remarks = $plantData->ref_code . '-' . $plantData->name;
                 }
-                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
+                $trackingDetail = ['visibility_status' => 3, 'module_code' => null, 'module_type' => null];
+                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $trackingDetail, $remarks);
                 $msg = Yii::$app->getSession()->getFlash('success')['message'];
                 $res = ['status' => 'success', 'msg' => $msg];
             } else {
@@ -239,7 +240,8 @@ class TblMilkVehicleEntryQltyController extends ChildController {
             if (!empty($plantData)) {
                 $remarks = $plantData->ref_code . '-' . $plantData->name;
             }
-            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
+            $trackingDetail = ['visibility_status' => 3, 'module_code' => null, 'module_type' => null];
+            Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $trackingDetail, $remarks);
             $record = ['status' => 'success', 'msg' => 'Tanker Milk Lot Quality Reset Successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Tanker Milk Lot Quality Not Reset.'];
@@ -346,7 +348,8 @@ class TblMilkVehicleEntryQltyController extends ChildController {
                 if (!empty($plantData)) {
                     $remarks = $plantData->ref_code . '-' . $plantData->name;
                 }
-                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $remarks);
+                $trackingDetail = ['visibility_status' => 3, 'module_code' => null, 'module_type' => null];
+                Yii::$app->general->setVehicleTripTrackingDetail($vehicleTripData, $trackingDetail, $remarks);
                 return $this->redirect(['index']);
             } else {
                 $msg = Yii::$app->getSession()->getFlash('success')['message'];

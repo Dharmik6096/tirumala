@@ -350,7 +350,8 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
             $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
             $chamberQuantity = (int)$this->chamber_quantity == $this->chamber_quantity ? (int)$this->chamber_quantity : $this->chamber_quantity;
             $remarks = $chamberQuantity . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
-            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+            $trackingDetail = ['visibility_status' => 0, 'module_code' => $this->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
         }
     }
 

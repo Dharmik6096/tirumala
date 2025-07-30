@@ -227,16 +227,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
                     } else if ($transaction == 'customRedirect') {
-                        if ($new_rec) {
-                            $response = Yii::$app->general->getColumnName($model->source_org_type);
-                            $remarks = $model->remarks;
-                            if (!empty($response['rel'])) {
-                                $sourceData = $model->{$response['rel'] . 'Source'};
-                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
-                            }
-                            $tripModel->trip_sub_status = 'bmc_dispatch';
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
-                        }
                         return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code, 'txnEdit' => $txnEdit]);
                     }
                 }
@@ -619,16 +609,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
                     } else if ($transaction == 'customRedirect') {
-                        if ($new_rec) {
-                            $response = Yii::$app->general->getColumnName($model->source_org_type);
-                            $remarks = $model->remarks;
-                            if (!empty($response['rel'])) {
-                                $sourceData = $model->{$response['rel'] . 'Source'};
-                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
-                            }
-                            $tripModel->trip_sub_status = 'plant_dispatch';
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
-                        }
                         return $this->redirect(['create-plant-dispatch', 'id' => $model->bmc_milk_dispatch_code, 'txnEdit' => $txnEdit]);
                     }
                 }
