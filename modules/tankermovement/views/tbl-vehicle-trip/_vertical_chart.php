@@ -124,7 +124,7 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 $track_key++;
                 ?>
                 <div class="sub_status_content">
-                    <h5><strong><?= !empty($lable_array[$track->trip_sub_status]) ? $lable_array[$track->trip_sub_status] : $track->trip_sub_status ?></strong></h5>
+                    <h5><strong><?= !empty($lable_array[$track->trip_sub_status]) ? $lable_array[$track->trip_sub_status] : ucwords(str_replace('_', ' ', $track->trip_sub_status)) ?></strong></h5>
                     <p><?= Yii::$app->controls->view_datetime($track->sub_status_time) ?></p>
                     <p><?= $track->remarks ?></p>
                 </div>
