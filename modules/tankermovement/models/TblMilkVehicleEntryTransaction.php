@@ -342,7 +342,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        if ($insert && !empty($this->tare_weight)) {
+        if (!empty($this->gross_weight)) {
             $tripModel = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
             if(!empty($tripModel)){
                 $tripModel->trip_sub_status = 'milk_receipt_C' . $this->chamber_no;
