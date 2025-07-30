@@ -6340,3 +6340,6 @@ div#dashboardFarmerPopup {
     border: 2px solid #eeeeee;
     border-radius: 5px;
 }
+.transform-rotateY {
+    transform: rotateY(180deg);
+}
