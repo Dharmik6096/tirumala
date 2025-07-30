@@ -56,17 +56,17 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['source_org_code', 'source_org_type'], 'required'],
-            [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
-            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks', 'is_virtual_location'], 'safe'],
-            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
-            [['travel_km', 'originating_type', 'is_active'], 'safe'],
-            [['is_last_destination', 'is_virtual_location'], 'default', 'value' => 0],
-            [['is_active'], 'default', 'value' => 1],
-            [['arrival_time'], 'required', 'on' => ['gate-in']],
-            [['departure_time'], 'required', 'on' => ['gate-out']],
-            [['arrival_time'], 'validateArrival'],
-            [['departure_time'], 'validateDeparture'],
+                [['source_org_code', 'source_org_type'], 'required'],
+                [['destination_code', 'destination_type'], 'required', 'except' => ['on_crete_trip', 'gate-in', 'gate-out', 'autoTrip']],
+                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'in_remarks', 'out_remarks', 'is_virtual_location'], 'safe'],
+                [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination', 'sequence_no'], 'safe'],
+                [['travel_km', 'originating_type', 'is_active'], 'safe'],
+                [['is_last_destination', 'is_virtual_location'], 'default', 'value' => 0],
+                [['is_active'], 'default', 'value' => 1],
+                [['arrival_time'], 'required', 'on' => ['gate-in']],
+                [['departure_time'], 'required', 'on' => ['gate-out']],
+                [['arrival_time'], 'validateArrival'],
+                [['departure_time'], 'validateDeparture'],
                 //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
@@ -206,7 +206,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         }
         if (!empty($tripCode) && $bmc_code != 'alltrip' && $tripCode != 'alltrip') {
             $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode])
-                ->andFilterWhere(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
+                    ->andFilterWhere(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
         }
         $data = $query->all();
         return ArrayHelper::map($data, 'trip_code', 'trip_code');
@@ -300,6 +300,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
     }
 
     public function setChildTable(&$model, &$modelSave, &$childModel) {
+        $visibility_status = 0;
         $content = $modelSave['content'];
         $action_datetime = $content['action_datetime'];
         $remarks = $content['remarks'];
@@ -324,11 +325,13 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                     $nextTripDetail->arrival_time = date('Y-m-d H:i:s', strtotime($departure) + 1);
                 }
             }
+            $visibility_status = $model->is_last_destination ? 1 : 2;
         } else if ($action_type == 'out' && empty($model->departure_time)) {
             $isValid = TRUE;
             $model->departure_time = $action_datetime;
             $model->out_remarks = $remarks;
             $trip->trip_sub_status = 'gate_out';
+            $visibility_status = (empty($model->arrival_time) || $model->sequence_no == 1) ? 1 : 0;
         }
         if ($isValid && $model->validate()) {
             $trip->sub_status_time = $action_datetime;
@@ -341,7 +344,8 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 $sourceData = $model->{$response['rel'] . 'Source'};
                 $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
             }
-            Yii::$app->general->setVehicleTripTrackingDetail($trip, $remarks);
+            $trackingDetail = ['visibility_status' => $visibility_status, 'module_code' => $model->vehicle_trip_detail_code, 'module_type' => 'tbl_vehicle_trip_detail'];
+            Yii::$app->general->setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks);
         }
     }
 
