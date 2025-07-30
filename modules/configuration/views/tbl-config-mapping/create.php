@@ -35,8 +35,10 @@ $defaultToggle = true;
             }
             $pro_name = (isset($model->process_name)) ? $model->process_name : '';
             ?>
-            <?php echo $form->errorSummary($model); ?>
-            <div class="panel-heading"><?= $pro_name ?> > <?= $model->org_type ?> : <?= $name . '(' . $code . ')' ?>, Ref. Code: <?= $refCode ?></div>
+            <?php echo $form->errorSummary($model); 
+            if (!empty($refCode)) { ?>
+                <div class="panel-heading"><?= $pro_name ?> > <?= $model->org_type ?> : <?= $name . '(' . $code . ')' ?>, Ref. Code: <?= $refCode ?></div>
+            <?php } ?>
             <div class="panel-body set_checkbox padding_top_0 tbl_border">
                 <div class="grid-search search-filter padding_left_0 padding_right_0 searchBtnReport text-right beforeGridLoad">
                     <div class="btn-login btn-group btn btn-default mis_report_modal_toggle float-end"><i class="fa fa-search"></i></div>
