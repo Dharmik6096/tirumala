@@ -336,6 +336,7 @@ return [
     'Is Member Rate' => 'Is Farmer Rate',
     'DCS wise billing mapping' => 'VLCC wise billing mapping',
     'DCS Wise Billing Config' => 'VLCC Wise Billing Config',
+    'Update DCS Wise Billing Config' => 'Update VLCC Wise Billing Config',
     'Search DCS wise billing mapping' => 'Search VLCC wise billing mapping',
     'Member Payment Process : Step 1' => 'Farmer Payment Process : Step 1',
     'Member Address Details' => 'Farmer Address Details',
