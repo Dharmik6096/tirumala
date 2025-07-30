@@ -83,9 +83,13 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                                 <div class="box minimalist-border-box <?= $bgColorClass ?>">
                                     <div class="col-sm-2" style="align-content: center;">
                                         <?php
-                                        if (str_contains(strtolower($content->trip_sub_status), 'dispatch') || str_contains(strtolower($content->trip_sub_status), 'receipt')):
+                                        if (str_contains(strtolower($content->trip_sub_status), 'dispatch')):
                                             ?>
                                             <i class="fa fa-truck"></i>
+                                            <?php
+                                        elseif (str_contains(strtolower($content->trip_sub_status), 'receipt')):
+                                            ?>
+                                            <i class="fa fa-truck transform-rotateY"></i>
                                         <?php else: ?>
                                             <?php if ($content->trip_sub_status == 'gate_in'): ?>
                                                 <i class="fa fa-sign-in"></i>
