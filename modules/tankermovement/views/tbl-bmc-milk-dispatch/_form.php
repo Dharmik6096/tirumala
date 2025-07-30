@@ -532,7 +532,7 @@ function calculateClr(){
                 if (obj.status == 'success') {
                     if(is_clr_input==0){
                         $('#tblbmcmilkdispatchtxn-clr').val('');
-                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data.toFixed(2));
+                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data);
                     }else{
                         $('#tblbmcmilkdispatchtxn-snf').val('');
                         $('#tblbmcmilkdispatchtxn-snf').val(obj.data);

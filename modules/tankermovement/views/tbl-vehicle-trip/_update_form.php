@@ -43,9 +43,20 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput(['readonly' => $readonly]) ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'no_of_compartment')->textInput(['readonly' => $readonly]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'vehicle_capacity')->textInput(['readonly' => $readonly]) ?>
+    </div>
     <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['disabled' => $readonly])->label('Is Partial Trip?'); ?>
     </div>
+    <div class="col-sm-8">
+        <?= $form->field($model, 'remark')->textInput(['readonly' => $readonly]) ?>
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6">
         <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true); ?>
