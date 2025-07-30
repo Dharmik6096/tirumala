@@ -224,8 +224,11 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                             $destData = $this->model->{$response['rel'] . 'Dest'};
                             $remarks = $destData->{$response['ref_code']} . '-' . $destData->{$response['name']};
                         }
+                        $trackingDetail = ['visibility_status' => 1, 'module_code' => $this->model->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
+                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
                         if (!empty($tripModel)) {
                             $tripModel->trip_sub_status = 'milk_receipt';
+                            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($tripModel->sub_status_time . ' +2 second'));
                         }
                         $trackingDetail = ['visibility_status' => 2, 'module_code' => $this->model->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
                         Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
