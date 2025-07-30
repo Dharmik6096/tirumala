@@ -6262,7 +6262,7 @@ div#dashboardFarmerPopup {
     transition: max-height 0.2s ease-out;
     left: -240px;
     position: relative;
-    max-width: fit-content;
+    max-width: 60%;
 }
 .sub_status_content .fa-angle-down, .sub_status_content .fa-angle-up {
     font-size: 15px;

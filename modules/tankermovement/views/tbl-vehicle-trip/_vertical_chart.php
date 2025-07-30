@@ -75,37 +75,39 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 </div>
                 <div class="collapsible_contents sub_status_content">
                     <?php foreach ($collapsibleData[$vehicleCode]['contents'] as $key => $content): ?>
-                    <?php
-                        $bgColorClass = ($key % 2 == 0) ? 'bg-gray' : 'white'; 
-                    ?>
-                    <div class="collapsible_box">
-                            <div class="box minimalist-border-box <?= $bgColorClass ?>">
-                                <div class="col-sm-2" style="align-content: center;">
-                                    <?php
-                                    if (str_contains(strtolower($content->trip_sub_status), 'dispatch')):
-                                        ?>
-                                        <i class="fa fa-truck"></i>
-                                    <?php else: ?>
-                                        <?php if ($content->trip_sub_status == 'gate_in'): ?>
-                                            <i class="fa fa-sign-in"></i>
-                                        <?php elseif ($content->trip_sub_status == 'gate_out'): ?>
-                                            <i class="fa fa-sign-out"></i>
+                        <?php
+                        if ($content->trip_sub_status != 'milk_receipt'):
+                            $bgColorClass = ($key % 2 == 0) ? 'bg-gray' : 'white';
+                            ?>
+                            <div class="collapsible_box">
+                                <div class="box minimalist-border-box <?= $bgColorClass ?>">
+                                    <div class="col-sm-2" style="align-content: center;">
+                                        <?php
+                                        if (str_contains(strtolower($content->trip_sub_status), 'dispatch') || str_contains(strtolower($content->trip_sub_status), 'receipt')):
+                                            ?>
+                                            <i class="fa fa-truck"></i>
                                         <?php else: ?>
-                                            <i class="fa fa-info-circle"></i>
+                                            <?php if ($content->trip_sub_status == 'gate_in'): ?>
+                                                <i class="fa fa-sign-in"></i>
+                                            <?php elseif ($content->trip_sub_status == 'gate_out'): ?>
+                                                <i class="fa fa-sign-out"></i>
+                                            <?php else: ?>
+                                                <i class="fa fa-info-circle"></i>
+                                            <?php endif; ?>
                                         <?php endif; ?>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="col-sm-10">
-                                    <p><b><?= ucwords(str_replace('_', ' ', $content->trip_sub_status)) ?></b></p>
-                                    <p><?= Yii::$app->controls->view_datetime($content->sub_status_time) ?></p>
-                                    <p><?= $content->remarks ?></p>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <p><b><?= ucwords(str_replace('_', ' ', $content->trip_sub_status)) ?></b></p>
+                                        <p><?= Yii::$app->controls->view_datetime($content->sub_status_time) ?></p>
+                                        <p><?= $content->remarks ?></p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endif;
+                    endforeach; ?>
                 </div>
             </div>
-        <?php } elseif (!isset($collapsibleData[$track->module_code])) { ?>
+            <?php } elseif (!isset($collapsibleData[$track->module_code])) { ?>
             <div class="containers <?php echo $class; ?>">
                 <?php
                 if ($index == $track_key):
@@ -124,13 +126,13 @@ $this->title = Yii::t('app', 'Vehicle Trip Map');
                 </div>
             </div>
         <?php } ?>
-    <?php } ?>
+<?php } ?>
 </div>
 <script>
     var coll = document.getElementsByClassName("collapsible");
     for (var i = 0; i < coll.length; i++) {
         var icon = coll[i].querySelector('.collapsible-icon');
-        icon.addEventListener("click", function(event) {
+        icon.addEventListener("click", function (event) {
             event.stopPropagation();
             var parentCollapsible = this.closest('.collapsible');
             var content = parentCollapsible.nextElementSibling;
