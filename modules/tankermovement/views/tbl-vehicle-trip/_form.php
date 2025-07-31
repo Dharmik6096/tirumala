@@ -221,7 +221,6 @@ $('#tblvehicletrip-vehicle_code').on('change', function(){
                         $('#tblvehicletrip-vehicle_capacity').val(response.capacity);
                         $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
                     } else {
-                        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no, #tblvehicletrip-no_of_compartment, #tblvehicletrip-vehicle_capacity, #tblvehicletrip-transporter_code').val(null).trigger('change');
                         bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Compartment not available for selected vehicle: '+vehicle_name+'</span></div></div>');
                         $('#tblvehicletrip-vehicle_code').val(null).trigger('change');
                     }
