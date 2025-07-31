@@ -239,9 +239,19 @@ class GeneralFunctions extends Component {
             }
     }
 
-    public function validateDiscriptiveField($model, $attribute) {
+    public function validateDiscriptiveField($model, $attribute, $has_strict_address_validation = TRUE) {
         if (!empty($model->$attribute)) {
-            if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+            $validationFailed = FALSE;
+            if ($has_strict_address_validation) {
+                if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            } else {
+                if (preg_match('/[<>&"\']/', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            }
+            if ($validationFailed) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '.'));
                 return false;
             }
@@ -3022,13 +3032,16 @@ class GeneralFunctions extends Component {
                         ->one();
     }
 
-    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+    public function setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks = '') {
         if (!empty($trip)) {
             $tripTrackingModel = new TblVehicleTripTracking();
             $tripTrackingModel->attributes = $trip->attributes;
             $tripTrackingModel->trip_date = $trip->transaction_date;
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
             $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
+            $tripTrackingModel->visibility_status = $trackingDetail['visibility_status'];
+            $tripTrackingModel->module_code = $trackingDetail['module_code'];
+            $tripTrackingModel->module_type = $trackingDetail['module_type'];
             $tripTrackingModel->save(TRUE, FALSE);
         }
     }
@@ -3054,11 +3067,11 @@ class GeneralFunctions extends Component {
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
-    public function calculateData($config, $union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '') {
+    public function calculateData($config, $union = '', $orgCode = '', $fat = '', $snf = '', $clr = '', $orgType = '', $is_clr_input = '') {
         $response = [];
 
-        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, $customer_type, $config);
-        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, $customer_type, $config);
+        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $orgCode, $orgType, $config);
+        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $orgCode, $orgType, $config);
         if ($lr1 == '' || $lr2 == '') {
             $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
             $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');
@@ -3067,7 +3080,7 @@ class GeneralFunctions extends Component {
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 
-        $response['clr'] = $is_clr_input == 0 ? ($snf - ($fat * $lr1) - $lr2) * 4 : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
+        $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
 
         return $response;
     }

@@ -250,6 +250,8 @@ class CustomValidation extends Component {
                 'TblTransporter' => [
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['activation']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['activation']],
+                        [['hamlet_code'], 'required', 'except' => ['activation']],
+                        [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'activation']],
                 ],
                 'TblVehicleMaster' => [
                         [['parsing_no'], function ($attribute, $params) {
@@ -898,6 +900,8 @@ class CustomValidation extends Component {
                     'default' => [
                             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['activation']],
                             [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['activation']],
+                            [['hamlet_code'], 'required', 'except' => ['activation']],
+                            [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'activation']],
                     ],
                 ],
                 'TblDcsBmc' => [
@@ -1066,6 +1070,8 @@ class CustomValidation extends Component {
                     'default' => [
                             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['activation']],
                             [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['activation']],
+                            [['hamlet_code'], 'required', 'except' => ['activation']],
+                            [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'activation']],
                     ],
                 ],
                 'TblDcsBmc' => [
@@ -1294,6 +1300,16 @@ class CustomValidation extends Component {
                 'TblMilkVehicleEntryQltyMerge' => [
                     'default' => [
                             [['tested_by', 'verified_by'], 'required', 'except' => ['androidsync']]
+                    ],
+                ],
+                'TblTransporter' => [
+                    'default' => [
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['activation']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['activation']],
+                            [['address'], function ($attribute, $params) {
+                                $this->isValidateAddressBeforeSave = FALSE;
+                                Yii::$app->general->validateDiscriptiveField($this, $attribute, FALSE);
+                            }, 'except' => ['activation']],
                     ],
                 ],
             ],

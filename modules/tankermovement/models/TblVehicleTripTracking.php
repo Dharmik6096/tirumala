@@ -21,7 +21,7 @@ class TblVehicleTripTracking extends \app\models\ChildModel
     public function rules()
     {
         return [
-            [['union_code', 'plant_code', 'trip_code', 'vehicle_code', 'trip_date', 'trip_status', 'trip_sub_status', 'sub_status_time', 'remarks', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code', 'plant_code', 'trip_code', 'vehicle_code', 'trip_date', 'trip_status', 'trip_sub_status', 'sub_status_time', 'remarks', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'visibility_status', 'module_code', 'module_type'], 'safe'],
         ];
     }
 

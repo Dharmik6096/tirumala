@@ -236,7 +236,8 @@ class TblMilkVehicleEntryQlty extends ChildModel {
 
     public function validateSampleAfterGrossWeight($attribute, $params) {
         if (empty($this->getErrors())) {
-            $milkVehicleEntryQltyData = $this->findOne($this->chamber_no);
+            $pk = $this->scenario === 'update' ? $this->milk_vehicle_entry_qlty_code : $this->chamber_no;            
+            $milkVehicleEntryQltyData = $this->findOne($pk);
             $lotQltySampleTimeValidateConfig = Yii::$app->general->getUnionConfiguration($milkVehicleEntryQltyData->union_code, 'lot_qlty_sample_time_validate', 'PORTAL');
             $lotQltySampleTimeValidate = $lotQltySampleTimeValidateConfig = '' ? 1 : $lotQltySampleTimeValidateConfig;
             if (!empty($lotQltySampleTimeValidate)) {
@@ -250,7 +251,7 @@ class TblMilkVehicleEntryQlty extends ChildModel {
                 $milkVehicleEntryTxn = TblMilkVehicleEntryTransaction::find()
                         ->alias('mvet')
                         ->joinWith(['milkVehicleEntryCode mve'])
-                        ->where(['mvet.chamber_no' => $milkVehicleEntryQltyData->chamber_no, 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
+                        ->where([ 'mve.trip_code' => $milkVehicleEntryQltyData->trip_code])
                         ->orderBy(['mvet.gross_weight_time' => SORT_DESC])
                         ->one();
 

@@ -78,13 +78,12 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->dropdownStatic('record_status', $model, $form, 'form-group', $model->getAttributeLabel('record_status'), false, 'record_status', false); ?>
                 </div>
                 <?php
-                $index = 1;
                 $cnt = 1;
                 foreach ($config_list as $c) {
-                    echo Html::activeHiddenInput($config, '[' . $index . ']config_code', ['value' => $c->config_code]);
+                    echo Html::activeHiddenInput($config, '[' . $c->config_code . ']config_code', ['value' => $c->config_code]);
                     ?>
                     <div class="col-sm-2">
-                        <?= $c->prepareControl($form, $config, $index); ?>
+                        <?= $c->prepareControl($form, $config, $c->config_code); ?>
                     </div>
                     <?php if ($cnt == 6) { ?>
                         <?php
@@ -93,7 +92,6 @@ $form = ActiveForm::begin([
                     ?>
                     <?php
                     $cnt++;
-                    $index++;
                 }
                 ?>
             </div>
@@ -181,7 +179,7 @@ $script = "
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
                         if(is_clr_input==0) {
-                            $('#tblmilkvehicleentryqlty-clr').val(obj.data.toFixed(2));
+                            $('#tblmilkvehicleentryqlty-clr').val(obj.data);
                         } else {
                             $('#tblmilkvehicleentryqlty-snf').val(obj.data);
                         }
@@ -248,6 +246,41 @@ $script = "
             return true;
         } else {
             return false;
+        }
+    }
+    
+    $(document).on('change', '#tblmilkvehicleentryqlty-chamber_no', function() {
+        fillData();
+    });
+    
+    function fillData() {
+        var chamber_no = $('#tblmilkvehicleentryqlty-chamber_no').val(); 
+        if(setData(chamber_no)){
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['get-quality-data']) . "',
+                data: {'id' : chamber_no},
+                success: function(data) {
+                    var obj1 = $.parseJSON(data);
+                    if(obj1.status == 'success'){
+                    var modelData = obj1.data.model; 
+                    var configList = obj1.data.config_list;
+                        $('#tblmilkvehicleentryqlty-record_status').val(modelData.record_status).trigger('change');
+                        const modelFields = [
+                            'acidity', 'mbrt','fat','snf','clr', 'water','density','protein','lactose','freezing_point', 'temp', 'tested_by', 'verified_by'
+                        ];
+                        modelFields.forEach(function(fieldName) {
+                            $('#tblmilkvehicleentryqlty-' + fieldName).val(modelData[fieldName] || '');
+                        });
+                        $('#tblmilkvehicleentryqlty-sample_datetime').val(modelData.sample_datetime);
+                        $('#tblmilkvehicleentryqlty-sample_time').val(obj1.data.sample_time);
+                        $('.config_class').val('').trigger('change');
+                        $.each(configList, function(key,val) {
+                            $('#tblconfigtxnresult-'+val.config_code+'-config_result').val(val.config_result || '').trigger('change');
+                        });
+                    }
+                },
+            });
         }
     }
 ";

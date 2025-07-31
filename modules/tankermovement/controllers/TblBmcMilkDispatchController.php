@@ -227,16 +227,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
                     } else if ($transaction == 'customRedirect') {
-                        if ($new_rec) {
-                            $response = Yii::$app->general->getColumnName($model->source_org_type);
-                            $remarks = $model->remarks;
-                            if (!empty($response['rel'])) {
-                                $sourceData = $model->{$response['rel'] . 'Source'};
-                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
-                            }
-                            $tripModel->trip_sub_status = 'bmc_dispatch';
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
-                        }
                         return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code, 'txnEdit' => $txnEdit]);
                     }
                 }
@@ -378,11 +368,12 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
     public function actionTransactionForm() {
         $union_code = Yii::$app->request->get('union_code');
         $config = new TblConfig();
-        $config->config_for = 'BMC';
-        $config->process_name = 'BMC_DISPATCH';
+        $config->config_for = Yii::$app->request->get('org_type');
+        $configCode = Yii::$app->request->get('org_code');
+        $config->process_name = Yii::$app->request->get('process_name');
         $config->config_type = 'CONTROL';
         $config_mapping = new TblConfigTxnResult();
-        $config_list = $config->getOrgConfigList($config->config_for, Yii::$app->request->get('bmc_code'));
+        $config_list = $config->getOrgConfigList($config->config_for, $configCode);
         $auto_reject = isset(Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_auto_reject']) ? Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_auto_reject'] : '0';
         $txn_model = new TblBmcMilkDispatchTxn();
         return $this->renderAjax('_from_transaction', [
@@ -513,12 +504,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         if ($id != '') {
             $model = $this->findModel($id);
         } else {
-            $model->scenario = 'createPlantDispatch';
             $model->transaction_date = date('Y-m-d');
         }
-        if ($txnEdit) {
-            $model->scenario = 'createPlantDispatch';
-        }
+        $model->scenario = 'createPlantDispatch';
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
@@ -584,7 +572,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $txnHistoryModel;
                     $bmcMilkDispatchTxnData->attributes = $txn_model->attributes;
                     $saveModel[] = $bmcMilkDispatchTxnData;
-                    $configTxnDeleteData = TblConfigTxnResult::find()->where(['ref_code' => (string) $txn_model->bmc_milk_dispatch_txn_code, 'config_for' => 'BMC_DISPATCH', 'union_code' => $bmcMilkDispatchTxnData->union_code])->all();
+                    $configTxnDeleteData = TblConfigTxnResult::find()->where(['ref_code' => (string) $txn_model->bmc_milk_dispatch_txn_code, 'config_for' => 'PLANT_DISPATCH', 'union_code' => $bmcMilkDispatchTxnData->union_code])->all();
                     foreach ($configTxnDeleteData as $key => $id) {
                         $configTxnHistoryModel = new TblConfigTxnResultHistory();
                         Yii::$app->operation->history($id, $configTxnHistoryModel, DELETE);
@@ -601,7 +589,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $config_model = new TblConfigTxnResult();
                     $config_model->attributes = $txn_model->attributes;
                     $config_model->attributes = $data;
-                    $config_model->config_for = 'BMC_DISPATCH';
+                    $config_model->config_for = 'PLANT_DISPATCH';
                     $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
                     $config_model->ref_code = $txn_model->bmc_milk_dispatch_txn_code;
                     $config_detail = $config_model->configCode;
@@ -621,16 +609,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     if ($transaction != 'customRedirect' && $new_rec) {
                         $model->bmc_milk_dispatch_code = '';
                     } else if ($transaction == 'customRedirect') {
-                        if ($new_rec) {
-                            $response = Yii::$app->general->getColumnName($model->source_org_type);
-                            $remarks = $model->remarks;
-                            if (!empty($response['rel'])) {
-                                $sourceData = $model->{$response['rel'] . 'Source'};
-                                $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
-                            }
-                            $tripModel->trip_sub_status = 'plant_dispatch';
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
-                        }
                         return $this->redirect(['create-plant-dispatch', 'id' => $model->bmc_milk_dispatch_code, 'txnEdit' => $txnEdit]);
                     }
                 }
@@ -686,8 +664,10 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
     public function actionGetClrInput() {
         $unionCode = Yii::$app->request->post('union_code');
-        $bmcCode = Yii::$app->request->post('bmc_code');
-        $isClrInput = Yii::$app->general->getCheckBmcConfiguration($unionCode, 'is_clr_input', $bmcCode, 'BMC', 'BMC_DISPATCH_CONFIG');
+        $orgCode = Yii::$app->request->post('orgCode');
+        $field = Yii::$app->request->post('field');
+        $for = Yii::$app->request->post('for');
+        $isClrInput = Yii::$app->general->getCheckBmcConfiguration($unionCode, 'is_clr_input', $orgCode, $field, $for);
         if ($isClrInput == '') {
             $isClrInput = Yii::$app->general->getUnionConfiguration($unionCode, 'is_clr_input', 'PORTAL');
         }
@@ -701,10 +681,11 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $snf = (float) Yii::$app->request->post('snf');
         $clr = (float) Yii::$app->request->post('clr');
         $union = Yii::$app->request->post('union_code');
-        $org_code = Yii::$app->request->post('bmcCode');
+        $org_type = Yii::$app->request->post('orgType');
+        $org_code = Yii::$app->request->post('orgCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-
-        $result = Yii::$app->general->calculateData('BMC_DISPATCH_CONFIG', $union, $org_code, $fat, $snf, $clr, 'BMC', $is_clr_input);
+        $processName = Yii::$app->request->post('processName');
+        $result = Yii::$app->general->calculateData($processName, $union, $org_code, $fat, $snf, $clr, $org_type, $is_clr_input);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
@@ -724,9 +705,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
     public function actionGetQualityParamRange() {
         $model = new TblMilkQualityParamRange();
         $model->union_code = Yii::$app->request->post('union');
-        $model->process_name = 'BMC_MILK_DISPATCH';
-        $model->org_type = 'BMC';
-        $model->org_code = Yii::$app->request->post('bmcCode');
+        $model->process_name = Yii::$app->request->post('processName');
+        $model->org_type = Yii::$app->request->post('orgType');
+        $model->org_code = Yii::$app->request->post('orgCode');
         $model->animal_type_code = Yii::$app->request->post('milkTypeCode');
         $data = $model->getQualityRange();
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

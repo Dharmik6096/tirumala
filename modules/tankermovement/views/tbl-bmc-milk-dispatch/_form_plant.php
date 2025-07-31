@@ -28,52 +28,53 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">PLANT Milk Dispatch Detail</h4>
         </div>
         <div class="col-md-12 micro_form <?= $disabled ?> padding-bottom-20">
+            <?php echo Html::hiddenInput('is_clr_input', 0, ['id' => 'is_clr_input']); ?>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
-            <?php if ($readonly) { ?>
-                <div class="col-sm-2">
-                    <?= $form->field($model, 'plant_code')->label(Yii::t('app', 'Source Plant'))->dropDownList([$model->plant_code => Yii::$app->general->getforeignkey($model->plantCode, 'name')], ['disabled' => 'disabled', 'prompt' => '']) ?>
-                </div>
-            <?php } else { ?>
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', Yii::t('app', 'Source Plant'), FALSE, '', $readonly); ?>
-                </div>
-            <?php } ?>
             <div class="col-sm-2 filldata">
+                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', Yii::t('app', 'Source Plant'), FALSE, '', $readonly); ?>
+            </div>
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $readonly, true); ?>
             </div>
-            <div class="col-sm-2 shift filldata">
+            <div class="col-sm-2 shift">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'from_shift_code'); ?>
             </div>
-            <div class="col-sm-2 filldata">
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
             </div>
-            <div class="col-sm-2 shift filldata">
+            <div class="col-sm-2 shift">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
             </div>
             <?= Html::hiddenInput('type', 'plant', ['id' => 'type']); ?>
             <?php if (!$tripGenerateBtn) { ?>
-                <div class="col-sm-2 filldata" id='transactionDate'>
+                <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
-                <div class="col-sm-2 filldata"> 
-                    <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-union_code,type,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
-                </div>
+                <?php if ($readonly) { ?>
+                    <div class="col-sm-2">
+                        <?= $form->field($model, 'vehicle_code')->dropDownList([$model->vehicle_code => Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no')], ['disabled' => 'disabled', 'prompt' => '']) ?>
+                    </div>
+                <?php } else { ?>
+                    <div class="col-sm-2"> 
+                        <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-union_code,type,NULL,tblbmcmilkdispatch-transaction_date', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                    </div>
+                <?php } ?>
             <?php } else { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
                 </div>
-                <div class="col-sm-2 filldata" id='transactionDate'>
+                <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
             <?php } ?>
             <?php if ($readonly) { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= $form->field($model, 'trip_code')->dropDownList([$model->trip_code => $model->trip_code], ['disabled' => 'disabled', 'prompt' => '']) ?>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-2 filldata">
+                <div class="col-sm-2">
                     <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
                     <?= Html::hiddenInput('tankerMovementWithTripSubStatus', $tankerMovementWithTripSubStatus, ['id' => 'tankerMovementWithTripSubStatus']); ?>
                     <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-plant_code,tblbmcmilkdispatch-transaction_date,trip_code,type,tankerMovementWithTripSubStatus', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
@@ -138,13 +139,13 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'snf')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
+            <?= $form->field($txn_model, 'clr')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'temperature')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
-        </div>
-        <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'clr')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
@@ -185,7 +186,8 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
-        <!-- <div class="clearfix"></div> -->
+        <?= Html::activeHiddenInput($txn_model, 'is_clr_input'); ?>
+        <div class="clearfix"></div>
         <div id="transactions-from">
 
         </div>
@@ -213,6 +215,8 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
+var isTransactionDetailLoad = false;
+var isTransactionFormLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
@@ -312,17 +316,17 @@ $(document).ready(function(){
         updateLastDestinationCheckbox(destType);
     });
     if(!isSecondTransaction) {
-        $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
-            var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
+        $(document).on('change', '#tblbmcmilkdispatch-plant_code, #tblbmcmilkdispatch-trip_code', function() {   
+            var source_org_code = $('#tblbmcmilkdispatch-plant_code').val();
             var trip_code = $('#tblbmcmilkdispatch-trip_code').val();     
-            var source_org_type = 'bmc';
+            var source_org_type = 'plant';
             $('.field-tblbmcmilkdispatch-destination_type').removeClass('no_pointer_disabled');
             $('.field-tblbmcmilkdispatch-destination_code').removeClass('no_pointer_disabled');
             if(setData(trip_code) && setData(source_org_code)){
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['vehicle-trip-detail']) . "',
-                    data: {'source_org_code' : source_org_code,'trip_code':trip_code,'source_org_type':source_org_type}, 
+                    data: {'source_org_code':source_org_code,'trip_code':trip_code,'source_org_type':source_org_type,'tankerMovementWithTripSubStatus':tankerMovementWithTripSubStatus}, 
                     success: function(data) {
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success') {
@@ -361,6 +365,136 @@ $(document).ready(function(){
             }
         });
     }
+
+    $('#tblbmcmilkdispatch-plant_code').change(function() {
+        isClrInput();
+        checkQualityRanges();
+    });
+
+    $(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code', function() {
+        checkQualityRanges();
+    });
+
+    function checkQualityRanges(){
+        var union = $('#tblbmcmilkdispatch-union_code').val();
+        var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
+        var milkTypeCode = $('#tblbmcmilkdispatchtxn-milk_type_code').val();
+        if(setData(milkTypeCode) && setData(plantCode)){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['get-quality-param-range']) . "',
+                data: {'union':union, 'orgCode':plantCode, 'milkTypeCode':milkTypeCode, 'orgType':'PLANT', 'processName':'PLANT_MILK_DISPATCH'},
+                success: function(data) {  
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        var range = obj.data;
+                        var minFat = parseFloat(range.min_fat);
+                        var maxFat = parseFloat(range.max_fat);
+                        var minSnf = parseFloat(range.min_snf);
+                        var maxSnf = parseFloat(range.max_snf);
+                        var minClr = parseFloat(range.min_clr);
+                        var maxClr = parseFloat(range.max_clr);
+                        function showError(fieldName, min, max) {
+                            var msg = fieldName + ' should be between ' + min + ' and ' + max;
+                            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                        }
+                        $(document).off('change', '#tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-snf, #tblbmcmilkdispatchtxn-clr').on('change', '#tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-snf, #tblbmcmilkdispatchtxn-clr', function () {
+                            var fat = parseFloat($('#tblbmcmilkdispatchtxn-fat').val());
+                            var snf = parseFloat($('#tblbmcmilkdispatchtxn-snf').val());
+                            var clr = parseFloat($('#tblbmcmilkdispatchtxn-clr').val());
+
+                            if (!isNaN(fat) && (fat < minFat || fat > maxFat)) {
+                                showError('FAT', minFat, maxFat);
+                                $('#tblbmcmilkdispatchtxn-fat').val('');
+                            }
+                            if (!$('#tblbmcmilkdispatchtxn-snf').is('[readonly]')) {
+                                var snf = parseFloat($('#tblbmcmilkdispatchtxn-snf').val());
+                                if (!isNaN(snf) && (snf < minSnf || snf > maxSnf)) {
+                                    showError('SNF', minSnf, maxSnf);
+                                    $('#tblbmcmilkdispatchtxn-snf').val('');
+                                }
+                            }
+                            if (!$('#tblbmcmilkdispatchtxn-clr').is('[readonly]')) {
+                                var clr = parseFloat($('#tblbmcmilkdispatchtxn-clr').val());
+                                if (!isNaN(clr) && (clr < minClr || clr > maxClr)) {
+                                    showError('CLR', minClr, maxClr);
+                                    $('#tblbmcmilkdispatchtxn-clr').val('');
+                                }
+                            }
+                        });
+                    }
+                },
+                error:function(data){
+                }
+            });
+        }    
+    };
+
+    function isClrInput(){
+        var union = $('#tblbmcmilkdispatch-union_code').val();
+        var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
+        $('#tblbmcmilkdispatchtxn-is_clr_input').val('');
+        if(setData(plantCode)){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['get-clr-input']) . "',
+                data: {'union_code':union,'orgCode':plantCode,'field':'PLANT','for':'PLANT_DISPATCH_CONFIG'},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success' && obj.data != null) {
+                        var is_clr_input = obj.data;
+                        $('#is_clr_input').val(is_clr_input);
+                        $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
+                        if (is_clr_input == 0) {
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);
+                        } else {
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true);
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
+                        }
+                    }
+                }
+            });
+        }
+    };
+
+    $(document).on('change', '#tblbmcmilkdispatch-plant_code, #tblbmcmilkdispatchtxn-fat, #tblbmcmilkdispatchtxn-clr, #tblbmcmilkdispatchtxn-snf', function() {
+        calculateClr();
+    });
+
+    function calculateClr(){
+        var union = $('#tblbmcmilkdispatch-union_code').val();
+        var fat = $('#tblbmcmilkdispatchtxn-fat').val();
+        var snf = $('#tblbmcmilkdispatchtxn-snf').val();
+        var clr = $('#tblbmcmilkdispatchtxn-clr').val();
+        var is_clr_input = $('#is_clr_input').val();
+        var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
+
+        is_clr_input == 0 && (fat == '' || snf == '') && $('#tblbmcmilkdispatchtxn-clr').val('');
+        is_clr_input == 1 && (fat == '' || clr == '') && $('#tblbmcmilkdispatchtxn-snf').val('');
+
+        if(setData(plantCode) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['calculate-clr']) . "',
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':plantCode,'orgType':'PLANT','processName':'PLANT_DISPATCH_CONFIG'},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        if(is_clr_input==0){
+                            $('#tblbmcmilkdispatchtxn-clr').val('');
+                            $('#tblbmcmilkdispatchtxn-clr').val(obj.data);
+                        }else{
+                            $('#tblbmcmilkdispatchtxn-snf').val('');
+                            $('#tblbmcmilkdispatchtxn-snf').val(obj.data);
+                        }
+                    }
+                },
+                error:function(data){
+                }
+            });
+        }    
+    };
 
     $(document).on('click','.edit-record',function(e){
         var id= $(this).attr('data-val');
@@ -434,31 +568,38 @@ function setData(field = ''){
 
 $script .= "
     var isTxnEditable = " . json_encode($txnEdit) . ";
-    $(document).on('change','.filldata', function() {
+    $(document).off('change', '.filldata').on('change', '.filldata', function () {
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
+        var plant_code = $('#tblbmcmilkdispatch-plant_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         $('#transactions-from').html('');
         $('#transactions-detial').html('');           
-        BindData(bmc_milk_dispatch_code,union_code);      
+        BindData(plant_code,bmc_milk_dispatch_code,union_code);      
     }); 
   
-    function BindData(bmc_milk_dispatch_code,union_code){
-        if(setData(union_code)){
+    function BindData(plant_code,bmc_milk_dispatch_code,union_code){
+        if(setData(plant_code) && !isTransactionFormLoad){
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-form']) . "',
-                data: {'union_code':union_code},             
+                data: {'process_name' : 'PLANT_DISPATCH','org_type' : 'PLANT','org_code' : plant_code,'union_code':union_code},             
                 success: function(data) {
+                    if(isSecondTransaction){
+                        isTransactionFormLoad = true;
+                    }
                     $('#transactions-from').html(data);                                                                 
                 }
             });    
         }        
-        if(setData(bmc_milk_dispatch_code)) {
+        if(setData(bmc_milk_dispatch_code) && !isTransactionDetailLoad) {
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-detail']) . "',
                 data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code,'form_type':'plant', 'txnEdit': isTxnEditable},
                 success: function(data) {
+                    if(isSecondTransaction){
+                        isTransactionDetailLoad = true;
+                    }
                     $('#transactions-detial').html(data);
                 },
                 error: function(data) {  
