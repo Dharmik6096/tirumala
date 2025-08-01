@@ -169,6 +169,7 @@ echo GhostMenu::widget([
                 ],
                     ['label' => Yii::t('app', 'Allow Manual Collection Range'), 'url' => ['/collection/tbl-allow-manual-collection-range/index'], 'active' => ($cntrl == 'tbl-allow-manual-collection-range')],
                     ['label' => Yii::t('app', 'Milk Collection'), 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
+                    ['label' => Yii::t('app', 'Sample Milk Collection'), 'url' => ['/collection/tbl-sample-milk-collection/index'], 'active' => ($cntrl == 'tbl-sample-milk-collection')],
                     ['label' => Yii::t('app', 'Milk Collection Special'), 'url' => ['/collection/tbl-milk-collection-special-code/index'], 'active' => ($cntrl == 'tbl-milk-collection-special-code')],
                     ['label' => Yii::t('app', 'QTY Import Approval'), 'url' => ['/collection/tbl-collection-data-alias/qty-import-approval'], 'active' => ($cntrl == 'tbl-collection-data-alias' && ($action == 'qty-import-approval'))],
                     ['label' => Yii::t('app', 'Manual Collection Approval'), 'url' => ['/collection/tbl-collection-approval/index'], 'active' => ($cntrl == 'tbl-collection-approval'), 'visible' => ($eiplCode == 'VRS_NEWASA' || 'VRS_GLT') ? FALSE : TRUE],
