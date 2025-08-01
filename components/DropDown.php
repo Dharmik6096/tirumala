@@ -795,7 +795,7 @@ class DropDown extends Component {
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
 //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
-        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
                             ->widget(DepDrop::classname(), [
@@ -817,7 +817,7 @@ class DropDown extends Component {
                                             function(jqXHR, settings) {
                                                 return handleDepdropBeforeSend({
                                                     depends: " . json_encode($depends) . ",
-                                                    selfId: '{$seftId}'
+                                                    selfId: '{$selfId}'
                                                 });
                                             }
                                         "),
@@ -846,7 +846,7 @@ class DropDown extends Component {
                                     function(jqXHR, settings) {
                                         return handleDepdropBeforeSend({
                                             depends: " . json_encode($depends) . ",
-                                            selfId: '{$seftId}'
+                                            selfId: '{$selfId}'
                                         });
                                     }
                                 "),
@@ -892,7 +892,7 @@ class DropDown extends Component {
         if (isset($searchable) && $searchable) {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
-        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $control_name);
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -911,7 +911,7 @@ class DropDown extends Component {
                                 function(jqXHR, settings) {
                                     return handleDepdropBeforeSend({
                                         depends: " . json_encode($depends) . ",
-                                        selfId: '{$seftId}'
+                                        selfId: '{$selfId}'
                                     });
                                 }
                             "),
@@ -1061,6 +1061,7 @@ class DropDown extends Component {
     private function dependedDropdownMultiple($model, $form, $depends, $name, $id = '', $islable = false, $url = '', $placeholder = '', $multiple = true, $extraParam = '', $readonly = false) {
         $depends = explode(',', $depends);
         $class = $readonly ? 'depend-control' : '';
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($multiple)
             $placeholder = FALSE;
         echo $form->field($model, $name, ['options' => ['class' => $class]])->widget(DepDropComp::classname(), [
@@ -1090,6 +1091,16 @@ class DropDown extends Component {
                 'url' => Url::to([$url]),
                 'allParam' => ["'" . $extraParam . "'"],
                 'initialize' => true,
+                'ajaxSettings' => [
+                    'beforeSend' => new \yii\web\JsExpression("
+                        function(jqXHR, settings) {
+                            return handleDepdropBeforeSend({
+                                depends: " . json_encode($depends) . ",
+                                selfId: '{$selfId}'
+                            });
+                        }
+                    "),
+                ],
             ]
         ])->label(Yii::t('app', $islable));
     }
@@ -2484,7 +2495,7 @@ class DropDown extends Component {
         }
 
         $allParam = is_array($extraParam) ? $extraParam : ["'" . $extraParam . "'"];
-        $seftId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
+        $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -2504,7 +2515,7 @@ class DropDown extends Component {
                                 function(jqXHR, settings) {
                                     return handleDepdropBeforeSend({
                                         depends: " . json_encode($depends) . ",
-                                        selfId: '{$seftId}'
+                                        selfId: '{$selfId}'
                                     });
                                 }
                             "),
