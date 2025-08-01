@@ -346,7 +346,7 @@ class TblMilkVehicleEntryTransaction extends \app\models\ChildModel {
             $tripModel = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
             if(!empty($tripModel)){
                 $tripModel->trip_sub_status = 'milk_receipt_C' . $this->chamber_no;
-                $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+                $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +2 second'));
                 $remarks = $this->chamber_quantity . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
                 $trackingDetail = ['visibility_status' => 0, 'module_code' => $this->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
                 Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
