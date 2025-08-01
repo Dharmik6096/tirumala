@@ -6346,3 +6346,15 @@ div#dashboardFarmerPopup {
 .transform-rotateY {
     transform: rotateY(180deg);
 }
+.button_info {      
+    float: right;
+    font-size: 15px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.PlantWiseTankerStatusModal{
+    width: 66%;
+}
+.PlantWiseTankerMilkDetailModal{
+    width: 66%;
+}

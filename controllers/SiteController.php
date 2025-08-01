@@ -3321,19 +3321,116 @@ class SiteController extends Controller {
         $sp_param = [];
         $rlsData = $this->setRlsData();
         $sp_name = 'sp_portal_dashboard_plant_intransit_tanker_milk_detail';
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
         if (!empty(Yii::$app->request->post('union'))) {
             $union = Yii::$app->request->post('union');
         }
         $date = Yii::$app->request->post('Dashboard')['date'];
         $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $data_type;
         $sp_param[] = $union;
         $sp_param[] = empty($rlsData['plant']) ? '' : $rlsData['plant'];
-        $sp_param[] = is_array($date) ? $date['from_date'] : $date;
-        $sp_param[] = is_array($date) ? $date['to_date'] : $date;
-        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        $table = $this->renderAjax('_intransit_tanker_milk_detail.php', ['output' => $output]);
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_intransit_tanker_milk_detail', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return ['status' => 'success', 'output' => $output, 'intransit_tanker_milk_detail' => $table];
+        return ['status' => 'success', 'res' => $results[0], 'intransit_tanker_milk_detail' => $table];
+    }
+    
+    public function actionIntransitTankerStatusDetail() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_intransit_tanker_status_detail';
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $data_type;
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_intransit_tanker_status_detail', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $results[0], 'intransit_tanker_status_detail' => $table];
+    }
+    
+    public function actionPlantWiseTankerStatus() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_wise_tanker_status';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        
+        $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_status' => $table];
+    }
+    
+    public function actionPlantWiseTankerMilkDetail() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_wise_tanker_milk_detail';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        
+        $table = $this->renderAjax('_plant_wise_tanker_milk_detail', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_milk_detail' => $table];
+    }
+    
+    public function actionPlantTankerCapacityWiseTankerStatus() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_tanker_capacity_wise_tanker_status';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        
+        $table = $this->renderAjax('_plant_tanker_capacity_wise_tanker_status', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
     }
 
 }
