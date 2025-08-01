@@ -1,6 +1,6 @@
 var initDepdropMs;
 (function ($) {
-    window.handleDepdropBeforeSend = function(options) {
+    window.handleDepdropBeforeSend = function (options) {
         const parentIds = options.depends || [];
         const selfId = options.selfId;
 
@@ -8,7 +8,7 @@ var initDepdropMs;
             const val = $(`#${id}`).val();
             return (val === null || val === undefined || val === '') ? '' : val;
         });
-        var parentVal = $(`#`+parentIds[0]).val();
+        var parentVal = $(`#` + parentIds[0]).val();
         // if (!currentParentVals[0]) { // Check if any parent is empty
         if (isEmpty(parentVal)) { // Check if first parent is empty
             resetChildDropdown(selfId);
@@ -22,11 +22,11 @@ var initDepdropMs;
 
         const self = $(`#${selfId}`);
         const shouldAllowRequest = (
-            !window.depdropStateTracker[selfId] ||
-            window.depdropStateTracker[selfId].stateKey !== stateKey ||
-            self.find('option').length <= 1 ||
-            self.prop('disabled')
-        );
+                !window.depdropStateTracker[selfId] ||
+                window.depdropStateTracker[selfId].stateKey !== stateKey ||
+                self.find('option').length <= 1 ||
+                self.prop('disabled')
+                );
 
         if (shouldAllowRequest) {
             self.prop('disabled', false);
@@ -42,7 +42,7 @@ var initDepdropMs;
     };
 
     function resetChildDropdown(id) {
-        var self = $('#' + id);                                        
+        var self = $('#' + id);
         if (self.data('select2')) {
             self.val(null).trigger('select2:select');
             self.trigger('select2:unselect');
@@ -74,7 +74,7 @@ var initDepdropMs;
         }
         return false;
     }
-    
+
     initDepdropMs = function (id, text, val) {
         var $s2 = $('#' + id), $s2cont = $('#' + id).parent('.form-group'), ph = '...';
 
@@ -364,6 +364,34 @@ var initDepdropMs;
         if (time.length == 5 && !time.includes('_') && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
             $help.text('Invalid time.');
         }
+    });
+
+    $(document).ready(function () {
+        const Interaction_Block_Classes = 'div.disabled, div.no_pointer, div.readonly';
+        const Target_Selectors = 'input, select';
+        const isInteractionBlocked = ($element) => {
+            return $element.is(':disabled') || $element.prop('readonly') || $element.closest(Interaction_Block_Classes).length > 0;
+        };
+        const updateElementTabindex = ($element) => {
+            $element.attr('tabindex', isInteractionBlocked($element) ? '-1' : null);
+        };
+        $(Target_Selectors).each((index, element) => updateElementTabindex($(element)));
+        const domChangeObserver = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                const $targetElement = $(mutation.target);
+                if (($targetElement.is('input') || $targetElement.is('select')) && mutation.type === 'attributes' && (mutation.attributeName === 'readonly' || mutation.attributeName === 'disabled')) {
+                    updateElementTabindex($targetElement);
+                } else if ($targetElement.is('div') && mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    $targetElement.find(Target_Selectors).each((index, element) => updateElementTabindex($(element)));
+                }
+            });
+        });
+        const observerConfig = {
+            attributes: true,
+            attributeFilter: ['readonly', 'disabled', 'class'],
+            subtree: true
+        };
+        domChangeObserver.observe(document.body, observerConfig);
     });
 })(jQuery);
 

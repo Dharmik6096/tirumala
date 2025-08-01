@@ -2150,7 +2150,7 @@ class DropDown extends Component {
             'quality_config_process_name' => [
                 'name' => 'process_name',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['BMC_MILK_DISPATCH' => Yii::t('app', 'BMC MILK DISPATCH'), 'PLANT_MILK_RECEIPT' => Yii::t('app', 'PLANT MILK RECEIPT')],
+                'data' => ['BMC_MILK_DISPATCH' => Yii::t('app', 'BMC MILK DISPATCH'), 'PLANT_MILK_RECEIPT' => Yii::t('app', 'PLANT MILK RECEIPT'), 'PLANT_MILK_DISPATCH' => Yii::t('app', 'PLANT MILK DISPATCH')],
             ],
             'no_of_installment' => [
                 'name' => 'no_of_installment',

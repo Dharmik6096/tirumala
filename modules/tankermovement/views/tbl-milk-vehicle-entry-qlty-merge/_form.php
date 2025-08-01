@@ -173,7 +173,7 @@ $script = "
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
                         if(is_clr_input==0) {
-                            $('#tblmilkvehicleentryqltymerge-clr').val(obj.data.toFixed(2));
+                            $('#tblmilkvehicleentryqltymerge-clr').val(obj.data);
                         } else {
                             $('#tblmilkvehicleentryqltymerge-snf').val(obj.data);
                         }

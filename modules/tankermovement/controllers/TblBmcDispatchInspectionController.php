@@ -110,7 +110,8 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
                         $sourceData = $trip_detail->{$response['rel'] . 'Source'};
                         $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']}.'-'.$model->remarks;
                     }
-                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                    $trackingDetail = ['visibility_status' => 3, 'module_code' => null, 'module_type' => null];
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
                     $this->redirect(['index']);
                 }
             }

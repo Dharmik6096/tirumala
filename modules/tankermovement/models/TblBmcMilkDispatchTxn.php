@@ -339,18 +339,24 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         if ($insert) {
-            $bmcMilkDispatchData = $this->bmcMilkDispatchCode;
-            $tripTrackingModel = new TblVehicleTripTracking();
-            $tripTrackingModel->union_code = $bmcMilkDispatchData->union_code;
-            $tripTrackingModel->plant_code = $bmcMilkDispatchData->plant_code;
-            $tripTrackingModel->trip_code = $bmcMilkDispatchData->trip_code;
-            $tripTrackingModel->vehicle_code = $bmcMilkDispatchData->vehicle_code;
-            $tripTrackingModel->trip_date = date('Y-m-d');
-            $tripTrackingModel->trip_status = 'open';
-            $tripTrackingModel->trip_sub_status = 'bmc_dispatch_C' . $this->chamber_no;
-            $tripTrackingModel->sub_status_time = date('Y-m-d H:i:s');
-            $tripTrackingModel->remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
-            $tripTrackingModel->save(TRUE, FALSE);
+            $tripModel = new TblVehicleTrip();
+            $bmcMilkDispatchCode = $this->bmcMilkDispatchCode;
+            $tripModel->attributes = $bmcMilkDispatchCode->attributes;
+            $tripModel->transaction_date = date('Y-m-d');
+            $tripModel->trip_status = 'open';
+            $tripModel->trip_sub_status = $bmcMilkDispatchCode['source_org_type'] . '_dispatch_C' . $this->chamber_no;
+            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');  
+            $tripDetail = TblVehicleTripDetail::find()->where([
+                    'challan_no' => $bmcMilkDispatchCode['challan_no'],
+                    'trip_code' => $bmcMilkDispatchCode['trip_code'],
+                ])->one();
+            $tripDetailCode = '';
+            if ($tripDetail !== null) {
+                $tripDetailCode = $tripDetail->vehicle_trip_detail_code;
+            }
+            $trackingDetail = ['visibility_status' => 0, 'module_code' => $tripDetailCode, 'module_type' => 'tbl_vehicle_trip_detail'];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
         }
     }
 
@@ -380,12 +386,15 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
     }
 
     public function validateQualityRange($attribute, $params) {
-        if (!empty($this->bmc_code) && $this->is_clr_input != '') {
+        if ($this->is_clr_input != '') {
+            $for = $this->bmc_code ? 'BMC' : 'PLANT';
+            $processName = $this->bmc_code ? 'BMC_MILK_DISPATCH' : 'PLANT_MILK_DISPATCH';
+            $orgCode = $this->bmc_code ? $this->bmc_code : $this->plant_code;
             $milkQualityParamRangeModel = new TblMilkQualityParamRange();
             $milkQualityParamRangeModel->union_code = $this->union_code;
-            $milkQualityParamRangeModel->process_name = 'BMC_MILK_DISPATCH';
-            $milkQualityParamRangeModel->org_type = 'BMC';
-            $milkQualityParamRangeModel->org_code = $this->bmc_code;
+            $milkQualityParamRangeModel->process_name = $processName;
+            $milkQualityParamRangeModel->org_type = $for;
+            $milkQualityParamRangeModel->org_code = $orgCode;
             $milkQualityParamRangeModel->animal_type_code = $this->milk_type_code;
             $range = $milkQualityParamRangeModel->getQualityRange();
             if (!empty($range)) {

@@ -602,7 +602,7 @@ $script = "
                     if (obj.status == 'success')
                     {
                         if(is_clr_input==0){
-                            $('#tblmilkvehicleentrytransaction-clr').val(obj.data.toFixed(2));
+                            $('#tblmilkvehicleentrytransaction-clr').val(obj.data);
                         }else{
                             $('#tblmilkvehicleentrytransaction-snf').val(obj.data);
                         }
