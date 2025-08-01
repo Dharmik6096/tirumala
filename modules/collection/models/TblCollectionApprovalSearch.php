@@ -54,7 +54,7 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
             return $dataProvider;
         }
         if (!empty($this->collection_type)) {
-            $query->andFilterWhere(['collection_types' => (int) $this->collection_type]);
+            $query->andFilterWhere(['collection_type' => (int) $this->collection_type]);
         }
         if (!empty($this->date)) {
             $query->andFilterWhere(['cast(tbl_collection_approval.date as date)' => date('Y-m-d', strtotime($this->date))]);
