@@ -199,7 +199,7 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
     public function paymentCycles($union_code, $bmc, $type, $for, $where, $member_billing_lock_check = '0', $ignoreTypeCheck = false) {
         $query = $this->find()->select(['from_date', 'to_date', 'payment_cycle_code'])->distinct()
                 ->where(['union_code' => $union_code, 'applicable_code' => $bmc, 'applicable_for' => $for])->andWhere($where)
-                ->andWhere(['<', 'from_date', date('Y-m-d')]);
+                ->andWhere(['<=', 'cast(from_date as date)', date('Y-m-d')]);
 
         if (empty($ignoreTypeCheck) || !empty($type)) {
             $query->andWhere(['applicable_type' => $type]);

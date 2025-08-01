@@ -77,7 +77,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'product_code'], 'required', 'on' => ['AdvancePm']],
                 [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth', 'RootWiseDifference', 'AppStartupReport']],
-                [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment', 'RouteWiseReconciliation', 'MonthlySahayakIncome', 'MisCcWiseClosingBalance']],
+                [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment', 'RouteWiseReconciliation', 'MonthlySahayakIncome', 'MisCcWiseClosingBalance', 'MccMilkBillDetailsWithIncentiveRouteWise', 'MccMilkBillDetailsMccDayWise', 'MisMilkPurchase']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory', 'StockRegisterBmcToSap', 'BillHeadDetail', 'ComplainActivityList']],
                 [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingShift', 'CleaningFormat', 'VlccTransactionDataReport', 'IndentMemberDetail']],
