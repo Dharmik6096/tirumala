@@ -1122,7 +1122,7 @@ class DropDown extends Component {
             'value' => !empty($model->{$name}) ? array_values($model->{$name}) : [0],
             'multiSelectOptions' => [
                 'id' => $id,
-                'clientOptions' =>
+                'pluginOptions' =>
                     [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
