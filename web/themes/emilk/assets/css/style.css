@@ -6066,8 +6066,8 @@ div#dashboardFarmerPopup {
     cursor: pointer;
 }
 .PlantWiseTankerStatusModal{
-    width: 66%;
+    max-width: 66%;
 }
 .PlantWiseTankerMilkDetailModal{
-    width: 66%;
+    max-width: 66%;
 }
