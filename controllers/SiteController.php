@@ -3327,11 +3327,11 @@ class SiteController extends Controller {
         }
         $date = Yii::$app->request->post('Dashboard')['date'];
         $date = date('Y-m-d', strtotime($date));
-        $sp_param[] = $data_type;
         $sp_param[] = $union;
         $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
         $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $table = $this->renderAjax('_intransit_tanker_milk_detail', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -3350,11 +3350,11 @@ class SiteController extends Controller {
         }
         $date = Yii::$app->request->post('Dashboard')['date'];
         $date = date('Y-m-d', strtotime($date));
-        $sp_param[] = $data_type;
         $sp_param[] = $union;
         $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
         $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $table = $this->renderAjax('_intransit_tanker_status_detail', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
