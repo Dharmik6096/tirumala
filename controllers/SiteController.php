@@ -3335,7 +3335,7 @@ class SiteController extends Controller {
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $table = $this->renderAjax('_intransit_tanker_milk_detail', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return ['status' => 'success', 'res' => $results[0], 'intransit_tanker_milk_detail' => $table];
+        return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_milk_detail' => $table];
     }
     
     public function actionIntransitTankerStatusDetail() {
@@ -3358,7 +3358,7 @@ class SiteController extends Controller {
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $table = $this->renderAjax('_intransit_tanker_status_detail', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return ['status' => 'success', 'res' => $results[0], 'intransit_tanker_status_detail' => $table];
+        return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_status_detail' => $table];
     }
     
     public function actionPlantWiseTankerStatus() {
