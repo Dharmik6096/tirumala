@@ -241,47 +241,49 @@ $user_type = Yii::$app->session->get('UserType');
                             </div>
                         <?php } ?>      
                         <?php
-                        echo $form->field($model, 'plant_widgets[]')->checkboxList(
-                                $allPlantWidgets, [
-                            'id' => 'plant_widgets_list',
-                            'class' => 'row sortable',
-                            'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allPlantWidgets, $plant_selected_widgets, $model, $dashboard_widget, $plant_selected_popup, $enableDashboardPopup) {
-                                //                var_dump(count($map_model));exit;
-                                $checked = in_array($label, $plant_selected_widgets);
-                                $dispLabel = '';
-                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'plant');
-                                if (empty($dispLabel)) {
-                                    return '';
-                                } else {
-                                    $selectedPopup = in_array($label, $plant_selected_popup);
-                                    $className = 'Dashboard';
-                                    $plant_value = [];
-                                    $output = "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'plant_' . $label,
-                                                'label' => '<label for="plant_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'plant') . '</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]);
-                                    if (!empty($enableDashboardPopup) && in_array($label, $plant_value)) {
-                                        $output .= Html::checkbox($className . '[plant_widgets_after][]', $selectedPopup, [
+                        if ($user_type <= 4) {
+                            echo $form->field($model, 'plant_widgets[]')->checkboxList(
+                                    $allPlantWidgets, [
+                                'id' => 'plant_widgets_list',
+                                'class' => 'row sortable',
+                                'item' =>
+                                function ($index, $label, $name, $checked, $value) use ($allPlantWidgets, $plant_selected_widgets, $model, $dashboard_widget, $plant_selected_popup, $enableDashboardPopup) {
+                                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $plant_selected_widgets);
+                                    $dispLabel = '';
+                                    $dispLabel = $dashboard_widget->getWidgetLabel($label, 'plant');
+                                    if (empty($dispLabel)) {
+                                        return '';
+                                    } else {
+                                        $selectedPopup = in_array($label, $plant_selected_popup);
+                                        $className = 'Dashboard';
+                                        $plant_value = [];
+                                        $output = "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
                                                     'value' => $label,
-                                                    'id' => 'plant_' . $label . '_after',
-                                                    'label' => '<label for="plant_' . $label . '_after" class="widgets-text"></label>', // Label for the second checkbox
-                                                    'class' => 'widgets-checkbox',
+                                                    'id' => 'plant_' . $label,
+                                                    'label' => '<label for="plant_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'plant') . '</label>',
                                                     'labelOptions' => [
-                                                        'class' => 'right_align_date mr-2',                                                    ],
+                                                        'class' => 'widgets-text' //. $disabled,
+                                                    ],
+                                                    'class' => 'widgets-checkbox',
                                         ]);
+                                        if (!empty($enableDashboardPopup) && in_array($label, $plant_value)) {
+                                            $output .= Html::checkbox($className . '[plant_widgets_after][]', $selectedPopup, [
+                                                        'value' => $label,
+                                                        'id' => 'plant_' . $label . '_after',
+                                                        'label' => '<label for="plant_' . $label . '_after" class="widgets-text"></label>', // Label for the second checkbox
+                                                        'class' => 'widgets-checkbox',
+                                                        'labelOptions' => [
+                                                            'class' => 'right_align_date mr-2',],
+                                            ]);
+                                        }
+                                        $output .= "</div></div>";
+                                        return $output;
                                     }
-                                    $output .= "</div></div>";
-                                    return $output;
-                                }
-                            },
-                                ]
-                        )->label(false);
+                                },
+                                    ]
+                            )->label(false);
+                        }
                         ?>
 
                         <?php
@@ -1299,9 +1301,9 @@ $('.dpu_data_icon').click(function(){
                             success: function(data) {
                                 var obj1 = data;
                                 if (obj1.status == 'success'){
-                                    $('#Empty_Tankers').text(obj1.res.Empty_Tankers);
-                                    $('#With_Milk').text(obj1.res.With_Milk);
-                                    $('#Total').text(obj1.res.Total);
+                                    $('#Empty_Tankers').text(obj1.res.Empty_Tankers ?? 0);
+                                    $('#With_Milk').text(obj1.res.With_Milk ?? 0);
+                                    $('#Total').text(obj1.res.Total ?? 0);
                                 }
                             },
                             error:function(data){
@@ -1321,9 +1323,9 @@ $('.dpu_data_icon').click(function(){
                             success: function(data) {
                                 var obj1 = data;
                                 if (obj1.status == 'success'){
-                                    $('#Waiting_for_loading').text(obj1.res.Waiting_for_loading);
-                                    $('#Loading_Completed').text(obj1.res.Loading_Completed);
-                                    $('#Total').text(obj1.res.Total);
+                                    $('#Waiting_for_loading').text(obj1.res.Waiting_for_loading ?? 0);
+                                    $('#Loading_Completed').text(obj1.res.Loading_Completed ?? 0);
+                                    $('#Total').text(obj1.res.Total ?? 0);
                                 }
                             },
                             error:function(data){

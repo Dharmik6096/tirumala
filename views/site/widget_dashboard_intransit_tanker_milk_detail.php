@@ -6,18 +6,18 @@ use yii\helpers\Url;
 ?>
 
 <div class="col-sm-12">
-    <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Intransit Tankers'); ?>
+    <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Intransit Tanker Milk Detail'); ?>
         <div id="IntransitTankerMilkDetail" class="button_info"><i class="fa fa-info-circle"></i></div>
     </div>
     <div class="div_dash_block dashboardWidgetDetailPortion col-sm-4">
         <div class="div_mobile_dash_block_content">
-            <p class="mobile_dash_block_header"><?= Yii::t('app', 'Waiting For Loading') ?></p>
+            <p class="mobile_dash_block_header"><?= Yii::t('app', 'Empty Tankers') ?></p>
             <h4 class="dash_block_value block_value" id="Empty_Tankers">0</h4>
         </div>
     </div>
     <div class="div_dash_block dashboardWidgetDetailPortion col-sm-4">
         <div class="div_mobile_dash_block_content">
-            <p class="mobile_dash_block_header"><?= Yii::t('app', 'Loading Completed') ?></p>
+            <p class="mobile_dash_block_header"><?= Yii::t('app', 'With Milk') ?></p>
             <h4 class="dash_block_value block_value" id="With_Milk">0</h4>
         </div>
     </div>
@@ -31,7 +31,7 @@ use yii\helpers\Url;
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="IntransitTankerMilkDetailModalLabel"><?= Yii::t('app', 'Intransit Tankers'); ?></h5>
+                    <h5 class="modal-title" id="IntransitTankerMilkDetailModalLabel"><?= Yii::t('app', 'Intransit Tanker Milk Detail'); ?> - <?= date("d-m-Y", strtotime($date)); ?></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
