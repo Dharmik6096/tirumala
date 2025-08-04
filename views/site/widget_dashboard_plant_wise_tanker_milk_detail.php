@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 
 <div class="col-sm-12">
-    <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Plant Wise Tanker Milk Detail'); ?>
+    <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Plant Wise Tanker Qty/Status Detail'); ?>
         <div id="PlantWiseTankerMilkDetail" class="button_info"><i class="fa fa-info-circle"></i></div>
     </div>
     <div class="flt">
@@ -15,7 +15,7 @@ use yii\helpers\Url;
         <div class="modal-dialog PlantWiseTankerMilkDetailModal" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="PlantWiseTankerMilkDetailModalLabel"><?= Yii::t('app', 'Plant Wise Tanker Milk Detail'); ?> - <?= date("d-m-Y", strtotime($date)); ?></h5>
+                    <h5 class="modal-title" id="PlantWiseTankerMilkDetailModalLabel"><?= Yii::t('app', 'Plant Wise Tanker Qty/Status Detail'); ?> - <?= date("d-m-Y", strtotime($date)); ?></h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
