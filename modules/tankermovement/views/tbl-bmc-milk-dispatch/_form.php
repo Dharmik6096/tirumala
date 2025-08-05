@@ -526,13 +526,13 @@ function calculateClr(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['calculate-clr']) . "',
-            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
+            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':bmcCode,'orgType':'BMC','processName':'BMC_DISPATCH_CONFIG'},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success') {
                     if(is_clr_input==0){
                         $('#tblbmcmilkdispatchtxn-clr').val('');
-                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data.toFixed(2));
+                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data);
                     }else{
                         $('#tblbmcmilkdispatchtxn-snf').val('');
                         $('#tblbmcmilkdispatchtxn-snf').val(obj.data);
@@ -565,7 +565,7 @@ function checkQualityRanges(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['get-quality-param-range']) . "',
-            data: {'union':union, 'bmcCode':bmcCode, 'milkTypeCode':milkTypeCode},
+            data: {'union':union,'orgCode':bmcCode,'milkTypeCode':milkTypeCode,'orgType':'BMC','processName':'BMC_MILK_DISPATCH'},
             success: function(data) {  
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success') {
@@ -658,7 +658,7 @@ function isClrInput(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['get-clr-input']) . "',
-            data: {'union_code':union,'bmcCode':bmcCode},
+            data: {'union_code':union,'orgCode':bmcCode,'field':'BMC','for':'BMC_DISPATCH_CONFIG'},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success' && obj.data != null) {
@@ -769,7 +769,7 @@ $script .= "
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-form']) . "',
-                data: {'bmc_code' : bmc_code,'union_code':union_code},             
+                data: {'process_name':'BMC_DISPATCH','org_type':'BMC','org_code':bmc_code,'union_code':union_code},             
                 success: function(data) {
                     if(isSecondTransaction){
                         isTransactionFormLoad = true;

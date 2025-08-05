@@ -71,11 +71,11 @@ class TblTransporter extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['transporter_name', 'address', 'union_code', 'hamlet_code', 'vendor_code', 'billing_type_code'], 'required', 'except' => ['importCsv', 'activation']],
-                [['transporter_name', 'address', 'hamlet_code', 'vendor_code', 'union_code', 'billing_type_code'], 'required', 'on' => 'importCsv'],
+                [['transporter_name', 'address', 'union_code', 'vendor_code', 'billing_type_code'], 'required', 'except' => ['importCsv', 'activation']],
+                [['transporter_name', 'address', 'vendor_code', 'union_code', 'billing_type_code'], 'required', 'on' => 'importCsv'],
                 [['transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
                 [['registration_no'], 'unique', 'skipOnEmpty' => true, 'except' => ['activation']],
-                [['transporter_code', 'state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'activation']],
+                [['transporter_code'], 'required', 'except' => ['importCsv', 'activation']],
                 [['vendor_code'], 'number', 'except' => ['activation']],
                 [['transporter_code'], 'integer', 'except' => ['activation']],
                 [['email'], 'email', 'except' => ['activation']],
@@ -131,7 +131,7 @@ class TblTransporter extends \app\models\ChildModel {
 //                [['branch_code'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBranch($this, $attribute, $params);
 //                }, 'skipOnEmpty' => false, 'except' => ['activation']],
-                [['hamlet_code'], 'validateHamlet', 'on' => 'importCsv'],
+            [['hamlet_code'], 'validateHamlet', 'on' => 'importCsv'],
                 [['agreement_to_date'], 'validateAgreeTo', 'except' => ['activation']],
                 [['agreement_from_date', 'agreement_to_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
 //                    [['transporter_type'], function ($attribute, $params) {

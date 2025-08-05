@@ -120,7 +120,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                             $tripModel->plant_code = $data['organization_code'];
                             $plantData = $tripModel->plantCode;
                             $remarks = $plantData->ref_code . '-' . $plantData->name;
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                            $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
                         }
                     }
                 }
@@ -225,7 +226,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                                     $sourceData = $tripDetail->{$response['rel'] . 'Source'};
                                     $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                                 }
-                                Yii::$app->general->setVehicleTripTrackingDetail($result[1][0], $remarks);
+                                $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
+                                Yii::$app->general->setVehicleTripTrackingDetail($result[1][0], $trackingDetail, $remarks);
                             }
                         }
                     }
@@ -281,16 +283,18 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $res_data['message'] = 'Trip Updated Successfully.';
-                    $response = Yii::$app->general->getColumnName('bmc');
-                    if (!empty($response['rel'])) {
-                        $model = new TblBmcMilkDispatch();
-                        $model->source_org_code = $source_org_code;
-                        $sourceData = $model->{$response['rel'] . 'Source'};
-                        $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
-                    }
-                    $tripModel->trip_sub_status = 'bmc_dispatch';
-                    $tripModel->sub_status_time = date('Y-m-d H:i:s');
-                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                    /*
+                      $response = Yii::$app->general->getColumnName('bmc');
+                      if (!empty($response['rel'])) {
+                      $model = new TblBmcMilkDispatch();
+                      $model->source_org_code = $source_org_code;
+                      $sourceData = $model->{$response['rel'] . 'Source'};
+                      $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                      }
+                      $tripModel->trip_sub_status = 'bmc_dispatch';
+                      $tripModel->sub_status_time = date('Y-m-d H:i:s');
+                      Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                     */
                 }
             }
         }

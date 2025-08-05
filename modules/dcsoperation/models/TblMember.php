@@ -137,7 +137,7 @@ class TblMember extends ChildModel {
                 [['sap_farmer_code'], 'unique', 'targetAttribute' => ['sap_farmer_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'specialCodeImportCsv', 'kycVerify']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync', 'specialCodeImportCsv']],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
