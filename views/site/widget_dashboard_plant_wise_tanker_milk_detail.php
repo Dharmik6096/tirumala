@@ -1,0 +1,61 @@
+<?php
+use yii\web\View;
+use yii\helpers\Url;
+?>
+
+
+<div class="col-sm-12">
+    <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Plant Wise Tanker Qty/Status Detail'); ?>
+        <div id="PlantWiseTankerMilkDetail" class="button_info"><i class="fa fa-info-circle"></i></div>
+    </div>
+    <div class="flt">
+        <div id="plant_wise_tanker_milk_detail" class="cont milk-collection"></div>
+    </div>
+    <div class="modal fade" id="PlantWiseTankerMilkDetailModal" tabindex="-1" role="dialog" aria-labelledby="PlantWiseTankerMilkDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog PlantWiseTankerMilkDetailModal" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="PlantWiseTankerMilkDetailModalLabel"><?= Yii::t('app', 'Plant Wise Tanker Qty/Status Detail'); ?> - <?= date("d-m-Y", strtotime($date)); ?></h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body overflow_auto" id="plant_wise_tanker_milk_detail_table">
+                    <!-- Table content will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+$script = "
+
+$('#PlantWiseTankerMilkDetail').on('click', function() {
+    var blockDataString = $('#collapse1 form').serialize();
+    var id= 'sp_portal_dashboard_plant_wise_tanker_milk_detail'; 
+    var union= '" . $union . "';
+    var data_type = 1;
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/site/plant-wise-tanker-milk-detail']) . "',
+            data: blockDataString+'&sp='+id+'&union='+union+'&data_type='+data_type,
+            success: function(data) {
+                var obj1 = data;
+                if (obj1.status == 'success') {
+                  $('#plant_wise_tanker_milk_detail_table').html(obj1.plant_wise_tanker_milk_detail);
+                  $('#PlantWiseTankerMilkDetailModal').modal('show');
+                }
+            },
+            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+            }
+        });
+});
+
+";
+$this->registerJs($script, View::POS_READY, 'plant_wise_tanker_milk_detail');
+?>

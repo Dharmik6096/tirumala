@@ -3937,7 +3937,8 @@ input[type="checkbox"]:after {
 }
 
 .field-rmrd_widgets_list .help-block,
-.field-farmer_widgets_list .help-block {
+.field-farmer_widgets_list .help-block, 
+.field-plant_widgets_list .help-block {
     display: none;
 }
 
@@ -6153,8 +6154,10 @@ tr.highlightRow {
 .mr-2{
     margin-bottom: -2px !important;
 }
-.h560{
-    height: 560px;
+.widget_popup{
+    display: grid;
+    max-height: calc(100vH - 130px);
+    overflow-y: auto;
 }
 .pop_button{
     float: inline-end;
@@ -6347,4 +6350,16 @@ div#dashboardFarmerPopup {
 }
 .transform-rotateY {
     transform: rotateY(180deg);
+}
+.button_info {      
+    float: right;
+    font-size: 15px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.PlantWiseTankerStatusModal{
+    width: 66%;
+}
+.PlantWiseTankerMilkDetailModal{
+    width: 66%;
 }

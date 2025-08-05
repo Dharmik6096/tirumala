@@ -157,6 +157,9 @@ class SiteController extends \app\controllers\ChildController {
         if (Yii::$app->session->get('eiplCode') == 'GYAN') {
             $defaultWidget = 'rmrd';
         }
+        if (Yii::$app->session->get('UserType') == 4) {
+            $defaultWidget = 'plant';
+        }
         if (!empty(Yii::$app->request->post('Dashboard')['shift'])) {
             $model->shift = Yii::$app->request->post('Dashboard')['shift'];
         } else {
@@ -178,6 +181,8 @@ class SiteController extends \app\controllers\ChildController {
             $farmer_widget_position = json_encode(Yii::$app->request->post('Dashboard')['farmer_widgets']);
             $farmer_widget_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['farmer_widgets_after']) ? Yii::$app->request->post('Dashboard')['farmer_widgets_after'] : '');
             $rmrd_widget_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['rmrd_widgets_after']) ? Yii::$app->request->post('Dashboard')['rmrd_widgets_after'] : '');
+            $plant_widget_position = json_encode(!empty(Yii::$app->request->post('Dashboard')['plant_widgets']) ? Yii::$app->request->post('Dashboard')['plant_widgets'] : '');
+            $plant_widget_popup = json_encode(!empty(Yii::$app->request->post('Dashboard')['plant_widgets_after']) ? Yii::$app->request->post('Dashboard')['plant_widgets_after'] : '');
             if (!empty($dashboardUserWidgets)) {
                 $dashboardUserWidgets->user_id = Yii::$app->session->get('UserCode');
             }
@@ -185,18 +190,23 @@ class SiteController extends \app\controllers\ChildController {
             $dashboardUserWidgets->position_rmrd = $rmrd_widget_position;
             $dashboardUserWidgets->is_farmer_popup = $farmer_widget_popup;
             $dashboardUserWidgets->is_rmrd_popup = $rmrd_widget_popup;
+            $dashboardUserWidgets->position_plant = $plant_widget_position;
+            $dashboardUserWidgets->is_plant_popup = $plant_widget_popup;
             $dashboardUserWidgets->save();
         }
         $dashboardWidgets = new TblDashboardWidgets();
         $widgets = $dashboardWidgets->getDashboardWidgets();
         $farmerWidgets = [];
         $rmrdWidgets = [];
+        $plantWidgets = [];
 // $dashboardUserWidgets = new TblDashboardUserWidgets();
         foreach ($widgets as $key => $value) {
             if ($value->widget_type == 'farmer')
                 $farmerWidgets[] = $value->widget_id;
             if ($value->widget_type == 'rmrd')
                 $rmrdWidgets[] = $value->widget_id;
+            if ($value->widget_type == 'plant')
+                $plantWidgets[] = $value->widget_id;
         }
 
         $userWidgets = $dashboardUserWidgets->getDashboardUserWidgets();
@@ -204,11 +214,15 @@ class SiteController extends \app\controllers\ChildController {
         $userFarmerWidgets = [];
         $userFarmerPopup = [];
         $userRmrdPopup = [];
+        $userPlantWidgets = [];
+        $userPlantPopup = [];
         if (!empty($userWidgets)) {
             $userFarmerWidgets = json_decode($userWidgets->position_farmer);
             $userRmrdWidgets = json_decode($userWidgets->position_rmrd);
             $userFarmerPopup = json_decode(!empty($userWidgets->is_farmer_popup) ? $userWidgets->is_farmer_popup : '');
             $userRmrdPopup = json_decode(!empty($userWidgets->is_rmrd_popup) ? $userWidgets->is_rmrd_popup : '');
+            $userPlantWidgets = json_decode(!empty($userWidgets->position_plant) ? $userWidgets->position_plant : '');
+            $userPlantPopup = json_decode(!empty($userWidgets->is_plant_popup) ? $userWidgets->is_plant_popup : '');
         }
 
         $model->date = $end_date;
@@ -238,7 +252,7 @@ class SiteController extends \app\controllers\ChildController {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-        'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup]);
+        'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup, 'plantWidgets' => $plantWidgets, 'userPlantWidgets' => $userPlantWidgets, 'userPlantPopup' => $userPlantPopup]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -3296,6 +3310,124 @@ class SiteController extends \app\controllers\ChildController {
     public function actionMergeWeightQualityData() {
         $sp_name = 'process_weight_quality_merge_data';
         \Yii::$app->general->getSpData($sp_name, [], TRUE);
+    }
+    
+    public function actionPlantIntransitTankerMilkDetail() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_intransit_tanker_milk_detail';
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_intransit_tanker_milk_detail', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_milk_detail' => $table];
+    }
+    
+    public function actionIntransitTankerStatusDetail() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_intransit_tanker_status_detail';
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_intransit_tanker_status_detail', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_status_detail' => $table];
+    }
+    
+    public function actionPlantWiseTankerStatus() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_wise_tanker_status';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        
+        $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_status' => $table];
+    }
+    
+    public function actionPlantWiseTankerMilkDetail() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_wise_tanker_milk_detail';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        
+        $table = $this->renderAjax('_plant_wise_tanker_milk_detail', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_milk_detail' => $table];
+    }
+    
+    public function actionPlantTankerCapacityWiseTankerStatus() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_tanker_capacity_wise_tanker_status';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $data_type = !empty(Yii::$app->request->post('data_type')) ? Yii::$app->request->post('data_type') : '0';
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
+        $sp_param[] = $data_type;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        
+        $table = $this->renderAjax('_plant_tanker_capacity_wise_tanker_status', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
     }
 
 }
