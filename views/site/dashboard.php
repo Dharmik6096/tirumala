@@ -1303,7 +1303,7 @@ $('.dpu_data_icon').click(function(){
                                 if (obj1.status == 'success'){
                                     $('#Empty_Tankers').text(obj1.res.Empty_Tankers ?? 0);
                                     $('#With_Milk').text(obj1.res.With_Milk ?? 0);
-                                    $('#Total').text(obj1.res.Total ?? 0);
+                                    $('#Total_Calculated').text(obj1.res.Total_Calculated ?? 0);
                                 }
                             },
                             error:function(data){

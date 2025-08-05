@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\helpers\Url;
 ?>
 
-<div class="col-sm-12">
+<div class="col-sm-12 margin-bottom-10">
     <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Intransit Tanker Status Detail'); ?>
         <div id="IntransitTankerStatusDetail" class="button_info"><i class="fa fa-info-circle"></i></div>
     </div>
@@ -28,7 +28,7 @@ use yii\helpers\Url;
         </div>
     </div>
     <div class="modal fade" id="IntransitTankerStatusDetailModal" tabindex="-1" role="dialog" aria-labelledby="IntransitTankerStatusDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog width75" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="IntransitTankerStatusDetailModalLabel"><?= Yii::t('app', 'Intransit Tanker Status Detail'); ?> - <?= date("d-m-Y", strtotime($date)); ?></h5>

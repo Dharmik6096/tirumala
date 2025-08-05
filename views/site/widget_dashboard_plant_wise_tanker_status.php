@@ -4,15 +4,15 @@ use yii\helpers\Url;
 ?>
 
 
-<div class="col-sm-12">
-    <div class="cal-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Plant Wise Tanker Status'); ?>
+<div class="col-sm-12 margin-bottom-10">
+    <div class="plant-widget-header dashboardWidgetHeader col-sm-12"><?= Yii::t('app', 'Plant Wise Tanker Status'); ?>
         <div id="PlantWiseTankerStatus" class="button_info"><i class="fa fa-info-circle"></i></div>
     </div>
     <div class="flt">
         <div id="plant_wise_tanker_status" class="cont milk-collection"></div>
     </div>
     <div class="modal fade" id="PlantWiseTankerStatusModal" tabindex="-1" role="dialog" aria-labelledby="PlantWiseTankerStatusModalLabel" aria-hidden="true">
-        <div class="modal-dialog PlantWiseTankerStatusModal" role="document">
+        <div class="modal-dialog width75" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="PlantWiseTankerStatusModalLabel"><?= Yii::t('app', 'Plant Wise Tanker Status'); ?> - <?= date("d-m-Y", strtotime($date)); ?></h5>
