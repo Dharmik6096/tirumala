@@ -20,10 +20,10 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'dock_no'], 'safe'],
-                [['gross_weight', 'tare_weight'], 'number'],
-                [['originating_type'], 'integer'],
-                [['from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'changeTrip'],
+            [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code', 'approved_at', 'approved_by', 'approval_status', 'approval_remarks', 'dock_no', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'safe'],
+            [['gross_weight', 'tare_weight'], 'number'],
+            [['originating_type'], 'integer'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'changeTrip'],
         ];
     }
 
@@ -69,6 +69,22 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
             $this->approval_status = ['Pending', 'Inprogress'];
             $query->where(['tbl_milk_vehicle_entry.approval_status' => $this->approval_status]);
         }
+        if (!empty($this->f_union_code)) {
+            $query->andFilterWhere(['tbl_milk_vehicle_entry.union_code' => $this->f_union_code]);
+        }
+        if (!empty($this->f_plant_code)) {
+            $query->andFilterWhere(['tbl_milk_vehicle_entry.plant_code' => $this->f_plant_code]);
+        }
+        if (!empty($this->f_mcc_code)) {
+            $query->andFilterWhere(['tbl_milk_vehicle_entry.mcc_plant_code' => $this->f_mcc_code]);
+        }
+        if (!empty($this->f_bmc_code)) {
+            $query->andFilterWhere(['tbl_milk_vehicle_entry.bmc_code' => $this->f_bmc_code]);
+        }
+        if (!empty($this->from_date)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $query->andFilterWhere(['>=', 'CAST(vehicle_entry_date as date)', $from_date]);
+        }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $query->andFilterWhere(['<=', 'CAST(vehicle_entry_date as date)', $to_date]);
@@ -91,8 +107,7 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
         return $dataProvider;
     }
 
-    public function approvalSearch($params)
-    {
+    public function approvalSearch($params) {
         $query = TblMilkVehicleEntryTransaction::find()->alias('t');
 
         $dataProvider = new ActiveDataProvider([
