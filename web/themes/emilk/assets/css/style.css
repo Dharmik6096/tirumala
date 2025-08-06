@@ -6065,9 +6065,12 @@ div#dashboardFarmerPopup {
     margin-right: 10px;
     cursor: pointer;
 }
-.PlantWiseTankerStatusModal{
-    max-width: 66%;
+.width75{
+    max-width: 75%;
 }
-.PlantWiseTankerMilkDetailModal{
-    max-width: 66%;
+.plant-widget-header {
+    padding-top: 4px;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 1px solid #fff;
 }

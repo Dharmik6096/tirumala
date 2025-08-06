@@ -3330,7 +3330,7 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        $table = $this->renderAjax('_intransit_tanker_milk_detail', ['results' => $results]);
+        $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_milk_detail' => $table];
     }
@@ -3353,7 +3353,7 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        $table = $this->renderAjax('_intransit_tanker_status_detail', ['results' => $results]);
+        $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_status_detail' => $table];
     }
@@ -3401,7 +3401,7 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         
-        $table = $this->renderAjax('_plant_wise_tanker_milk_detail', ['results' => $results]);
+        $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_milk_detail' => $table];
     }
@@ -3425,7 +3425,7 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         
-        $table = $this->renderAjax('_plant_tanker_capacity_wise_tanker_status', ['results' => $results]);
+        $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
     }
