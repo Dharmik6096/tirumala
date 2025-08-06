@@ -72,7 +72,7 @@ class MasterDataController extends \app\modules\androiddpu\v3\controllers\Master
                     $model->setAttributes($transaction_data);
                     $model->sync_timestamp = date('Y-m-d H:i:s');
                     // $model->posting_timestamp = date('Y-m-d H:i:s');
-                    $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
+                    $transaction = $this->generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
                     if ($transaction == 'customRedirect') {
                         $message = 'Successfully Saved!';
                         $success_id[] = $transaction_data['uuid'];
