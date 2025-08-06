@@ -2092,6 +2092,18 @@ class SiteController extends Controller {
             } catch (\Throwable $e) {
                 
             }
+        } catch (\Throwable $e) {
+            try {
+                if (isset($verifyCountModel)) {
+                    $verifyCountModel->x_col1 = substr($e->getMessage(), 0, 7900);
+                    $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
+                    $verifyCountModel->success_count = isset($successCount) ? $successCount : 0;
+                    $verifyCountModel->error_count = isset($errorCount) ? $errorCount : 0;
+                    $verifyCountModel->save();
+                }
+            } catch (\Throwable $e) {
+                
+            }
         }
     }
 
