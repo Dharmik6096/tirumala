@@ -63,27 +63,22 @@ class MasterDataController extends \app\modules\androiddpu\v3\controllers\Master
         $success_id = [];
         $error_id = [];
         $data = $this->post_data;
-//        $sync_active_model = $this->syncActiveRecord($data);
-//        if (!empty($sync_active_model)) {
-        if (true) {
-            if (!empty($data['content'])) {
-                foreach ($data['content'] as $transaction_data) {
+        if (!empty($data['content'])) {
+            foreach ($data['content'] as $transaction_data) {
+                if (!empty($transaction_data['uuid'])) {
                     $request = new HttpRequest();
                     $transaction_data = $request->camelCaseToUnderscore($transaction_data);
                     $model = new TblInbox();
                     $model->setAttributes($transaction_data);
                     $model->sync_timestamp = date('Y-m-d H:i:s');
-                    $model->posting_timestamp = date('Y-m-d H:i:s');
-                    $modelData = $model->findOne($model->uuid);
-                    $syncModel = new TblSyncLog();
-                    $syncModel->uuid = $model->uuid;
-                    $syncModelData = $syncModel->findOne($syncModel->uuid);
-                    if (!empty($modelData) || !empty($syncModelData)) {
+                    // $model->posting_timestamp = date('Y-m-d H:i:s');
+                    $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $message = 'Successfully Saved!';
                         $success_id[] = $transaction_data['uuid'];
                     } else {
-                        $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
-                        if ($transaction == 'customRedirect') {
-                            $message = 'Successfully Saved!';
+                        $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
+                        if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
                             $success_id[] = $transaction_data['uuid'];
                         } else {
                             $error_id[] = $transaction_data['uuid'];
@@ -92,6 +87,7 @@ class MasterDataController extends \app\modules\androiddpu\v3\controllers\Master
                 }
             }
         }
+
         $res_data['success_id'] = implode(',', $success_id);
         $res_data['error_id'] = implode(',', $error_id);
         $this->response['message'] = [$message];

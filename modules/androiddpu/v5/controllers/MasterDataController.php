@@ -22,7 +22,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
                     $model = new TblInbox();
                     $model->setAttributes($transaction_data);
                     $model->sync_timestamp = date('Y-m-d H:i:s');
-                    $model->posting_timestamp = date('Y-m-d H:i:s');
+                    // $model->posting_timestamp = date('Y-m-d H:i:s');
                     $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
                     if ($transaction == 'customRedirect') {
                         $message = 'Successfully Saved!';
