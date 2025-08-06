@@ -213,27 +213,30 @@ class TblTransporterPayment extends \app\models\ChildModel {
         return $this->hasOne(TblTransporterPaymentDetail::className(), ['transporter_payment_code' => 'transporter_payment_code']);
     }
 
-    public function getdatewiseBmcList($union_code, $plant_code, $mcc_plant_code, $from_date, $to_date) {
+    public function getdatewiseBmcList($union_code, $plant_code, $mcc_plant_code, $from_date, $to_date, $check_condition = 'Yes') {
         $from_date = date('Y-m-d', strtotime($from_date));
         $to_date = date('Y-m-d', strtotime($to_date));
-
-        $exclude = TblTransporterPayment::find()->select(['bmc_code'])
-                ->where(['transporter_type' => 0, 'union_code' => $union_code])
-                ->andWhere(['not in', 'status', ['processed']])
-                ->andWhere(['or',
-                ['or',
-                    ['between', 'from_date', $from_date, $to_date],
-                    ['between', 'to_date', $from_date, $to_date]
-            ],
-                ['or',
-                "'$from_date' BETWEEN [from_date] AND [to_date]",
-                "'$to_date' BETWEEN [from_date] AND [to_date]"
-        ]]);
+        if($check_condition == 'Yes'){
+            $exclude = TblTransporterPayment::find()->select(['bmc_code'])
+                    ->where(['transporter_type' => 0, 'union_code' => $union_code])
+                    ->andWhere(['not in', 'status', ['processed']])
+                    ->andWhere(['or',
+                    ['or',
+                        ['between', 'from_date', $from_date, $to_date],
+                        ['between', 'to_date', $from_date, $to_date]
+                ],
+                    ['or',
+                    "'$from_date' BETWEEN [from_date] AND [to_date]",
+                    "'$to_date' BETWEEN [from_date] AND [to_date]"
+            ]]);
+        }
 
         $query = TblDcsBmc::find()->select(['bmc_code', 'bmc_name'])
                 ->where(['union_code' => $union_code, 'is_active' => 1])
-                ->andWhere(['plant_code' => $plant_code, 'mcc_plant_code' => $mcc_plant_code])
-                ->andWhere(['not in', 'bmc_code', $exclude]);
+                ->andWhere(['plant_code' => $plant_code, 'mcc_plant_code' => $mcc_plant_code]);
+        if($check_condition == 'Yes'){
+            $query->andWhere(['not in', 'bmc_code', $exclude]);
+        }
 
         if (Yii::$app->session->get('BMC') !== '') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);

@@ -39,7 +39,7 @@ echo $form->errorSummary($model);
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbltransporterpayment-plant_code', 'mcc_plant_code', TRUE, TRUE); ?>
         </div>      
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->datewise_bmc_list($model, $form, 'tbltransporterpayment-union_code,tbltransporterpayment-plant_code,tbltransporterpayment-mcc_plant_code,tbltransporterpayment-from_date,tbltransporterpayment-to_date', 'bmc_code', $model->getAttributeLabel('bmc_code'), TRUE, '', FALSE, TRUE, TRUE); ?>
+            <?= Yii::$app->dropdown->datewise_bmc_list($model, $form, 'tbltransporterpayment-mcc_plant_code,tbltransporterpayment-plant_code,tbltransporterpayment-union_code,tbltransporterpayment-from_date,tbltransporterpayment-to_date', 'bmc_code', $model->getAttributeLabel('bmc_code'), TRUE, '', FALSE, TRUE, TRUE); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->all_route_transporter($model, $form, 'tbltransporterpayment-plant_code,tbltransporterpayment-mcc_plant_code,tbltransporterpayment-bmc_code', 'transporter_code', $model->getAttributeLabel('transporter_code'), FALSE, '', FALSE, TRUE); ?>
