@@ -55,6 +55,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\syncutility\models\TblInboxParsingCount;
 
 class SiteController extends \app\controllers\ChildController {
 
@@ -252,7 +253,7 @@ class SiteController extends \app\controllers\ChildController {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-        'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup, 'plantWidgets' => $plantWidgets, 'userPlantWidgets' => $userPlantWidgets, 'userPlantPopup' => $userPlantPopup]);
+                    'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup, 'plantWidgets' => $plantWidgets, 'userPlantWidgets' => $userPlantWidgets, 'userPlantPopup' => $userPlantPopup]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -1852,10 +1853,20 @@ class SiteController extends \app\controllers\ChildController {
 
     public function actionParseInboxData() {
         try {
+            $successCount = 0;
+            $errorCount = 0;
+            $verifyCountModel = new TblInboxParsingCount();
+            $verifyCountModel->total_count = 0;
+            $verifyCountModel->success_count = 0;
+            $verifyCountModel->error_count = 0;
+            $pick_datetime = date('Y-m-d H:i:s');
+            $verifyCountModel->created_at = $pick_datetime;
+
             $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
             $i = 1;
+
             if (!empty($modelData)) {
                 $version_ignore_tables = ['tbl_product_sale', 'tbl_product_sale_transaction'];
                 $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
@@ -1864,7 +1875,12 @@ class SiteController extends \app\controllers\ChildController {
                 ];
                 $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
-//$model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+                $model->updateAll(['picked_datetime' => $pick_datetime], ['uuid' => $update_ids]);
+
+                $verifyCountModel->total_count = count($modelData);
+                $verifyCountModel->updated_at = date('Y-m-d H:i:s');
+                $verifyCountModel->save();
+
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
@@ -1898,15 +1914,19 @@ class SiteController extends \app\controllers\ChildController {
                             /* update record if already available */
                             if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
                                 $unique_value = $model->$unique_key;
-                                $model_data = $model->find()->where([$unique_key => $unique_value])->one();
-                                if (!empty($model_data)) {
-                                    $is_insert = FALSE;
-                                    $model = $model_data;
-                                    $history = $model_name . 'History';
-                                    $historyModel = new $history();
-                                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
-                                    $childModel[] = $historyModel;
-                                    $model->setAttributes($json);
+                                $model_count = $model->find()->where([$unique_key => $unique_value])->count();
+                                $model_count = (int) $model_count;
+                                if ($model_count != 0) {
+                                    $model_data = $model->find()->where([$unique_key => $unique_value])->one();
+                                    if (!empty($model_data)) {
+                                        $is_insert = FALSE;
+                                        $model = $model_data;
+                                        $history = $model_name . 'History';
+                                        $historyModel = new $history();
+                                        Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                        $childModel[] = $historyModel;
+                                        $model->setAttributes($json);
+                                    }
                                 }
                             }
                             /* update record if already available */
@@ -2018,6 +2038,7 @@ class SiteController extends \app\controllers\ChildController {
                                 }
                                 $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                                 if ($transaction != 'customRedirect') {
+                                    $errorCount++;
                                     $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
                                     $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                                     $transaction_data->data_post_status = 3;
@@ -2027,17 +2048,24 @@ class SiteController extends \app\controllers\ChildController {
                                         $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
                                         $inbox_constraint->data_post_status = 3;
                                         $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
+                                        if ($transaction != 'customRedirect') {
+                                            $transaction_data->save();
+                                        }
                                     } else {
                                         $transaction_data->save();
                                     }
+                                } else {
+                                    $successCount++;
                                 }
                             } else {
+                                $errorCount++;
                                 $transaction_data->error_log = Json::encode($model->getErrors());
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                                 $transaction_data->data_post_status = 3;
                                 $transaction_data->save();
                             }
                         } else {
+                            $errorCount++;
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction($childModel, [], $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
@@ -2048,6 +2076,7 @@ class SiteController extends \app\controllers\ChildController {
                             }
                         }
                     } catch (\Throwable $ex) {
+                        $errorCount++;
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                         $transaction_data->data_post_status = 3;
@@ -2055,9 +2084,35 @@ class SiteController extends \app\controllers\ChildController {
                     }
                     $i++;
                 }
+                $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
+                $verifyCountModel->success_count = $successCount;
+                $verifyCountModel->error_count = $errorCount;
+                $verifyCountModel->save();
             }
         } catch (yii\base\Exception $e) {
-            var_dump($e);
+            try {
+                if (isset($verifyCountModel)) {
+                    $verifyCountModel->x_col1 = substr($e->getMessage(), 0, 7900);
+                    $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
+                    $verifyCountModel->success_count = isset($successCount) ? $successCount : 0;
+                    $verifyCountModel->error_count = isset($errorCount) ? $errorCount : 0;
+                    $verifyCountModel->save();
+                }
+            } catch (\Throwable $e) {
+                
+            }
+        } catch (\Throwable $e) {
+            try {
+                if (isset($verifyCountModel)) {
+                    $verifyCountModel->x_col1 = substr($e->getMessage(), 0, 7900);
+                    $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
+                    $verifyCountModel->success_count = isset($successCount) ? $successCount : 0;
+                    $verifyCountModel->error_count = isset($errorCount) ? $errorCount : 0;
+                    $verifyCountModel->save();
+                }
+            } catch (\Throwable $e) {
+                
+            }
         }
     }
 
@@ -3309,7 +3364,7 @@ class SiteController extends \app\controllers\ChildController {
         $sp_name = 'process_weight_quality_merge_data';
         \Yii::$app->general->getSpData($sp_name, [], TRUE);
     }
-    
+
     public function actionPlantIntransitTankerMilkDetail() {
         $output = [];
         $union = 0;
@@ -3332,7 +3387,7 @@ class SiteController extends \app\controllers\ChildController {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_milk_detail' => $table];
     }
-    
+
     public function actionIntransitTankerStatusDetail() {
         $output = [];
         $union = 0;
@@ -3355,7 +3410,7 @@ class SiteController extends \app\controllers\ChildController {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_status_detail' => $table];
     }
-    
+
     public function actionPlantWiseTankerStatus() {
         $output = [];
         $union = 0;
@@ -3374,12 +3429,12 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        
+
         $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_status' => $table];
     }
-    
+
     public function actionPlantWiseTankerMilkDetail() {
         $output = [];
         $union = 0;
@@ -3398,12 +3453,12 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        
+
         $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_milk_detail' => $table];
     }
-    
+
     public function actionPlantTankerCapacityWiseTankerStatus() {
         $output = [];
         $union = 0;
@@ -3422,7 +3477,7 @@ class SiteController extends \app\controllers\ChildController {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        
+
         $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
