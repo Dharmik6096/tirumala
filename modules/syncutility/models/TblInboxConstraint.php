@@ -47,7 +47,9 @@ class TblInboxConstraint extends \yii\db\ActiveRecord {
                 [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
                 [['sequence_no'], 'safe'],
                 [['posting_timestamp', 'sync_timestamp', 'processed_timestamp', 'error_timestamp', 'data_post_status'], 'safe'],
-                [['data_post_status'], 'default', 'value' => 0]
+                [['data_post_status'], 'default', 'value' => 0],
+                [['picked_datetime', 'received_time', 'sync_time'], 'safe'],
+                [['sync_time'], 'default', 'value' => date('Y-m-d H:i:s.u')],
         ];
     }
 
