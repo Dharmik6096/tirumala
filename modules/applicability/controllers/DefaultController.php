@@ -138,6 +138,9 @@ class DefaultController extends Controller {
             if (!empty($from_date) && !empty($to_date)) {
                 $condition = '((\'' . $from_date . '\' between from_date  and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))';
             }
+            if ($model->hasAttribute('is_active')) {
+                $condition = !empty($condition) ? $condition.' AND is_active = 1' : 'is_active = 1';
+            }
         }
         $modelQuery = $model->find()->select(['applicable_code'])->where(['applicable_for' => $filter]);
         if($check_applicability_with_field_name){
