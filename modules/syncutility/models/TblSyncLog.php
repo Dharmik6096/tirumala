@@ -46,7 +46,9 @@ class TblSyncLog extends \yii\db\ActiveRecord {
                 [['sequence_no'], 'safe'],
                 [['posting_timestamp', 'sync_timestamp'], 'safe'],
                 [['error_timestamp', 'processed_timestamp', 'data_post_status'], 'safe'],
-                [['data_post_status'], 'default', 'value' => 0]
+                [['data_post_status'], 'default', 'value' => 0],
+                [['picked_datetime', 'received_time', 'sync_time'], 'safe'],
+                [['sync_time'], 'default', 'value' => date('Y-m-d H:i:s.u')],
         ];
     }
 

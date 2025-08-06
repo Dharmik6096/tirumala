@@ -2097,7 +2097,20 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'CmpReport';
         return $this->actionIndex();
     }
-
+    public function actionMccMilkBillDetailsWithIncentiveRouteWise() {
+        $this->report = 'MccMilkBillDetailsWithIncentiveRouteWise';
+        return $this->actionIndex();
+    }
+    
+    public function actionMccMilkBillDetailsMccDayWise() {
+        $this->report = 'MccMilkBillDetailsMccDayWise';
+        return $this->actionIndex();
+    }
+    
+    public function actionMisMilkPurchase() {
+        $this->report = 'MisMilkPurchase';
+        return $this->actionIndex();
+    }
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4554,6 +4567,27 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_rpt_bmc_compare_date_wise',
                 'scenario' => 'CmpReport',
                 'title' => 'CMP Report ',
+                'bkg_export' => TRUE,
+            ],
+            'MccMilkBillDetailsWithIncentiveRouteWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_mcc_milk_bill_details_with_incentive_route_wise',
+                'scenario' => 'MccMilkBillDetailsWithIncentiveRouteWise',
+                'title' => 'Mcc Milk Bill Details With Incentive Route Wise',
+                'bkg_export' => TRUE,
+            ],
+            'MccMilkBillDetailsMccDayWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_mcc_milk_bill_details_mcc_day_wise',
+                'scenario' => 'MccMilkBillDetailsMccDayWise',
+                'title' => 'MCC Day wise Summary',
+                'bkg_export' => TRUE,
+            ],
+            'MisMilkPurchase' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_purchase',
+                'scenario' => 'MisMilkPurchase',
+                'title' => 'Milk Purchase',
                 'bkg_export' => TRUE,
             ],
         ];

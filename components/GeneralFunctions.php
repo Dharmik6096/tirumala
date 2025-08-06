@@ -3080,7 +3080,7 @@ class GeneralFunctions extends Component {
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 
-        $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
+        $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format((($clr / 4) + ($fat * $lr1) + $lr2), 2);
 
         return $response;
     }

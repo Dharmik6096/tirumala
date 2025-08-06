@@ -3,6 +3,15 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /**
  * This is the model class for table "tbl_sample_milk_collection".
@@ -83,16 +92,16 @@ class TblSampleMilkCollection extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'sample_milk_collection_code' => Yii::t('app', 'Sample Milk Collection Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'route_code' => Yii::t('app', 'Route'),
             'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
-            'shift_code' => Yii::t('app', 'Shift Code'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
+            'shift_code' => Yii::t('app', 'Shift'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
             'fat' => Yii::t('app', 'Fat'),
             'snf' => Yii::t('app', 'Snf'),
             'clr' => Yii::t('app', 'Clr'),
@@ -133,6 +142,42 @@ class TblSampleMilkCollection extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getMilkQualityCode() {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
     }
 
 }
