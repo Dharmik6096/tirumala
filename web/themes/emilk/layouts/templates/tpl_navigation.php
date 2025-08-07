@@ -1002,6 +1002,7 @@ echo GhostMenu::widget([
                             ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
                             ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
+                            ['label' => '922-' . Yii::t('app', 'Asset Detail Summary'), 'url' => ['/misreports/reports/asset-detail-summary']],
                     ]
                 ],
                     [
@@ -1120,6 +1121,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
                             ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
+                            ['label' => Yii::t('app', 'User Attendance Details'), 'url' => ['/misreports/reports/user-attendance-details']],
                     ]
                 ],
             ],

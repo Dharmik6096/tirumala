@@ -680,12 +680,8 @@ class SchedulerController extends ChildController {
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
                             if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
-                                $modelHistory->save();
                                 $decrypt = $modelMaster->decryptModel($existData);
                                 $existData->setAttributes($decrypt);
-                                $existData->is_active = $is_active;
-                                $existData->is_sentbox = FALSE;
-                                $existData->save(TRUE, FALSE);
                                 $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
                             }
                             $row->save(FALSE);
@@ -714,6 +710,12 @@ class SchedulerController extends ChildController {
                                 }
                             }
                         }
+                    }
+                    if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                        $modelHistory->save();
+                        $existData->is_active = $is_active;
+                        $existData->is_sentbox = FALSE;
+                        $existData->save(TRUE, FALSE);
                     }
                 }
             }
