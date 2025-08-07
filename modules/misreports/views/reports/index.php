@@ -559,14 +559,16 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'reportsmodel-dispatch_center_type', 'dispatch_center', $model->getAttributeLabel('dispatch_center'), FALSE, FALSE); ?>
-                                                }
-                                                if (in_array($value, array('store_location_code'))) {
-                                                ?>
-                                                <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type', '', $model->getAttributeLabel('store_location_code')); ?>
-                                                </div>
-                                                <?php
-                                            }
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('store_location_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type', '', $model->getAttributeLabel('store_location_code')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
