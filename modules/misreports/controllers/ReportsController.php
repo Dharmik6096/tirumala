@@ -2118,6 +2118,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionUserAttendanceDetails() {
+        $this->report = 'UserAttendanceDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionAssetDetailSummary() {
+        $this->report = 'AssetDetailSummary';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4603,6 +4613,19 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MisMilkPurchase',
                 'title' => 'Milk Purchase',
                 'bkg_export' => TRUE,
+            ],
+            'UserAttendanceDetails' => [
+                'param' => 'login_type_report:static:login_type_report,from_date:string,to_date:string',
+                'sp_name' => 'get_user_attendance_details',
+                'scenario' => 'UserAttendanceDetails',
+                'title' => 'User Attendance Details',
+                'bkg_export' => TRUE,
+            ],
+            'AssetDetailSummary' => [
+                'param' => 'store_location_type,store_location_code,is_groupbyserial:static:boolean_value',
+                'sp_name' => 'get_asset_location_data',
+                'scenario' => 'AssetDetailSummary',
+                'title' => '922 - Asset Detail Summary',
             ],
         ];
         return $label[$l];

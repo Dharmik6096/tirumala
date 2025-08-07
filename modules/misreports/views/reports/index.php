@@ -118,15 +118,15 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('union_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', false, true, true); ?>
+                                                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', false, true, true); ?>
                                             </div>   <?php
                                         }
                                         if (in_array($value, array('plant_code'))) {
                                             ?>
                                             <div class="col-sm-3 val_plant_code">
-                                            <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
+                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
-                                            <?php } if (in_array($value, array('mcc_code'))) { ?>
+                                        <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
                                                 <?php
                                                 $multiple = in_array($value, $multiArray) ? true : false;
@@ -145,25 +145,25 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 $channelmultiple = isset($value_array[2]) ? FALSE : true;
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), $channelmultiple); ?>
+                                                    <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), $channelmultiple); ?>
                                                 </div>
                                                 <?php
                                             } else if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->union_bmc($model, $form, 'reportsmodel-union_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
+                                                    <?= Yii::$app->dropdown->union_bmc($model, $form, 'reportsmodel-union_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
                                                 </div>
                                                 <?php
                                             } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
+                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
                                                 </div>
                                                 <?php
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_bmc_code">
-                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
+                                                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
                                                 </div>
                                                 <?php
                                             }
@@ -181,7 +181,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>
+                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>
                                                 </div>
                                                 <?php
                                             }
@@ -189,21 +189,21 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (isset($value_array[1]) && $value_array[1] == 'txt') {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= $form->field($model, $value_array[0])->textInput(['maxlength' => true]) ?>
+                                                <?= $form->field($model, $value_array[0])->textInput(['maxlength' => true]) ?>
                                             </div>    
                                             <?php
                                         }
                                         if (in_array($value, array('customer_code'))) {
                                             ?>
                                             <div class="col-sm-3 val_dcs_code">
-                                            <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-bmc_code', 'customer_code', Yii::t('app', 'Name')); ?>
+                                                <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-bmc_code', 'customer_code', Yii::t('app', 'Name')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('customer_type'))) {
                                             ?>
                                             <div class="col-sm-3 cust_type">
-                                            <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodel-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+                                                <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodel-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                                             </div>
                                             <?php
                                         }
@@ -219,14 +219,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             }
                                             ?>
                                             <div class="col-sm-3 vendor">
-                                            <?= Yii::$app->dropdown->customer_code($model, $form, $depend, 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
+                                                <?= Yii::$app->dropdown->customer_code($model, $form, $depend, 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('main_customer_type'))) {
                                             ?>
                                             <div class="col-sm-3 ">
-                                            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), FALSE, 'main_customer_type'); ?>
+                                                <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), FALSE, 'main_customer_type'); ?>
                                             </div>
                                             <?php
                                         }
@@ -257,14 +257,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             }
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc,0,reportsmodel-type_check', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                                                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc,0,reportsmodel-type_check', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('member_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
                                             </div>
                                             <?php
                                         }
@@ -288,7 +288,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 ?>
 
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('p_organization_type'), false, 'p_organization_type') ?> 
+                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('p_organization_type'), false, 'p_organization_type') ?> 
                                                 </div>
                                                 <?php
                                             }
@@ -296,17 +296,17 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('action_perform'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value, false, TRUE) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value, false, TRUE) ?> 
                                             </div>
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                                 </div>
                                                 <?php
                                             }
@@ -324,7 +324,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('member_type'))) {
                                             ?>
                                             <div class="col-sm-3 val_dcs_code">
-                                            <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel($value), false, 'member_type'); ?>
+                                                <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel($value), false, 'member_type'); ?>
                                             </div>
                                             <?php
                                         }
@@ -332,13 +332,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'all_routes') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->all_routes($model, $form, 'reportsmodel-plant_code,reportsmodel-mcc_code,reportsmodel-bmc_code', 'route_code', Yii::t('app', 'Route')); ?>
+                                                    <?= Yii::$app->dropdown->all_routes($model, $form, 'reportsmodel-plant_code,reportsmodel-mcc_code,reportsmodel-bmc_code', 'route_code', Yii::t('app', 'Route')); ?>
                                                 </div>
                                                 <?php
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
+                                                    <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
                                                 </div>
                                                 <?php
                                             }
@@ -346,7 +346,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('store_location_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), FALSE, 'store_location_type'); ?>
+                                                <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), FALSE, 'store_location_type'); ?>
 
                                             </div>
 
@@ -367,7 +367,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             $depends = 'reportsmodel-' . $value_array[1] . ',' . 'reportsmodel-' . $value_array[2] . ',' . 'reportsmodel-' . $value_array[3] . ',' . 'reportsmodel-' . $value_array[4];
                                             ?>
                                             <div class="col-sm-3">
-                                            <?php echo Yii::$app->dropdown->org_sap_code($model, $form, $depends, 'sap_code', $model->getAttributeLabel('sap_code')); ?>
+                                                <?php echo Yii::$app->dropdown->org_sap_code($model, $form, $depends, 'sap_code', $model->getAttributeLabel('sap_code')); ?>
                                             </div>
                                             <?php
                                         }
@@ -375,11 +375,11 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code')); ?>
+                                                    <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code')); ?>
                                                 </div>
-                                                <?php } else { ?>
+                                            <?php } else { ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code'), false, 'transporter_code'); ?>
+                                                    <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code'), false, 'transporter_code'); ?>
                                                 </div>
                                                 <?php
                                             }
@@ -388,11 +388,11 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'transporter_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'reportsmodel-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+                                                    <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'reportsmodel-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
                                                 </div>
-                                                <?php } else { ?>
+                                            <?php } else { ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', $model->getAttributeLabel('vehicle_code')); ?>
+                                                    <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', $model->getAttributeLabel('vehicle_code')); ?>
                                                 </div>
                                                 <?php
                                             }
@@ -401,14 +401,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('report_collection_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('channel_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdown('channel', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel($value), false, $value); ?>
+                                                <?= Yii::$app->dropdown->dropdown('channel', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel($value), false, $value); ?>
                                             </div>
                                             <?php
                                         }
@@ -416,11 +416,11 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'product_type') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->product($model, $form, 'reportsmodel-union_code,reportsmodel-product_type', $value, 'Product', TRUE); ?>
+                                                    <?= Yii::$app->dropdown->product($model, $form, 'reportsmodel-union_code,reportsmodel-product_type', $value, 'Product', TRUE); ?>
                                                 </div>
-                                                <?php } else { ?>
+                                            <?php } else { ?>
                                                 <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+                                                    <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                                                 </div>
                                                 <?php
                                             }
@@ -428,28 +428,28 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('sap_batch_no'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->productBatchNo($model, $form, 'reportsmodel-plant_code,reportsmodel-product_code', 'sap_batch_no', 'Batch', false) ?> 
+                                                <?= Yii::$app->dropdown->productBatchNo($model, $form, 'reportsmodel-plant_code,reportsmodel-product_code', 'sap_batch_no', 'Batch', false) ?> 
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('org_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('product_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('module_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->moduleType($model, $form, 'module_type', 'Module Type'); ?>                                            </div>
+                                                <?= Yii::$app->dropdown->moduleType($model, $form, 'module_type', 'Module Type'); ?>                                            </div>
                                             <?php
                                         }
                                         if (in_array($value, array('trip_code'))) {
@@ -468,56 +468,56 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('grn_no'))) {
                                             ?>
                                             <div class="col-sm-3 val_dcs_code">
-                                            <?= Yii::$app->dropdown->dropdown('grn_no', $model, $form, '', $model->getAttributeLabel($value), false, 'grn_no'); ?>
+                                                <?= Yii::$app->dropdown->dropdown('grn_no', $model, $form, '', $model->getAttributeLabel($value), false, 'grn_no'); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('plant_register_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('month', 'report_req_status', 'payment_type', 'rate_cal_for', 'trip_status'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('year'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->year($model, $form, 'year', 'Year', '', false, true, 5, 5) ?> 
+                                                <?= Yii::$app->dropdown->year($model, $form, 'year', 'Year', '', false, true, 5, 5) ?> 
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('state_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, '', 'State Name'); ?>
+                                                <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, '', 'State Name'); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('region_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('area_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'reportsmodel-region_code', 'form-group col-sm-12', 'Area Name', 'area_code'); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'reportsmodel-region_code', 'form-group col-sm-12', 'Area Name', 'area_code'); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('login_user_code', 'user_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdown($value, $model, $form, '', 'User Name', false, '', TRUE); ?>
+                                                <?= Yii::$app->dropdown->dropdown($value, $model, $form, '', 'User Name', false, '', TRUE); ?>
                                             </div>   <?php
                                         }
                                         if (in_array($value, array('user_login_type'))) {
@@ -559,171 +559,176 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'reportsmodel-dispatch_center_type', 'dispatch_center', $model->getAttributeLabel('dispatch_center'), FALSE, FALSE); ?>
-                                            </div>
-                                            <?php
-                                        }
-                                    }
-                                    if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
-                                    }
-                                    if (isset($data['dynamic'])) {
-                                        echo Html::hiddenInput('dynamic_report', $data['dynamic']);
-                                    }
-                                    if (!isset($data['output_type'])) {
-                                        echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
-                                    }
-                                    ?>
-
-                                    <div class="modal-footer mt10 col-sm-12">
-                                        <?php
-                                        if ($param) {
-                                            if (!empty($fileDownloadArr)) {
-                                                echo Html::hiddenInput('upload_ftp_file', '0', ['id' => 'reportsmodel-upload_ftp_file']);
+                                                }
+                                                if (in_array($value, array('store_location_code'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type', '', $model->getAttributeLabel('store_location_code')); ?>
+                                                </div>
+                                                <?php
                                             }
-                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
+                                        }
+                                        if (isset($data['report_type'])) {
+                                            echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
+                                        }
+                                        if (isset($data['dynamic'])) {
+                                            echo Html::hiddenInput('dynamic_report', $data['dynamic']);
+                                        }
+                                        if (!isset($data['output_type'])) {
+                                            echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                         }
                                         ?>
-                                        <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+
+                                        <div class="modal-footer mt10 col-sm-12">
+                                            <?php
+                                            if ($param) {
+                                                if (!empty($fileDownloadArr)) {
+                                                    echo Html::hiddenInput('upload_ftp_file', '0', ['id' => 'reportsmodel-upload_ftp_file']);
+                                                }
+                                                echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
+                                            }
+                                            ?>
+                                            <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                                        </div>
                                     </div>
+                                    <?php ActiveForm::end(); ?>
                                 </div>
-<?php ActiveForm::end(); ?>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <?php
-            $class = 'beforeGridLoad';
-            if (!empty($result)) {
-                $defaultToggle = false;
-                if (!(isset($data['download_only'])) && is_array($result)) {
-                    $class = '';
-                }
-            }
-            if (!empty($model->getErrors())) {
-                $defaultToggle = true;
-            }
-            $custom_report_class = isset($data['custom_report']) ? 'custom_report_search' : '';
-            ?>
-
-            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class ?>">
-                <div class="btn-login btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php if (!empty($result) && $model->output_type != 'BACKGROUND') {
-                    ?>
-                    <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="far fa-file-excel"></i></div>
-                    <?php }
-                    ?>
-            </div>
-<?php if (!empty($result) && !(isset($data['download_only']))) { ?>
-
-                <!--                                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                    <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
-                                                </div>-->
-            <?php } ?>
-            <?php
-            if (!empty($result) && !is_array($result) && !isset($data['custom_report'])) {
-                echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
-            } else if (!empty($result) && isset($data['custom_report'])) {
-                echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
-            } else if (!empty($result) && isset($data['kartik_grid_view'])) {
-                $attr = [];
-                foreach ($result[0] as $att => $value) {
-                    $checkAttr = explode('##', $att);
-                    $attr_arr = [];
-                    $format = 'raw';
-                    if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
-                        $format = ['decimal', 2];
+                <?php
+                $class = 'beforeGridLoad';
+                if (!empty($result)) {
+                    $defaultToggle = false;
+                    if (!(isset($data['download_only'])) && is_array($result)) {
+                        $class = '';
                     }
-//                    $attr_arr['attribute'] = $att;
-                    if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
+                }
+                if (!empty($model->getErrors())) {
+                    $defaultToggle = true;
+                }
+                $custom_report_class = isset($data['custom_report']) ? 'custom_report_search' : '';
+                ?>
+
+                <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class ?>">
+                    <div class="btn-login btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
+                    <?php if (!empty($result) && $model->output_type != 'BACKGROUND') {
+                        ?>
+                        <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="far fa-file-excel"></i></div>
+                        <?php }
+                        ?>
+                </div>
+                <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
+
+                    <!--                                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                        <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
+                                                    </div>-->
+                <?php } ?>
+                <?php
+                if (!empty($result) && !is_array($result) && !isset($data['custom_report'])) {
+                    echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
+                } else if (!empty($result) && isset($data['custom_report'])) {
+                    echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
+                } else if (!empty($result) && isset($data['kartik_grid_view'])) {
+                    $attr = [];
+                    foreach ($result[0] as $att => $value) {
+                        $checkAttr = explode('##', $att);
                         $attr_arr = [];
-                        if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
-                            $attr_arr['value'] = function($model) use ($att) {
-                                return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
-                            };
+                        $format = 'raw';
+                        if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
+                            $format = ['decimal', 2];
                         }
+//                    $attr_arr['attribute'] = $att;
+                        if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
+                            $attr_arr = [];
+                            if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
+                                $attr_arr['value'] = function($model) use ($att) {
+                                    return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
+                                };
+                            }
 
-                        $str = ucwords(str_replace('_', ' ', $att));
-                        $attr_arr['attribute'] = $att;
-                        $attr_arr['label'] = Yii::t('app', $str);
-                        $attr_arr['format'] = $format;
-                        $attr_arr['filter'] = false;
-                        $attr[] = $attr_arr;
+                            $str = ucwords(str_replace('_', ' ', $att));
+                            $attr_arr['attribute'] = $att;
+                            $attr_arr['label'] = Yii::t('app', $str);
+                            $attr_arr['format'] = $format;
+                            $attr_arr['filter'] = false;
+                            $attr[] = $attr_arr;
 //                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
+                        }
                     }
-                }
-                $grid_option = [
-                    'id' => $data['kartik_grid_view'],
-                    'attributes' => $attr,
-                    'active_column' => false,
-                ];
+                    $grid_option = [
+                        'id' => $data['kartik_grid_view'],
+                        'attributes' => $attr,
+                        'active_column' => false,
+                    ];
 
-                Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index']);
+                    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index']);
 
 //                echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
-            } else if (!empty($result) && !(isset($data['download_only']))) {
-                $attr = [];
-                foreach ($result[0] as $att => $value) {
-                    $checkAttr = explode('##', $att);
-                    $attr_arr = [];
-                    $format = 'raw';
-                    if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
-                        $format = ['decimal', 2];
-                    }
-//                    $attr_arr['attribute'] = $att;
-                    if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
+                } else if (!empty($result) && !(isset($data['download_only']))) {
+                    $attr = [];
+                    foreach ($result[0] as $att => $value) {
+                        $checkAttr = explode('##', $att);
                         $attr_arr = [];
-                        if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
-                            $attr_arr['value'] = function($model) use ($att) {
-                                return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
-                            };
+                        $format = 'raw';
+                        if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
+                            $format = ['decimal', 2];
                         }
+//                    $attr_arr['attribute'] = $att;
+                        if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
+                            $attr_arr = [];
+                            if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
+                                $attr_arr['value'] = function($model) use ($att) {
+                                    return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
+                                };
+                            }
 
-                        $str = ucwords(str_replace('_', ' ', $att));
-                        $attr_arr['attribute'] = $att;
-                        $attr_arr['label'] = Yii::t('app', $str);
-                        $attr_arr['format'] = $format;
-                        $attr_arr['filter'] = true;
+                            $str = ucwords(str_replace('_', ' ', $att));
+                            $attr_arr['attribute'] = $att;
+                            $attr_arr['label'] = Yii::t('app', $str);
+                            $attr_arr['format'] = $format;
+                            $attr_arr['filter'] = true;
 
-                        $datatabel = [];
-                        $datatabel['data'] = $att;
-                        $datatabel['title'] = Yii::t('app', $str);
-                        $datatabel['filter'] = true;
-                        $attr[] = $datatabel;
+                            $datatabel = [];
+                            $datatabel['data'] = $att;
+                            $datatabel['title'] = Yii::t('app', $str);
+                            $datatabel['filter'] = true;
+                            $attr[] = $datatabel;
 //                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
+                        }
                     }
-                }
-                $grid_option = [
-                    'id' => 'mis-report-list',
-                    'attributes' => $attr,
-                    'active_column' => false,
-                ];
-                $c = 0;
-                echo '<div id="grid_show_hide_list" class="dropdown-check-list" tabindex="100">';
-                echo '<span class="anchor"><i class="fa fa-chevron-down"></i></span>';
-                echo '<ul class="items">';
-                foreach ($attr as $key => $value) {
-                    echo '<li><input class="toggle-vis" data-column="' . $c++ . '" type="checkbox" checked/>' . $value['title'] . '</li>';
-                }
-                echo '</ul>';
-                echo '</div>';
-                // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
-                // var_dump($dataProvider->getModels());
-                echo CustomDataTable::widget([
-                    'id' => 'custom_report',
-                    'autoWidth' => true,
+                    $grid_option = [
+                        'id' => 'mis-report-list',
+                        'attributes' => $attr,
+                        'active_column' => false,
+                    ];
+                    $c = 0;
+                    echo '<div id="grid_show_hide_list" class="dropdown-check-list" tabindex="100">';
+                    echo '<span class="anchor"><i class="fa fa-chevron-down"></i></span>';
+                    echo '<ul class="items">';
+                    foreach ($attr as $key => $value) {
+                        echo '<li><input class="toggle-vis" data-column="' . $c++ . '" type="checkbox" checked/>' . $value['title'] . '</li>';
+                    }
+                    echo '</ul>';
+                    echo '</div>';
+                    // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
+                    // var_dump($dataProvider->getModels());
+                    echo CustomDataTable::widget([
+                        'id' => 'custom_report',
+                        'autoWidth' => true,
 //                    'searching' => true,
-                    'data' => $dataProvider->getModels(),
-                    'scrollX' => true,
-                    'scrollY' => '100px',
-                    'scrollCollapse' => false,
-                    'paging' => false,
-                    'columns' => $attr,
-                    'info' => false,
-                    'withColumnFilter' => true,
-                    'order' => []
-                ]);
+                        'data' => $dataProvider->getModels(),
+                        'scrollX' => true,
+                        'scrollY' => '100px',
+                        'scrollCollapse' => false,
+                        'paging' => false,
+                        'columns' => $attr,
+                        'info' => false,
+                        'withColumnFilter' => true,
+                        'order' => []
+                    ]);
 //                echo \nullref\datatable\DataTable::widget([
 //                    'id' => 'custom_report',
 //                    'data' => $dataProvider->getModels(),
@@ -734,20 +739,20 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 //                    'info' => false,
 //                    'withColumnFilter' => true
 //                ]);
-                // Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
+                    // Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
+                }
+                ?>
+            </div>
+            <?php
+            if (!empty($fileDownloadArr)) {
+                echo GhostHtml::submitButton('<i class="text-white fas fa-file"></i>', ['class' => 'btn-login btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+                echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn-login btn btn-default apply-shortcut uploadSapFiles ms-2', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
             }
             ?>
         </div>
-        <?php
-        if (!empty($fileDownloadArr)) {
-            echo GhostHtml::submitButton('<i class="text-white fas fa-file"></i>', ['class' => 'btn-login btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
-            echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn-login btn btn-default apply-shortcut uploadSapFiles ms-2', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
-        }
-        ?>
-    </div>
-</div>       
-<?php
-$script = "
+    </div>       
+    <?php
+    $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
 });
@@ -903,22 +908,22 @@ $('.mis_report_modal_toggle').on('click', function(){
 	
 ";
 
-if ($defaultToggle) {
-    $script .= "
+    if ($defaultToggle) {
+        $script .= "
         $(document).ready(function () {
             $('#mis_report_search_filter').modal('toggle');
         });
     ";
-}
-$this->registerJs($script, View::POS_READY, 'mis-report-script');
-?>
+    }
+    $this->registerJs($script, View::POS_READY, 'mis-report-script');
+    ?>
 
 
-<?php
-$baseUrl = Yii::$app->request->baseUrl;
-$count = count($fileDownloadArr);
-$timeOutForLoader = ($count * 1000) + 2000;
-$scriptDownload = "
+    <?php
+    $baseUrl = Yii::$app->request->baseUrl;
+    $count = count($fileDownloadArr);
+    $timeOutForLoader = ($count * 1000) + 2000;
+    $scriptDownload = "
 
 var timeOut = 500;
 $(document).on('click', '.downloadSapFiles', function(e){
@@ -950,5 +955,5 @@ $(document).on('click', '.uploadSapFiles', function(e){
 
 ";
 
-$this->registerJs($scriptDownload, View::POS_READY, 'mis-report-script-other-download');
-?>
+    $this->registerJs($scriptDownload, View::POS_READY, 'mis-report-script-other-download');
+    ?>
