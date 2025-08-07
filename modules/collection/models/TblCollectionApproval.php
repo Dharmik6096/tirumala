@@ -7,6 +7,8 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\installation\models\TblUserAndroid;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\usermanagement\models\User;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_collection_approval".
@@ -46,7 +48,7 @@ class TblCollectionApproval extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['uuid','date','shift_code','collection_type','code','is_approve','requested_by','approved_by','approve_date','allow_till_date','valid_hours','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+                [['uuid', 'date', 'shift_code', 'collection_type', 'code', 'is_approve', 'requested_by', 'approved_by', 'approve_date', 'allow_till_date', 'valid_hours', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['valid_hours'], 'required', 'on' => 'approve', 'except' => 'androidsync'],
                 [['date', 'approve_date', 'allow_till_date', 'created_at', 'updated_at'], 'safe'],
                 [['shift_code', 'collection_type', 'is_approve', 'valid_hours', 'originating_type'], 'integer'],
@@ -81,6 +83,11 @@ class TblCollectionApproval extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'f_union_code' => Yii::t('app', 'Union'),
+            'f_plant_code' => Yii::t('app', 'Plant'),
+            'f_mcc_code' => Yii::t('app', 'MCC'),
+            'f_bmc_code' => Yii::t('app', 'BMC'),
+            'f_dcs_code' => Yii::t('app', 'DCS'),
         ];
     }
 
@@ -126,6 +133,14 @@ class TblCollectionApproval extends \app\models\ChildModel {
         $sentbox->source_org_id = Yii::$app->session->get('Unions'); //$this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'code']);
     }
 
 }
