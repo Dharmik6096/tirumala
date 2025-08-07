@@ -22,6 +22,49 @@ $this->title = Yii::$app->label->title('view', 'Manual Collection Approval');
                         [
                         'columns' => [
                                 [
+                                'attribute' => 'union_code',
+                                'value' => ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['unionCode'], 'union_name') : Yii::$app->general->getmultiforeignkey($model->bmcCode, ['unionCode'], 'union_name'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
+                                'attribute' => 'plant_code',
+                                'value' => ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['plantCode'], 'name') : Yii::$app->general->getmultiforeignkey($model->bmcCode, ['plantCode'], 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'mcc_plant_code',
+                                'value' => ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['mccPlantCode'], 'name') : Yii::$app->general->getmultiforeignkey($model->bmcCode, ['tblMccPlant'], 'name'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
+                                'attribute' => 'bmc_code',
+                                'value' => ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'bmc_name') : Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'dcs_code',
+                                'value' => ($model->collection_type == 1) ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
+                                'attribute' => 'code',
+                                'label' => Yii::t('app', 'Ref. Code'),
+                                'value' => ($model->collection_type == 1) ? Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code') : Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
                                 'attribute' => 'date',
                                 'format' => 'html',
                                 'value' => Yii::$app->controls->view_date($model->date),
