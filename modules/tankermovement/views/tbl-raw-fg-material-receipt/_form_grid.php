@@ -21,6 +21,7 @@ $attribute = [
             $sapVendorCode = Yii::$app->general->getforeignkey($model->partyMaster, 'sap_vendor_code');
             return Yii::$app->general->getforeignkey($model->partyMaster, 'party_name') . ($sapVendorCode ? ' (' . $sapVendorCode . ')' : '');
         }],
+        ['attribute' => 'party_name'],
         ['attribute' => 'tanker_no'],
         ['attribute' => 'material_ref_code', 'label' => Yii::t('app', 'Material Ref Code'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->materialCode, 'ref_code');
