@@ -674,7 +674,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     
     public function actionChallan($id) {
         $controls = [];
-        $controls['p_bmc_milk_dispatch_code'] = $id;
+        $controls['p_milk_vehicle_entry_code'] = $id;
         $controls['p_report_name'] = 'Tanker Milk Receipt Challan';
         $this->printDocument($controls, 'vsp/ReceiptChallan', 'TankerDispatchChallan', 'pdf');
     }
