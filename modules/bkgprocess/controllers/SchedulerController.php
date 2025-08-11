@@ -657,14 +657,13 @@ class SchedulerController extends ChildController {
                         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
                     }
                     $sentboxGenerated = false;
-                    foreach ($sentboxArray as $sent) {
-                        $flag = 'UPDATE';
-                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
-                        if (!($sentbox->setSentbox($existData, $flag))) {
-                            $sentboxGenerated = !empty($sentboxGenerated) ? $sentboxGenerated : false;
-                        } else {
-                            $sentboxGenerated = true;
-                        }
+                    $flag = 'UPDATE';
+                    $sentbox = new TblSentbox();
+                    $sentbox->source_org_id = $existData->union_code;
+                    if (!($sentbox->setSentboxBatch($existData, $flag, $sentboxArray))) {
+                        $sentboxGenerated = !empty($sentboxGenerated) ? $sentboxGenerated : false;
+                    } else {
+                        $sentboxGenerated = true;
                     }
                     if($sentboxGenerated){
                         $row->data_post_status = $success;
