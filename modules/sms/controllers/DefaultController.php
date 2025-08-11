@@ -41,6 +41,7 @@ class DefaultController extends Controller {
                             $filename = '';
                             $filepath = '';
                             $from = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
+                            $pwd = Yii::$app->general->getforeignkey($row->apiMasterCode, 'api_password');
                             $to = $row->receiver_detail;
                             $otherReceiver = $row->other_receiver_detail;
                             $token = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
@@ -66,7 +67,7 @@ class DefaultController extends Controller {
                             } else {
                                 $attachment = FALSE;
                             }
-                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename, $filepath, $bcc);
+                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename, $filepath, $bcc, $pwd);
                         }
                         $row->response_datetime = date('Y-m-d H:i:s');
                         $row->response_status = $send;
