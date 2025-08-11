@@ -260,8 +260,9 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3]) && !empty($parents[4])) {
+                $check_condition = !empty($parents[5]) ? $parents[5] : 'Yes';
                 $mccs = new TblTransporterPayment();
-                $data = $mccs->getdatewiseBmcList($parents[0], $parents[1], $parents[2], $parents[3], $parents[4]);
+                $data = $mccs->getdatewiseBmcList($parents[2], $parents[1], $parents[0], $parents[3], $parents[4], $check_condition);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -337,6 +338,37 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionDisbursePayment() {
+        $model = new TblTransporterPayment();
+        if(Yii::$app->request->post()){
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $transporterCode = implode(',',Yii::$app->request->post('selection'));
+                $param = [];
+                $param[] = date('Y-m-d', strtotime($model->from_date));
+                $param[] = date('Y-m-d', strtotime($model->to_date));
+                $param[] = $transporterCode;
+                $param[] = $model->transporter_type;
+                $param[] = \Yii::$app->user->identity->user_code;
+                $output = \Yii::$app->general->getSpData('sp_disburse_transporter_payment', $param);
+                if (!empty($output[0]) && !empty($output[0]['result'])) {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => 'Transporter Payment locked successfully.']);
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => 'Your transaction is not saved successfully.']);
+                }
+                return $this->redirect(['index']);
+            }
+        }
+        $searchModel = new TblTransporterPaymentSearch();
+        $searchModel->scenario = 'disbursePayment';
+        $dataProvider = $searchModel->disburseSearch(Yii::$app->request->queryParams);
+
+        return $this->render('disburse_payment', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'model' => $model
+        ]);
     }
 
 }

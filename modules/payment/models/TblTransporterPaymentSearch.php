@@ -11,6 +11,7 @@ use app\modules\payment\models\TblTransporterPayment;
  * TblTransporterPaymentSearch represents the model behind the search form about `app\modules\payment\models\TblTransporterPayment`.
  */
 class TblTransporterPaymentSearch extends TblTransporterPayment {
+    public $secondory_transporter_code;
 
     /**
      * @inheritdoc
@@ -18,8 +19,14 @@ class TblTransporterPaymentSearch extends TblTransporterPayment {
     public function rules() {
         return [
                 [['transporter_payment_code', 'transporter_type', 'is_verified'], 'integer'],
-                [['union_code', 'transporter_code', 'from_date', 'to_date', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'payment_date', 'status', 'disburse_date', 'utr_no', 'reference_no', 'route_code', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bill_no', 'fixed_rent', 'fuel_consumption', 'vehicle_average', 'fuel_rate', 'vehicle_code', 'fixed_amount', 'route_name', 'parsing_no', 'transporter_name'], 'safe'],
+                [['union_code', 'transporter_code', 'from_date', 'to_date', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'payment_date', 'status', 'disburse_date', 'utr_no', 'reference_no', 'route_code', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bill_no', 'fixed_rent', 'fuel_consumption', 'vehicle_average', 'fuel_rate', 'vehicle_code', 'fixed_amount', 'route_name', 'parsing_no', 'transporter_name', 'secondory_transporter_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
                 [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days', 'total_kms', 'avg_rate', 'total_qty', 'total_amount', 'total_deduction', 'total_addition', 'net_amount', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_amount', 'final_amount', 'disburse_amount', 'qty_amount'], 'number'],
+                [['transporter_type', 'from_date', 'to_date'], 'required', 'on' => 'disbursePayment'],
+                [['union_code', 'plant_code'], 'required', 'when' => function ($model) {
+                        return $model->transporter_type == '0';
+                    }, 'whenClient' => "function (attribute, value) { 
+                    return $('#tbltransporterpaymentsearch-transporter_type').val() == '0'; 
+                }", 'on' => 'disbursePayment'],
         ];
     }
 
@@ -86,6 +93,34 @@ class TblTransporterPaymentSearch extends TblTransporterPayment {
                 ->andFilterWhere(['like', 'tbl_transporter_payment.fuel_rate', $this->fuel_rate])
                 ->andFilterWhere(['like', 'tbl_transporter_payment.fixed_amount', $this->fixed_amount])
                 ->andFilterWhere(['like', 'tbl_transporter_payment.qty_amount', $this->qty_amount]);
+        return $dataProvider;
+    }
+
+    public function disburseSearch($params) {
+        $query = TblTransporterPayment::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->joinWith(['routeCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_transporter_payment', 'tbl_transporter_payment', 'tbl_transporter_payment');
+        $query->where(['tbl_transporter_payment.status' => 'processed']);
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $query->andWhere(['tbl_transporter_payment.from_date' => date('Y-m-d', strtotime($this->from_date)), 'tbl_transporter_payment.to_date' => date('Y-m-d', strtotime($this->to_date))]);
+        }
+        $query->andFilterWhere(['tbl_transporter_payment.transporter_type' => $this->transporter_type]);
+        if($this->transporter_type == '1'){
+            $query->andFilterWhere(['tbl_transporter_payment.transporter_code' => $this->secondory_transporter_code]);
+        } else {
+            $query->andFilterWhere(['tbl_transporter_payment.transporter_code' => $this->transporter_code]);
+        }
         return $dataProvider;
     }
 
