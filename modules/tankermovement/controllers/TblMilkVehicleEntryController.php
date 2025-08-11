@@ -671,5 +671,12 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => !empty($data) ? 'success' : 'error', 'data' => !empty($data) ? $data : []]);
     }
+    
+    public function actionChallan($id) {
+        $controls = [];
+        $controls['p_milk_vehicle_entry_code'] = $id;
+        $controls['p_report_name'] = 'Tanker Milk Receipt Challan';
+        $this->printDocument($controls, 'vsp/ReceiptChallan', 'TankerMilkReceiptChallan', 'pdf');
+    }
 
 }
