@@ -65,7 +65,9 @@ class TblDeviceMasterMapping extends \app\models\ChildModel {
                 }],
                 [['dock_no'], 'required', 'when' => function($model) {
                     return $model->applicability_type == 3;
-                }],
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tbldevicemastermapping-applicability_type').val() == '3'; 
+                }"],
                 [['applicability_code'], 'unique', 'skipOnError' => true, 'targetAttribute' => ['dock_no', 'applicability_code', 'device_master_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                     return empty($model->getErrors()) && $model->applicability_type == 3;
                 }],
