@@ -37,12 +37,12 @@ BootstrapAsset::register($this);
 <script type="text/javascript">
     $('.login-submit').on('click', function () {
         var login_enc_key = '<?= Yii::$app->session->get('login_enc_key'); ?>';
-        var username = $('#loginform-username').val();
-        var password = $('#loginform-password').val();
-        if (username != '' && password != '') {
+        var login_username = $('#loginform-login_username').val();
+        var login_password = $('#loginform-login_password').val();
+        if (login_username != '' && login_password != '') {
             var KeyObj = CryptoJS.enc.Utf8.parse(login_enc_key);
-            username = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(username), KeyObj, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding});
-            password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(password), KeyObj, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding});
+            username = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(login_username), KeyObj, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding});
+            password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(login_password), KeyObj, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding});
             $('#loginform-username').val(username);
             $('#loginform-password').val(password);
         }

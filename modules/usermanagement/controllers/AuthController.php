@@ -56,6 +56,7 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         if ($model->load(Yii::$app->request->post())) {
             $username = $model->username = \Yii::$app->EIPLSecurity->UrlDecrypt($model->username, TRUE);
             $model->password = \Yii::$app->EIPLSecurity->UrlDecrypt($model->password, TRUE);
+            $model->username = htmlspecialchars(trim($username), ENT_QUOTES);
             $model->username = $identity->organization_code . '#' . $model->username;
             Yii::$app->session->set('login_enc_key', NULL);
             if ($model->validatePassword(true, $userCode, $maxLoginAttempts)) {

@@ -25,19 +25,18 @@ use webvimark\modules\UserManagement\UserManagementModule;
 
 class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm {
 
-    public $type;
-    public $organization;
+    public $type, $organization, $login_username, $login_password;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['username', 'password'], 'required'],
+                [['username', 'password', 'login_username', 'login_password'], 'required'],
                 [['type'], 'required', 'on' => 'non_national'],
                 [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
                 ['rememberMe', 'boolean'],
-                [['organization', 'type', 'state'], 'safe'],
+                [['organization', 'type', 'state', 'login_username', 'login_password'], 'safe'],
                 ['password', 'validatePassword'],
                 [['db'], 'safe'],
                 ['username', 'validateIP'],
@@ -51,6 +50,8 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
             'rememberMe' => Yii::t('app', 'Remember me'),
             'type' => Yii::t('app', 'Organization Type'),
             'organization' => Yii::t('app', 'Organization Name'),
+            'login_username' => Yii::t('app', 'Username'),
+            'login_password' => Yii::t('app', 'Password'),
         ];
     }
 
