@@ -12,6 +12,10 @@ use app\modules\organisation\models\TblRouteMapping;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateBased;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 
 /**
  * This is the model class for table "tbl_sample_milk_collection".
@@ -81,8 +85,21 @@ class TblSampleMilkCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'own_bmc_code', 'own_mcc_plant_code', 'device_lat', 'device_long', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'qty', 'converted_qty', 'rtpl', 'amount', 'shift_code', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'purchase_rate_code', 'qlty_auto', 'qty_auto', 'milk_analyser_type_code', 'ws_code', 'originating_type', 'date_time_of_collection', 'qlty_time', 'qty_time', 'created_at', 'updated_at', 'version_no', 'source_of_milk', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['union_code'], 'required', 'on' => ['androidsync']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'own_bmc_code', 'own_mcc_plant_code', 'device_lat', 'device_long', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'qty', 'converted_qty', 'rtpl', 'amount', 'shift_code', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'purchase_rate_code', 'qlty_auto', 'qty_auto', 'milk_analyser_type_code', 'ws_code', 'originating_type', 'date_time_of_collection', 'qlty_time', 'qty_time', 'created_at', 'updated_at', 'version_no', 'source_of_milk', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['union_code'], 'required', 'on' => ['androidsync']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'fat', 'snf', 'bmc_code', 'milk_type_code', 'shift_code', 'dcs_code', 'qty', 'milk_quality_type_code', 'amount', 'rtpl'], 'required'],
+            [['dcs_code'], 'pastDateValidate', 'on' => ['create']],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'milk_type_code']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
         ];
     }
 
@@ -98,7 +115,7 @@ class TblSampleMilkCollection extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'route_code' => Yii::t('app', 'Route'),
-            'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
+            'date_time_of_collection' => Yii::t('app', 'Collection Date'),
             'shift_code' => Yii::t('app', 'Shift'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
@@ -178,6 +195,179 @@ class TblSampleMilkCollection extends \app\models\ChildModel {
 
     public function getMilkQualityCode() {
         return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+
+    public function pastDateValidate($attribute, $params) {
+        $date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : NULL;
+        if (!empty($date_time_of_collection) && ($date_time_of_collection > date('Y-m-d'))) {
+            $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
+        }
+    }
+
+    public function calculateData($flag, $union = '', $bmcCode = '', $fat = '', $snf = '', $milk_type = '', $data = []) {
+        $response = [];
+        $flagArray = [];
+        if (!is_array($flag)) {
+            $flagArray[] = $flag;
+        } else {
+            $flagArray = $flag;
+        }
+//calculate clr
+        if (in_array('calculate_clr', $flagArray)) {
+            $lr1 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
+            $lr2 = Yii::$app->general->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, 'BMC', 'MEMBER_COLLECTION');
+
+            if ($lr1 == '' or $lr2 == '') {
+                $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'VLC');
+                $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'VLC');
+            }
+            (float) $lr1 = empty($lr1) ? 1 : $lr1;
+            (float) $lr2 = empty($lr2) ? 0 : $lr2;
+            $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
+            $response['clr'] = $clr;
+        }
+
+        if (in_array('check_fat_range', $flagArray)) {
+//calculate fat range
+            $range = Yii::$app->general->getUnionConfiguration($union, 'buf_min_fat_range_member', 'PORTAL');
+            $mapping = new TblBmcMilkType();
+            $mapped = $mapping->find()->where(['bmc_code' => $bmcCode, 'is_active' => 1])->all();
+
+            if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
+                $type = [];
+                foreach ($mapped as $map) {
+                    $type[] = $map->milk_type_code;
+                }
+//Cow and Buffalo
+                if (in_array(1, $type) && in_array(2, $type)) {
+                    if ($range < $fat && $milk_type != 2) {
+                        $response['status'] = 'success';
+                        $response['data'] = 2;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                    } elseif ($range >= $fat && $milk_type != 1) {
+                        $response['status'] = 'success';
+                        $response['data'] = 1;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                    }
+                }
+//Cow and Mix
+                if (in_array(1, $type) && in_array(3, $type)) {
+                    if ($range < $fat && $milk_type != 3) {
+                        $response['status'] = 'success';
+                        $response['data'] = 3;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                    } elseif ($range >= $fat && $milk_type != 1) {
+                        $response['status'] = 'success';
+                        $response['data'] = 1;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                    }
+                }
+//Buffalo and Mix
+                if (in_array(2, $type) && in_array(3, $type)) {
+                    if ($range < $fat && $milk_type != 3) {
+                        $response['status'] = 'success';
+                        $response['data'] = 3;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                    } elseif ($range >= $fat && $milk_type != 2) {
+                        $response['status'] = 'success';
+                        $response['data'] = 2;
+                        $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                    }
+                }
+            }
+        }
+
+        if (in_array('rtpl_calculate', $flagArray)) {
+            //calculate rtpl 
+            $model = new TblDcsPurchaseRateApplicabitity();
+            $model->wef_date = $data['dt_date'];
+            $data['milk_type'] = $data['milk_type'];
+            $data['milk_quality_type_code'] = $data['milk_quality_type'];
+            $data['appl_for'] = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
+            $data['appl_code'] = $data['dcs_code'];
+            $model_data = $model->getDcsPurchaseRateApplicableData($data);
+
+            if (!empty($model_data)) {
+                if ($model_data->rate_gen_method_code == '4') {
+                    $model->purchase_rate_code = $model_data->purchase_rate_code;
+                    $purchase_rate_data = $model->getDcsPurchaseRateData($data);
+                    if (!empty($purchase_rate_data)) {
+                        $purchase_model = new TblDcsPurchaseRateBased();
+                        $purchase_model->rate_type = $purchase_rate_data->rate_app_code;
+                        $rate_type = !empty($purchase_model->rateTypeCode) ? $purchase_model->rateTypeCode->rate_type : '';
+                        $purchase_data = $purchase_model->getDcsPurchaseRateData($model_data, $rate_type);
+                        $kgfatRate = 0.00;
+                        $kgsnfRate = 0.00;
+                        $kgclrRate = 0.00;
+                        $kgtsRate = 0.00;
+                        $qty = $data['qty'];
+                        $fat = $data['fat'];
+                        $snf = $data['snf'];
+                        $clr = $data['clr'];
+                        $formula = '';
+                        foreach ($purchase_data as $value) {
+                            if ($value['param'] == 'FAT') {
+                                $kgfatRate = $value['kg_rate'];
+                            } else if ($value['param'] == 'SNF') {
+                                $kgsnfRate = $value['kg_rate'];
+                            } else if ($value['param'] == 'CLR') {
+                                $kgclrRate = $value['kg_rate'];
+                            } else if ($value['param'] == 'TS') {
+                                $kgtsRate = $value['kg_rate'];
+                            }
+                            $formula = $value['formula'];
+                        }
+                        $formula = str_replace('kgFATRate', number_format($kgfatRate, 2, '.', ''), $formula);
+                        $formula = str_replace('kgSNFRate', number_format($kgsnfRate, 2, '.', ''), $formula);
+                        $formula = str_replace('kgCLRRate', number_format($kgclrRate, 2, '.', ''), $formula);
+                        $formula = str_replace('kgTSRate', number_format($kgtsRate, 2, '.', ''), $formula);
+                        $formula = str_replace('qty', number_format($qty, 2, '.', ''), $formula);
+                        $formula = str_replace('fat', number_format($fat, 2, '.', ''), $formula);
+                        $formula = str_replace('snf', number_format($snf, 2, '.', ''), $formula);
+                        $formula = str_replace('clr', number_format((float) $clr, 2, '.', ''), $formula);
+                        $command = \Yii::$app->db->createCommand("SELECT $formula as rtpl");
+                        $result = $command->queryAll();
+                        if (!empty($result)) {
+                            $result[0]['rtpl'] = round(bcdiv($result[0]['rtpl'], $qty, 3), 2);
+                            $response['status'] = 'success';
+                            $rtpl_data['list'] = $result[0];
+                            $response['data'] = $rtpl_data;
+                        }
+                    }
+                } else {
+                    $detail_model = new TblDcsPurchaseRateDetails();
+                    $detail_model->rate_type_code = $model_data->rate_app_code;
+                    $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                    $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
+                    $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
+                    if (!empty($detail_data)) {
+                        $response['status'] = 'success';
+                        $rtpl_data['list'] = $detail_data;
+                        $response['data'] = $rtpl_data;
+                    }
+                }
+            }
+        }
+        return $response;
+    }
+
+    public function setCollectionData(&$model, $flag) {
+        $datetime = date('Y-m-d H:i:s');
+        $model->date_time_of_collection = empty($model->date_time_of_collection) ? NULL : Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($model->shift_code);
+        $model->qlty_time = $datetime;
+        $model->qty_time = $datetime;
+        $model->qty_mode = 0;
+        $model->qlty_auto = 0;
+        $model->qty_auto = 0;
+        $model->route_code = Yii::$app->general->getforeignkey($model->dcsCode, 'route_code');
+        $model->own_mcc_plant_code = $model->mcc_plant_code;
+        $model->own_bmc_code = $model->bmc_code;
+        $model->scenario = 'create';
+        $model->qty_mode = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_qty_mode', 'VLC');
+        $conversion_const = Yii::$app->general->getUnionConfiguration($model->union_code, 'ltr_to_kg_constant', 'VLC');
+        $model->converted_qty_mode = $model->qty_mode == 1 ? 0 : 1;
+        $conversion_const = empty($conversion_const) ? 1 : $conversion_const;
+        $model->converted_qty = $model->qty_mode == 1 ? $model->qty / $conversion_const : $model->qty * $conversion_const;
     }
 
 }
