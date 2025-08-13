@@ -156,8 +156,7 @@ $script = "
     var union = `$model->union_code`;
     var is_clr_input = `$model->is_clr_input`;
     var plantCode = `$model->plant_code`;
-    var tripCode = `$model->trip_code`;
-    var chamberNo = `$model->chamber_no`;
+    var chamberNo = `$model->milk_vehicle_entry_qlty_code`;
 
     $(document).on('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-clr, #tblmilkvehicleentryqlty-snf', function() {
         calculateClr();
@@ -171,11 +170,11 @@ $script = "
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqlty-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqlty-snf').val('');
 
-        if(setData(tripCode) && setData(chamberNo) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+        if(setData(chamberNo) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'tripCode':tripCode,'chamberNo':chamberNo,'process':'UPDATE'},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'chamberNo':chamberNo},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {

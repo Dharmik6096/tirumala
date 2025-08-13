@@ -370,22 +370,17 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('plantCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-
-        if (Yii::$app->request->post('process') == 'CREATE' && ($milkVehicleEntryQltyData = TblMilkVehicleEntryQlty::findOne(Yii::$app->request->post('chamberNo'))) !== null) {
-            $tripCode = $milkVehicleEntryQltyData->trip_code;
-            $chamberNo = $milkVehicleEntryQltyData->chamber_no;
+        $chamberNo = Yii::$app->request->post('chamberNo');
+        if (($milkVehicleEntryQltyData = TblMilkVehicleEntryQlty::findOne($chamberNo)) !== null) {
+            $bmcMilkDispatchData = TblBmcMilkDispatch::find()
+                    ->select(['tbl_bmc_milk_dispatch.plant_code', 'tbl_bmc_milk_dispatch.bmc_code'])
+                    ->joinWith(['bmcMilkDispatchTxnCode'])
+                    ->where(['tbl_bmc_milk_dispatch.union_code' => $union, 'tbl_bmc_milk_dispatch.trip_code' => $milkVehicleEntryQltyData->trip_code, 'tbl_bmc_milk_dispatch_txn.chamber_no' => $milkVehicleEntryQltyData->chamber_no])
+                    ->orderBy(['tbl_bmc_milk_dispatch.created_at' => SORT_DESC])
+                    ->one();
         } else {
-            $tripCode = Yii::$app->request->post('tripCode');
-            $chamberNo = Yii::$app->request->post('chamberNo');
+            $bmcMilkDispatchData = [];
         }
-
-        $bmcMilkDispatchData = TblBmcMilkDispatch::find()
-                ->select(['tbl_bmc_milk_dispatch.plant_code', 'tbl_bmc_milk_dispatch.bmc_code'])
-                ->joinWith(['bmcMilkDispatchTxnCode'])
-                ->where(['tbl_bmc_milk_dispatch.union_code' => $union, 'tbl_bmc_milk_dispatch.trip_code' => $tripCode, 'tbl_bmc_milk_dispatch_txn.chamber_no' => $chamberNo])
-                ->orderBy(['tbl_bmc_milk_dispatch.created_at' => SORT_DESC])
-                ->one();
-
         if (!empty($bmcMilkDispatchData)) {
             if (!empty($bmcMilkDispatchData->bmc_code)) {
                 $config = 'BMC_DISPATCH_CONFIG';
