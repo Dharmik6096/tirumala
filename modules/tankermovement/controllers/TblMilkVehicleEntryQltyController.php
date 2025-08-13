@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use yii\helpers\Json;
 use app\modules\configuration\models\TblConfig;
 use app\modules\configuration\models\TblMilkQualityParamRange;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
@@ -370,8 +371,38 @@ class TblMilkVehicleEntryQltyController extends ChildController {
         $org_code = Yii::$app->request->post('plantCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
 
-        $result = Yii::$app->general->calculateData('PLANT_RECEIPT_CONFIG', $union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input);
+        if (Yii::$app->request->post('process') == 'CREATE' && ($milkVehicleEntryQltyData = TblMilkVehicleEntryQlty::findOne(Yii::$app->request->post('chamberNo'))) !== null) {
+            $tripCode = $milkVehicleEntryQltyData->trip_code;
+            $chamberNo = $milkVehicleEntryQltyData->chamber_no;
+        } else {
+            $tripCode = Yii::$app->request->post('tripCode');
+            $chamberNo = Yii::$app->request->post('chamberNo');
+        }
 
+        $bmcMilkDispatchData = TblBmcMilkDispatch::find()
+                ->select(['tbl_bmc_milk_dispatch.plant_code', 'tbl_bmc_milk_dispatch.bmc_code'])
+                ->joinWith(['bmcMilkDispatchTxnCode'])
+                ->where(['tbl_bmc_milk_dispatch.union_code' => $union, 'tbl_bmc_milk_dispatch.trip_code' => $tripCode, 'tbl_bmc_milk_dispatch_txn.chamber_no' => $chamberNo])
+                ->orderBy(['tbl_bmc_milk_dispatch.created_at' => SORT_DESC])
+                ->one();
+
+        if (!empty($bmcMilkDispatchData)) {
+            if (!empty($bmcMilkDispatchData->bmc_code)) {
+                $config = 'BMC_DISPATCH_CONFIG';
+                $orgType = 'BMC';
+                $orgCode = $bmcMilkDispatchData->bmc_code;
+            } else {
+                $config = 'PLANT_DISPATCH_CONFIG';
+                $orgType = 'PLANT';
+                $orgCode = $bmcMilkDispatchData->plant_code;
+            }
+        } else {
+            $config = 'PLANT_RECEIPT_CONFIG';
+            $orgType = 'PLANT';
+            $orgCode = $org_code;
+        }
+
+        $result = Yii::$app->general->calculateData($config, $union, $orgCode, $fat, $snf, $clr, $orgType, $is_clr_input);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }

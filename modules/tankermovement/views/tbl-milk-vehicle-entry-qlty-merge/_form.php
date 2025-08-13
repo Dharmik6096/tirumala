@@ -160,15 +160,16 @@ $script = "
         var fat = $('#tblmilkvehicleentryqltymerge-fat').val();
         var snf = $('#tblmilkvehicleentryqltymerge-snf').val();
         var clr = $('#tblmilkvehicleentryqltymerge-clr').val();
+        var chamberNo = $('#tblmilkvehicleentryqltymerge-chamber_no').val();
 
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqltymerge-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqltymerge-snf').val('');
 
-        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+        if(setData(chamberNo) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'chamberNo':chamberNo},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
