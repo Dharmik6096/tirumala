@@ -148,7 +148,7 @@ $script = "
     var is_clr_input = `$model->is_clr_input`;
     var plantCode = `$model->plant_code`;
 
-    $(document).on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-clr, #tblmilkvehicleentryqltymerge-snf', function() {
+    $(document).on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-clr, #tblmilkvehicleentryqltymerge-snf, #tblmilkvehicleentryqltymerge-chamber_no', function() {
         calculateClr();
     });
     
@@ -165,7 +165,7 @@ $script = "
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqltymerge-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqltymerge-snf').val('');
 
-        if(setData(chamberNo) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr))) && setData(chamberNo)){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
