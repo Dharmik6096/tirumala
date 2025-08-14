@@ -77,11 +77,11 @@ $grid_option = [
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Hold Release Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="far fa-money-bill-alt"></i>', ['/vsp/tbl-bill-head/hold-release-applicability', 'id' => $model->bill_head_code], $options);
         },
-        'update_to_date' => function ($url, $model) {
-            $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
-            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit To Date', 'class' => $disable];
-            return GhostHtml::a('<i class="fas fa-pen-square"></i>', ['/vsp/tbl-bill-head/update-to-date', 'id' => $model->bill_head_code], $options);
-        },
+        // 'update_to_date' => function ($url, $model) {
+        //     $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
+        //     $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit To Date', 'class' => $disable];
+        //     return GhostHtml::a('<i class="fas fa-pen-square"></i>', ['/vsp/tbl-bill-head/update-to-date', 'id' => $model->bill_head_code], $options);
+        // },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
