@@ -574,7 +574,7 @@ $script = "
         }
     }
 
-    $(document).on('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-snf', function() {
+    $(document).on('change', '#tblmilkvehicleentrytransaction-fat, #tblmilkvehicleentrytransaction-clr, #tblmilkvehicleentrytransaction-snf, #tblmilkvehicleentrytransaction-trip_code, #tblmilkvehicleentrytransaction-chamber_no', function() {
         if(!qltyParamsReadOnly){
             calculateClr();
         }
@@ -588,6 +588,8 @@ $script = "
         var is_clr_input = $('#is_clr_input').val();
         var receiptAt = $('#tblmilkvehicleentry-receipt_at').val();
         var receiptAtCode = $('#tblmilkvehicleentry-receipt_at_code').val();
+        var tripCode = $('#tblmilkvehicleentry-trip_code').val();
+        var chamberNo = $('#tblmilkvehicleentrytransaction-chamber_no').val();
 
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentrytransaction-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentrytransaction-snf').val('');
@@ -596,7 +598,7 @@ $script = "
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'receiptAtCode':receiptAtCode},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'receiptAtCode':receiptAtCode,'tripCode':tripCode,'chamberNo':chamberNo},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success')
