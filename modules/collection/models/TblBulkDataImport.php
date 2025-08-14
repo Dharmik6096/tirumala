@@ -98,7 +98,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 [['source_of_milk'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'source_of_milk');
                 }, 'on' => ['sample_milk_collection']],
-                [['dcs_code'], 'required', 'on' => ['sample_milk_collection']],
+                [['dcs_code', 'shift_code', 'date_time_of_collection'], 'required', 'on' => ['sample_milk_collection']],
         ];
     }
 
