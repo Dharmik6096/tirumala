@@ -43,16 +43,18 @@ if (Yii::$app->session->hasFlash('success')) {
                 ])
                 ?>
                 <?php echo $form->errorSummary($model); ?>
+                <?= Html::activeHiddenInput($model, 'username'); ?>
+                <?= Html::activeHiddenInput($model, 'password'); ?>
                 <div class="row">
                     <div class="col-sm-12">
                         <?=
-                        $form->field($model, 'username')
+                        $form->field($model, 'login_username')
                             ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
                         ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
-                        $form->field($model, 'password')
+                        $form->field($model, 'login_password')
                             ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
                         ?>
                     </div>
@@ -74,12 +76,7 @@ if (Yii::$app->session->hasFlash('success')) {
                         <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? \Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'rememberMe', true) : '' ?>
                     </div>
                     <div class="col-sm-12">
-                        <?=
-                        Html::button(
-                            Yii::t('app', 'Login'),
-                            ['class' => 'btn-login-second btn btn-primary btn-block login-submit']
-                        )
-                        ?>
+                        <?= Html::button(Yii::t('app', 'Login'), ['class' => 'btn-login-second btn btn-primary btn-block login-submit', 'type' => 'submit']) ?>
                     </div>
                 </div>
                 <div class="row registration-block">
