@@ -667,55 +667,58 @@ class SchedulerController extends ChildController {
                     } else {
                         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
                     }
-                    foreach ($sentboxArray as $sent) {
-                        $flag = 'UPDATE';
-                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
-                        if (!($sentbox->setSentbox($existData, $flag))) {
-                            $row->data_post_status = $error;
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->resp_desc = 'SentBox Entry is not Generated';
-                            $row->save(FALSE);
+                    $sentboxGenerated = false;
+                    $flag = 'UPDATE';
+                    $sentbox = new TblSentbox();
+                    $sentbox->source_org_id = $existData->union_code;
+                    if (!($sentbox->setSentboxBatch($existData, $flag, $sentboxArray))) {
+                        $sentboxGenerated = !empty($sentboxGenerated) ? $sentboxGenerated : false;
+                    } else {
+                        $sentboxGenerated = true;
+                    }
+                    if($sentboxGenerated){
+                        $row->data_post_status = $success;
+                        $row->response_datetime = date('Y-m-d H:i:s');
+                        $row->resp_desc = 'Sentbox Generated';
+                        if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                            $modelHistory->save();
+                            $decrypt = $modelMaster->decryptModel($existData);
+                            $existData->setAttributes($decrypt);
+                            $existData->is_active = $is_active;
+                            $existData->is_sentbox = FALSE;
+                            $existData->save(TRUE, FALSE);
+                            $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
+                        }
+                        $row->save(FALSE);
+                        $statusModel = new TblDcsVendorStatus();
+                        $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
+                        $statusModel->union_code = $existData->union_code;
+                        $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : (!empty($existData->member_code) ? 'Member' : 'DCS');
+                        $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : (!empty($existData->member_code) ? $existData->member_code : $existData->dcs_code);
+                        $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
+                        $statusModel->is_active = $status;
+                        if (!empty($existStatus)) {
+                            $existStatus->updateAll(['is_active' => $status, 'updated_at' => date('Y-m-d H:i:s')], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
                         } else {
-                            $row->data_post_status = $success;
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->resp_desc = 'Sentbox Generated';
-                            if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
-                                $decrypt = $modelMaster->decryptModel($existData);
-                                $existData->setAttributes($decrypt);
-                                $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
+                            $statusModel->save(FALSE);
+                        }
+                        if ($status == '0' && strtolower($statusModel->customer_type) != 'member') {
+                            $bankModel = new TblBankDetails();
+                            $existbankModel = $bankModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
+                            if (!empty($existbankModel)) {
+                                $existbankModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                             }
-                            $row->save(FALSE);
-                            $statusModel = new TblDcsVendorStatus();
-                            $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
-                            $statusModel->union_code = $existData->union_code;
-                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : (!empty($existData->member_code) ? 'Member' : 'DCS');
-                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : (!empty($existData->member_code) ? $existData->member_code : $existData->dcs_code);
-                            $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
-                            $statusModel->is_active = $status;
-                            if (!empty($existStatus)) {
-                                $existStatus->updateAll(['is_active' => $status, 'updated_at' => date('Y-m-d H:i:s')], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
-                            } else {
-                                $statusModel->save(FALSE);
-                            }
-                            if ($status == '0' && strtolower($statusModel->customer_type) != 'member') {
-                                $bankModel = new TblBankDetails();
-                                $existbankModel = $bankModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
-                                if (!empty($existbankModel)) {
-                                    $existbankModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
-                                }
-                                $contactModel = new TblContactDetails();
-                                $existcontactModel = $contactModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
-                                if (!empty($existcontactModel)) {
-                                    $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
-                                }
+                            $contactModel = new TblContactDetails();
+                            $existcontactModel = $contactModel::find()->where(['module_code' => $statusModel->customer_code, 'is_active' => 1])->andWhere(['in', 'module_name', ['society', 'customer']])->one();
+                            if (!empty($existcontactModel)) {
+                                $existcontactModel->updateAll(['is_active' => 0, 'is_default' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
                             }
                         }
-                    }
-                    if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
-                        $modelHistory->save();
-                        $existData->is_active = $is_active;
-                        $existData->is_sentbox = FALSE;
-                        $existData->save(TRUE, FALSE);
+                    } else {
+                        $row->data_post_status = $error;
+                        $row->response_datetime = date('Y-m-d H:i:s');
+                        $row->resp_desc = 'SentBox Entry is not Generated';
+                        $row->save(FALSE);
                     }
                 }
             }
