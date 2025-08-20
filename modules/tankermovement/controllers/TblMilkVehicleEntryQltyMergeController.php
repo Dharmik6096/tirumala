@@ -183,13 +183,8 @@ class TblMilkVehicleEntryQltyMergeController extends \app\controllers\ChildContr
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('plantCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
+        $tripCode = Yii::$app->request->post('tripCode');
         $chamberNo = Yii::$app->request->post('chamberNo');
-        if (($milkVehicleEntryQltyData = TblMilkVehicleEntryQltyMerge::findOne($chamberNo)) !== null) {
-            $tripCode = $milkVehicleEntryQltyData->trip_code;
-            $chamberNo = $milkVehicleEntryQltyData->chamber_no;
-        } else {
-            $tripCode = $chamberNo = '';
-        }
         $BmcMilkDispatchModel = new TblBmcMilkDispatch();
         $dispatchData = $BmcMilkDispatchModel->getDispatchData($union, $tripCode, $chamberNo, $org_code);
         $result = Yii::$app->general->calculateData($dispatchData['config'], $union, $dispatchData['orgCode'], $fat, $snf, $clr, $dispatchData['orgType'], $is_clr_input);
