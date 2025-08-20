@@ -64,7 +64,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'milk_collection_dpu_data', 'milk_collection_other_data', 'milk_collection_qty']],
                 [['milk_quality_type_code'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection']],
                 [['customer_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection']],
-                [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic', 'doc_no', 'qlty_auto', 'qty_auto', 'calibration_value_fat', 'calibration_value_snf'], 'safe'],
+                [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic', 'doc_no', 'qlty_auto', 'qty_auto', 'calibration_value_fat', 'calibration_value_snf', 'source_of_milk'], 'safe'],
                 [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
                 [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime', 'clr', 'qlty_time', 'qty_time'], 'safe'],
                 [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no', 'clr'], 'number'],
@@ -99,6 +99,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'source_of_milk');
                 }, 'on' => ['sample_milk_collection']],
                 [['dcs_code', 'shift_code', 'date_time_of_collection'], 'required', 'on' => ['sample_milk_collection']],
+                ['source_of_milk', 'in', 'range' => ['0', 'Sample Milk', '1', 'Flush Milk', '2', 'Other'], 'on' => ['sample_milk_collection']],
         ];
     }
 
