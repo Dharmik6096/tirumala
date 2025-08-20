@@ -653,9 +653,11 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('receiptAtCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-
-        $result = Yii::$app->general->calculateData('PLANT_RECEIPT_CONFIG', $union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input);
-
+        $tripCode = Yii::$app->request->post('tripCode');
+        $chamberNo = Yii::$app->request->post('chamberNo');
+        $BmcMilkDispatchModel = new TblBmcMilkDispatch();
+        $dispatchData = $BmcMilkDispatchModel->getDispatchData($union, $tripCode, $chamberNo, $org_code);
+        $result = Yii::$app->general->calculateData($dispatchData['config'], $union, $dispatchData['orgCode'], $fat, $snf, $clr, $dispatchData['orgType'], $is_clr_input);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
@@ -671,7 +673,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => !empty($data) ? 'success' : 'error', 'data' => !empty($data) ? $data : []]);
     }
-    
+
     public function actionChallan($id) {
         $controls = [];
         $controls['p_milk_vehicle_entry_code'] = $id;

@@ -154,7 +154,7 @@ $script = "
     var is_clr_input = `$model->is_clr_input`;
     var plantCode = `$model->plant_code`;
 
-    $(document).on('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-clr, #tblmilkvehicleentryqlty-snf', function() {
+    $(document).on('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-clr, #tblmilkvehicleentryqlty-snf, #tblmilkvehicleentryqlty-chamber_no', function() {
         calculateClr();
     });
     
@@ -166,15 +166,16 @@ $script = "
         var fat = $('#tblmilkvehicleentryqlty-fat').val();
         var snf = $('#tblmilkvehicleentryqlty-snf').val();
         var clr = $('#tblmilkvehicleentryqlty-clr').val();
+        var chamberNo = $('#tblmilkvehicleentryqlty-chamber_no').val();
 
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqlty-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqlty-snf').val('');
 
-        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr))) && setData(chamberNo)){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'chamberNo':chamberNo},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {

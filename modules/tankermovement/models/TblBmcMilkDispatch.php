@@ -519,9 +519,30 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         }
     }
 
-    public function getBmcSilosInfoList(){
+    public function getBmcSilosInfoList() {
         $data = TblBmcSilosInfo::find()->select(['bmc_silos_info_code', 'silo_no'])->where(['module_name' => 'BMC', 'module_code' => $this->bmc_code])->asArray()->all();
         return ArrayHelper::map($data, 'bmc_silos_info_code', 'silo_no');
+    }
+
+    public function getDispatchData($union, $tripCode, $chamberNo, $org_code) {
+        $bmcMilkDispatchData = [];
+        if (!empty($tripCode) && !empty($chamberNo)) {
+            $bmcMilkDispatchData = $this->find()
+                    ->select(['tbl_bmc_milk_dispatch.plant_code', 'tbl_bmc_milk_dispatch.bmc_code'])
+                    ->joinWith(['bmcMilkDispatchTxnCode'])
+                    ->where(['tbl_bmc_milk_dispatch.union_code' => $union, 'tbl_bmc_milk_dispatch.trip_code' => $tripCode, 'tbl_bmc_milk_dispatch_txn.chamber_no' => $chamberNo])
+                    ->orderBy(['tbl_bmc_milk_dispatch.created_at' => SORT_DESC])
+                    ->one();
+        }
+        if (!empty($bmcMilkDispatchData)) {
+            if (!empty($bmcMilkDispatchData->bmc_code)) {
+                return ['config' => 'BMC_DISPATCH_CONFIG', 'orgType' => 'BMC', 'orgCode' => $bmcMilkDispatchData->bmc_code];
+            } else {
+                return ['config' => 'PLANT_DISPATCH_CONFIG', 'orgType' => 'PLANT', 'orgCode' => $bmcMilkDispatchData->plant_code];
+            }
+        } else {
+            return ['config' => 'PLANT_RECEIPT_CONFIG', 'orgType' => 'PLANT', 'orgCode' => $org_code];
+        }
     }
 
 }
