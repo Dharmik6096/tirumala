@@ -120,11 +120,16 @@ class TblAppLockPassword extends \app\models\ChildModel {
             $Query->andWhere(["ISNULL(dcs_code, '')" => '']);
         }
 
-        $data = $Query->all();
+        $count = $Query->count();
 
-        if (!empty($data)) {
-            $showField = !empty($this->dcs_code) ? 'dcs_code' : 'bmc_code';
-            $this->addError($showField, Yii::t('app/validation', ' You Can not generate Password Within 1 hr.'));
+        if (empty($this->dcs_code)) {
+            if ($count >= 4) {
+                $this->addError('bmc_code', Yii::t('app/validation', 'You have exceeded the maximum number of attempts within 1 hour.'));
+            }
+        } else {
+            if ($count > 0) {
+                $this->addError('dcs_code', Yii::t('app/validation', 'You cannot generate Password within 1 hour.'));
+            }
         }
     }
 
