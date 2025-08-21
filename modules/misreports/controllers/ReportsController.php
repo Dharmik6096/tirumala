@@ -4556,6 +4556,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise',
                 'scenario' => 'FarmerPaymentWiseMilkWise',
                 'title' => '119 - Farmer Wise Milk Bill 2',
+                'to_decrypt' => ['adhar_no'],
                 'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
                 'bkg_export' => TRUE
             ],
@@ -4564,6 +4565,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise_summary',
                 'scenario' => 'FarmerPaymentWiseMilkWise',
                 'title' => '119 - Farmer Wise Milk Bill 2',
+                'to_decrypt' => ['adhar_no'],
                 'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
                 'bkg_export' => TRUE
             ],
