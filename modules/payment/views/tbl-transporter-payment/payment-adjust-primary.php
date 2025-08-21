@@ -10,6 +10,9 @@ $this->title = 'Transporter Payment Process : Step 2';
 if ($transporter_type == 0) {
     $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
             Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+    if(is_array($model->bmc_code) && count($model->bmc_code) > 1) {
+        $bmc_info = 'All > '.Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+    }
 } else {
     $bmc_info = $model->vendor_code . ' > ' . $model->transporter_name . ' > ' .
             Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);

@@ -92,7 +92,7 @@ class TblTransporterPayment extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['adjust_amount', 'transporter_type'], 'default', 'value' => 0],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
+                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
                 [['union_code', 'from_date', 'to_date', 'transporter_code'], 'required', 'on' => 'sec_paymentprocess'],
                 [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'bmc_code', 'basic_price', 'vehicle_code'], 'safe'],
                 [['transporter_type', 'is_verified', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost', 'billing_method', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'total_rejected_qty', 'total_rejected_amount', 'rejected_kg_fat', 'rejected_kg_snf', 'billing_type_code'], 'safe'],
@@ -213,27 +213,30 @@ class TblTransporterPayment extends \app\models\ChildModel {
         return $this->hasOne(TblTransporterPaymentDetail::className(), ['transporter_payment_code' => 'transporter_payment_code']);
     }
 
-    public function getdatewiseBmcList($union_code, $plant_code, $mcc_plant_code, $from_date, $to_date) {
+    public function getdatewiseBmcList($union_code, $plant_code, $mcc_plant_code, $from_date, $to_date, $check_condition = 'Yes') {
         $from_date = date('Y-m-d', strtotime($from_date));
         $to_date = date('Y-m-d', strtotime($to_date));
-
-        $exclude = TblTransporterPayment::find()->select(['bmc_code'])
-                ->where(['transporter_type' => 0, 'union_code' => $union_code])
-                ->andWhere(['not in', 'status', ['processed']])
-                ->andWhere(['or',
-                ['or',
-                    ['between', 'from_date', $from_date, $to_date],
-                    ['between', 'to_date', $from_date, $to_date]
-            ],
-                ['or',
-                "'$from_date' BETWEEN [from_date] AND [to_date]",
-                "'$to_date' BETWEEN [from_date] AND [to_date]"
-        ]]);
+        if($check_condition == 'Yes'){
+            $exclude = TblTransporterPayment::find()->select(['bmc_code'])
+                    ->where(['transporter_type' => 0, 'union_code' => $union_code])
+                    ->andWhere(['not in', 'status', ['processed']])
+                    ->andWhere(['or',
+                    ['or',
+                        ['between', 'from_date', $from_date, $to_date],
+                        ['between', 'to_date', $from_date, $to_date]
+                ],
+                    ['or',
+                    "'$from_date' BETWEEN [from_date] AND [to_date]",
+                    "'$to_date' BETWEEN [from_date] AND [to_date]"
+            ]]);
+        }
 
         $query = TblDcsBmc::find()->select(['bmc_code', 'bmc_name'])
                 ->where(['union_code' => $union_code, 'is_active' => 1])
-                ->andWhere(['plant_code' => $plant_code, 'mcc_plant_code' => $mcc_plant_code])
-                ->andWhere(['not in', 'bmc_code', $exclude]);
+                ->andWhere(['plant_code' => $plant_code, 'mcc_plant_code' => $mcc_plant_code]);
+        if($check_condition == 'Yes'){
+            $query->andWhere(['not in', 'bmc_code', $exclude]);
+        }
 
         if (Yii::$app->session->get('BMC') !== '') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
@@ -293,6 +296,23 @@ class TblTransporterPayment extends \app\models\ChildModel {
         $value = ArrayHelper::map($value, 'transporter_code', function ($value) {
                     return $value['transporter_name'] . '(' . $value['vendor_code'] . ')';
                 });
+        return $value;
+    }
+
+    public function getMccList($union_code, $plant_code) {
+
+        $query = TblMccPlant::find()->select(['mcc_plant_code'])
+                ->where(['union_code' => $union_code, 'is_active' => 1])
+                ->andWhere(['plant_code' => $plant_code]);
+
+        if (Yii::$app->session->get('MCC') !== '') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        } else if (Yii::$app->session->get('Plant') !== '') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
+
+        $value = $query->all();
+        $value = !empty($value) ? array_column($value, 'mcc_plant_code') : [];
         return $value;
     }
 
