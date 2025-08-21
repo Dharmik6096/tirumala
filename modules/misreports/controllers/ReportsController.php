@@ -2097,20 +2097,42 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'CmpReport';
         return $this->actionIndex();
     }
+
     public function actionMccMilkBillDetailsWithIncentiveRouteWise() {
         $this->report = 'MccMilkBillDetailsWithIncentiveRouteWise';
         return $this->actionIndex();
     }
-    
+
     public function actionMccMilkBillDetailsMccDayWise() {
         $this->report = 'MccMilkBillDetailsMccDayWise';
         return $this->actionIndex();
     }
-    
+
     public function actionMisMilkPurchase() {
         $this->report = 'MisMilkPurchase';
         return $this->actionIndex();
     }
+
+    public function actionUserAttendanceDetails() {
+        $this->report = 'UserAttendanceDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionAssetDetailSummary() {
+        $this->report = 'AssetDetailSummary';
+        return $this->actionIndex();
+    }
+    
+    public function actionFarmerPaymentWiseMilkWise() {
+        $this->report = 'FarmerPaymentWiseMilkWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'FarmerPaymentWiseMilkWiseSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3564,7 +3586,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_farmer_wise_milk_bill_date_shift_wise',
                 'scenario' => 'MemberMilkBill',
-                'title' => '113 - Farmer Wise Milk Bill',
+                'title' => '119 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'bkg_export' => TRUE
             ],
@@ -3572,7 +3594,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_farmer_wise_milk_bill_date_wise',
                 'scenario' => 'MemberMilkBill',
-                'title' => '113 - Farmer Wise Milk Bill',
+                'title' => '119 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'bkg_export' => TRUE
             ],
@@ -3580,7 +3602,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_farmer_wise_milk_bill_summary',
                 'scenario' => 'MemberMilkBill',
-                'title' => '113 - Farmer Wise Milk Bill',
+                'title' => '119 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'bkg_export' => TRUE
             ],
@@ -4589,6 +4611,37 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MisMilkPurchase',
                 'title' => 'Milk Purchase',
                 'bkg_export' => TRUE,
+            ],
+            'UserAttendanceDetails' => [
+                'param' => 'login_type_report:static:login_type_report,from_date:string,to_date:string',
+                'sp_name' => 'get_user_attendance_details',
+                'scenario' => 'UserAttendanceDetails',
+                'title' => 'User Attendance Details',
+                'bkg_export' => TRUE,
+            ],
+            'AssetDetailSummary' => [
+                'param' => 'store_location_type,store_location_code,is_groupbyserial:static:boolean_value',
+                'sp_name' => 'get_asset_location_data',
+                'scenario' => 'AssetDetailSummary',
+                'title' => '922 - Asset Detail Summary',
+            ],
+            'FarmerPaymentWiseMilkWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise',
+                'scenario' => 'FarmerPaymentWiseMilkWise',
+                'title' => '119 - Farmer Wise Milk Bill 2',
+                'to_decrypt' => ['adhar_no'],
+                'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'FarmerPaymentWiseMilkWiseSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise_summary',
+                'scenario' => 'FarmerPaymentWiseMilkWise',
+                'title' => '119 - Farmer Wise Milk Bill 2',
+                'to_decrypt' => ['adhar_no'],
+                'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];

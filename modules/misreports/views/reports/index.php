@@ -300,7 +300,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -558,6 +558,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'reportsmodel-dispatch_center_type', 'dispatch_center', $model->getAttributeLabel('dispatch_center'), FALSE, FALSE); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('store_location_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type', '', $model->getAttributeLabel('store_location_code')); ?>
                                             </div>
                                             <?php
                                         }
