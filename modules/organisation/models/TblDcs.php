@@ -22,6 +22,7 @@ use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
 use app\modules\general\models\TblSocietyVendor;
 use app\models\ChildModel;
+use app\models\TblKeyPatternChild;
 use yii\db\Query;
 use app\modules\organisation\models\TblDpuInstallation;
 use app\modules\organisation\models\TblSocietyCodes;
@@ -44,6 +45,7 @@ use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\product\models\TblProductSaleRate;
 use yii\base\UserException;
 use yii\helpers\Html;
+use app\modules\organisation\models\TblMasterHierarchy;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -1461,6 +1463,311 @@ class TblDcs extends ChildModel {
 
     public function resetData() {
         $this->aadhaar_no = $this->pan_no = null;
+    }
+
+    public function autoGenerateMember(&$master) {
+        $config = !empty(Yii::$app->session->get('unionConfig')[$this->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['no_of_auto_member_create'] : 100;
+        $max_qty_config_val = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
+        $memberMod = new TblMember();
+
+        $memberModels = [];
+        $keyPattern = Yii::$app->general->getKeyPattern('tbl_member');
+
+        if (empty($keyPattern)) {
+            $memberMod->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            $master[] = FALSE;
+        }
+
+        $exCodeData = $memberMod->find()
+            ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
+            ->where([$keyPattern['ex_code_reset_on'] => $this->{$keyPattern['ex_code_reset_on']}])
+            ->asArray()
+            ->one();
+
+        $refAutoCodeData = $memberMod->find()
+            ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $keyPattern['ref_code_length'] . ') as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+            ->where(['union_code' => $this->union_code])
+            ->asArray()
+            ->one();
+
+        $exCode = str_pad($exCodeData['ex_code'], $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+        $autoCode = $refAutoCodeData['auto_code'];
+        $refCode = str_pad($refAutoCodeData['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+
+        $prefixData = [];
+        if ($keyPattern['ref_code_type'] == 1) {
+            $prefix_seq = explode(',', $keyPattern['prefix_field']);
+            foreach ($prefix_seq as $pre) {
+                $pre_info = explode(':', $pre);
+                if (isset($pre_info[1])) {
+                    $t_info = explode('#', $pre_info[0]);
+                    $table_name = $t_info[0];
+                    $where_key = $t_info[1];
+                    $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                    $append_field = $pre_info[1];
+
+                    $key = "$table_name|$where_key|$where_val";
+                    if (!isset($prefixData[$key])) {
+                        $query = new \yii\db\Query();
+                        $prefixData[$key] = $query->select($append_field)
+                            ->from($table_name)
+                            ->where([$where_key => $this->{$where_val}])
+                            ->one();
+                    }
+                }
+            }
+        }
+        if ($keyPattern['master_hierarchy_auto_entry'] == 1) {
+            $childPattern = new TblKeyPatternChild();
+            $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $keyPattern['key_pattern_code']])->all();
+
+            $childPrefixData = [];
+            $childSuffixData = [];
+
+            $childRefCodeData = [];
+
+            foreach ($childKeyPatterns as $childKey => $childKeyPattern) {
+                if ($childKeyPattern['key_code_type'] == 1) {
+                    if (!empty($childKeyPattern['prefix_field'])) {
+                        $prefix_seq = explode(',', $childKeyPattern['prefix_field']);
+                        foreach ($prefix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+
+                                $key = "$table_name|$where_key|$where_val";
+                                if (!isset($childPrefixData[$key])) {
+                                    $query = new \yii\db\Query();
+                                    $childPrefixData[$key] = $query->select($append_field)
+                                        ->from($table_name)
+                                        ->where([$where_key => $this->{$where_val}])
+                                        ->one();
+                                }
+                            }
+                        }
+                    }
+
+                    if (!empty($childKeyPattern['suffix_field'])) {
+                        $suffix_seq = explode(',', $childKeyPattern['suffix_field']);
+                        foreach ($suffix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+
+                                $key = "$table_name|$where_key|$where_val";
+                                if (!isset($childSuffixData[$key])) {
+                                    $query = new \yii\db\Query();
+                                    $childSuffixData[$key] = $query->select($append_field)
+                                        ->from($table_name)
+                                        ->where([$where_key => $this->{$where_val}])
+                                        ->one();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $index = $childKey + 1;
+                $key_name = 'ref_code' . $index;
+                $key_length = (int) $childKeyPattern['key_length'];
+                $masterHierarchy = new TblMasterHierarchy();
+                $childRefCodeData[$key_name] = $masterHierarchy->find()
+                    ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ') as bigint)),0)+1'])
+                    ->where(['union_code' => $this->union_code])
+                    ->asArray()
+                    ->one();
+                $activeCounts[$key_name] = $masterHierarchy->getActiveCount($key_name, $childKeyPattern['key_reset_on']);
+            }
+        }
+
+        for ($x = 1; $x <= $config; $x++) {
+            $memberModel = new TblMember();
+            $memberModel->attributes = $this->attributes;
+
+            $memberModel->ex_member_code = str_pad((int)$exCode + $x, $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            $memberModel->auto_code = $autoCode + $x;
+
+            $pk_code = $this->union_code . str_pad($memberModel->auto_code, 3, '0', STR_PAD_LEFT);
+
+            if ($keyPattern['ref_code_type'] == 0) {
+                $memberModel->ref_code = $pk_code;
+            } elseif ($keyPattern['ref_code_type'] == 1) {
+                $memberModel->ref_code = '';
+                foreach ($prefix_seq as $pre) {
+                    $pre_info = explode(':', $pre);
+                    if (isset($pre_info[1])) {
+                        $t_info = explode('#', $pre_info[0]);
+                        $table_name = $t_info[0];
+                        $where_key = $t_info[1];
+                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+
+                        $key = "$table_name|$where_key|$where_val";
+                        if (isset($prefixData[$key]) && !empty($prefixData[$key])) {
+                            $memberModel->ref_code .= $prefixData[$key][$append_field];
+                        } else {
+                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $this->{$where_val} . ')';
+                            $this->addError('ref_code', $message);
+                            $master[] = FALSE;
+                        }
+                    } else {
+                        $memberModel->ref_code .= $this->{$pre};
+                    }
+                }
+                $memberModel->ref_code .= str_pad((int)$refCode + $x, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+            } elseif ($keyPattern['ref_code_type'] == 2) {
+                $memberModel->ref_code = $pk_code;
+            }
+
+            $memberModel->ref_code = str_pad($memberModel->ref_code, $keyPattern['ref_code_fix_length'], '0', STR_PAD_LEFT);
+            $memberModel->member_code = $this->dcs_code . $memberModel->ex_member_code;
+
+            if ($keyPattern['master_hierarchy_auto_entry'] == 1) {
+                if (!empty($childKeyPatterns)) {
+                    $masterHierarchy = new TblMasterHierarchy();
+                    $pk_name = $memberModel::primaryKey()[0];
+                    $masterHierarchy->attributes = $memberModel->attributes;
+                    $masterHierarchy->master_key = $pk_name;
+                    $masterHierarchy->{$pk_name} = $pk_code;
+                    $masterHierarchy->wef_date = date('Y-m-d');
+                    $masterHierarchy->is_active = 1;
+
+                    foreach ($childKeyPatterns as $key => $childKeyPattern) {
+                        $index = $key + 1;
+                        $key_name = 'ref_code' . $index;
+                        $masterHierarchy->master_type = $childKeyPattern->pattern_for;
+                        $key_length = (int) $childKeyPattern['key_length'];
+                        $key_fix_length = (int) $childKeyPattern['key_fix_length'];
+                        $key_reset_on = $childKeyPattern['key_reset_on'];
+
+                        if ($childKeyPattern['key_code_type'] == 1) {
+                            $ref_code = ($key_length > 0) ? str_pad($childRefCodeData[$key_name]['ref_code'] + $x, $key_length, '0', STR_PAD_LEFT) : '';
+
+                            if (!empty($childKeyPattern['prefix_field'])) {
+                                $masterHierarchy->{$key_name} = '';
+                                $prefix_seq = explode(',', $childKeyPattern['prefix_field']);
+                                foreach ($prefix_seq as $pre) {
+                                    $pre_info = explode(':', $pre);
+                                    if (isset($pre_info[1])) {
+                                        $t_info = explode('#', $pre_info[0]);
+                                        $table_name = $t_info[0];
+                                        $where_key = $t_info[1];
+                                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                        $append_field = $pre_info[1];
+
+                                        $key = "$table_name|$where_key|$where_val";
+                                        if (isset($childPrefixData[$key]) && !empty($childPrefixData[$key])) {
+                                            $masterHierarchy->{$key_name} .= $childPrefixData[$key][$append_field];
+                                        } else {
+                                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $this->{$where_val} . ')';
+                                            $this->addError('ref_code', $message);
+                                            $master[] = FALSE;
+                                        }
+                                    } else {
+                                        $masterHierarchy->{$key_name} .= $this->{$pre};
+                                    }
+                                }
+                            }
+
+                            $masterHierarchy->{$key_name} .= $ref_code;
+
+                            if (!empty($childKeyPattern['suffix_field'])) {
+                                $suffix_seq = explode(',', $childKeyPattern['suffix_field']);
+                                foreach ($suffix_seq as $pre) {
+                                    $pre_info = explode(':', $pre);
+                                    if (isset($pre_info[1])) {
+                                        $t_info = explode('#', $pre_info[0]);
+                                        $table_name = $t_info[0];
+                                        $where_key = $t_info[1];
+                                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                        $append_field = $pre_info[1];
+
+                                        $key = "$table_name|$where_key|$where_val";
+                                        if (isset($childSuffixData[$key]) && !empty($childSuffixData[$key])) {
+                                            $masterHierarchy->{$key_name} .= $childSuffixData[$key][$append_field];
+                                        } else {
+                                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $this->{$where_val} . ')';
+                                            $this->addError('ref_code', $message);
+                                            $master[] = FALSE;
+                                        }
+                                    } else {
+                                        $masterHierarchy->{$key_name} .= $this->{$pre};
+                                    }
+                                }
+                            }
+                        } elseif ($childKeyPattern['key_code_type'] == 2) {
+                            $masterHierarchy->{$key_name} = !empty($masterHierarchy->{$key_name}) ? $masterHierarchy->{$key_name} : NULL;
+                        }
+
+                        if ($childKeyPattern['key_code_type'] == 1) {
+                            if (empty($masterHierarchy->{$key_name})) {
+                                $this->addError('ref_code', Yii::t('app/validation', $this->getAttributeLabel('ref_code') . ' can not be blank.'));
+                                $master[] = FALSE;
+                            } else {
+                                if ($activeCounts[$key_name] > 0) {
+                                    $this->addError('ref_code', Yii::t('app/validation', $this->getAttributeLabel('ref_code') . ' has already been taken.'));
+                                    $master[] = FALSE;
+                                }
+                            }
+
+                            if (!empty($masterHierarchy->{$key_name})) {
+                                $masterHierarchy->{$key_name} = str_pad($masterHierarchy->{$key_name}, $key_fix_length, '0', STR_PAD_LEFT);
+                                if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                                    $this->addError('ref_code', Yii::t('app/validation', $this->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
+                                    $master[] = FALSE;
+                                }
+                            }
+                        }
+                    }
+                    $memberModel->set_master_hierarchy[] = $masterHierarchy;
+                }   
+            }
+
+            Yii::$app->default->getDefaults($memberModel);
+            $memberModel->address = $this->dcs_name;
+            $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+            $memberModel->member_name = 'No Name';
+            $memberModel->gender_code = 1;
+            $memberModel->caste_category_code = 1;
+            $memberModel->member_type_code = 1;
+            $memberModel->bank_code = NULL;
+            $memberModel->branch_code = NULL;
+            $memberModel->bank_account_no = NULL;
+            $memberModel->ifsc = NULL;
+            $memberModel->beneficiary_name = NULL;
+            $memberModel->adhar_no = NULL;
+            $memberModel->data_post_status = 0;
+            $memberModel->is_download = $memberModel->is_email_verify = $memberModel->rate_class = $memberModel->is_verified = $memberModel->is_contact_verified = $memberModel->is_dcs_member = '0';
+            $memberModel->is_active = 1;
+            if (empty($memberModel->x_col3)) {
+                $memberModel->x_col3 = (!empty($max_qty_config_val) && ($max_qty_config_val > 0)) ? $max_qty_config_val : 15;
+            }
+            foreach ($memberModel->attributes as $key => $value) {
+                if ($value == '') {
+                    $memberModel->$key = null;
+                }
+            }
+
+            $memberModels[] = $memberModel;
+        }
+
+        $columns = array_keys($memberModels[0]->getAttributes());
+        $rows = [];
+        foreach ($memberModels as $memberModel) {
+            $row = [];
+            foreach ($columns as $column) {
+                $row[] = $memberModel->$column;
+            }
+            $rows[] = $row;
+        }
+        $master[] = Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
     }
 
 }

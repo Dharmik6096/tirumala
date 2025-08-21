@@ -341,33 +341,7 @@ class DcsImportStrategy extends ARImportStrategy {
                         $importedPks[] = $model->dcs_code;
 
                         if (empty($existData) && ($model->auto_member_create == 1)) {
-                            $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
-                            for ($x = 1; $x <= $config; $x += 1) {
-                                $memberModel = new TblMember();
-                                $memberModel->attributes = $model->attributes;
-                                $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
-                                $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                                if (!empty($memberModel->set_master_hierarchy)) {
-                                    $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
-                                }
-                                Yii::$app->default->getDefaults($memberModel);
-                                $memberModel->address = $model->dcs_name;
-                                $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
-                                $memberModel->member_type_code = '1';
-                                $memberModel->member_name = 'No Name';
-                                $memberModel->gender_code = 1;
-                                $memberModel->caste_category_code = 1;
-                                $memberModel->member_type_code = 1;
-                                $memberModel->mobile_no = NULL;
-                                $memberModel->pan_no = NULL;
-                                $memberModel->bank_code = NULL;
-                                $memberModel->branch_code = NULL;
-                                $memberModel->bank_account_no = NULL;
-                                $memberModel->ifsc = NULL;
-                                $memberModel->beneficiary_name = NULL;
-                                $memberModel->adhar_no = NULL;
-                                $master[] = $memberModel->save();
-                            }
+                            $model->autoGenerateMember($master);
                         }
 
                         if (!in_array(FALSE, $master)) {
