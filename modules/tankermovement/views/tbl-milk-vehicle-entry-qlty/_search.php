@@ -24,8 +24,8 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($searchModel, 'parsing_no')->textInput(['disabled' => true])->label(); ?>
         </div>
-        <div class="col-sm-2 mt-21">
-            <?= Html::a('', ['/tankermovement/tbl-vehicle-trip/vertical-chart', 'trip_code' => $searchModel->trip_code], ['data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'data-original-title' => 'View Map', 'target' => '_blank', 'data-val' => $searchModel->trip_code, 'class' => 'fa fa-info-circle fs24']); ?>
+        <div class="col-sm-2 mt18">
+            <?= Html::a('', ['/tankermovement/tbl-vehicle-trip/vertical-chart', 'trip_code' => $searchModel->trip_code], ['data-toggle' => 'tooltip', 'data-bs-placement' => 'right', 'title' => 'View Map', 'target' => '_blank', 'data-val' => $searchModel->trip_code, 'class' => 'fa fa-info-circle fs24']); ?>
         </div>
     <?php } ?>
 
