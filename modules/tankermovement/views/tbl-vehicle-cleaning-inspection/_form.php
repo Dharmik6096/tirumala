@@ -16,17 +16,17 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row theme_border_left theme_border_right theme_border_bottom">
+    <?= Html::hiddenInput('trip_process', 'cleaning_inspection', ['id' => 'trip_process']); ?>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>
     <div class="col-sm-2"> 
-        <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+        <?= Yii::$app->dropdown->vehicleList($model, $form, 'tblvehiclecleaninginspection-union_code,trip_process', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE); ?>
     </div>
     <div class="col-sm-2"> 
         <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehiclecleaninginspection-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code')); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Html::hiddenInput('trip_process', 'cleaning_inspection', ['id' => 'trip_process']); ?>
+    <div class="col-sm-2">        
         <?= Yii::$app->dropdown->vehicleOpenTripDetail($model, $form, 'tblvehiclecleaninginspection-union_code,trip_process,tblvehiclecleaninginspection-vehicle_code', 'trip_code', $model->getAttributeLabel('trip_code')); ?>
     </div>
     <div class="col-sm-4"> 
@@ -68,7 +68,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
    $(document).ready(function() {
-    $('.field-tblvehiclecleaninginspection-transporter_code').addClass('disabled no_pointer');
+    $('.field-tblvehiclecleaninginspection-transporter_code').addClass('no_pointer_disabled');
     function setDefaultTripCode() {
         var tripDropdown = $('#tblvehiclecleaninginspection-trip_code');
         var options = tripDropdown.find('option');
