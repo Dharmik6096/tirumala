@@ -55,7 +55,7 @@ class TblVehicleTripDetailHistory extends \yii\db\ActiveRecord {
                 [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
                 [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'history_created_at', 'sequence_no'], 'safe'],
                 [['is_last_destination', 'originating_type'], 'safe'],
-                [['travel_km', 'is_active'], 'safe'],
+                [['travel_km', 'is_active', 'is_virtual_location'], 'safe'],
         ];
     }
 

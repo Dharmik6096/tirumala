@@ -66,8 +66,8 @@ class TblPartyMaster extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
-                [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'sap_vendor_code', 'is_sales_office'], 'safe'],
+                [['union_code', 'party_name', 'party_contact_no', 'party_type'], 'required'],
+                [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'sap_vendor_code', 'is_sales_office', 'party_type'], 'safe'],
                 [['owner_email'], 'email'],
                 [['is_active'], 'default', 'value' => 1],
                 [['pan_no'], function ($attribute, $params) {
@@ -132,15 +132,20 @@ class TblPartyMaster extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'sap_vendor_code' => Yii::t('app', 'Sap Vendor Code'),
             'is_sales_office' => Yii::t('app', 'Is Sales Office'),
+            'party_type' => Yii::t('app', 'Party Type'),
         ];
     }
 
-    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
-        $query = $this->find()->select(['party_master_code', 'party_name'])
-                ->where(['is_active' => 1]);
+    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false, $partyType = '') {
+        $query = $this->find()->select(['party_master_code', 'party_name', 'sap_vendor_code'])
+                ->where(['union_code' => $unionCode, 'is_active' => 1]);
+        if (!empty($partyType)) {
+            $partyTypeIn = ($partyType === 'bmcMilkDispatch' || $partyType === 'milkReceiptSource') ? ['conversion_vendor', 'sales_party'] : ($partyType === 'milkReceiptDest' ? ['sales_party'] : []);
+            !empty($partyTypeIn) && $query->andWhere(['party_type' => $partyTypeIn]);
+        }
         $value = $query->orderBy('party_name asc')->all();
         $value = ArrayHelper::map($value, 'party_master_code', function ($value) use ($concatCode) {
-                    return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
+                    return $value->party_name . ($concatCode && !empty($value->sap_vendor_code) ? ' - ' . $value->sap_vendor_code : '');
                 });
         return $value;
     }
@@ -178,8 +183,18 @@ class TblPartyMaster extends \app\models\ChildModel {
     }
 
     public function getUnionPartyList($unionCode) {
-        $partyList = $this->find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - party') AS party_name"])
-                        ->where(['is_active' => 1, 'union_code' => $unionCode])->asArray()->all();
+        $partyList = $this->find()->select(["CONCAT(party_master_code, '#party') AS party_master_code, CONCAT(party_name, ' - ', party_type, ' - party') AS party_name"])
+                        ->where(['is_active' => 1, 'party_type' => 'sales_party', 'union_code' => $unionCode])->asArray()->all();
+        return ArrayHelper::map($partyList, 'party_master_code', 'party_name');
+    }
+
+    public function getMappedPartyList($unionCode) {
+        $partyList = $this->find()
+            ->alias('p')
+            ->select(["CONCAT(p.party_master_code, '#party#', p.party_type) AS party_master_code","CONCAT(party_name, ' - ', REPLACE(p.party_type, '_', ' '), ' - party') AS party_name"])
+            ->innerJoin('tbl_plant_conversion_vendor_mapping m','m.party_master_code = p.party_master_code')
+            ->where(['p.is_active' => 1,'p.party_type' => 'conversion_vendor','p.union_code' => $unionCode])
+            ->asArray()->all();
         return ArrayHelper::map($partyList, 'party_master_code', 'party_name');
     }
 

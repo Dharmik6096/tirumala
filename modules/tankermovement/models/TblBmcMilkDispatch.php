@@ -2,6 +2,7 @@
 
 namespace app\modules\tankermovement\models;
 
+use app\modules\collection\models\TblMccShiftLock;
 use Yii;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -13,6 +14,8 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
+use app\modules\organisation\models\TblBmcSilosInfo;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch".
@@ -70,23 +73,26 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch']],
-                [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create']],
-                [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input'], 'safe'],
-                [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
-                [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
-            //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
+        $main_rules = [
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
+            [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
+            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by'], 'safe'],
+            [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
+            [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
-                [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-                [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
-                [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
+            [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+            [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
+            [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
                     $this->source_org_code = $this->originating_org_code;
                     $this->source_org_type = $this->originating_org_type;
                 }, 'on' => 'androidsync'],
+            [['tested_by'], 'string', 'max' => 100],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblBmcMilkDispatch', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -136,6 +142,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             'f_bmc_code' => Yii::t('app', 'BMC'),
             'source_org_code' => Yii::t('app', 'Source Org Code'),
             'source_org_type' => Yii::t('app', 'Source Org Type'),
+            'tested_by' => Yii::t('app', 'Tested By'),
         ];
     }
 
@@ -250,6 +257,8 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                     } else {
                         if ($stock_date->from_date == $this->from_date && $stock_date->to_date == $this->to_date) {
                             return TRUE;
+                        } else if ($stock_date->to_date == $this->from_date && $stock_date->to_date == $this->to_date) {
+                            return TRUE;
                         } else if ($this->from_date < $dispatch_date) {
                             $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date. Please select this date: ' . $formatted_date . ' and shift ' . $formatted_shift));
                             return FALSE;
@@ -322,7 +331,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $value = $orgCode . $code;
         return $value;
     }
-    
+
     public function getTripDetailsCount() {
         $transaction_date = date('Y-m-d', strtotime($this->transaction_date));
         $count = TblVehicleTripDetail::find()
@@ -338,6 +347,202 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->andWhere(['IS', 'departure_time', null])
                 ->count();
         return $count == 1;
+    }
+
+    public function getFromDateToDate($is_physical_stock = false) {
+        $bmcData = $this->bmcCode;
+        $result = ['status' => 'error', 'from_datetime' => NULL, 'from_date' => null, 'from_shift' => null, 'to_datetime' => NULL, 'to_date' => null, 'to_shift' => null, 'physical_stock_only' => 0];
+        $stock = TblBmcDispatchStock::find()
+                ->where(['bmc_code' => $this->bmc_code])
+                ->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])
+                ->one();
+
+        if (!empty($stock)) {
+            $shiftLock = TblMccShiftLock::find()
+                    ->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])
+                    ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
+                    ->orderBy(['date_time_of_collection' => SORT_DESC])
+                    ->one();
+            $oldShiftLock = TblMccShiftLock::find()
+                    ->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])
+                    ->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])
+                    ->orderBy(['date_time_of_collection' => SORT_ASC])
+                    ->one();
+
+            // IF Not - check - Any previous Dispatch entry is available
+            if (strtolower($stock->type) == 'physical') {
+                if (empty($shiftLock) || $shiftLock->date_time_of_collection <= $stock->to_date) {
+                    // Set - Both From Date & To Date as last Physical Stock Entry
+                    $physical_stock_only = 1;
+                    //  if (!empty($dispatch) && ($dispatch->to_date == $stock->to_date)) {
+                    if (!empty($shiftLock) && ($shiftLock->created_at >= $stock->created_at)) {
+                        $physical_stock_only = 0;
+                    }
+
+                    $result = [
+                        'status' => 'success',
+                        'from_datetime' => $stock->to_date,
+                        'to_datetime' => $stock->to_date,
+                        'from_date' => date('d-m-Y', strtotime($stock->to_date)),
+                        'from_shift' => $stock->to_shift_code,
+                        'to_date' => date('d-m-Y', strtotime($stock->to_date)),
+                        'to_shift' => $stock->to_shift_code,
+                        'physical_stock_only' => $physical_stock_only,
+                    ];
+                } else {
+                    if (!empty($oldShiftLock) && ($oldShiftLock->created_at >= $stock->created_at)) {
+                        $fromDate = $oldShiftLock->date_time_of_collection;
+                        $fromShift = $oldShiftLock->shift_code;
+                    } else {
+                        $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock->to_date)));
+                        $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
+                    }
+                    $result = [
+                        // Set last physical stock entry date shift as from Date-shift. +12 Hr
+                        'status' => 'success',
+                        'from_datetime' => $fromDate,
+                        'to_datetime' => $shiftLock->date_time_of_collection,
+                        'from_date' => date('d-m-Y', strtotime($fromDate)),
+                        'from_shift' => $fromShift,
+                        // Latest RMRD Shift Lock Date
+                        'to_date' => date('d-m-Y', strtotime($shiftLock->date_time_of_collection)),
+                        'to_shift' => $shiftLock->shift_code,
+                        'physical_stock_only' => 0
+                    ];
+                }
+            } else {
+                if (!empty($shiftLock) && $stock->to_date < $shiftLock->date_time_of_collection) {
+                    if (!empty($oldShiftLock) && ($oldShiftLock->created_at >= $stock->created_at)) {
+                        $fromDate = $oldShiftLock->date_time_of_collection;
+                        $fromShift = $oldShiftLock->shift_code;
+                    } else {
+                        $fromDate = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock->to_date)));
+                        $fromShift = (date('H', strtotime($fromDate)) == 18) ? 2 : 1;
+                    }
+                    $result = [
+                        // Set previous dispatch to date shift +12 hours
+                        'status' => 'success',
+                        'from_datetime' => $fromDate,
+                        'to_datetime' => $shiftLock->date_time_of_collection,
+                        'from_date' => date('d-m-Y', strtotime($fromDate)),
+                        'from_shift' => $fromShift,
+                        // Set - Latest RMRD Shift Lock Date
+                        'to_date' => date('d-m-Y', strtotime($shiftLock->date_time_of_collection)),
+                        'to_shift' => $shiftLock->shift_code,
+                        'physical_stock_only' => 0
+                    ];
+                } else {
+                    $result = [
+                        // Set previous dispatch from date & shift
+                        'status' => 'success',
+                        'from_datetime' => $stock->from_date,
+                        'to_datetime' => $stock->to_date,
+                        'from_date' => date('d-m-Y', strtotime($stock->from_date)),
+                        'from_shift' => $stock->from_shift_code,
+                        'to_date' => date('d-m-Y', strtotime($stock->to_date)),
+                        'to_shift' => $stock->to_shift_code,
+                        'physical_stock_only' => 1,
+                    ];
+                }
+            }
+        } else {
+            if (!empty($is_physical_stock)) {
+                $shift = 1;
+                $date = date('Y-m-d') . ' ' . \Yii::$app->general->getshift($shift);
+                $result = [
+                    'status' => 'success',
+                    'from_datetime' => $date,
+                    'to_datetime' => $date,
+                    'from_date' => date('d-m-Y'),
+                    'from_shift' => $shift,
+                    'to_date' => date('d-m-Y'),
+                    'to_shift' => $shift,
+                    'physical_stock_only' => 2,
+                ];
+            }
+        }
+        $stock_data = [];
+        if (!empty($result['from_datetime']) && !empty($result['to_datetime'])) {
+            $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime,:physical_stock_only)}")
+                    ->bindValue(':from_datetime', date('Y-m-d H:i:s', strtotime($result['from_datetime'])))
+                    ->bindValue(':to_datetime', date('Y-m-d H:i:s', strtotime($result['to_datetime'])))
+                    ->bindValue(':bmc_code', $this->bmc_code)
+                    ->bindValue(':physical_stock_only', $result['physical_stock_only']);
+            $stock_data = $query->queryAll();
+        }
+        $result['stock_data'] = $stock_data;
+
+        $stock_detail = [];
+        if (!empty($stock_data)) {
+            $dispatch_with_milk_type = 0;
+            if (!$is_physical_stock) {
+                $dispatchWithMilkTypeConfig = Yii::$app->general->getUnionConfiguration($bmcData->union_code, 'bmc_dispatch_with_milk_type', 'PORTAL');
+                $dispatch_with_milk_type = ($dispatchWithMilkTypeConfig != '') ? $dispatchWithMilkTypeConfig : 0;
+            }
+            foreach ($stock_data as $r) {
+                $animal_type = $is_physical_stock ? $r['animal_type_code'] : ($dispatch_with_milk_type == '1' ? $r['animal_type_code'] : '3');
+                $key = $r['bmc_silos_info_code'] . '_' . $animal_type . '_' . $r['milk_quality_type_code'];
+                if (empty($stock_detail[$key])) {
+                    $stock_detail[$key]['previous_qty'] = 0;
+                    $stock_detail[$key]['purchase_qty'] = 0;
+                }
+                $stock_detail[$key]['previous_qty'] = $stock_detail[$key]['previous_qty'] + $r['previous_qty'];
+                $stock_detail[$key]['purchase_qty'] = $stock_detail[$key]['purchase_qty'] + $r['purchase_qty'];
+            }
+        }
+        $result['stock_detail'] = $stock_detail;
+        return $result;
+    }
+
+    public function getlastDestTripDetail() {
+        $tripExists = TblVehicleTripDetail::find()
+                ->joinWith(['tripCode'])
+                ->where([
+                    'tbl_vehicle_trip_detail.trip_code' => $this->trip_code,
+                    'tbl_vehicle_trip_detail.arrival_time' => null,
+                    'tbl_vehicle_trip.trip_status' => ['generated', 'open', 'tankerfull'],])
+                ->orderBy(['tbl_vehicle_trip_detail.sequence_no' => SORT_DESC])
+                ->one();
+
+        if (!empty($tripExists)) {
+            $stockDataCreatedAt = TblBmcDispatchStock::find()->select('created_at')->where(['from_date' => $this->from_date, 'to_date' => $this->to_date, 'bmc_code' => $this->bmc_code, 'type' => 'dispatch'])->orderBy(['created_at' => SORT_DESC])->scalar();
+            $laterStockExists = true;
+            if (!empty($stockDataCreatedAt)) {
+                $laterStockExists = TblBmcDispatchStock::find()
+                        ->where(['bmc_code' => $this->bmc_code,])
+                        ->andWhere(['>', 'created_at', $stockDataCreatedAt])
+                        ->exists();
+            }
+            return $laterStockExists ? false : true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getBmcSilosInfoList() {
+        $data = TblBmcSilosInfo::find()->select(['bmc_silos_info_code', 'silo_no'])->where(['module_name' => 'BMC', 'module_code' => $this->bmc_code])->asArray()->all();
+        return ArrayHelper::map($data, 'bmc_silos_info_code', 'silo_no');
+    }
+
+    public function getDispatchData($union, $tripCode, $chamberNo, $org_code) {
+        $bmcMilkDispatchData = [];
+        if (!empty($tripCode) && !empty($chamberNo)) {
+            $bmcMilkDispatchData = $this->find()
+                    ->select(['tbl_bmc_milk_dispatch.plant_code', 'tbl_bmc_milk_dispatch.bmc_code'])
+                    ->joinWith(['bmcMilkDispatchTxnCode'])
+                    ->where(['tbl_bmc_milk_dispatch.union_code' => $union, 'tbl_bmc_milk_dispatch.trip_code' => $tripCode, 'tbl_bmc_milk_dispatch_txn.chamber_no' => $chamberNo])
+                    ->orderBy(['tbl_bmc_milk_dispatch.created_at' => SORT_DESC])
+                    ->one();
+        }
+        if (!empty($bmcMilkDispatchData)) {
+            if (!empty($bmcMilkDispatchData->bmc_code)) {
+                return ['config' => 'BMC_DISPATCH_CONFIG', 'orgType' => 'BMC', 'orgCode' => $bmcMilkDispatchData->bmc_code];
+            } else {
+                return ['config' => 'PLANT_DISPATCH_CONFIG', 'orgType' => 'PLANT', 'orgCode' => $bmcMilkDispatchData->plant_code];
+            }
+        } else {
+            return ['config' => 'PLANT_RECEIPT_CONFIG', 'orgType' => 'PLANT', 'orgCode' => $org_code];
+        }
     }
 
 }

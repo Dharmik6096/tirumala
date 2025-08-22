@@ -24,7 +24,7 @@ use yii\helpers\Url;
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list', 'vehicle-open-list', 'get-vehicle-transpoter'];
+    public $freeAccessActions = ['depend-vehicles', 'get-chamber-list', 'vehicle-open-list', 'get-vehicle-transpoter', 'get-vehicle-detail', 'get-vehicle-list'];
 
     /**
      * Lists all TblVehicleMaster models.
@@ -329,10 +329,10 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $milkReceipt = !empty($parents[3]) && ($parents[3] == 'receipt') ? TRUE : FALSE;
-                $unionCode = $parents[0];
+                $unionCode = $parents[1];
                 $transaction_date = (isset($parents[4]) && !empty($parents[4])) ? date('Y-m-d', strtotime($parents[4])) : date('Y-m-d');
                 $vehicleTripDetailModel = new TblVehicleMaster();
-                $list = $vehicleTripDetailModel->getVehicleMaster($unionCode, $parents[1], $parents[2], $milkReceipt, $transaction_date);
+                $list = $vehicleTripDetailModel->getVehicleMaster($unionCode, $parents[2], $parents[0], $milkReceipt, $transaction_date);
                 foreach ($list as $key => $r) {
                     $out[] = array('id' => $key,
                         'name' => $r);
@@ -341,6 +341,38 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => []]);
+    }
+    
+    public function actionGetVehicleList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && (!empty($parents[1]) || $parents[1] == '0')) {
+
+                $this->model = new TblVehicleMaster();
+                $this->model->union_code = $parents[0];
+                $this->model->vehicle_use_type = $parents[1];
+                $data = $this->model->getVehicleList();
+                foreach ($data as $key => $val) {
+                    $out[] = ['id' => $key, 'name' => $val];
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+    
+    public function actionGetVehicleDetail() {
+        $status = 'error';
+        $vehicleData = [];
+        $postData = Yii::$app->request->post();
+        if (!empty($postData['vehicle_code'])) {
+            $vehicleData = TblVehicleMaster::find()->select(['transporter_code'])->where(['vehicle_code' => $postData['vehicle_code']])->one();
+            $status = 'success';
+        }
+        $record = ['status' => $status, 'data' => $vehicleData];
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

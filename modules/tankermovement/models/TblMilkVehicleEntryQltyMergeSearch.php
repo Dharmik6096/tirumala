@@ -19,8 +19,8 @@ class TblMilkVehicleEntryQltyMergeSearch extends TblMilkVehicleEntryQltyMerge {
      */
     public function rules() {
         return [
-                [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'milk_vehicle_entry_qlty_merge_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'union_code', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'parsing_no', 'from_date', 'to_date'], 'safe'],
-                [['trip_code'], 'required', 'on' => 'update'],
+            [['fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'milk_vehicle_entry_qlty_merge_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'union_code', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'parsing_no', 'from_date', 'to_date', 'tested_by', 'verified_by'], 'safe'],
+            [['trip_code'], 'required', 'on' => 'update'],
         ];
     }
 

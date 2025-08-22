@@ -55,7 +55,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                 [['data_lock'], 'default', 'value' => 0],
                 [['is_active'], 'default', 'value' => 1],
                 [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
-                [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock', 'plant_code', 'mcc_plant_code'], 'safe'],
+                [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock', 'plant_code', 'mcc_plant_code', 'route_ref_code'], 'safe'],
                 [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'morning_grace_time', 'evening_grace_time'], 'number', 'min' => 0],
                 [['morning_arrival_time', 'evening_arrival_time'], 'date', 'format' => 'php:H:i'],
                 [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],

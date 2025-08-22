@@ -58,7 +58,7 @@ class TblMilkVehicleEntryQltyHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['milk_vehicle_entry_qlty_code', 'union_code', 'plant_code', 'vehicle_code', 'arrival_datetime', 'trip_code', 'chamber_no', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'status', 'status_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'lot_datetime', 'lot_no'], 'safe'],
+            [['milk_vehicle_entry_qlty_code', 'union_code', 'plant_code', 'vehicle_code', 'arrival_datetime', 'trip_code', 'chamber_no', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'status', 'status_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'lot_datetime', 'lot_no', 'tested_by', 'verified_by', 'sample_datetime', 'record_status', 'is_qty_only', 'is_pending_merge', 'is_approved'], 'safe'],
         ];
     }
 

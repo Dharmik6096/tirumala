@@ -55,6 +55,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
     public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route, $beneficiary_name, $prefix, $file_name;
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc

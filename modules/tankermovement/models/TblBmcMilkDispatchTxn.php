@@ -2,6 +2,7 @@
 
 namespace app\modules\tankermovement\models;
 
+use app\modules\configuration\models\TblMilkQualityParamRange;
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\globalmaster\models\TblMilkQualityType;
@@ -73,7 +74,7 @@ use app\modules\transporter\models\TblVehicleCompartmentDetail;
  */
 class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code, $trip_code, $vehicle_code;
+    public $from_datetime, $to_datetime, $opening_bal, $purchase_qty, $current_dispatch_qty, $source_type, $source_code, $trip_code, $vehicle_code, $transaction_date, $physical_stock_only, $from_date_tr, $is_clr_input, $original_dispatch_qty;
 
     /**
      * @inheritdoc
@@ -86,23 +87,25 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'bmc_silos_info_code', 'chamber_no', 'qty_diff_type_code', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync', 'createPlantDispatch']],
+        $main_rules = [
+            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'temperature', 'bmc_silos_info_code', 'chamber_no', 'qty_diff_type_code', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync', 'createPlantDispatch', 'createPlantDispatchUpdate']],
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'milk_analyser_type_code', 'ws_code', 'adt_param', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
-            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code'], 'safe'],
+            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code', 'transaction_date', 'test_report_no', 'shift_of_milk', 'physical_stock_only', 'from_date_tr', 'is_clr_input', 'original_dispatch_qty', 'bmc_silos_info_code', 'milk_quality_type_code'], 'safe'],
             [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Chamber Entry for selected milk and silo has been already taken.'), 'on' => 'create'],
-        //     [['milk_type_code'], function ($attribute, $params) {
-        //     Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
-        // }, 'on' => 'create'],
             [['qty_time', 'qlty_time'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['qty_auto', 'qlty_auto', 'is_rejected', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff', 'rtpl', 'amount',], 'default', 'value' => '0'],
             [['milk_type_code'], 'ValidateData', 'on' => 'create'],
-            [['union_code'], 'required', 'except' => ['androidsync']],
-            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'chamber_no'], 'required', 'on' => 'createPlantDispatch'],
+            [['union_code'], 'required', 'except' => ['androidsync', 'update']],
+            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'temperature', 'chamber_no'], 'required', 'on' => 'createPlantDispatch'],
             [['dispatch_qty'], 'ValidateCapacity', 'on' => ['createPlantDispatch', 'create']],
+            [['shift_of_milk'], 'string', 'max' => 25],
+            [['fat'], 'validateQualityRange', 'except' => ['androidsync']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblBmcMilkDispatchTxn', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -166,6 +169,8 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'shift_of_milk' => Yii::t('app', 'Shift Of Milk'),
+            'original_dispatch_qty' => Yii::t('app', 'Original Qty'),
         ];
     }
 
@@ -209,7 +214,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             return;
         }
         // $current_stock_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($this->to_datetime)));
-        $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmcsilomilk_stock_detail (:bmc_code,:silo_code,:milk_type,:quality_type,:with_milk_type,:from_datetime,:to_datetime,:current_stock_date)}")
+        $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmcsilomilk_stock_detail (:bmc_code,:silo_code,:milk_type,:quality_type,:with_milk_type,:from_datetime,:to_datetime,:physical_stock_only)}")
                 ->bindValue(':from_datetime', $this->from_datetime)
                 ->bindValue(':to_datetime', $this->to_datetime)
                 ->bindValue(':bmc_code', $this->bmc_code)
@@ -217,7 +222,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 ->bindValue(':silo_code', $this->bmc_silos_info_code)
                 ->bindValue(':milk_type', $this->milk_type_code)
                 ->bindValue(':with_milk_type', $dispatch_with_milk_type)
-                ->bindValue(':current_stock_date', $this->to_datetime);
+                ->bindValue(':physical_stock_only', $this->physical_stock_only);
         $result = $query->queryAll();
         if (empty($result)) {
             $this->addError('bmc_silos_info_code', Yii::t('app/validation', 'Silo is empty.'));
@@ -225,10 +230,11 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             $this->opening_bal = $result[0]['opening_bal'];
             $this->purchase_qty = $result[0]['purchase_qty'];
             $this->current_dispatch_qty = $result[0]['current_dispatch_qty'];
+            $this->from_date_tr = $result[0]['from_date_tr'];
             $bal = ($this->opening_bal + $this->purchase_qty) - ($this->current_dispatch_qty + $this->dispatch_qty);
-           // $balance = abs($bal);
-            $balance = number_format((float)abs($bal), 2, '.', '');
-            $this->balance_qty = number_format((float)$this->balance_qty, 2, '.', '');
+            // $balance = abs($bal);
+            $balance = number_format((float) abs($bal), 2, '.', '');
+            $this->balance_qty = number_format((float) $this->balance_qty, 2, '.', '');
             if ($this->qty_diff_type_code == 1) {
                 if ($bal < 0) {
                     $this->addError('qty_diff_type_code', Yii::t('app/validation', 'Diff Type is must be Flush.'));
@@ -241,8 +247,8 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 if ($this->qty_diff != $balance) {
                     $this->addError('qty_diff', Yii::t('app/validation', 'Diff. Qty must be ' . $balance . '.'));
                 } else {
-                    $flush_limit = (float) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'bmc_dispatch_flush_limit',$this->bmc_code, 'BMC','BMC_DISPATCH_CONFIG');
-                    $flush_limit = $flush_limit ?: 0; 
+                    $flush_limit = (float) Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'bmc_dispatch_flush_limit', $this->bmc_code, 'BMC', 'BMC_DISPATCH_CONFIG');
+                    $flush_limit = $flush_limit ?: 0;
                     $bmcDispatchFlushWithStock = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'bmc_dispatch_flush_with_stock', 'BMC') == 1 ? TRUE : FALSE;
                     $stock_model = new TblBmcDispatchStock();
                     $stock_model->bmc_code = $this->bmc_code;
@@ -251,7 +257,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                     $stock_model->bmc_silos_info_code = $this->bmc_silos_info_code;
                     $stock_model->milk_quality_type_code = $this->milk_quality_type_code;
                     $stock_data = $stock_model->getStockEntry();
-                    if(!empty($stock_data)){
+                    if (!empty($stock_data)) {
                         $act_milk = $bmcDispatchFlushWithStock ? ($stock_data->opening_bal + $stock_data->purchase_qty) : $stock_data->purchase_qty;
                     } else {
                         $act_milk = $bmcDispatchFlushWithStock ? ($this->opening_bal + $this->purchase_qty) : $this->purchase_qty;
@@ -299,26 +305,26 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getCompartmentWiseDispatchData() {
         $dispatchData = TblBmcMilkDispatchtxn::find()
-            ->select(['chamber_no', 'SUM(dispatch_qty) as total_qty'])
-            ->where(['bmc_milk_dispatch_code' => TblBmcMilkDispatch::find()
-                ->select('bmc_milk_dispatch_code')
-                ->where(['trip_code' => $this->trip_code])
-            ])
-            ->groupBy('chamber_no')
-            ->asArray()
-            ->all();
-    
+                ->select(['chamber_no', 'SUM(dispatch_qty) as total_qty'])
+                ->where(['bmc_milk_dispatch_code' => TblBmcMilkDispatch::find()
+                    ->select('bmc_milk_dispatch_code')
+                    ->where(['trip_code' => $this->trip_code])
+                ])
+                ->groupBy('chamber_no')
+                ->asArray()
+                ->all();
+
         $chamberWiseQty = [];
         foreach ($dispatchData as $data) {
             $chamberWiseQty[$data['chamber_no']] = $data['total_qty'];
         }
-    
+
         $compartmentCapacities = TblVehicleCompartmentDetail::find()
-            ->select(['compartment_no', 'capacity'])
-            ->where(['vehicle_code' => $this->vehicle_code])
-            ->asArray()
-            ->all();
-    
+                ->select(['compartment_no', 'capacity'])
+                ->where(['vehicle_code' => $this->vehicle_code])
+                ->asArray()
+                ->all();
+
         $result = [];
         foreach ($compartmentCapacities as $compartment) {
             $compartmentNo = $compartment['compartment_no'];
@@ -327,8 +333,82 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 'capacity' => $compartment['capacity']
             ];
         }
-            
+
         return $result;
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        if ($insert) {
+            $tripModel = new TblVehicleTrip();
+            $bmcMilkDispatchCode = $this->bmcMilkDispatchCode;
+            $tripModel->attributes = $bmcMilkDispatchCode->attributes;
+            $tripModel->transaction_date = date('Y-m-d');
+            $tripModel->trip_status = 'open';
+            $tripModel->trip_sub_status = $bmcMilkDispatchCode['source_org_type'] . '_dispatch_C' . $this->chamber_no;
+            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');  
+            $tripDetail = TblVehicleTripDetail::find()->where([
+                    'challan_no' => $bmcMilkDispatchCode['challan_no'],
+                    'trip_code' => $bmcMilkDispatchCode['trip_code'],
+                ])->one();
+            $tripDetailCode = '';
+            if ($tripDetail !== null) {
+                $tripDetailCode = $tripDetail->vehicle_trip_detail_code;
+            }
+            $trackingDetail = ['visibility_status' => 0, 'module_code' => $tripDetailCode, 'module_type' => 'tbl_vehicle_trip_detail'];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+        }
+    }
+
+    public function generateTestReportNo() {
+        $isBmc = !empty($this->bmc_code);
+        $prefix = $isBmc ? 'B' : 'P';
+        $refCode = $isBmc ? $this->bmcCode->ref_code : $this->plantCode->ref_code;
+        $year = date('Y', strtotime($this->transaction_date));
+        $pattern = "{$prefix}/{$refCode}/{$year}/";
+
+        $testReportNo = $this->find()
+                ->select(['test_report_no'])
+                ->where(['like', 'test_report_no', $pattern . '%', false])
+                ->orderBy(['test_report_no' => SORT_DESC])
+                ->limit(1)
+                ->scalar();
+
+        if (!empty($testReportNo) && preg_match('/(\d{4})$/', $testReportNo, $matches)) {
+            $lastIncrement = (int) $matches[1];
+            $nextIncrement = $lastIncrement + 1;
+        } else {
+            $nextIncrement = 1;
+        }
+
+        $autoInc = str_pad($nextIncrement, 4, '0', STR_PAD_LEFT);
+        return "{$prefix}/{$refCode}/{$year}/{$autoInc}";
+    }
+
+    public function validateQualityRange($attribute, $params) {
+        if ($this->is_clr_input != '') {
+            $for = $this->bmc_code ? 'BMC' : 'PLANT';
+            $processName = $this->bmc_code ? 'BMC_MILK_DISPATCH' : 'PLANT_MILK_DISPATCH';
+            $orgCode = $this->bmc_code ? $this->bmc_code : $this->plant_code;
+            $milkQualityParamRangeModel = new TblMilkQualityParamRange();
+            $milkQualityParamRangeModel->union_code = $this->union_code;
+            $milkQualityParamRangeModel->process_name = $processName;
+            $milkQualityParamRangeModel->org_type = $for;
+            $milkQualityParamRangeModel->org_code = $orgCode;
+            $milkQualityParamRangeModel->animal_type_code = $this->milk_type_code;
+            $range = $milkQualityParamRangeModel->getQualityRange();
+            if (!empty($range)) {
+                if ($this->fat < $range->min_fat || $this->fat > $range->max_fat) {
+                    $this->addError('fat', "FAT should be between " . $range->min_fat . " and " . $range->max_fat);
+                }
+                if (($this->snf < $range->min_snf || $this->snf > $range->max_snf) && $this->is_clr_input == 0) {
+                    $this->addError('snf', "SNF should be between " . $range->min_snf . " and " . $range->max_snf);
+                }
+                if (($this->clr < $range->min_clr || $this->clr > $range->max_clr) && $this->is_clr_input == 1) {
+                    $this->addError('clr', "CLR should be between " . $range->min_clr . " and " . $range->max_clr);
+                }
+            }
+        }
     }
 
 }

@@ -10,6 +10,8 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\tankermovement\models\TblPartyMaster;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_plant".
@@ -51,29 +53,29 @@ class TblPlant extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['name', 'union_code'], 'required'],
-                [['plant_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-                [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
-                [['email'], 'email'],
+            [['name', 'union_code'], 'required'],
+            [['plant_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
+            [['email'], 'email'],
             //[['plant_code'], 'unique'],
             [['name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
+            [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['mobile_no'], function ($attribute, $params) {
+            [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['mobile_no'], 'string', 'max' => 10],
-                [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code'], 'safe'],
-                [['capacity'], 'integer'],
-                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['mobile_no'], 'string', 'max' => 10],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code', 'is_virtual_plant'], 'safe'],
+            [['capacity'], 'integer'],
+            [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
 //            [['plant_code'], 'integer', 'min' => 1],
 //            [['plant_code'], 'string', 'max' => 6],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code_ex', 'vendor_code', 'ref_code'], 'safe'],
-                ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblPlant', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -108,6 +110,7 @@ class TblPlant extends \app\models\ChildModel {
             'valid_from' => Yii::t('app', 'Valid From'),
             'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
+            'is_virtual_plant' => Yii::t('app', 'is Virtual Plant?'),
         ];
     }
 
@@ -176,15 +179,15 @@ class TblPlant extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant' => 1]);
     }
 
-    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
-        $value = $this->getPlant($unionCode, $RLS, $notIn);
+    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false, $type = '') {
+        $value = $this->getPlant($unionCode, $RLS, $notIn, $type);
         $value = ArrayHelper::map($value, 'plant_code', function($value) use ($concatCode) {
                     return $value->name . ($concatCode ? ' - ' . $value->plant_code : ' - ' . $value->ref_code);
                 });
         return $value;
     }
 
-    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = []) {
+    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = [], $type = '') {
         $query = $this->find()->select(['plant_code', 'name', 'ref_code'])
                 ->where(['is_active' => 1]);
         if (!empty($unionCode))
@@ -195,6 +198,10 @@ class TblPlant extends \app\models\ChildModel {
         if (!empty($notIn)) {
             $query->andWhere(['not in', 'plant_code', $notIn]);
         }
+        if (!empty($type) && $type == 'tankerMilkDispatch') {
+            $query->andWhere(['in', 'is_virtual_plant', [0, NULL]]);
+        }
+
         return $query->orderBy('name asc')->all();
     }
 
@@ -264,8 +271,18 @@ class TblPlant extends \app\models\ChildModel {
 
     public function getPlantData($plant_code) {
         $partyList = $this->find()->select(["CONCAT(plant_code, '#plant') AS plant_code, CONCAT(name, ' - ', ref_code, ' - PLANT') AS name"])
-        ->where(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
+                        ->where(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
         return ArrayHelper::map($partyList, 'plant_code', 'name');
+    }
+
+    public function getParty() {
+        return TblPartyMaster::find()->alias('p')->select(['p.party_master_code', 'p.party_name', 'p.sap_vendor_code'])
+                        ->leftJoin('tbl_plant_conversion_vendor_mapping m', 'p.party_master_code = m.party_master_code')
+                        ->where(['p.party_type' => 'conversion_vendor'])
+                        ->andWhere(['m.party_master_code' => null])
+                        ->orderBy(['p.party_name' => SORT_ASC])
+                        ->asArray()
+                        ->all();
     }
 
 }

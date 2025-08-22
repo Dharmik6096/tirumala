@@ -530,6 +530,31 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'CcSubStandardMrg';
         return $this->actionIndex();
     }
+    
+    public function actionDmrCheckList() {
+        $this->report = 'DmrCheckList';
+        return $this->actionIndex();
+    }
+
+    public function actionDmrWeightedAverage() {
+        $this->report = 'DmrWeightedAverage';
+        return $this->actionIndex();
+    }
+    
+    public function actionMccBonusReport() {
+        $this->report = 'MccBonusReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionMccMaintanceReport() {
+        $this->report = 'MccMaintanceReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionMccVlcRecieptRouteWise() {
+        $this->report = 'MccVlcRecieptRouteWise';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1262,6 +1287,37 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'MRG Report ',
                 'bkg_export' => TRUE,
             ],
+            'DmrCheckList' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code,p_customer_type,p_customer_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DMRCheckList',
+                'scenario' => 'DmrCheckList',
+                'title' => 'BMC Check List',
+            ],
+            'DmrWeightedAverage' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DMRWeightedAverage',
+                'scenario' => 'DmrWeightedAverage',
+                'title' => 'Route wise Weighted Average',
+            ],
+            'MccBonusReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/MccBonusReport',
+                'scenario' => 'MccBonusReport',
+                'title' => 'MCC Bonus',
+            ],
+            'MccMaintanceReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/MccMaintanceReport',
+                'scenario' => 'MccMaintanceReport',
+                'title' => 'Mcc maintenance',
+            ],
+            'MccVlcRecieptRouteWise' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/MccVlcRecieptRouteWise',
+                'scenario' => 'MccVlcRecieptRouteWise',
+                'title' => 'Mcc Vlc Reciept Route Wise',
+            ],
+            
         ];
         return $label[$l];
     }

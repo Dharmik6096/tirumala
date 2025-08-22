@@ -27,6 +27,7 @@ use yii\bootstrap\ActiveForm;
                         'id' => 'widget-mapping-form',
             ]);
             ?>     
+            <?= Html::hiddenInput('union_code', $mappingModel->union_code, ['id' => 'union_code']); ?>
             <?= Html::hiddenInput('login_type', $mappingModel->login_type, ['id' => 'login_type']); ?>
             <?= Html::hiddenInput('department', $mappingModel->department, ['id' => 'department']); ?>
 

@@ -12,7 +12,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'label' => 'Company', 'value' => function($model) {
+        ['attribute' => 'union_code', 'label' => Yii::t('app', 'Company'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'plant_code', 'label' => 'Plant', 'value' => function($model) {

@@ -82,7 +82,7 @@ class TblMccPlant extends \app\models\ChildModel {
                 [['email'], 'string', 'max' => 50],
                 [['email'], 'email'],
                 [['name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);

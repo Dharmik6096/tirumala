@@ -71,7 +71,8 @@ class TblPartyMasterSearch extends TblPartyMaster
             ->andFilterWhere(['like', 'party_contact_no', $this->party_contact_no])
             ->andFilterWhere(['like', 'owner_name', $this->owner_name])
             ->andFilterWhere(['like', 'owner_contact_no', $this->owner_contact_no])
-            ->andFilterWhere(['like', 'owner_email', $this->owner_email]);
+            ->andFilterWhere(['like', 'owner_email', $this->owner_email])
+            ->andFilterWhere(['like', 'sap_vendor_code', $this->sap_vendor_code]);
 
         return $dataProvider;
     }

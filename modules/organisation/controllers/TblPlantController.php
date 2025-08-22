@@ -20,6 +20,9 @@ use app\modules\organisation\models\TblPlantDockMapping;
 use app\modules\organisation\models\TblPlantDockMappingSearch;
 use yii\helpers\Url;
 use app\modules\organisation\models\TblPlantDockMappingHistory;
+use app\modules\organisation\models\TblPlantConversionVendorMapping;
+use app\modules\organisation\models\TblPlantConversionVendorMappingHistory;
+use app\modules\organisation\models\TblPlantConversionVendorMappingSearch;
 
 /**
  * TblPlantController implements the CRUD actions for TblPlant model.
@@ -289,7 +292,8 @@ class TblPlantController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
                 $plants = new TblPlant();
-                $data = $plants->getPlantList($parents[0]);
+                $rls = (!empty($parents[1]) && strtoupper($parents[1]) == 'FALSE') ? 'FALSE' : 'TRUE';
+                $data = $plants->getPlantList($parents[0], $rls);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -355,6 +359,79 @@ class TblPlantController extends \app\controllers\ChildController {
         $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Plant Dock Mapping', 'delete']);
         if ($transaction == 'customRedirect') {
             return $this->redirect(['index']);
+        }
+    }
+
+    public function actionConversionVendorMapping($id) {
+        $model = $this->findModel($id);
+        $partyList = $model->getParty();
+        $list = [];
+        $searchModel = new TblPlantConversionVendorMappingSearch();
+        $searchModel->plant_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        foreach ($partyList as $party) {
+            $list[$party['party_master_code']] = $party['party_name'] . ' - ' . $party['sap_vendor_code'];
+        }
+        $mapping = new TblPlantConversionVendorMapping();
+        $mapping->plant_code = $id;
+        if (Yii::$app->request->post()) {
+            $selectedCodes = Yii::$app->request->post('TblPlantConversionVendorMapping')['party_master_code'];
+            if (!empty($selectedCodes)) {
+                $saveModels = [];
+                $validateFalse = 0;
+                foreach ($selectedCodes as $partyCode) {
+                    $modelNew = new TblPlantConversionVendorMapping();
+                    $modelNew->union_code = $model->union_code;
+                    $modelNew->plant_code = $id;
+                    $modelNew->party_master_code = $partyCode;
+
+                    if ($modelNew->validate()) {
+                        $saveModels[] = $modelNew;
+                    } else {
+                        $validateFalse++;
+                        Yii::$app->session->addFlash('error', 'Validation failed for party: ' . $partyCode);
+                    }
+                }
+                if ($validateFalse == 0) {
+                    $transaction = $this->generalModel->saveTransaction($saveModels, ['Conversion Vendor Mapping', 'create']);
+                    if ($transaction) {
+                        Yii::$app->session->addFlash('success', 'Mapping saved.');
+                        return $this->redirect(['conversion-vendor-mapping', 'id' => $id]);
+                    } else {
+                        Yii::$app->session->addFlash('error', 'Transaction failed. No mapping saved.');
+                    }
+                }
+            } else {
+                $mapping->addError('party_master_code', 'Please select at least one party.');
+            }
+        }
+        return $this->render('_conversion_vendor_mapping', [
+                    'plantModel' => $model,
+                    'model' => $mapping,
+                    'list' => $list,
+                    'selected' => [],
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDeleteMapping() {
+        $saveModel = [];
+        $deleteModel = [];
+        $this->model = TblPlantConversionVendorMapping::findOne(Yii::$app->request->post('id'));
+        if (!empty($this->model)) {
+            $historyModel = new TblPlantConversionVendorMappingHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $saveModel[] = $historyModel;
+            $deleteModel[] = $this->model;
+            $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Party', 'delete']);
+            if ($transaction == 'customRedirect') {
+                $this->redirect(['conversion-vendor-mapping', 'id' => $this->model->plant_code]);
+            }
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
         }
     }
 

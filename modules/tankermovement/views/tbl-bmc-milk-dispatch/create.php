@@ -8,8 +8,9 @@ $this->title = Yii::$app->label->title('create', 'BMC Milk Dispatch');
         $this->render('_form', [
             'model' => $model,
             'txn_model' => $txn_model,
-            'type' => 'create',
-            'tripGenerateBtn' => $tripGenerateBtn
+            'type' => $txnEdit ? 'edit' : 'create',
+            'tripGenerateBtn' => $tripGenerateBtn,
+            'txnEdit' => $txnEdit,
         ])
         ?>
     </div>

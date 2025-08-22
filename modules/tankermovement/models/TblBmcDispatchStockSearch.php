@@ -50,7 +50,8 @@ class TblBmcDispatchStockSearch extends TblBmcDispatchStock {
         ]);
 
         $this->load($params);
-        $query->joinWith(['bmcCode']);
+
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'fromShiftCode', 'toShiftCode', 'milkType', 'milkQualityType', 'silosInfoCode', 'qtyDiffType']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_dispatch_stock', 'tbl_bmc_dispatch_stock', 'tbl_bmc_dispatch_stock');
 
         if (!$this->validate()) {
@@ -67,30 +68,30 @@ class TblBmcDispatchStockSearch extends TblBmcDispatchStock {
         $from_date = date('Y-m-d', strtotime($this->from_date));
         $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
         $from_date .= ' ' . $from_shift;
-        $query->andWhere(['>=', 'transaction_date', $from_date]);
+        $query->andWhere(['>=', 'tbl_bmc_dispatch_stock.transaction_date', $from_date]);
 
         $to_date = date('Y-m-d', strtotime($this->to_date));
         $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
         $to_date .= ' ' . $to_shift;
-        $query->andWhere(['<=', 'transaction_date', $to_date]);
+        $query->andWhere(['<=', 'tbl_bmc_dispatch_stock.transaction_date', $to_date]);
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'milk_quality_type_code' => $this->milk_quality_type_code,
-            'milk_type_code' => $this->milk_type_code,
+            'tbl_bmc_dispatch_stock.milk_quality_type_code' => $this->milk_quality_type_code,
+            'tbl_bmc_dispatch_stock.milk_type_code' => $this->milk_type_code,
         ]);
 
-        $query->andFilterWhere(['like', 'bmc_dispatch_stock_code', $this->bmc_dispatch_stock_code])
-                ->andFilterWhere(['like', 'type', $this->type])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'fat', $this->fat])
-                ->andFilterWhere(['like', 'snf', $this->snf])
-                ->andFilterWhere(['like', 'opening_bal', $this->opening_bal])
-                ->andFilterWhere(['like', 'balance_qty', $this->balance_qty])
-                ->andFilterWhere(['like', 'purchase_qty', $this->purchase_qty])
-                ->andFilterWhere(['like', 'qty_diff', $this->qty_diff])
-                ->andFilterWhere(['like', 'bmc_silos_info_code', $this->bmc_silos_info_code])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
+        $query->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.bmc_dispatch_stock_code', $this->bmc_dispatch_stock_code])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.type', $this->type])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.fat', $this->fat])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.snf', $this->snf])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.opening_bal', $this->opening_bal])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.balance_qty', $this->balance_qty])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.purchase_qty', $this->purchase_qty])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.qty_diff', $this->qty_diff])
+                ->andFilterWhere(['like', 'tbl_bmc_silos_info.silo_no', $this->bmc_silos_info_code])
+                ->andFilterWhere(['like', 'tbl_bmc_dispatch_stock.remarks', $this->remarks])
                 ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
         return $dataProvider;
     }

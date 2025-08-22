@@ -86,7 +86,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false],
                 [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
@@ -600,4 +600,11 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->find()->where(['bmc_code' => $this->bmc_code])->all();
     }
 
+    public function getBmcPlantList() {
+        return $this->find()
+            ->select('plant_code')
+            ->distinct()
+            ->where(['is_active' => 1])
+            ->all();
+    }
 }

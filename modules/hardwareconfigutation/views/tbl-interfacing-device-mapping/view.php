@@ -24,7 +24,7 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                             [
                             'attribute' => 'union_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
-                            'label' => 'Company',
+                            'label' => Yii::t('app', 'Company'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [

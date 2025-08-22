@@ -175,7 +175,7 @@ if($('#tbldcspurchaseratebased-0-deduction_type').val()=='' || $('#tbldcspurchas
                     $('#tbldcspurchaseratebased-0-quality_param_code').append('<option value='+value+'>' + item + '</option>');
                 });
         }
-    $('#tbldcspurchaseratebased-0-milk_type_code').on('blur',function(){
+    $('#tbldcspurchaseratebased-0-milk_type_code').on('change',function(){
 
             var data = $('#purchase_rate').val();
             var obj = $.parseJSON(data);

@@ -243,8 +243,8 @@ $attribute = [
             return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => FALSE, 'visible' => false],
         ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
-        ['attribute' => 'is_security_cheque', 'filter' => FALSE, 'visible' => FALSE, 
-            'value' => function($model) {
+        ['attribute' => 'is_security_cheque', 'filter' => FALSE, 'visible' => FALSE,
+        'value' => function($model) {
             return ($model->is_security_cheque == 1) ? 'Yes' : 'No';
         }],
         ['attribute' => 'cheque_number', 'filter' => FALSE, 'visible' => FALSE],
@@ -276,7 +276,7 @@ $grid_option = [
         'update' => function ($url, $model) use ($pending_approval) {
             $class = '';
             if (!$pending_approval) {
-                $class = ($model->is_active === 0 || $model->status != 'Pending') ? 'link-disable' : '';
+                $class = ($model->is_active === 0 || ($model->status != 'Pending' && $model->status != 'Reroute')) ? 'link-disable' : '';
             }
             $name = $model->dcs_name;
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
@@ -286,7 +286,7 @@ $grid_option = [
             if ($pending_approval) {
                 return false;
             }
-            $disable = ($model->status == 'Pending') ? '' : 'disabled';
+            $disable = ($model->status == 'Pending' || $model->status == 'Reroute') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code], $options);
         },

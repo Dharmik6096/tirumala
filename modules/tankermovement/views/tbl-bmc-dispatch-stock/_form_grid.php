@@ -65,7 +65,9 @@ $attribute = [
         ['attribute' => 'balance_qty'],
         ['attribute' => 'fat'],
         ['attribute' => 'snf'],
-        ['attribute' => 'bmc_silos_info_code'],
+        ['attribute' => 'bmc_silos_info_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->silosInfoCode, 'silo_no');
+        }, 'vAlign' => 'middle'],
         ['attribute' => 'qty_diff_type_code', 'label' => 'Qty Diff Type',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');

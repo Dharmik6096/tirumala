@@ -54,14 +54,14 @@ class TblMilkTransferHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['milk_transfer_code', 'source_type', 'destination_type'], 'safe'],
-                [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
-                [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
-                [['fat', 'snf', 'qty', 'temp'], 'safe'],
-                [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['operation_type', 'history_created_by', 'history_created_at'], 'safe'],
-                [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
+            [['milk_transfer_code', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code', 'is_rechilling'], 'safe'],
+            [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
+            [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
+            [['fat', 'snf', 'qty', 'temp'], 'safe'],
+            [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['operation_type', 'history_created_by', 'history_created_at'], 'safe'],
+            [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
         ];
     }
 
@@ -102,6 +102,8 @@ class TblMilkTransferHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'transaction_datetime' => Yii::t('app', 'Transaction Date'),
+            'shift_code' => Yii::t('app', 'Shift'),
         ];
     }
 

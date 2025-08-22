@@ -48,7 +48,7 @@ use app\modules\globalmaster\models\TblVehicleType;
  */
 class TblMilkVehicleEntryQltyMerge extends ChildModel {
 
-    public $config_code;
+    public $config_code, $is_clr_input;
 
     /**
      * @inheritdoc
@@ -61,12 +61,15 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['config_code', 'union_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'created_at', 'updated_at', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['fat', 'snf', 'chamber_no', 'trip_code'], 'required', 'except' => ['androidsync']],
-                [['is_qty_only', 'is_pending_merge', 'is_approved'], 'default', 'value' => 1],
-                ['chamber_no', 'unique', 'targetAttribute' => ['chamber_no', 'trip_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+        $main_rules = [
+            [['config_code', 'union_code', 'is_qty_only', 'is_pending_merge', 'is_approved', 'originating_type', 'fat', 'snf', 'clr', 'water', 'density', 'protein', 'lactose', 'freezing_point', 'mbrt', 'temp', 'acidity', 'created_at', 'updated_at', 'plant_code', 'vehicle_code', 'trip_code', 'chamber_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'tested_by', 'verified_by', 'is_clr_input'], 'safe'],
+            [['fat', 'snf', 'chamber_no', 'trip_code'], 'required', 'except' => ['androidsync']],
+            [['is_qty_only', 'is_pending_merge', 'is_approved'], 'default', 'value' => 1],
+            ['chamber_no', 'unique', 'targetAttribute' => ['chamber_no', 'trip_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblMilkVehicleEntryQltyMerge', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -126,12 +129,20 @@ class TblMilkVehicleEntryQltyMerge extends ChildModel {
     }
 
     public function getConfigResult() {
-        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_merge_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty_merge']);
+        return TblConfigTxnResult::findOne(['ref_code' => (string) $this->milk_vehicle_entry_qlty_merge_code, 'config_code' => $this->config_code, 'config_for' => 'PLANT_QUALITY_RECEIPT', 'ref_table' => 'tbl_milk_vehicle_entry_qlty_merge']);
     }
 
     public function getPlant($trip_code) {
         return TblVehicleTripDetail::find()->select(['source_org_code', 'vehicle_code'])
                         ->where(['is_last_destination' => 1, 'source_org_type' => 'plant', 'trip_code' => $trip_code])->one();
+    }
+
+    public function GetClrInput() {
+        $isClrInput = Yii::$app->general->getCheckBmcConfiguration($this->union_code, 'is_clr_input', $this->plant_code, 'PLANT', 'PLANT_RECEIPT_CONFIG');
+        if ($isClrInput == '') {
+            $isClrInput = Yii::$app->general->getUnionConfiguration($this->union_Code, 'is_clr_input', 'PORTAL');
+        }
+        $this->is_clr_input = $isClrInput;
     }
 
 }

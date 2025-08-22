@@ -185,7 +185,7 @@ class TblDcsProvisionalController extends ChildController {
                 $this->model->vendor_code = $this->model->vendor;
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if ($this->model->status == 'Pending') {
+                    if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
                         return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
                     } else {
                         return $this->redirect(['pending-approval']);

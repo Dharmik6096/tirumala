@@ -41,7 +41,7 @@ $depend = 'tblmilkvehicleentrysearch';
     </div>
     <div class="col-sm-2">
         <?= Html::hiddenInput('trip_type', 'alltrip', ['id' => 'trip_type']); ?>
-        <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentrysearch-vehicle_code,tblmilkvehicleentrysearch-from_date,tblmilkvehicleentrysearch-to_date', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
+        <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblmilkvehicleentrysearch-vehicle_code,trip_type,tblmilkvehicleentrysearch-from_date,tblmilkvehicleentrysearch-to_date', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
     </div>
     <div class="col-sm-2 mt20">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

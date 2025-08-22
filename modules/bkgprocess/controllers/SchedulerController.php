@@ -636,10 +636,21 @@ class SchedulerController extends ChildController {
                     if (method_exists($existData, 'updateChildRecord')) {
                         $existData->updateChildRecord($existData, $status);
                     }
+                    $is_active = $existData->is_active;
                     $existData->is_active = $status;
                     $sentboxArray = [];
                     $encrypt = $modelMaster->encryptModel($existData->attributes);
                     $existData->setAttributes($encrypt);
+                    $unionCode = $row->union_code;
+                    if (!isset($uniqueUnionConfigData[$unionCode])) {
+                        $uniqueUnionConfigData[$unionCode] = Yii::$app->general->getUnionConfiguration($unionCode, 'reset_data_on_deactivation', 'PORTAL');
+                    }
+                    if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                        $historyModelName = $model_name . 'History';
+                        $modelHistory = new $historyModelName();
+                        Yii::$app->operation->history($existData, $modelHistory, UPDATE);
+                        $existData->resetData();
+                    }
                     if (!empty($existData->customer_type)) {
                         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $existData->bmc_code);
                     } else {
@@ -657,18 +668,10 @@ class SchedulerController extends ChildController {
                             $row->data_post_status = $success;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
-                            $unionCode = $row->union_code;
-                            if (!isset($uniqueUnionConfigData[$unionCode])) {
-                                $uniqueUnionConfigData[$unionCode] = Yii::$app->general->getUnionConfiguration($unionCode, 'reset_data_on_deactivation', 'PORTAL');
-                            }
                             if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
-                                $historyModelName = $model_name . 'History';
-                                $modelHistory = new $historyModelName();
-                                Yii::$app->operation->history($existData, $modelHistory, UPDATE);
-                                $modelHistory->save();
-                                $existData->resetData();
-                                $existData->save(TRUE, FALSE);
-                                $row->remarks = $row->remarks . ' Deactivation CBPA Removed';
+                                $decrypt = $modelMaster->decryptModel($existData);
+                                $existData->setAttributes($decrypt);
+                                $row->remarks = trim($row->remarks . ' Deactivation CBPA Removed');
                             }
                             $row->save(FALSE);
                             $statusModel = new TblDcsVendorStatus();
@@ -696,6 +699,12 @@ class SchedulerController extends ChildController {
                                 }
                             }
                         }
+                    }
+                    if (!empty($uniqueUnionConfigData[$unionCode]) && $status == '0') {
+                        $modelHistory->save();
+                        $existData->is_active = $is_active;
+                        $existData->is_sentbox = FALSE;
+                        $existData->save(TRUE, FALSE);
                     }
                 }
             }

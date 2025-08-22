@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_milk_transfer".
@@ -57,26 +58,24 @@ class TblMilkTransfer extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['source_type', 'destination_type'], 'default', 'value' => 'BMC'],
-                [['milk_transfer_code'], 'safe'],
-                [['milk_transfer_code', 'from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type'], 'required', 'except' => 'androidsync'],
-                [['to_date', 'to_shift'], 'required', 'when' => function ($model) {
-                    return $model->transfer_type == 0;
-                }, 'whenClient' => "function (attribute, value) {
-              return $('#tblmilktransfer-transfer_type').val() == '0';
-          }", 'except' => 'androidsync'],
-                [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
-                [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
-                [['fat', 'snf', 'qty', 'temp'], 'safe'],
-                [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['fat', 'snf', 'qty'], 'number'],
-                [['fat', 'snf', 'qty', 'transfer_type'], 'default', 'value' => 0],
-                [['fat', 'qty', 'snf'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
-                [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
-                ['source_code', 'compare', 'compareAttribute' => 'destination_code', 'operator' => '!=', 'when' => function ($model) {
+            [['source_type', 'destination_type'], 'default', 'value' => 'BMC'],
+            [['transaction_datetime', 'shift_code', 'is_rechilling'], 'safe'],
+            [['from_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'source_type', 'destination_type', 'transaction_datetime', 'shift_code', 'to_date', 'to_shift'], 'required', 'except' => 'androidsync'],
+            [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
+            [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
+            [['fat', 'snf', 'qty', 'temp'], 'safe'],
+            [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['fat', 'snf', 'qty'], 'number'],
+            [['fat', 'snf', 'qty', 'transfer_type'], 'default', 'value' => 0],
+            [['fat', 'qty', 'snf'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
+            [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
+            ['source_code', 'compare', 'compareAttribute' => 'destination_code', 'operator' => '!=', 'when' => function ($model) {
                     return $model->source_type == $model->destination_type;
                 }, 'message' => Yii::t('app/validation', 'Source and Destination must not be same.')],
+            [['to_date'], 'validateToDate'],
+            [['transaction_datetime'], 'transactionDateValidate'],
+            [['is_rechilling'], 'integer'],
         ];
     }
 
@@ -115,6 +114,9 @@ class TblMilkTransfer extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'source_type' => Yii::t('app', 'Source Type'),
             'destination_type' => Yii::t('app', 'Destination Type'),
+            'transaction_datetime' => Yii::t('app', 'Transaction Date'),
+            'shift_code' => Yii::t('app', 'Shift'),
+            'is_rechilling' => Yii::t('app', 'Is Rechilling ?'),
         ];
     }
 
@@ -162,12 +164,30 @@ class TblMilkTransfer extends \app\models\ChildModel {
         return $this->hasOne(TblShift::className(), ['id' => 'to_shift']);
     }
 
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->to_date) && !empty($this->from_date) && ($this->from_date > $this->to_date)) {
+            $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than or Equal to From Date.'));
+            return false;
+        }
+    }
+
+    public function transactionDateValidate($attribute, $params) {
+        if ($this->to_date > $this->transaction_datetime) {
+            $this->addError($attribute, Yii::t('app/validation', 'Transaction Date Must be Greater Than or Equal to To Date.'));
+            return false;
+        }
+    }
+
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         $code = $this->transfer_type == 1 ? $this->destination_code : $this->source_code;
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $code, '', '');
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $this);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {

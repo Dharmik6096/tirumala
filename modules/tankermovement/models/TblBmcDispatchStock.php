@@ -66,18 +66,18 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['bmc_dispatch_stock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift_code', 'to_date', 'to_shift_code', 'from_shift_code', 'from_date', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'fat', 'snf', 'opening_bal', 'purchase_qty', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync']],
-                [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_shift_code', 'from_date'], 'safe'],
-                [['transaction_date', 'to_date', 'created_at', 'updated_at', 'from_date', 'from_shift_code'], 'safe'],
-                [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
-                [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
-                [['type'], 'default', 'value' => 'dispatch'],
-                [['closing_bal', 'water'], 'default', 'value' => 0],
-                [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
-                [['type'], 'unique', 'targetAttribute' => ['to_date', 'bmc_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'type'], 'message' => Yii::t('app/validation', 'BMC Dispatch Stock has been already taken.'), 'on' => 'create'],
-                [['to_date'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
-                [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
-                [['qty_diff'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
+            [['bmc_dispatch_stock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift_code', 'to_date', 'to_shift_code', 'from_shift_code', 'from_date', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'fat', 'snf', 'opening_bal', 'purchase_qty', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync']],
+            [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_shift_code', 'from_date', 'from_date_tr'], 'safe'],
+            [['transaction_date', 'to_date', 'created_at', 'updated_at', 'from_date', 'from_shift_code'], 'safe'],
+            [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
+            [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
+            [['type'], 'default', 'value' => 'dispatch'],
+            [['closing_bal', 'water'], 'default', 'value' => 0],
+            [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
+            [['type'], 'unique', 'targetAttribute' => ['to_date', 'bmc_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'type'], 'message' => Yii::t('app/validation', 'BMC Dispatch Stock has been already taken.'), 'on' => 'create'],
+            [['to_date'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
+            [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
+            [['qty_diff'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
         ];
     }
 
@@ -127,10 +127,7 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
     }
 
     public function getStockEntry() {
-        return $this->find()
-                        ->where(['bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'milk_type_code' => $this->milk_type_code,
-                            'bmc_silos_info_code' => $this->bmc_silos_info_code, 'milk_quality_type_code' => $this->milk_quality_type_code])
-                        ->one();
+        return $this->find()->where(['bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'milk_type_code' => $this->milk_type_code, 'bmc_silos_info_code' => $this->bmc_silos_info_code, 'milk_quality_type_code' => $this->milk_quality_type_code])->orderBy(['created_at' => SORT_DESC])->one();
     }
 
     public function getUnionCode() {

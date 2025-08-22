@@ -20,6 +20,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                             'id' => 'widget-mapping-form',
                 ]);
                 ?>
+                <?= Html::hiddenInput('union_code', $model->union_code, ['id' => 'union_code']); ?>
                 <?= Html::hiddenInput('login_type', $model->login_type, ['id' => 'login_type']); ?>
                 <?= Html::hiddenInput('department', $model->department, ['id' => 'department']); ?>
 

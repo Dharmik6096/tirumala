@@ -173,7 +173,7 @@ if (!empty($filter_data)) {
                                             </div>
                                         <?php } else if (isset($value_array[1]) && $value_array[1] == 'union_vehicle') { ?>
                                             <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, $field_class . '-f_union_code', 'form-group col-sm-3'); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, $field_class . '-f_union_code', 'form-group col-sm-3'); ?>
                                             </div>
                                         <?php } else { ?>
                                             <div class="col-sm-3">
@@ -333,8 +333,8 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status'))) {
-                                        $flag  = isset($value_array[1]) ? $value_array[1] : $value;
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status', 'quality_config_process_name'))) {
+                                        $flag = isset($value_array[1]) ? $value_array[1] : $value;
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
@@ -391,6 +391,14 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'area_code'); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('mcc_user_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->UserList($model, $form, $field_class . '-f_mcc_code', 'mcc_user_code', FALSE, FALSE, FALSE, '/tms/tbl-user-tracking-movement/user-list'); ?>
+                                        </div>
+                                    <?php } ?> 
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">

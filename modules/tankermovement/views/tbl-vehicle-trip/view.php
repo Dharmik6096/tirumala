@@ -157,7 +157,23 @@ $is_button_visible = true;
                         'columns' => [
                             [
                                 'attribute' => 'trip_sub_status',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'no_of_compartment',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'vehicle_capacity',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'remark',
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
@@ -259,6 +275,17 @@ $is_button_visible = true;
                         }
                     ],
                     ['attribute' => 'out_remarks', 'label' => (Yii::t('app', 'GateOut Remarks')),],
+                    [
+                        'attribute' => 'is_virtual_location',
+                        'label' => Yii::t('app', 'Location Type'),
+                        'value' => function ($model) {
+                            $labels = [
+                                1 => 'conversion_vendor',
+                                2 => 'virtual_plant',
+                            ];
+                            return $labels[$model->is_virtual_location] ?? '';
+                        },
+                    ],
                 ];
                 $cnt = 0;
                 $ctnDep = 0;
@@ -275,7 +302,7 @@ $is_button_visible = true;
                             $type = strtolower($model->source_org_type);
                             $RLS = ($type == 'plant' && $userType == 4 && in_array($model->source_org_code, $allowedPlants)) ||
                                     ($type == 'bmc' && $userType == 6 && in_array($model->source_org_code, $allowedBmcs)) ||
-                                    ($type == 'party' && in_array($userType, [3, 4]));
+                                    ($type == 'party' && (($model->is_virtual_location == 1 && in_array($model->destination_code, $allowedPlants)) || ($model->is_virtual_location != 1 && in_array($userType, [3, 4]))));
                             if ($cnt == 0) {
                                 $cnt++;
                                 return '';
@@ -292,7 +319,7 @@ $is_button_visible = true;
                             $type = strtolower($model->source_org_type);
                             $RLS = ($type == 'plant' && $userType == 4 && in_array($model->source_org_code, $allowedPlants)) ||
                                     ($type == 'bmc' && $userType == 6 && in_array($model->source_org_code, $allowedBmcs)) ||
-                                    ($type == 'party' && in_array($userType, [3, 4]));
+                                    ($type == 'party' && (($model->is_virtual_location == 1 && in_array($model->destination_code, $allowedPlants)) || ($model->is_virtual_location != 1 && in_array($userType, [3, 4]))));
                             if ($model->is_last_destination == 1) {
                                 return '';
                             }

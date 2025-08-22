@@ -279,11 +279,11 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_alert_notification',
             ],
             'menu/master' => [
-                'param' => 'login_type#department',
+                'param' => 'union#login_type#department',
                 'sp' => 'sp_app_eipl_v1_menu_master'
             ],
             'user-widget/list' => [
-                'param' => 'login_type#department',
+                'param' => 'union#login_type#department',
                 'sp' => 'sp_app_eipl_v1_user_widget',
             ],
             'dashboard/bmc-mcc' => [

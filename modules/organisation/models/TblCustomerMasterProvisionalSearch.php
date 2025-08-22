@@ -22,12 +22,12 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'customer_code', 'customer_code_ex', 'customer_name', 'customer_type', 'sap_code', 'refference_code', 'address', 'local_name', 'local_address', 'gst_no', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'ccenter_code', 'ref_code', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'vendor_code', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'sap_vendor_code', 'customer_category', 'distance_from_mcc', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'contact_person', 'email', 'mobile_no', 'local_contact_person', 'department', 'firstname', 'lastname', 'surname', 'local_firstname', 'local_lastname', 'local_surname', 'status', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'morning_kms', 'evening_kms', 'customer_provisional_code', 'auto_code', 'data_post_status', 'animal_type_code', 'originating_type'], 'safe'],
-            [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'from_date', 'to_date', 'table_name', 'report_type'], 'safe'],
-            [['from_date', 'to_date'], 'required', 'on' => 'ApprovedAttachmentDetails'],
-            [['from_date',], function ($attribute, $params) {
-                Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-            }, 'on' => 'ApprovedAttachmentDetails'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'customer_code', 'customer_code_ex', 'customer_name', 'customer_type', 'sap_code', 'refference_code', 'address', 'local_name', 'local_address', 'gst_no', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'ccenter_code', 'ref_code', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'vendor_code', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'sap_vendor_code', 'customer_category', 'distance_from_mcc', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'contact_person', 'email', 'mobile_no', 'local_contact_person', 'department', 'firstname', 'lastname', 'surname', 'local_firstname', 'local_lastname', 'local_surname', 'status', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'morning_kms', 'evening_kms', 'customer_provisional_code', 'auto_code', 'data_post_status', 'animal_type_code', 'originating_type'], 'safe'],
+                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'from_date', 'to_date', 'table_name', 'report_type'], 'safe'],
+                [['from_date', 'to_date'], 'required', 'on' => 'ApprovedAttachmentDetails'],
+                [['from_date',], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'on' => 'ApprovedAttachmentDetails'],
         ];
     }
 
@@ -71,7 +71,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             // $query->where('0=1');
             return $dataProvider;
         }
-        
+
         if (!$pending_approval) {
             $query->andFilterWhere(['tbl_customer_master_provisional.status' => $this->status]);
         }
@@ -81,7 +81,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
 
         $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
         $query->andFilterWhere(['<=', 'cast(tbl_customer_master_provisional.created_at as date)', $this->to_date]);
-        
+
         // grid filtering conditions
         $query->andFilterWhere([
             'customer_provisional_code' => $this->customer_provisional_code,
@@ -174,7 +174,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($member->provisional_status) == 'inprogress';
             });
             $pendingProvisionalMembers = array_filter($provisionalMembers, function($member) {
-                return strtolower($member->provisional_status) == 'pending';
+                return strtolower($member->provisional_status) == 'pending' || strtolower($member->provisional_status) == 'reroute';
             });
             $registeredProvisionalMembers = array_filter($provisionalMembers, function($member) {
                 return strtolower($member->provisional_status) == 'register';
@@ -183,7 +183,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($member->provisional_status) == 'reject';
             });
             $results[] = [
-                'process_name' =>  Yii::t('app', 'Provisional Member') ,
+                'process_name' => Yii::t('app', 'Provisional Member'),
                 'table_name' => 'tbl_member_provisional',
                 'approved_count' => count($approvedProvisionalMembers),
                 'inprogress_count' => count($inprogressProvisionalMembers),
@@ -205,7 +205,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($society->status) == 'inprogress';
             });
             $pendingProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
-                return strtolower($society->status) == 'pending';
+                return strtolower($society->status) == 'pending' || strtolower($society->status) == 'reroute';
             });
             $registerProvisionalSocieties = array_filter($provisionalSocieties, function($society) {
                 return strtolower($society->status) == 'register';
@@ -236,7 +236,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 return strtolower($vendor->status) == 'inprogress';
             });
             $pendingProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
-                return strtolower($vendor->status) == 'pending';
+                return strtolower($vendor->status) == 'pending' || strtolower($vendor->status) == 'reroute';
             });
             $registerProvisionalVendors = array_filter($provisionalVendors, function($vendor) {
                 return strtolower($vendor->status) == 'register';
@@ -261,5 +261,5 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             'pagination' => false
         ]);
     }
-    
+
 }

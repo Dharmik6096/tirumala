@@ -226,18 +226,17 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3])) {
-                if (strtolower($parents[2]) == 'dcs') {
+                if (strtolower($parents[0]) == 'dcs') {
                     $mccs = new TblDcs();
-                    $data = $mccs->getBMCDCSList($parents[1], 'TRUE', '', $parents[3]);
+                    $data = $mccs->getBMCDCSList($parents[2], 'TRUE', '', $parents[3]);
                 } else {
                     $model = new TblCustomerMaster();
-                    $data = $model->getActivateCustomerCodeList($parents[0], $parents[1], $parents[2], $parents[3]);
+                    $data = $model->getActivateCustomerCodeList($parents[1], $parents[2], $parents[0], $parents[3]);
                 }
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
-                return;
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);

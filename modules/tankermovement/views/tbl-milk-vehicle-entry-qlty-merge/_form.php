@@ -5,11 +5,9 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
-?>
-<?php
+use yii\web\View;
+
 $url = Url::to(['/tankermovement/tbl-milk-vehicle-entry-qlty-merge/qlty-submit', 'TblMilkVehicleEntry' => ['trip_code' => $model->trip_code]]);
-?>
-<?php
 $form = ActiveForm::begin([
             'options' => [
                 'class' => 'form-group popup-form',
@@ -36,10 +34,10 @@ $form = ActiveForm::begin([
                     <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 1 ? true : false])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 0 ? true : false])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -64,6 +62,12 @@ $form = ActiveForm::begin([
                 </div>
                 <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'tested_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'verified_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <?php
                 $index = 1;
@@ -138,3 +142,108 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+<?php
+$script = "
+    var union = `$model->union_code`;
+    var is_clr_input = `$model->is_clr_input`;
+    var plantCode = `$model->plant_code`;
+
+    $(document).on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-clr, #tblmilkvehicleentryqltymerge-snf, #tblmilkvehicleentryqltymerge-chamber_no', function() {
+        calculateClr();
+    });
+    
+    $(document).ready(function() {
+        checkQualityRanges();
+    });
+
+    function calculateClr(){
+        var fat = $('#tblmilkvehicleentryqltymerge-fat').val();
+        var snf = $('#tblmilkvehicleentryqltymerge-snf').val();
+        var clr = $('#tblmilkvehicleentryqltymerge-clr').val();
+        var chamberNo = $('#tblmilkvehicleentryqltymerge-chamber_no').val();
+        var tripCode = $('#tblmilkvehicleentryqltymergesearch-trip_code').val();
+
+        is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqltymerge-clr').val('');
+        is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqltymerge-snf').val('');
+
+        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr))) && setData(chamberNo) && setData(tripCode)){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['calculate-clr']) . "',
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'chamberNo':chamberNo,'tripCode':tripCode},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        if(is_clr_input==0) {
+                            $('#tblmilkvehicleentryqltymerge-clr').val(obj.data);
+                        } else {
+                            $('#tblmilkvehicleentryqltymerge-snf').val(obj.data);
+                        }
+                    }
+                },
+                error:function(data){
+                }
+            });
+        }
+    }
+
+    function checkQualityRanges(){
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['get-quality-param-range']) . "',
+            data: {'union':union, 'plantCode':plantCode},
+            success: function(data) {  
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success') {
+                    var range = obj.data;
+                    var minFat = parseFloat(range.min_fat);
+                    var maxFat = parseFloat(range.max_fat);
+                    var minSnf = parseFloat(range.min_snf);
+                    var maxSnf = parseFloat(range.max_snf);
+                    var minClr = parseFloat(range.min_clr);
+                    var maxClr = parseFloat(range.max_clr);
+                    function showError(fieldName, min, max) {
+                        var msg = fieldName + ' should be between ' + min + ' and ' + max;
+                        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                    }
+                    $(document).off('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-snf, #tblmilkvehicleentryqltymerge-clr').on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-snf, #tblmilkvehicleentryqltymerge-clr', function () {
+                        var fat = parseFloat($('#tblmilkvehicleentryqltymerge-fat').val());
+                        var snf = parseFloat($('#tblmilkvehicleentryqltymerge-snf').val());
+                        var clr = parseFloat($('#tblmilkvehicleentryqltymerge-clr').val());
+
+                        if (!isNaN(fat) && (fat < minFat || fat > maxFat)) {
+                            showError('FAT', minFat, maxFat);
+                            $('#tblmilkvehicleentryqltymerge-fat').val('');
+                        }
+                        if (!$('#tblmilkvehicleentryqltymerge-snf').is('[readonly]')) {
+                            var snf = parseFloat($('#tblmilkvehicleentryqltymerge-snf').val());
+                            if (!isNaN(snf) && (snf < minSnf || snf > maxSnf)) {
+                                showError('SNF', minSnf, maxSnf);
+                                $('#tblmilkvehicleentryqltymerge-snf').val('');
+                            }
+                        }
+                        if (!$('#tblmilkvehicleentryqltymerge-clr').is('[readonly]')) {
+                            var clr = parseFloat($('#tblmilkvehicleentryqltymerge-clr').val());
+                            if (!isNaN(clr) && (clr < minClr || clr > maxClr)) {
+                                showError('CLR', minClr, maxClr);
+                                $('#tblmilkvehicleentryqltymerge-clr').val('');
+                            }
+                        }
+                    });
+                }
+            },
+            error:function(data){
+            }
+        }); 
+    };
+
+    function setData(field = '') {
+        if (field !== '' && field !== null && field !== undefined && field !== 'Loading ...') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+";
+$this->registerJs($script, View::POS_END, 'milk-vehicle-entry-qlty-merge-script');
+?>

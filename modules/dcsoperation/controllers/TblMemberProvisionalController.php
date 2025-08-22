@@ -202,7 +202,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code, $this->model);
             }
             $this->model->member_code = $this->model->getCode();
-            $provisionalStatus = ['Register', 'Pending', 'Inprogress'];
+            $provisionalStatus = ['Register', 'Pending', 'Inprogress', 'Reroute'];
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code', 'provisional_status'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code, $provisionalStatus]);
             if ($validate == 1 && $this->model->validate()) {
@@ -215,7 +215,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 if ($transaction == 'customRedirect') {
                     if ($config == 1) {
                         return $this->redirect(['member-detail', 'id' => $this->model->provisional_member_code]);
-                    } else if ($config == 0 && $this->model->provisional_status == 'Pending') {
+                    } else if ($config == 0 && ($this->model->provisional_status == 'Pending' || $this->model->provisional_status == 'Reroute')) {
                         return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
                     } else {
                         return $this->redirect(['pending-approval']);
@@ -347,7 +347,20 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         if ($config == 1) {
                             $modelStages = new TblApprovalStagesDetail();
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
-                            $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+                            if (!empty($approval_stages)) {
+                                $status = 'Register';
+                            }
+                            if (!empty(Yii::$app->request->post()['operation'] == 'reroute')) {
+                                $model = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
+                                $historyModel = new TblMemberProvisionalHistory();
+                                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                                $save_model[] = $historyModel;
+                                $model->remarks = !empty(Yii::$app->request->post()['remarks']) ? Yii::$app->request->post()['remarks'] : '';
+                                if (!empty($approval_stages)) {
+                                    $status = 'Reroute';
+                                }
+                            }
+                            $model->provisional_status = empty($approval_stages) ? 'Approve' : $status;
                             if (strtolower($model->provisional_status) == 'approve') {
                                 $model->member_status = 1; //Created
                             }

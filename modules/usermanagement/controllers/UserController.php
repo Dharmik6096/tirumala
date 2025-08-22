@@ -56,6 +56,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $this->model->is_active = 1;
             $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
             $this->model->last_password_updated_at = date('Y-m-d H:i:s');
+            $this->model->date_of_joining = !empty($this->model->date_of_joining) ? date('Y-m-d', strtotime($this->model->date_of_joining)) : NULL;
 
             //Assign Role
             $master = [];
@@ -124,6 +125,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $model->load(Yii::$app->request->post());
                     $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
+                    $model->date_of_joining = !empty($model->date_of_joining) ? date('Y-m-d', strtotime($model->date_of_joining)) : NULL;
+                    $master[] = $historyModel;
                     $master[] = $model;
 
                     if ($model->oldAttributes['allow_app_login'] == 1 && $model->allow_app_login == 1) {
@@ -445,7 +448,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $delete = [];
             $historyModel = new UserHistory();
             Yii::$app->operation->history($model, $historyModel, UPDATE);
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->load(Yii::$app->request->post());
+            if ($model->validate() && !empty($model->email)) {
                 if ($tableName == "{{%user}}") {
                     $model->load(Yii::$app->request->post());
                     $model->last_password_updated_at = date('Y-m-d H:i:s');
@@ -475,11 +479,15 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $master[] = $notificationModel;
                     }
                 }
-                $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['Password', 'edit']);
+            } else {
+                $model->addError('password', Yii::t('app', 'Email Is Not Available for This user'));
+                return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
+            }
 
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
-                }
+            $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['Password', 'edit']);
+
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['index']);
             }
         }
         $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
@@ -529,10 +537,10 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         if (empty($modelData) && !empty($app_organization)) {
             $organization = $app_organization;
-            if(!empty(Yii::$app->request->post()['TblUserOrganizationMapping'])){
+            if (!empty(Yii::$app->request->post()['TblUserOrganizationMapping'])) {
                 $postData = Yii::$app->request->post();
                 $organization = $model->getOrganizationsArray($id, $postData['user_type'], $postData['TblUserOrganizationMapping']);
-            }  
+            }
         } else {
             $organization = $model->getOrganizationsArray($id, $user->user_type_id);
         }

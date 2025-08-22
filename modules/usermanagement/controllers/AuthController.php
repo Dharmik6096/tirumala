@@ -48,14 +48,16 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
 
         if ($model->load(Yii::$app->request->post())) {
             $model->username = $identity->organization_code . '#' . $model->username;
-            if($model->validatePassword(true, $userCode)){
+            if ($model->validatePassword(true, $userCode, $maxLoginAttempts)) {
                 return $this->redirect(['change-password', 'userCode' => $userCode]);
-            } else if ($model->login()) {
+            } else if (empty($maxLoginAttempts) && $model->login()) {
                 return $this->redirect(['/site/dashboard']);
             } else {
+                if (!empty($maxLoginAttempts)) {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Your account is temporarily suspended. Please try again after ' . $maxLoginAttempts . ' minute(s).']);
+                }
                 $model->username = $_POST['LoginForm']['username'];
             }
-                
         }
         Yii::$app->session->set('Login-sess', 'User');
         return $this->renderIsAjax($loginFile, compact('model'));
@@ -66,27 +68,27 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         if (empty($userCode)) {
             return $this->goHome();
         }
-    
+
         $user = User::findOne(['id' => $userCode, 'is_active' => 1]);
 
         $model = new ChangeOwnPasswordForm(['user' => $user]);
-    
+
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
-    
+
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate() && $model->changePassword()) {
                 return $this->render('changePassword', ['model' => $model, 'passwordChanged' => true]);
             }
             if (!$model->hasErrors()) {
-                Yii::$app->session->setFlash('success', ['type' => 'error','message' => 'Failed to change password. Please check your inputs.']);
+                Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'Failed to change password. Please check your inputs.']);
             }
         } else {
             Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'Your Password is Expired. Kindly update your password.']);
         }
-    
+
         return $this->render('changePassword', ['model' => $model, 'passwordChanged' => false]);
     }
 

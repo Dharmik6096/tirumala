@@ -71,19 +71,16 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->transaction_datetime = date('Y-m-d H:i:s');
             $model->status = 'pending';
-            $qaInspectionData = $model->find()->where(['vehicle_code' => $model->vehicle_code])->andWhere(['<>', 'status', 'closed'])->all();
-            if (!empty($qaInspectionData)) {
-                foreach ($qaInspectionData as $key => $inspectionData) {
-                    $historyModel = new TblVehicleQaInspectionHistory();
-                    Yii::$app->operation->history($inspectionData, $historyModel, UPDATE);
-                    $inspectionData->status = 'closed';
-                    $saveModel[] = $historyModel;
-                    $saveModel[] = $inspectionData;
-                }
+            $hasFailedConfig = false;
+
+            $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
+            $configDataFilter = array_column($config_data, 'config_result');
+            if (in_array(0, $configDataFilter)) {
+                $hasFailedConfig = true;
+                $model->status = 'rejected';
             }
             $saveModel[] = $model;
 
-            $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
             $cnt = 1;
             foreach ($config_data as $data) {
                 $config_model = new TblConfigTxnResult();
@@ -95,21 +92,37 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                 $auto_key_config['TblConfigTxnResult'][] = ['self_key' => 'ref_code', 'parent_key' => 'vehicle_qa_inspection_code', 'parent_index' => 0];
                 $cnt++;
             }
+
+            $qaInspectionData = $model->find()->where(['vehicle_code' => $model->vehicle_code])->andWhere(['=', 'status', 'pending'])->all();
+            if (!empty($qaInspectionData)) {
+                foreach ($qaInspectionData as $key => $inspectionData) {
+                    $historyModel = new TblVehicleQaInspectionHistory();
+                    Yii::$app->operation->history($inspectionData, $historyModel, UPDATE);
+                    $inspectionData->status = 'closed';
+                    $saveModel[] = $historyModel;
+                    $saveModel[] = $inspectionData;
+                }
+            }
+
             if (!empty($model->trip_code) && !empty($model->vehicle_code)) {
                 $tripDetail = TblVehicleTrip::find()->where(['trip_code' => $model->trip_code, 'vehicle_code' => $model->vehicle_code, 'is_active' => 1, 'trip_sub_status' => 'qa_pending', 'trip_status' => 'closed'])->one();
                 $historyModel = new TblVehicleTripHistory();
                 Yii::$app->operation->history($tripDetail, $historyModel, UPDATE);
                 $tripDetail->sub_status_time = date('Y-m-d H:i:s');
-                $tripDetail->trip_sub_status = 'tanker_qualified';
+                $tripDetail->trip_sub_status = $hasFailedConfig ? 'cleaning_pending' : 'tanker_qualified';
                 $saveModel[] = $historyModel;
                 $saveModel[] = $tripDetail;
             }
             $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Vehicle QA Inspection', 'create'], $auto_key_config);
             if ($transaction == 'customRedirect') {
                 if (!empty($model->trip_code)) {
-                    Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $model->remarks);
+                    if ($hasFailedConfig) {
+                        $tripDetail->trip_sub_status = 'qa_rejected';
+                    }
+                    $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $trackingDetail, $model->remarks);
                 }
-                $this->redirect(['index']);
+                return $this->redirect(['index']);
             }
         }
         return $this->render('create', [

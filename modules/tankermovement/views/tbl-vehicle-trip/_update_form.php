@@ -43,11 +43,23 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput(['readonly' => $readonly]) ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'no_of_compartment')->textInput(['readonly' => $readonly]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'vehicle_capacity')->textInput(['readonly' => $readonly]) ?>
+    </div>
     <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['disabled' => $readonly])->label('Is Partial Trip?'); ?>
     </div>
+    <div class="col-sm-8">
+        <?= $form->field($model, 'remark')->textInput(['readonly' => $readonly]) ?>
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true); ?>
+        <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true); ?>
     </div>
     <div class="col-sm-6">
         <label class="control-label">Dispatch already taken</label>
@@ -55,14 +67,19 @@ $form = ActiveForm::begin([
             <?php
             if(!empty($model->takenTripDetailCode)) {
                 foreach($model->takenTripDetailCode as $key => $value) { 
-                    $name = '';
-                    $response = Yii::$app->general->getColumnName($value->source_org_type);
-                    if (!empty($response['rel'])) {
-                        $sourceData = $value->{$response['rel'] . 'Source'};
-                        $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
-                    } ?>
-                    <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
-                <?php
+                    if($value->is_virtual_location != 2){
+                        $name = '';
+                        $response = Yii::$app->general->getColumnName($value->source_org_type);
+                        if (!empty($response['rel'])) {
+                            $sourceData = $value->{$response['rel'] . 'Source'};
+                            $name = $sourceData->{$response['name']} . ' - '. $sourceData->{$response['ref_code']};
+                            if($value->is_virtual_location == 1){
+                                $name = $sourceData->{$response['name']} . ' - conversion vendor '. $sourceData->{$response['ref_code']};
+                            }
+                        } ?>
+                        <p><?php echo $name . ' - ' . strtoupper($value->source_org_type); ?></p>
+                    <?php
+                    }
                 }
             }
             ?>

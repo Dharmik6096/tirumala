@@ -236,9 +236,19 @@ class GeneralFunctions extends Component {
             }
     }
 
-    public function validateDiscriptiveField($model, $attribute) {
+    public function validateDiscriptiveField($model, $attribute, $has_strict_address_validation = TRUE) {
         if (!empty($model->$attribute)) {
-            if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+            $validationFailed = FALSE;
+            if ($has_strict_address_validation) {
+                if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            } else {
+                if (preg_match('/[<>&"\']/', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            }
+            if ($validationFailed) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '.'));
                 return false;
             }
@@ -1426,7 +1436,7 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ex_member_code');
-            } else if(strtolower($type) == 'bmc') {
+            } else if (strtolower($type) == 'bmc') {
                 $name = $this->getforeignkey($model->bmcCode, 'bmc_code_ex');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
@@ -1434,7 +1444,7 @@ class GeneralFunctions extends Component {
         } else if ($bmcCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'bmc_code');
-            } else if(strtolower($type) == 'bmc') {
+            } else if (strtolower($type) == 'bmc') {
                 $name = $this->getforeignkey($model->bmcCode, 'bmc_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'bmc_code');
@@ -1444,7 +1454,7 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'ref_code');
             } else if (strtolower($type) == 'member') {
                 $name = $this->getforeignkey($model->memberCode, 'ref_code');
-            } else if(strtolower($type) == 'bmc') {
+            } else if (strtolower($type) == 'bmc') {
                 $name = $this->getforeignkey($model->bmcCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
@@ -1558,7 +1568,7 @@ class GeneralFunctions extends Component {
             $model->customer_type = 'DCS';
             $dcs = new TblDcs();
             $model->customer_code = $dcs->validDcs($model->customer_code, $model->bmc_code);
-        } else if(strtoupper($model->customer_type) == 'PARTY'){
+        } else if (strtoupper($model->customer_type) == 'PARTY') {
             $model->customer_type = strtoupper($model->customer_type);
             $party = new TblGeneralPartyMaster();
             $model->customer_code = $party->validateGenaralPartyCode($model->customer_code, $model->bmc_code);
@@ -1601,8 +1611,8 @@ class GeneralFunctions extends Component {
     public function validateGeneratePartyMasterCode($model) {
         if (!empty($model->customer_code) && strtolower($model->customer_type) == 'party') {
             $modelData = TblGeneralPartyMaster::find()
-                        ->where(['general_party_master_code' => $model->customer_code])
-                        ->one();
+                    ->where(['general_party_master_code' => $model->customer_code])
+                    ->one();
             return !empty($modelData) ? $modelData->party_name : '';
         }
     }
@@ -2133,11 +2143,11 @@ class GeneralFunctions extends Component {
     public function validateBMC($model, $attribute, $hierarchy = FALSE, $check_vendor = FALSE) {
         $bmcModel = new TblDcsBmc();
         $query = $bmcModel->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code']);
-            if($check_vendor){
-                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
-            } else {
-                $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
-            }
+        if ($check_vendor) {
+            $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute], ['sap_vendor_code' => $model->$attribute]]);
+        } else {
+            $query->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]]);
+        }
         $records = $query->all();
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->bmc_code;
@@ -2420,7 +2430,7 @@ class GeneralFunctions extends Component {
                 $value = 'Pendrive Import';
             }
         }
-        return $value;
+        return Yii::t('app', $value);
     }
 
     public function validateEmail($model, $attribute, $params, $check_char = false) {
@@ -2950,13 +2960,16 @@ class GeneralFunctions extends Component {
         return [$fromDate, $toDate];
     }
 
-    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+    public function setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks = '') {
         if (!empty($trip)) {
             $tripTrackingModel = new TblVehicleTripTracking();
             $tripTrackingModel->attributes = $trip->attributes;
             $tripTrackingModel->trip_date = $trip->transaction_date;
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
             $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
+            $tripTrackingModel->visibility_status = $trackingDetail['visibility_status'];
+            $tripTrackingModel->module_code = $trackingDetail['module_code'];
+            $tripTrackingModel->module_type = $trackingDetail['module_type'];
             $tripTrackingModel->save(TRUE, FALSE);
         }
     }
@@ -2982,20 +2995,20 @@ class GeneralFunctions extends Component {
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
-    public function calculateData($config, $union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '') {
+    public function calculateData($config, $union = '', $orgCode = '', $fat = '', $snf = '', $clr = '', $orgType = '', $is_clr_input = '') {
         $response = [];
 
-        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, $customer_type, $config);
-        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, $customer_type, $config);
+        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $orgCode, $orgType, $config);
+        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $orgCode, $orgType, $config);
         if ($lr1 == '' || $lr2 == '') {
             $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
             $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');
         }
-        
+
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 
-        $response['clr'] = $is_clr_input == 0 ? ($snf - ($fat * $lr1) - $lr2) * 4 : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
+        $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format((($clr / 4) + ($fat * $lr1) + $lr2), 2);
 
         return $response;
     }

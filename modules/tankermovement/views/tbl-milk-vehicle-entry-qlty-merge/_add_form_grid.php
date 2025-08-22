@@ -31,6 +31,8 @@ $attribute = [
         'value' => function ($model) {
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_pending_merge');
         },],
+        ['attribute' => 'tested_by', 'filter' => false],
+        ['attribute' => 'verified_by', 'filter' => false],
 ];
 foreach ($config_list as $config) {
     $attribute[] = [

@@ -51,6 +51,7 @@ echo GhostMenu::widget([
                 //['label' => Yii::t('app', 'Route'), 'url' => ['/organisation/tbl-routes/index'], 'active' => ($cntrl == 'tbl-routes')],
                 ['label' => Yii::t('app', 'Route Mapping'), 'url' => ['/organisation/tbl-route-mapping/index'], 'active' => ($cntrl == 'tbl-route-mapping')],
                     ['label' => Yii::t('app', 'Society'), 'url' => ['/organisation/tbl-dcs/index'], 'active' => ($cntrl == 'tbl-dcs' || (Yii::$app->request->get('type') == 'dcs' || Yii::$app->request->get('type') == 'DCS'))],
+                    ['label' => Yii::t('app', 'DCS Location Details'), 'url' => ['/dcsoperation/tbl-dcs-location-detail/index'], 'active' => ($cntrl == 'tbl-dcs-location-detail')],
                     ['label' => Yii::t('app', 'Competitors'), 'url' => ['/organisation/tbl-competitors/index'], 'active' => ($cntrl == 'tbl-competitors')],
                     ['label' => Yii::t('app', 'Vendor/Customer'), 'url' => ['/organisation/tbl-customer-master/index'], 'active' => ($cntrl == 'tbl-customer-master')],
                     ['label' => Yii::t('app', 'Member'), 'url' => ['/dcsoperation/tbl-member/index'], 'active' => ($cntrl == 'tbl-member')],
@@ -147,6 +148,7 @@ echo GhostMenu::widget([
                 ],
                     ['label' => Yii::t('app', 'Allow Manual Collection Range'), 'url' => ['/collection/tbl-allow-manual-collection-range/index'], 'active' => ($cntrl == 'tbl-allow-manual-collection-range')],
                     ['label' => Yii::t('app', 'Milk Collection'), 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
+                    ['label' => Yii::t('app', 'Sample Milk Collection'), 'url' => ['/collection/tbl-sample-milk-collection/index'], 'active' => ($cntrl == 'tbl-sample-milk-collection')],
                     ['label' => Yii::t('app', 'Milk Collection Special'), 'url' => ['/collection/tbl-milk-collection-special-code/index'], 'active' => ($cntrl == 'tbl-milk-collection-special-code')],
                     ['label' => Yii::t('app', 'QTY Import Approval'), 'url' => ['/collection/tbl-collection-data-alias/qty-import-approval'], 'active' => ($cntrl == 'tbl-collection-data-alias' && ($action == 'qty-import-approval'))],
                     ['label' => Yii::t('app', 'Manual Collection Approval'), 'url' => ['/collection/tbl-collection-approval/index'], 'active' => ($cntrl == 'tbl-collection-approval')],
@@ -197,6 +199,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tanker Milk Quality'), 'url' => ['/tankermovement/tbl-milk-vehicle-entry-qlty-merge/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry-qlty-merge' && $action == 'index')],
                             ['label' => 'Vehicle Cleaning Detail', 'url' => ['/tankermovement/tbl-vehicle-cleaning-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-cleaning-inspection')],
                             ['label' => 'Vehicle QA Inspection Detail', 'url' => ['/tankermovement/tbl-vehicle-qa-inspection/index'], 'active' => ($cntrl == 'tbl-vehicle-qa-inspection')],
+                            ['label' => 'Flush Qty Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-flush-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-flush-stock')],
                             ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
                             ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
                             ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
@@ -606,6 +609,7 @@ echo GhostMenu::widget([
                                     ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill 2'), 'url' => ['/misreports/reports/farmer-payment-wise-milk-wise']],
                                     ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
@@ -663,6 +667,8 @@ echo GhostMenu::widget([
                                     ['label' => '226 -' . Yii::t('app', 'Route Wise CDA'), 'url' => ['/misreports/reports/route-wise-cda-format']],
                                     ['label' => '227 -' . Yii::t('app', 'Milk Dispatch List'), 'url' => ['/misreports/reports/milk-dispatch-list']],
                                     ['label' => '228 -' . Yii::t('app', 'Milk Reject List'), 'url' => ['/misreports/reports/milk-reject-list']],
+                                    ['label' => '229 -' . Yii::t('app', 'Mcc Vlc Reciept Route Wise'), 'url' => ['/jasperreports/default/mcc-vlc-reciept-route-wise']],
+                                    ['label' => '230 -' . Yii::t('app', 'MCC Day wise Summary'), 'url' => ['/misreports/reports/mcc-milk-bill-details-mcc-day-wise']],
                             ]
                         ],
                             [
@@ -822,6 +828,8 @@ echo GhostMenu::widget([
                             ['label' => '632-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-sbd']],
                             ['label' => '633-' . Yii::t('app', 'Member and Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-bill-elanad'], 'visible' => User::canRoute(['/jasperreports/default/vendor-bill-elanad']) ? (($eiplCode == 'ELANAD') ? TRUE : FALSE) : FALSE],
                             ['label' => '634-' . Yii::t('app', 'Bank Advice'), 'url' => ['/jasperreports/default/bank-advice']],
+                            ['label' => '635-' . Yii::t('app', 'Mcc Milk Bill Details With Incentive Route Wise'), 'url' => ['/misreports/reports/mcc-milk-bill-details-with-incentive-route-wise']],
+                            ['label' => '636-' . Yii::t('app', 'Milk Purchase'), 'url' => ['/misreports/reports/mis-milk-purchase']],
                     ]
                 ],
                     [
@@ -922,6 +930,7 @@ echo GhostMenu::widget([
                             ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
                             ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
+                            ['label' => '922-' . Yii::t('app', 'Asset Detail Summary'), 'url' => ['/misreports/reports/asset-detail-summary']],
                     ]
                 ],
                     [
@@ -944,6 +953,8 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'CC Truck Slip'), 'url' => ['/jasperreports/default/cc-truck-slip']],
                                     ['label' => Yii::t('app', 'DMR Report'), 'url' => ['/jasperreports/default/dmr-report']],
                                     ['label' => Yii::t('app', 'MRG Report'), 'url' => ['/jasperreports/default/cc-sub-standard-mrg']],
+                                    ['label' => Yii::t('app', 'BMC Check List'), 'url' => ['/jasperreports/default/dmr-check-list']],
+                                    ['label' => Yii::t('app', 'Route wise Weighted Average'), 'url' => ['/jasperreports/default/dmr-weighted-average']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
@@ -974,6 +985,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Milk Collection Status Detail'), 'url' => ['/misreports/reports/milk-collection-status-detail']],
                             ['label' => Yii::t('app', 'Qty Slab Report Format 1'), 'url' => ['/misreports/reports/vlc-qty-slab-wise-category']],
                             ['label' => Yii::t('app', 'Qty Slab Report Format 2'), 'url' => ['/misreports/reports/avg-per-vlc-milk-qty-slab-wise-category']],
+                            ['label' => Yii::t('app', 'Mcc Bonus'), 'url' => ['/jasperreports/default/mcc-bonus-report']],
+                            ['label' => Yii::t('app', 'Mcc maintenance'), 'url' => ['/jasperreports/default/mcc-maintance-report']],
                     ]
                 ],
                     [
@@ -1034,6 +1047,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
                             ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
+                            ['label' => Yii::t('app', 'User Attendance Details'), 'url' => ['/misreports/reports/user-attendance-details']],
                     ]
                 ],
             ],
@@ -1087,6 +1101,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Task Type'), 'url' => ['/tms/tbl-task-type/index'], 'active' => ($cntrl == 'tbl-task-type')],
                             ['label' => Yii::t('app', 'Form Type'), 'url' => ['/tms/tbl-form-type/index'], 'active' => ($cntrl == 'tbl-form-type')],
                             ['label' => Yii::t('app', 'User Attendance'), 'url' => ['/tms/tbl-user-attendance/index'], 'active' => ($cntrl == 'tbl_user_attendance')],
+                            ['label' => Yii::t('app', 'User Attendance Regularization'), 'url' => ['/tms/tbl-user-attendance-regularization/index'], 'active' => ($cntrl == 'tbl-user-attendance-regularization')],
                             ['label' => Yii::t('app', 'Task'), 'url' => ['/tms/tbl-task/index'], 'active' => ($cntrl == 'tbl-task')],
                             ['label' => Yii::t('app', 'Current Location of All Users'), 'url' => ['/tms/tbl-user-tracking-movement/index'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
                             ['label' => Yii::t('app', 'Individual Location of a User'), 'url' => ['/tms/tbl-user-tracking-movement/index-other'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
@@ -1188,6 +1203,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
                                     ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
                                     ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
+                                    ['label' => Yii::t('app', 'Milk Quality Param Range Config'), 'url' => ['/configuration/tbl-milk-quality-param-range/index'], 'active' => ($cntrl == 'tbl-milk-quality-param-range')],
                             ]
                         ],
                             [

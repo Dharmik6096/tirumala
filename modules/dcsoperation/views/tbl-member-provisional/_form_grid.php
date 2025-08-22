@@ -165,7 +165,7 @@ $grid_option = [
             } else {
                 $class = '';
                 if (!$pending_approval) {
-                    $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
+                    $class = ($model->is_active === 0 || ($model->provisional_status != 'Pending' && $model->provisional_status != 'Reroute')) ? 'link-disable' : '';
                 }
                 $name = $model->member_name;
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
@@ -196,14 +196,14 @@ $grid_option = [
         },
         'document-upload' => function ($url, $model) use ($pending_approval) {
             if (!$pending_approval) {
-                $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
+                $disable = ($model->provisional_status == 'Pending' || $model->provisional_status == 'Reroute') ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
                 return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
             }
         },
         'report' => function ($url, $model) use ($pending_approval) {
             if (!$pending_approval) {
-                $disable = in_array(strtolower($model->provisional_status), ['approve', 'register', 'inprogress', 'pending', 'reject']) ? '' : 'disabled';
+                $disable = in_array(strtolower($model->provisional_status), ['approve', 'register', 'inprogress', 'pending', 'reject', 'Reroute']) ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'View Report'), 'class' => $disable, 'target' => '_blank'];
                 // return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register'], $options);
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/jasperreports/default/provisional-member-register', 'code' => $model->provisional_member_code], $options);

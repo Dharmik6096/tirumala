@@ -45,14 +45,26 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'no_of_compartment')->textInput(['readonly' => true]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'vehicle_capacity')->textInput(['readonly' => true]) ?>
+    </div>
     <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_auto_trip', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox()->label('Is Partial Trip?'); ?>
     </div>
+    <div class="col-sm-8">
+        <?= $form->field($model, 'remark')->textInput() ?>
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
+        <?php echo Html::hiddenInput('rls', 'FALSE', ['id' => 'tblvehicletrip-rls']); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvehicletrip-union_code,tblvehicletrip-rls', 'plant_code', Yii::t('app', 'Plant'), true, '', false, false); ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 megaSizeDualList">
+    <div class="col-sm-12 megaSizeDualList customDaulBoxCss">
         <?php
         echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12'], 'labelOptions' => ['label' => Yii::t('app', 'PLANT/BMC*')]])
                 ->widget(DualListbox::className(), [
@@ -117,29 +129,37 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                     options += '<option value=\"' + uniquePlantValue + '\">' + plantText + ' - PLANT</option>';
                 });          
                 $.each(obj1.data, function(index, value) {
-                    if(jQuery.inArray(index,selarray) == -1){   
+                    // if(jQuery.inArray(index,selarray) == -1){   
                         options += '<option value=\"'+index+'\">'+value+'</option>';  
-                    }
+                    // }
                 });
+
+                var container = $('#tblvehicletrip-bmc_code').bootstrapDualListbox('getContainer');
+                container.find('input.filter').val('').trigger('input');
+                container.find('select').trigger('change');
+
                 $('#tblvehicletrip-bmc_code').html(options);
                 $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);
-                if (selectedBmcCodesInitial.length > 0 && isLoadPage) {
-                    setTimeout(
-                        function() {
-                            var dualListBoxContainer = $('#tblvehicletrip-bmc_code').bootstrapDualListbox('getContainer');
-                            var sourceSelect = dualListBoxContainer.find('.box1 select');
-                            $.each(selectedBmcCodesInitial, function(index, valueToSelect) {
-                                var optionToMove = sourceSelect.find('option:not(:selected)[value=\"' + valueToSelect + '\"]').first();
-                                if (optionToMove.length > 0) {
-                                    optionToMove.prop('selected', true);
-                                    dualListBoxContainer.find('.box1 .move').trigger('click');
-                                }
-                            });
-                            isLoadPage = false;
-                        },
-                        500
-                    );
-                }
+
+                var moveSelected = function (items) {
+                    var sourceSelect = container.find('.box1 select');
+                    $.each(items, function (i, valueToSelect) {
+                        var optionToMove = sourceSelect.find('option:not(:selected)[value=\"' + valueToSelect + '\"]').first();
+                        if (optionToMove.length > 0) {
+                            optionToMove.prop('selected', true);
+                            container.find('.box1 .move').trigger('click');
+                        }
+                    });
+                };
+
+                setTimeout(function () {
+                    if (selectedBmcCodesInitial.length > 0 && isLoadPage) {
+                        moveSelected(selectedBmcCodesInitial);
+                        isLoadPage = false;
+                    } else if (selarray.length > 0) {
+                        moveSelected(selarray);
+                    }
+                }, 500);
             }
         }
     });           
@@ -184,7 +204,8 @@ $('#vehicle-trip-form').submit(function(e) {
 });
 $('#tblvehicletrip-vehicle_code').on('change', function(){
     var vehicle_code = $(this).val();
-     if(setData(vehicle_code)){
+    var vehicle_name = $(this).find('option:selected').text();
+    if(setData(vehicle_code)){
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-vehicle-detail']) . "',    
@@ -196,11 +217,18 @@ $('#tblvehicletrip-vehicle_code').on('change', function(){
                     if(response != '' && response != null){
                         $('#tblvehicletrip-driver_name').val(response.driver_name);
                         $('#tblvehicletrip-mobile_no').val(response.driver_contact_no);
+                        $('#tblvehicletrip-no_of_compartment').val(response.compartment_no);
+                        $('#tblvehicletrip-vehicle_capacity').val(response.capacity);
                         $('#tblvehicletrip-transporter_code').val(response.transporter_code).trigger('change').trigger('select2:select');
+                    } else {
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Compartment not available for selected vehicle: '+vehicle_name+'</span></div></div>');
+                        $('#tblvehicletrip-vehicle_code').val(null).trigger('change');
                     }
                 }
             }
         });
+    } else {
+        $('#tblvehicletrip-driver_name, #tblvehicletrip-mobile_no, #tblvehicletrip-no_of_compartment, #tblvehicletrip-vehicle_capacity, #tblvehicletrip-transporter_code').val(null).trigger('change');
     }
 });
 

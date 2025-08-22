@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
-use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
@@ -44,13 +43,13 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchstock-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $disabled); ?>
             </div>  
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $disabled, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $disabled, 'from_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $readonly, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, false, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, $readonly, 'to_shift_code'); ?>
@@ -136,7 +135,6 @@ $form = ActiveForm::begin([
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
                                                                 if (data.status == "success"){ 
-                                                                console.log(data.data);
                                                                 $("#transactions-detial").html(data.data);
                                                                     $("#loadercontent").hide();
                                                                     $("#pageloader").hide();
@@ -189,17 +187,11 @@ $form = ActiveForm::begin([
 </div>
 <?php
 $script = "
-$(document).ready(function() { 
+$(document).ready(function() {
 
     calculateQtyDiff();
-    
-    $('#tblbmcdispatchstock-opening_bal').on('change', function(){
-        calculateQtyDiff();
-    });
-    $('#tblbmcdispatchstock-purchase_qty').on('change', function(){
-        calculateQtyDiff();
-    });
-    $('#tblbmcdispatchstock-balance_qty').on('change', function(){
+
+    $(document).on('change', '#tblbmcdispatchstock-opening_bal, #tblbmcdispatchstock-purchase_qty, #tblbmcdispatchstock-balance_qty', function() {
         calculateQtyDiff();
     });
 
@@ -216,40 +208,10 @@ $(document).ready(function() {
     }
 });
 
-    $(document).on('change','.filldata', function() {
-        var bmc_code = $('#tblbmcdispatchstock-bmc_code').val();
-        var union_code = $('#tblbmcdispatchstock-union_code').val();
-        var from_date = $('#tblbmcdispatchstock-from_date').val();
-        var from_shift = $('#tblbmcdispatchstock-from_shift_code').val();
-        var to_date = $('#tblbmcdispatchstock-to_date').val();
-        var to_shift = $('#tblbmcdispatchstock-to_shift_code').val();
-        var bmc_dispatch_stock_code = $('#tblbmcdispatchstock-bmc_dispatch_stock_code').val();
-       if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != ''){
-            $('#purchase-detial').html('');         
-            BindData(bmc_code,from_date,from_shift,to_date,to_shift,bmc_dispatch_stock_code,union_code);            
-        }      
+    $(document).on('change', '#tblbmcdispatchstock-bmc_code', function () {
+        setDatePurchaseInfo();
     });
-   
-    function BindData(bmc_code,from_date,from_shift,to_date,to_shift,bmc_dispatch_stock_code,union_code){
-        $.ajax({
-            type: 'get',
-            url: '" . Url::to(['purchase-detail']) . "',
-            data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code},             
-            success: function(data) {
-                $('#purchase-detial').html(data);
-            }
-        });
-    }
-    
-    $(document).on('change', '#tblbmcdispatchstock-milk_type_code', function() {
-        updateFields();
-    });
-    
-    $(document).on('change', '#tblbmcdispatchstock-milk_quality_type_code', function() {
-        updateFields();
-    });
-    
-    $(document).on('change', '#tblbmcdispatchstock-bmc_silos_info_code', function() {
+    $(document).on('change', '#tblbmcdispatchstock-milk_type_code, #tblbmcdispatchstock-milk_quality_type_code, #tblbmcdispatchstock-bmc_silos_info_code', function() {
         updateFields();
     });
 
@@ -259,9 +221,9 @@ $(document).ready(function() {
         var bmcSiloInfoCode = $('#tblbmcdispatchstock-bmc_silos_info_code').val();
         var stockDetailArray = [];
         var check_key = bmcSiloInfoCode+ '_' + milkTypeCode + '_' + milkQualityTypeCode;
-        if(milkTypeCode != '' && bmcSiloInfoCode!='' && milkQualityTypeCode !='') {
+        if(setData(milkTypeCode) && setData(bmcSiloInfoCode) && setData(milkQualityTypeCode)) {
             var data = $('#stockdetail').val();
-            if(data != undefined && data != '' && isNaN(data)){
+            if(setData(data) && isNaN(data)){
                 stockDetailArray = jQuery.parseJSON(data);
                 $('#tblbmcdispatchstock-opening_bal').val(0);
                 $('#tblbmcdispatchstock-purchase_qty').val(0);
@@ -272,7 +234,58 @@ $(document).ready(function() {
             }
         }
     }
+    
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }   
+    
+    function setDatePurchaseInfo(){
+        var bmcCode = $('#tblbmcdispatchstock-bmc_code').val();
+        if(setData(bmcCode)){
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['get-date-purchase-info']) . "',
+                data: {'bmcCode':bmcCode},
+                success: function(data) {   
+                    if (data.result.status == 'success') {
+                        $('#tblbmcdispatchstock-from_date').val(data.result.from_date).trigger('change');
+                        $('#tblbmcdispatchstock-from_shift_code').val(data.result.from_shift).trigger('change').trigger('select2:select');
+                        $('#tblbmcdispatchstock-to_date').val(data.result.to_date).trigger('change');
+                        $('#tblbmcdispatchstock-to_shift_code').val(data.result.to_shift).trigger('change').trigger('select2:select');
+                        $('#purchase-detial').html(data.tableHtml);
+                        enableDisableDates(data.result.physical_stock_only);
+                    } else {
+                        resetFields();
+                    }
+                }
+            });
+        } else {
+            resetFields();
+	    }
+    }
+  
+    function enableDisableDates(physicalStockOnly) {
+        if (physicalStockOnly == 2) {
+            $('.field-tblbmcdispatchstock-from_date, .field-tblbmcdispatchstock-to_date').removeClass('disabled no_pointer');
+            $('.field-tblbmcdispatchstock-from_shift_code, .field-tblbmcdispatchstock-to_shift_code').removeClass('no_pointer_disabled');
+        } else {
+            $('.field-tblbmcdispatchstock-from_date, .field-tblbmcdispatchstock-to_date').addClass('disabled no_pointer');
+            $('.field-tblbmcdispatchstock-from_shift_code, .field-tblbmcdispatchstock-to_shift_code').addClass('no_pointer_disabled');
+        }
+    }
         
+    function resetFields() {
+        $('#tblbmcdispatchstock-from_date').val('');
+        $('#tblbmcdispatchstock-to_date').val('');
+        $('#tblbmcdispatchstock-from_shift_code').val('').trigger('change');
+        $('#tblbmcdispatchstock-to_shift_code').val('').trigger('change');
+        $('#purchase-detial table tbody').html('');
+        $('#purchase-detial table tbody').html('<tr><td colspan=\"6\" class=\"text-center\">No stock data available.</td></tr>');
+    }
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
@@ -283,7 +296,7 @@ $(document).ready(function(){
         var from_date = $('#tblbmcdispatchstock-from_date').val();
         var to_date = $('#tblbmcdispatchstock-to_date').val();
         
-        if (from_date !== '' && to_date !== '') {
+        if (setData(from_date) && setData(to_date)) {
             // Split date strings and format them as yyyy-mm-dd
             var from_date_parts = from_date.split('-');
             var to_date_parts = to_date.split('-');
