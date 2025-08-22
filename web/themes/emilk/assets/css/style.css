@@ -6056,3 +6056,6 @@ div#dashboardFarmerPopup {
 .transform-rotateY {
     transform: rotateY(180deg);
 }
+.fs24 {
+    font-size: 24px;
+}

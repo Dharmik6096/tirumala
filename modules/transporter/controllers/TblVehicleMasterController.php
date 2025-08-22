@@ -348,11 +348,15 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && (!empty($parents[1]) || $parents[1] == '0')) {
-
                 $this->model = new TblVehicleMaster();
                 $this->model->union_code = $parents[0];
-                $this->model->vehicle_use_type = $parents[1];
-                $data = $this->model->getVehicleList();
+                if (in_array($parents[1], ['cleaning_inspection', 'qa_inspection'])) {
+                    $subStatus = $parents[1] == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';
+                    $data = $this->model->getClosedVehicleList($subStatus);
+                } else {
+                    $this->model->vehicle_use_type = $parents[1];
+                    $data = $this->model->getVehicleList();
+                }
                 foreach ($data as $key => $val) {
                     $out[] = ['id' => $key, 'name' => $val];
                 }
