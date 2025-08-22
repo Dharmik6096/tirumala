@@ -4234,7 +4234,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ApprovedAttachmentDetails',
                 'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
                 'title' => 'Approved Attachment Details',
-                'append_link' => TRUE
+//                'append_link' => TRUE
             ],
             'BmcCollectionRouteWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
