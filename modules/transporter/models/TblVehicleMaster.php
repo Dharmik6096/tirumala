@@ -381,4 +381,17 @@ class TblVehicleMaster extends \app\models\ChildModel {
         return ArrayHelper::map($vehicle, 'vehicle_code', 'parsing_no');
     }
 
+    public function getClosedVehicleList($subStatus) {
+        $data = $this->find()
+                ->select(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
+                ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
+                ->innerJoin('tbl_vehicle_trip_detail', 'tbl_vehicle_trip_detail.trip_code = tbl_vehicle_trip.trip_code')
+                ->where(['tbl_vehicle_master.union_code' => $this->union_code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2], 'tbl_vehicle_trip.trip_status' => 'closed', 'tbl_vehicle_trip.trip_sub_status' => $subStatus])
+                ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', date('Y-m-d')])
+                ->groupBy(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
+                ->all();
+
+        return ArrayHelper::map($data, 'vehicle_code', 'parsing_no');
+    }
+
 }
