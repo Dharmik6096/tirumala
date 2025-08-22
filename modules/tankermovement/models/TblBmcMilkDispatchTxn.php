@@ -200,7 +200,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getSampleBottleNo() {
         return $this->hasOne(TblConfigTxnResult::className(), ['ref_code' => 'bmc_milk_dispatch_txn_code'])
-                        ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for='BMC' and c.process_name='BMC_DISPATCH'");
+                        ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for in ('BMC','PLANT') and c.process_name in ('BMC_DISPATCH','PLANT_DISPATCH')");
     }
 
     public function ValidateData() {
