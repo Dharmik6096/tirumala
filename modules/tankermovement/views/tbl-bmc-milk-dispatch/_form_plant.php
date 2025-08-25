@@ -114,6 +114,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
             </div>
+            <div class="col-sm-2"> 
+                <?= Yii::$app->dropdown->depend_dropdown('animal_type_additional', $txn_model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('additional_milk_type_code')); ?>
+            </div>
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
             </div>
