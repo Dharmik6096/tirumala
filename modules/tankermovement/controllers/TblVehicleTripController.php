@@ -357,9 +357,12 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
         $tripModel->scenario = 'closetrip';
         $tripModel->trip_status = 'closed';
+        $tripModel->trip_sub_status = 'cleaning_pending';
         $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
         $msg = Yii::$app->getSession()->getFlash('success')['message'];
         if ($transaction == 'customRedirect') {
+            $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, 'Trip Close Forcefully');
             $record = ['status' => 'success', 'msg' => $msg];
         } else {
             $record = ['status' => 'error', 'msg' => $msg];
@@ -375,6 +378,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
         $tripModel->scenario = 'closetrip';
         $tripModel->trip_status = 'closed';
+        $tripModel->trip_sub_status = 'cleaning_pending';
         $tripModel->is_active = 0;
         $saveModel[] = $historyModel;
         $saveModel[] = $tripModel;
@@ -386,6 +390,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle Trip In-Active', 'edit']);
         $msg = Yii::$app->getSession()->getFlash('success')['message'];
         if ($transaction == 'customRedirect') {
+            $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, 'Trip Close Forcefully');
             $record = ['status' => 'success', 'msg' => $msg];
         } else {
             $record = ['status' => 'error', 'msg' => $msg];
