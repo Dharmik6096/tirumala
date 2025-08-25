@@ -131,7 +131,7 @@ class TblSampleBottleTesting extends \app\models\ChildModel {
         $error_msg = '';
         $data = TblBmcMilkDispatch::find()->alias('d')->select(['dtx.milk_type_code', 'dtx.milk_quality_type_code', 'dtx.bmc_milk_dispatch_code', 'dtx.bmc_milk_dispatch_txn_code', 'dtx.union_code', 'dtx.plant_code', 'dtx.mcc_plant_code', 'dtx.bmc_code'])
                 ->join('inner join', 'tbl_bmc_milk_dispatch_txn dtx', "dtx.bmc_milk_dispatch_code=d.bmc_milk_dispatch_code")
-                ->join('inner join', 'tbl_config_txn_result cr', "cr.ref_code=dtx.bmc_milk_dispatch_txn_code and cr.config_for='BMC_DISPATCH'")
+                ->join('inner join', 'tbl_config_txn_result cr', "cr.ref_code=dtx.bmc_milk_dispatch_txn_code and cr.config_for in ('BMC_DISPATCH','PLANT_DISPATCH')")
                 ->join('inner join', 'tbl_config c', "c.config_code=cr.config_code and c.config_key='sample_bottle_no'")
                 ->where(['d.trip_code' => $this->trip_code, 'cr.config_result' => $this->sample_no])
                 ->asArray()

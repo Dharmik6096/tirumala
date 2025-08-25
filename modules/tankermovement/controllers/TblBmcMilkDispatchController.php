@@ -70,7 +70,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
     public function actionViewConfig($id) {
         $searchModel = new TblConfigTxnResultSearch();
         $searchModel->ref_code = $id;
-        $searchModel->config_for = 'BMC_DISPATCH';
+        $searchModel->config_for = ['BMC_DISPATCH', 'PLANT_DISPATCH'];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->renderAjax('config-view', [
                     'searchModel' => $searchModel,
@@ -723,7 +723,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             if (!empty($modelData)) {
                 $configData = TblConfigTxnResult::find()
                         ->select(['config_code', 'config_result'])
-                        ->where(['ref_code' => $_POST['bmc_milk_dispatch_txn_code'], 'config_for' => 'BMC_DISPATCH'])
+                        ->where(['ref_code' => $_POST['bmc_milk_dispatch_txn_code'], 'config_for' => ['BMC_DISPATCH', 'PLANT_DISPATCH']])
                         ->asArray()
                         ->all();
                 $config_data = ArrayHelper::map($configData, 'config_code', 'config_result');
