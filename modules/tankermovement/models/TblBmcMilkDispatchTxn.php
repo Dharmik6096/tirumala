@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\tankermovement\models\TblQtyDiffType;
 use app\modules\organisation\models\TblPlant;
 use app\modules\transporter\models\TblVehicleCompartmentDetail;
+use app\modules\globalmaster\models\TblAnimalTypeAdditional;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
@@ -171,6 +172,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'shift_of_milk' => Yii::t('app', 'Shift Of Milk'),
             'original_dispatch_qty' => Yii::t('app', 'Original Qty'),
+            'animal_type_additional_code' => Yii::t('app', 'Additional Milk Type'),
         ];
     }
 
@@ -201,6 +203,10 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
     public function getSampleBottleNo() {
         return $this->hasOne(TblConfigTxnResult::className(), ['ref_code' => 'bmc_milk_dispatch_txn_code'])
                         ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for in ('BMC','PLANT') and c.process_name in ('BMC_DISPATCH','PLANT_DISPATCH')");
+    }
+    
+    public function getAnimalType() {
+        return $this->hasOne(TblAnimalTypeAdditional::className(), ['animal_type_additional_code' => 'animal_type_additional_code']);
     }
 
     public function ValidateData() {
