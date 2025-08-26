@@ -54,7 +54,7 @@ class DefaultValue extends Component {
             ],
             'AMULAMCS' => [
                 'TblBulkNotification' => [
-                    'login_type' => 'farmer',
+                    'login_type' => 'MEMBER',
                 ],
             ],
             'COMFED' => [

@@ -316,7 +316,7 @@ class CustomValidation extends Component {
                         }, 'whenClient' => "function (attribute, value) {
                         return $('#tblbulknotification-notification_type').val() == '3';
                         }"],
-                        [['login_type', 'receiver_type'], 'required', 'when' => function ($model) {
+                        [['login_type', 'receiver_type', 'department'], 'required', 'when' => function ($model) {
                             return $model->notification_type == '1' || $model->notification_type == '4';
                         }, 'whenClient' => "function (attribute, value) {
                         return $('#tblbulknotification-notification_type').val() == '1' || $('#tblbulknotification-notification_type').val() == '4' ;
@@ -325,9 +325,9 @@ class CustomValidation extends Component {
                             return !empty($model->auto_scrolling);
                         }, 'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
                     ],
-                    'TblMilkVehicleEntryQlty' => [
-                            [['acidity', 'mbrt'], 'required', 'except' => ['resetQlty']],
-                    ],
+                ],
+                'TblMilkVehicleEntryQlty' => [
+                        [['acidity', 'mbrt'], 'required', 'except' => ['resetQlty']],
                 ],
             ],
             'NIFPL' => [
@@ -1322,7 +1322,7 @@ class CustomValidation extends Component {
                 'TblBulkNotification' => [
                     'default' => [
                             [['union_code', 'title', 'campaign_name'], 'required'],
-                            [['plant_code', 'mcc_plant_code', 'bmc_code', 'app_type', 'login_type'], 'required', 'when' => function ($model) {
+                            [['plant_code', 'mcc_plant_code', 'bmc_code', 'app_type', 'login_type', 'department'], 'required', 'when' => function ($model) {
                                 return $model->notification_type == '1';
                             }, 'whenClient' => "function (attribute, value) {
                             return $('#tblbulknotification-notification_type').val() == '1';

@@ -101,9 +101,9 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $filename = $filesArray[0];
                     $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
                     $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
-                    if (Yii::$app->general->checkDirectory($new_directory)) {
-                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
-                    }
+//                    if (Yii::$app->general->checkDirectory($new_directory)) {
+//                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+//                    }
                     $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
                     $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
                     $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
@@ -201,6 +201,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->dcs_code = $dcs_data['dcs_code'];
                         $model->notification_type = $this->model->notification_type;
                         $model->login_type = $this->model->login_type;
+                        $model->department = $this->model->department;
                         if ($model->notification_type == 4) {
                             $model->payment_cycle_code = $this->model->payment_cycle_code;
                             $model->from_date = $from_date;
@@ -361,10 +362,8 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $appModel->with_wef_date = FALSE;
             $appModel->with_applicable_code = true;
         } else {
-            if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
+            if (in_array(strtolower($model->login_type), ['MEMBER', 'vsp'])) {
                 $value['DCS'] = 'VLCC';
-            } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor', 'mcc_incharge', 'zonal_manager', 'service_engineer', 'az_manager'])) {
-                $value['USER'] = 'USER';
             } else {
                 $value['USER'] = 'USER';
             }
@@ -382,6 +381,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel->header_title = ' (' . $model->login_type . ':' . $model->message . ')';
         $appModel->dcs_filters = $value;
         $appModel->login_type = $model->login_type;
+        $appModel->department = $model->department;
         $appModel->fields = [
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],

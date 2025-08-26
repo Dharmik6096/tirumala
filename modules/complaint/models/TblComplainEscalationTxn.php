@@ -3,7 +3,7 @@
 namespace app\modules\complaint\models;
 
 use Yii;
-
+use app\modules\general\models\TblDepartment;
 /**
  * This is the model class for table "tbl_complain_escalation_txn".
  *
@@ -34,8 +34,8 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['user_type', 'complain_escalation_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['user_type', 'escalation_time', 'level'], 'required'],
+                [['user_type', 'complain_escalation_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'department'], 'safe'],
+                [['user_type', 'escalation_time', 'level', 'department'], 'required'],
                 [['user_type', 'level'], 'checkUnique'],
         ];
     }
@@ -71,6 +71,10 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
         if (!empty($result)) {
             $this->addError($attribute, Yii::t('app/validation', 'Already exist'));
         }
+    }
+
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

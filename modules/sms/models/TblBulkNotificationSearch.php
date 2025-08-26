@@ -20,7 +20,7 @@ class TblBulkNotificationSearch extends TblBulkNotification {
     public function rules() {
         return [
                 [['bulk_notification_id', 'content_id', 'status'], 'integer'],
-                [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date', 'dcs_ref_code', 'from_shift_code', 'to_shift_code', 'notification_type', 'filename', 'file_path'], 'safe'],
+                [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date', 'dcs_ref_code', 'from_shift_code', 'to_shift_code', 'notification_type', 'filename', 'file_path', 'department'], 'safe'],
         ];
     }
 
@@ -56,7 +56,7 @@ class TblBulkNotificationSearch extends TblBulkNotification {
             return $dataProvider;
         }
 
-        $query->joinWith(['dcsCode', 'memberCode', 'apiMaster']);
+        $query->joinWith(['dcsCode', 'memberCode', 'apiMaster', 'departmentId']);
 
         // grid filtering conditions
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bulk_notification', 'tbl_bulk_notification', 'tbl_bulk_notification');
@@ -90,7 +90,8 @@ class TblBulkNotificationSearch extends TblBulkNotification {
                 ->andFilterWhere(['like', 'tbl_bulk_notification.title', $this->title])
                 ->andFilterWhere(['like', 'tbl_bulk_notification.message', $this->message])
                 ->andFilterWhere(['like', 'tbl_bulk_notification.campaign_name', $this->campaign_name])
-                ->andFilterWhere(['like', 'tbl_bulk_notification.filename', $this->filename]);
+                ->andFilterWhere(['like', 'tbl_bulk_notification.filename', $this->filename])
+                ->andFilterWhere(['like', 'tbl_department.department_id', $this->department]);
 
         return $dataProvider;
     }

@@ -10,8 +10,11 @@ use kartik\grid\GridView;
     $attribute = [
             ['attribute' => 'user_type', 'filter' => FALSE,
             'value' => function ($model) {
-                return !empty($model->user_type) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->user_type] : '';
+                return !empty($model->user_type) ? Yii::$app->dropdown->getRecords('login_type')['data'][$model->user_type] : '';
             },],
+            ['attribute' => 'department', 'value' => function ($model) {
+                return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+            }, 'filter' => FALSE],
             ['attribute' => 'level', 'filter' => FALSE],
             ['attribute' => 'escalation_time', 'filter' => FALSE],
     ];
