@@ -30,12 +30,7 @@ class TblAnimalTypeAdditional extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['animal_type_additional_code', 'additional_animal_type_name', 'union_code'], 'required'],
-            [['animal_type_additional_code', 'is_active'], 'integer'],
-            [['created_at'], 'safe'],
-            [['additional_animal_type_name'], 'string', 'max' => 50],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by'], 'string', 'max' => 14],
+            [['additional_animal_type_name', 'created_at', 'created_by', 'is_active'], 'safe'],
         ];
     }
 

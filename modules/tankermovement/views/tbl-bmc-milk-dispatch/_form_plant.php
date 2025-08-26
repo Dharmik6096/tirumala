@@ -116,7 +116,7 @@ $form = ActiveForm::begin([
             </div>
         </div>
         <div class="col-sm-2"> 
-            <?= Yii::$app->dropdown->depend_dropdown('animal_type_additional', $txn_model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('additional_milk_type')); ?>
+            <?= Yii::$app->dropdown->dropdown('animal_type_additional', $txn_model, $form, '', true, FALSE, 'animal_type_additional_code'); ?>
         </div>
         <div class="<?= $txnEdit ? 'no_pointer_disabled' : ''; ?>">
             <div class="col-sm-1">
