@@ -392,6 +392,16 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_vsp_payment_param',
                 ],
             ],
+            'ABT' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,user_code',
+                    'sp_name' => 'sp_member_payment_abt',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_abt',
+                ],
+            ],
         ];
     }
 
