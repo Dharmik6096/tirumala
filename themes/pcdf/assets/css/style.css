@@ -3456,7 +3456,7 @@ select[multiple] {
 }
 
 #applicable_type-list,
-#login_type-list {
+#login_type-list, #department-list {
     margin-left: 10px;
 }
 

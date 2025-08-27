@@ -2299,6 +2299,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Shift Lock'), 1 => Yii::t('app', 'Manual Collection')],
             ],
+            'app_type' => [
+                'name' => 'app_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'HO'), 2 => Yii::t('app', 'Flutter'), 3 => Yii::t('app', 'Manual Collection'), 4 => Yii::t('app', 'Driver App')],
+            ],
         ];
         return $records[$l];
     }

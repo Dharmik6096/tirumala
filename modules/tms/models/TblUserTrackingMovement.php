@@ -49,7 +49,7 @@ class TblUserTrackingMovement extends ChildModel {
      */
     public function rules() {
         return [
-            [['tracking_datetime', 'created_at', 'updated_at', 'union_code', 'plant_code', 'mcc_plant_code'], 'safe'],
+            [['tracking_datetime', 'created_at', 'updated_at', 'union_code', 'plant_code', 'mcc_plant_code', 'department'], 'safe'],
             [['originating_type'], 'integer'],
             [['lat_long', 'module_name', 'mobile_no', 'login_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['module_code'], 'string', 'max' => 50],
@@ -88,6 +88,7 @@ class TblUserTrackingMovement extends ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 
