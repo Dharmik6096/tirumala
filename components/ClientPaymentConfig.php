@@ -398,7 +398,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_member_payment_abt',
                 ],
                 'remuneration_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,user_code',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
                     'sp_name' => 'sp_remuneration_payment_abt',
                 ],
             ],
