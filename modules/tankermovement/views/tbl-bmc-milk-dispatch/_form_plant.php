@@ -146,10 +146,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'clr')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
-        <div class="col-sm-1 number-validate">
+        <div class="col-sm-1 number-validate mb-2">
             <?= $form->field($txn_model, 'temperature')->textInput(['class' => 'one-decimal-validate']) ?>
         </div>
-        <div class="col-sm-1 number-validate">
+        <div class="col-sm-1 number-validate mb-2">
             <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
