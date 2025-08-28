@@ -41,7 +41,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Complain Escalation Transaction</h4>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdownStatic('login_type', $txnModel, $form, 'form-group', $txnModel->getAttributeLabel('user_type'), false, 'user_type'); ?>     
+            <?= Yii::$app->dropdown->dropdownStatic('route_login_type', $txnModel, $form, 'form-group', $txnModel->getAttributeLabel('user_type'), false, 'user_type'); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('department', $txnModel, $form, 'form-group', $model->getAttributeLabel('department'), false, 'department'); ?>
@@ -181,7 +181,7 @@ function addBtnEnable(){
         if(err == ''){
             var tr_class;
             var level_tr_class;
-            tr_class = user_type;
+            tr_class = user_type+'-'+department;
             level_tr_class = level;
             
             if($('.'+tr_class).length > 0){

@@ -22,7 +22,7 @@ use yii\web\View;
         <?= Yii::$app->dropdown->dropdownStatic('app_type', $model, $form, '', $model->getAttributeLabel('app_type'), false, 'app_type'); ?>
     </div>
     <div class="col-sm-2 login_type_div">
-        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, 'login_type', false, true); ?>
     </div>
     <div class="col-sm-2 department_div">
         <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
@@ -33,7 +33,7 @@ use yii\web\View;
 <?php
 $script = "
     updateGrid();
-    $('#tbleiplappmenuactionsmapping-app_type').change(function() {
+    $('#tbleiplappwidgetmapping-app_type').change(function() {
         $('.login_type_div').show();
         submitForm();
     });
@@ -48,7 +48,7 @@ $script = "
     });
 
     function submitForm(){
-        var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
+        var appType = $('#tbleiplappwidgetmapping-app_type').val();
         var login = $('#tbleiplappwidgetmapping-login_type').val();
         var department = $('#tbleiplappwidgetmapping-department').val();
         var unionCode = $('#tbleiplappwidgetmapping-union_code').val();
@@ -58,11 +58,11 @@ $script = "
         }
         if(appType != '' && appType != null && appType != undefined && appType != 'Loading ...'){
             if(appType == 4) {
-                $('#tbleiplappmenuactionsmapping-login_type').val('');
-                $('#tbleiplappmenuactionsmapping-department').val('');
+                $('#tbleiplappwidgetmapping-login_type').val('');
+                $('#tbleiplappwidgetmapping-department').val('');
                 $('.department_div').hide();
                 $('.login_type_div').hide();
-                $('form#app-menu-mapping-search').submit();
+                $('form#app-widget-mapping-search').submit();
                 setTimeout(function() {
                     $('.showHideData').show();
                 },1000);
@@ -83,8 +83,8 @@ $script = "
                 $('.showHideData').hide();
             }
         } else {
-            $('#tbleiplappmenuactionsmapping-login_type').val('');
-            $('#tbleiplappmenuactionsmapping-department').val(''); 
+            $('#tbleiplappwidgetmapping-login_type').val('');
+            $('#tbleiplappwidgetmapping-department').val('');
             $('.department_div').hide();
             $('.login_type_div').hide();
             $('.showHideData').hide();
@@ -94,8 +94,8 @@ $script = "
     } 
 
      function updateGrid() {
-    $('.department_div').hide();
-        var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
+        $('.department_div').hide();
+        var appType = $('#tbleiplappwidgetmapping-app_type').val();
         var login = $('#tbleiplappwidgetmapping-login_type').val();
         var department = $('#tbleiplappwidgetmapping-department').val();
         if(appType == 4) {

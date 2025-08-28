@@ -315,10 +315,8 @@ class TblBannerController extends \app\controllers\ChildController {
         $appModel->setModelFields = true;
         $appModel->assignMultiDataKey = 'department';
         $appModel->assignDataKey = 'applicable_code';
-        // $userLoginType = Yii::$app->dropdown->getRecords('user_login_type')['data'];
         $departmentModel = new TblDepartment();
         $userLoginType = $departmentModel->getActiveDepartments();
-        // unset($userLoginType['all']);
         $appModel->customer_type_list = $userLoginType;
         $appModel->customer_type_field_name = 'department';
 
@@ -334,10 +332,6 @@ class TblBannerController extends \app\controllers\ChildController {
             'bmc_code' => ['view' => ['grid'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
                 }],
-            // 'login_type' => ['view' => ['grid'],
-            //     'value' => function ($model) {
-            //         return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '';
-            //     }],
             'department' => ['view' => ['grid'],
                 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->departmentId, 'department');

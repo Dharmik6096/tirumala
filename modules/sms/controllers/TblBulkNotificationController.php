@@ -92,6 +92,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->to_date = !empty($this->model->to_date) ? date('Y-m-d', strtotime($this->model->to_date)) . ' ' . (!empty($this->model->to_shift_code) ? Yii::$app->general->getshift($this->model->to_shift_code) : '23:59:59') : '';
                     $this->model->app_type = NULL;
                     $this->model->login_type = NULL;
+                    $this->model->department = NULL;
                     $this->model->filename = !empty($filename) ? $filename . '.pdf' : '';
                     $this->model->file_path = !empty($this->model->filename) ? $file_path . $this->model->filename : '';
                 }
@@ -101,9 +102,9 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $filename = $filesArray[0];
                     $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
                     $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
-//                    if (Yii::$app->general->checkDirectory($new_directory)) {
-//                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
-//                    }
+                    if (Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
                     $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
                     $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
                     $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
@@ -242,10 +243,10 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
                 }
                 if ($transaction == 'customRedirect') {
-                    if ($this->model->login_type == 'all') {
+                    if (!empty($this->model->login_type) && strtoupper($this->model->login_type) == 'ALL') {
                         $appModel = new TblBulkNotificationApplicability();
                         $appModel->attributes = $this->model->attributes;
-                        $appModel->applicable_for = 'all';
+                        $appModel->applicable_for = 'ALL';
                         $appModel->applicable_code = '0';
                         $appModel->save();
                     }
@@ -362,7 +363,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $appModel->with_wef_date = FALSE;
             $appModel->with_applicable_code = true;
         } else {
-            if (in_array(strtolower($model->login_type), ['MEMBER', 'vsp'])) {
+            if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'MEMBER', 'DCS'])) {
                 $value['DCS'] = 'VLCC';
             } else {
                 $value['USER'] = 'USER';

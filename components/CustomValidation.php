@@ -316,10 +316,15 @@ class CustomValidation extends Component {
                         }, 'whenClient' => "function (attribute, value) {
                         return $('#tblbulknotification-notification_type').val() == '3';
                         }"],
-                        [['login_type', 'receiver_type', 'department'], 'required', 'when' => function ($model) {
+                        [['login_type', 'receiver_type'], 'required', 'when' => function ($model) {
                             return $model->notification_type == '1' || $model->notification_type == '4';
                         }, 'whenClient' => "function (attribute, value) {
                         return $('#tblbulknotification-notification_type').val() == '1' || $('#tblbulknotification-notification_type').val() == '4' ;
+                        }"],
+                        [['department'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
+                            }, 'whenClient' => "function (attribute, value) {
+                                return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL';
                         }"],
                         [['from_date', 'to_date'], 'required', 'when' => function ($model) {
                             return !empty($model->auto_scrolling);
@@ -1322,10 +1327,15 @@ class CustomValidation extends Component {
                 'TblBulkNotification' => [
                     'default' => [
                             [['union_code', 'title', 'campaign_name'], 'required'],
-                            [['plant_code', 'mcc_plant_code', 'bmc_code', 'app_type', 'login_type', 'department'], 'required', 'when' => function ($model) {
+                            [['plant_code', 'mcc_plant_code', 'bmc_code', 'app_type', 'login_type'], 'required', 'when' => function ($model) {
                                 return $model->notification_type == '1';
                             }, 'whenClient' => "function (attribute, value) {
                             return $('#tblbulknotification-notification_type').val() == '1';
+                            }"],
+                            [['department'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
+                            }, 'whenClient' => "function (attribute, value) {
+                                return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL';
                             }"],
                             [['wef_date'], 'required', 'when' => function ($model) {
                                 return $model->notification_type == '1' || $model->notification_type == '2' || $model->notification_type == '4' || $model->notification_type == '8';

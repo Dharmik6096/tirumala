@@ -63,7 +63,7 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
     public function checkUnique($attribute, $params) {
         $where = '';
         if ($attribute == 'user_type') {
-            $where = ['complain_escalation_code' => $this->complain_escalation_code, 'user_type' => $this->user_type];
+            $where = ['complain_escalation_code' => $this->complain_escalation_code, 'user_type' => $this->user_type, 'department' => $this->department];
         } else {
             $where = ['complain_escalation_code' => $this->complain_escalation_code, 'level' => $this->level];
         }

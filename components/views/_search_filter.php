@@ -362,7 +362,7 @@ if (!empty($filter_data)) {
                                         $f_cnt++
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
+                                            <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
                                     <?php

@@ -72,7 +72,7 @@ $attribute = [
     ['attribute' => 'login_type',
         'filter' => FALSE,
         'value' => function (User $model) {
-            return isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '') : '';
+            return isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('dcs_union_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('dcs_union_login_type')['data'][$model->login_type] : '') : '';
         },],
     [
         'attribute' => 'department',

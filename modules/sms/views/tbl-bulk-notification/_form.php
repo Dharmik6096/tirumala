@@ -257,7 +257,8 @@ $(document).ready(function () {
             $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
             resetDateShiftFields();
             if (type == '4') {
-                $('#tblbulknotification-login_type').val('vsp').trigger('change').trigger('select2:select');
+                $('#tblbulknotification-login_type').val('DCS').trigger('change').trigger('select2:select');
+                $('#tblbulknotification-department').val('').trigger('change').trigger('select2:select');
             }
         }else if(type == '3'){
             $('.import-area, .f_date, .t_date, .f_shift, .t_shift, .auto_scrol_s').show();
@@ -272,7 +273,7 @@ $(document).ready(function () {
         var notificationType = $('#tblbulknotification-notification_type').val();
         var loginType = $('#tblbulknotification-login_type').val();
 
-        if (notificationType == '1' && loginType != 'MEMBER') {
+        if (notificationType == '1' && loginType != 'MEMBER' && loginType != 'ALL') {
             $('.department').show();
         } else {
             $('#tblbulknotification-department').val('');

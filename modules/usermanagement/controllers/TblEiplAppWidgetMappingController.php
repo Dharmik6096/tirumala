@@ -20,6 +20,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
         $this->model = new TblEiplAppWidgetMapping();
         $this->model->load(Yii::$app->request->queryParams);
         $searchModel = new TblEiplAppWidgetSearch();
+        $searchModel->app_type = $this->model->app_type;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProviderOther = $searchModel->search(Yii::$app->request->queryParams, 2);
         $selectedArray = [];

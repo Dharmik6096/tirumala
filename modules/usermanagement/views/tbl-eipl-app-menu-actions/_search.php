@@ -22,8 +22,7 @@ use yii\web\View;
         <?= Yii::$app->dropdown->dropdownStatic('app_type', $model, $form, '', $model->getAttributeLabel('app_type'), false, 'app_type'); ?>
     </div>
     <div class="col-sm-2 login_type_div">
-        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, '', $model->getAttributeLabel('login_type'), false, 'login_type'); ?>
-        <?php //Yii::$app->dropdown->dropdownStatic('login_type_ho_flutter', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, '', $model->getAttributeLabel('login_type'), false, 'login_type', false, true); ?>
     </div>
     <div class="col-sm-2 department_div">
         <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
