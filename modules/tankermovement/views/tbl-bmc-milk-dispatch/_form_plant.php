@@ -114,6 +114,11 @@ $form = ActiveForm::begin([
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
             </div>
+        </div>
+        <div class="col-sm-2"> 
+            <?= Yii::$app->dropdown->dropdown('animal_type_additional', $txn_model, $form, '', true, FALSE, 'animal_type_additional_code'); ?>
+        </div>
+        <div class="<?= $txnEdit ? 'no_pointer_disabled' : ''; ?>">
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
             </div>
@@ -133,16 +138,16 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'fat')->textInput() ?>
+            <?= $form->field($txn_model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'snf')->textInput() ?>
+            <?= $form->field($txn_model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'clr')->textInput() ?>
+            <?= $form->field($txn_model, 'clr')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput(['class' => 'one-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
@@ -534,6 +539,7 @@ $(document).ready(function(){
                     });
                     $('#tblbmcmilkdispatchtxn-bmc_milk_dispatch_txn_code').val(data.modelData.bmc_milk_dispatch_txn_code);
                     $('#tblbmcmilkdispatchtxn-milk_type_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-animal_type_additional_code').trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatchtxn-milk_quality_type_code').trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatchtxn-chamber_no').trigger('change').trigger('select2:select');
 

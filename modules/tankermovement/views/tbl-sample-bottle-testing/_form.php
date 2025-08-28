@@ -39,10 +39,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'sample_bottle_testing_date', '', TRUE, FALSE); ?>
     </div>
     <div class="col-sm-2 number-validate"> 
-        <?= $form->field($model, 'fat')->textInput() ?>
+        <?= $form->field($model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
     </div>
     <div class="col-sm-2 number-validate"> 
-        <?= $form->field($model, 'snf')->textInput() ?>
+        <?= $form->field($model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
     </div>
     <div class="col-sm-2 number-validate"> 
         <?= $form->field($model, 'protein')->textInput() ?>
