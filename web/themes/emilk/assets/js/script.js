@@ -391,5 +391,20 @@ var initDepdropMs;
         };
         domChangeObserver.observe(document.body, observerConfig);
     });
+    $(document).on("input", ".two-decimal-validate", function () {
+        if (!/^\d+(\.\d{0,2})?$/.test(this.value)) {
+            this.value = this.value.slice(0, -1);
+        }
+    });
+    $(document).on("input", ".one-decimal-validate", function () {
+        if (!/^\d+(\.\d{0,1})?$/.test(this.value)) {
+            this.value = this.value.slice(0, -1);
+        }
+    });
+    $(document).on("input", ".three-decimal-validate", function () {
+        if (!/^\d+(\.\d{0,3})?$/.test(this.value)) {
+            this.value = this.value.slice(0, -1);
+        }
+    });
 })(jQuery);
 

@@ -31,10 +31,10 @@ class TblConfig extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['config_name', 'config_key', 'config_for'], 'string'],
-                [['union_code', 'plant_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
-                [['bmc_code', 'mcc_plant_code'], 'required', 'when' => function($model) {
+            [['config_name', 'config_key', 'config_for'], 'string'],
+            [['union_code', 'plant_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+            [['bmc_code', 'mcc_plant_code'], 'required', 'when' => function($model) {
                     return $model->config_for == 'BMC';
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblconfig-config_for').val() == 'BMC'; 
@@ -109,7 +109,7 @@ class TblConfig extends \app\models\ChildModel {
         } else if ($this->control_type == 'CHECKBOX') {
             return $form->field($config, '[' . $index . ']config_result', ['checkHorizontalTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox()->label(Yii::t('app', $this->config_name));
         } else {
-            $options = ($this->control_type == 'NUMERIC') ? ['class' => 'form-control number-validate'] : [];
+            $options = !empty($this->config_class) ? ['class' => 'form-control ' . $this->config_class] : (($this->control_type == 'NUMERIC') ? ['class' => 'form-control number-validate'] : []);
             return $form->field($config, '[' . $index . ']config_result')->textInput($options)->label(Yii::t('app', $this->config_name));
         }
     }

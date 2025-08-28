@@ -150,6 +150,13 @@ class TblMilkQualityParamRange extends \app\models\ChildModel {
         if ((!empty($this->min_clr) || !empty($this->max_clr)) && $this->max_clr <= $this->min_clr) {
             $this->addError('max_clr', $animal_name . ' - Max CLR must be greater than Min CLR.');
         }
+
+        $decimalFields = ['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'];
+        foreach ($decimalFields as $field) {
+            if (!empty($this->$field) && !preg_match('/^\d+(\.\d{1,2})?$/', $this->$field)) {
+                $this->addError($field, $animal_name . ' - ' . ucfirst(str_replace('_', ' ', $field)) . ' must have at most two decimal places.');
+            }
+        }
     }
 
     public function getQualityRange() {

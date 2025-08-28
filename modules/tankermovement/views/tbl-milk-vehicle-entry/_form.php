@@ -166,19 +166,19 @@ $form = ActiveForm::begin([
                         <?= $form->field($txn_model, 'chamber_quantity')->textInput() ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
-                        <?= $form->field($txn_model, 'fat')->textInput() ?>
+                        <?= $form->field($txn_model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
-                        <?= $form->field($txn_model, 'snf')->textInput() ?>
+                        <?= $form->field($txn_model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
-                        <?= $form->field($txn_model, 'clr')->textInput() ?>
+                        <?= $form->field($txn_model, 'clr')->textInput(['class' => 'two-decimal-validate']) ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'water')->textInput() ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
-                        <?= $form->field($txn_model, 'temp')->textInput() ?>
+                        <?= $form->field($txn_model, 'temp')->textInput(['class' => 'one-decimal-validate']) ?>
                     </div>
                     <div class="col-sm-1 number-validate"> 
                         <?= $form->field($txn_model, 'protein')->textInput() ?>
