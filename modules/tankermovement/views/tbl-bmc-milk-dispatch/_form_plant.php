@@ -568,16 +568,20 @@ function setData(field = ''){
 
 $script .= "
     var isTxnEditable = " . json_encode($txnEdit) . ";
+    if(isSecondTransaction){
+        BindData();
+    }
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
+    console.log('1');
+        $('#transactions-from').html('');
+        $('#transactions-detial').html('');           
+        BindData();      
+    }); 
+  
+    function BindData(){
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
         var plant_code = $('#tblbmcmilkdispatch-plant_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-        $('#transactions-from').html('');
-        $('#transactions-detial').html('');           
-        BindData(plant_code,bmc_milk_dispatch_code,union_code);      
-    }); 
-  
-    function BindData(plant_code,bmc_milk_dispatch_code,union_code){
         if(setData(plant_code) && !isTransactionFormLoad){
             $.ajax({
                 type: 'get',
@@ -608,7 +612,7 @@ $script .= "
         }
     }
 ";
-$this->registerJs($script, View::POS_END, 'panel-before-hide');
+$this->registerJs($script, View::POS_READY, 'panel-before-hide');
 ?>
 <?php
 $script = "$(document).ready(function(){
