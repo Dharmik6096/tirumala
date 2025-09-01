@@ -69,4 +69,12 @@ class TblDepartment extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'department_id', 'department_id');
     }
 
+    public function getActiveDepartments() {
+        $data = $this->find()
+                ->select(['department_id', 'department'])
+                ->where(['is_active' => 1])
+                ->all();
+        return ArrayHelper::map($data, 'department_id', 'department');
+    }
+
 }

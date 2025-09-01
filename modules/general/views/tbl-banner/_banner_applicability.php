@@ -9,7 +9,7 @@ use yii\helpers\Url;
 
 $attribute = [
         ['attribute' => 'login_type', 'value' => function ($model) {
-            return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '';
+            return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('login_type')['data'][$model->login_type] : '';
         }, 'filter' => false],
 ];
 

@@ -321,6 +321,11 @@ class CustomValidation extends Component {
                         }, 'whenClient' => "function (attribute, value) {
                         return $('#tblbulknotification-notification_type').val() == '1' || $('#tblbulknotification-notification_type').val() == '4' ;
                         }"],
+                        [['department'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
+                            }, 'whenClient' => "function (attribute, value) {
+                                return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL';
+                        }"],
                         [['from_date', 'to_date'], 'required', 'when' => function ($model) {
                             return !empty($model->auto_scrolling);
                         }, 'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
@@ -1326,6 +1331,11 @@ class CustomValidation extends Component {
                                 return $model->notification_type == '1';
                             }, 'whenClient' => "function (attribute, value) {
                             return $('#tblbulknotification-notification_type').val() == '1';
+                            }"],
+                            [['department'], 'required', 'when' => function ($model) {
+                                return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
+                            }, 'whenClient' => "function (attribute, value) {
+                                return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL';
                             }"],
                             [['wef_date'], 'required', 'when' => function ($model) {
                                 return $model->notification_type == '1' || $model->notification_type == '2' || $model->notification_type == '4' || $model->notification_type == '8';

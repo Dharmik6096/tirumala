@@ -45,8 +45,11 @@ $attribute = [
             return Yii::$app->controls->view_date($model->entry_datetime);
         }],
         ['attribute' => 'login_type', 'value' => function($model) {
-            return Yii::$app->general->getStaticDropdownVal('user_login_type', $model, 'login_type');
-        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('user_login_type', $searchModel, 'login_type')],
+            return Yii::$app->general->getStaticDropdownVal('login_type', $model, 'login_type');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('login_type', $searchModel, 'login_type')],
+        ['attribute' => 'department', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+        }, 'filter' => true],
         ['attribute' => 'receiver_type', 'value' => function($model) {
             return Yii::$app->general->getStaticDropdownVal('receiver_type', $model, 'receiver_type');
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('receiver_type', $searchModel, 'receiver_type')],

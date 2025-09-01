@@ -113,6 +113,8 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                                 <th><?= Yii::t('app', 'Level') ?></th>
                                 <th><?= Yii::t('app', 'Mode') ?></th>
                                 <th><?= Yii::t('app', 'User') ?></th>
+                                <th><?= Yii::t('app', 'Login Type') ?></th>
+                                <th><?= Yii::t('app', 'Department') ?></th>
                                 <th><?= Yii::t('app', 'Status By') ?></th>
                                 <th><?= Yii::t('app', 'Status') ?></th>
                                 <th><?= Yii::t('app', 'Date') ?></th>
@@ -125,6 +127,8 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                                 <td><?= $approval->level; ?></td>
                                 <td><?= $approval->approval_mode; ?></td>
                                 <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
+                                <td><?= $approval->login_type; ?></td>
+                                <td><?= Yii::$app->general->getforeignkey($approval->departmentId, 'department') ?></td>
                                 <td><?= Yii::$app->general->getforeignkey($approval->updatedBy, 'name') ?></td>
                                 <td>
                                     <?php

@@ -92,6 +92,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->to_date = !empty($this->model->to_date) ? date('Y-m-d', strtotime($this->model->to_date)) . ' ' . (!empty($this->model->to_shift_code) ? Yii::$app->general->getshift($this->model->to_shift_code) : '23:59:59') : '';
                     $this->model->app_type = NULL;
                     $this->model->login_type = NULL;
+                    $this->model->department = NULL;
                     $this->model->filename = !empty($filename) ? $filename . '.pdf' : '';
                     $this->model->file_path = !empty($this->model->filename) ? $file_path . $this->model->filename : '';
                 }
@@ -201,6 +202,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->dcs_code = $dcs_data['dcs_code'];
                         $model->notification_type = $this->model->notification_type;
                         $model->login_type = $this->model->login_type;
+                        $model->department = $this->model->department;
                         if ($model->notification_type == 4) {
                             $model->payment_cycle_code = $this->model->payment_cycle_code;
                             $model->from_date = $from_date;
@@ -241,10 +243,10 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
                 }
                 if ($transaction == 'customRedirect') {
-                    if ($this->model->login_type == 'all') {
+                    if (!empty($this->model->login_type) && strtoupper($this->model->login_type) == 'ALL') {
                         $appModel = new TblBulkNotificationApplicability();
                         $appModel->attributes = $this->model->attributes;
-                        $appModel->applicable_for = 'all';
+                        $appModel->applicable_for = 'ALL';
                         $appModel->applicable_code = '0';
                         $appModel->save();
                     }
@@ -361,10 +363,8 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $appModel->with_wef_date = FALSE;
             $appModel->with_applicable_code = true;
         } else {
-            if (in_array(strtolower($model->login_type), ['farmer', 'vsp'])) {
+            if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'MEMBER', 'DCS'])) {
                 $value['DCS'] = 'VLCC';
-            } elseif (in_array(strtolower($model->login_type), ['procurement_staff', 'route_supervisor', 'mcc_incharge', 'zonal_manager', 'service_engineer', 'az_manager'])) {
-                $value['USER'] = 'USER';
             } else {
                 $value['USER'] = 'USER';
             }
@@ -382,6 +382,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel->header_title = ' (' . $model->login_type . ':' . $model->message . ')';
         $appModel->dcs_filters = $value;
         $appModel->login_type = $model->login_type;
+        $appModel->department = $model->department;
         $appModel->fields = [
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],

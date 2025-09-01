@@ -4208,7 +4208,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Asset Details Report',
             ],
             'UserOrganizationMappingReport' => [
-                'param' => 'login_type_report:static:login_type_report',
+                'param' => 'login_type:static:login_type',
                 'sp_name' => 'mis_user_organization_mapping_report',
                 'title' => 'User Organization Mapping Report',
             ],
@@ -4627,7 +4627,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'UserAttendanceDetails' => [
-                'param' => 'login_type_report:static:login_type_report,from_date:string,to_date:string',
+                'param' => 'login_type:static:login_type,from_date:string,to_date:string',
                 'sp_name' => 'get_user_attendance_details',
                 'scenario' => 'UserAttendanceDetails',
                 'title' => 'User Attendance Details',

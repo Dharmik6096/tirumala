@@ -167,6 +167,7 @@ class DefaultController extends Controller {
                     $param['applicable_for'] = $row->applicable_for;
                     $param['wef_date'] = date('Y-m-d H:i:s', strtotime($row->wef_date));
                     $param['login_type'] = $notification->login_type;
+                    $param['department'] = $notification->department;
                     $param['message_json'] = $messageJson;
                     $param['header_json'] = $headerJson;
                     $result = \Yii::$app->general->getSpData('sp_generate_bulk_notification', $param, false);

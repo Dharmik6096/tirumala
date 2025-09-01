@@ -22,7 +22,7 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
         return [
             [['tracking_id', 'originating_type'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'user_code'], 'required', 'on' => 'indexOther'],
-            [['tracking_datetime', 'lat_long', 'module_name', 'module_code', 'user_code', 'mobile_no', 'login_type', 'device_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code'], 'safe'],
+            [['tracking_datetime', 'lat_long', 'module_name', 'module_code', 'user_code', 'mobile_no', 'login_type', 'device_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code', 'department'], 'safe'],
         ];
     }
 
