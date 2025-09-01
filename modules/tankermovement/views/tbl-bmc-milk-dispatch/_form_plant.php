@@ -445,11 +445,11 @@ $(document).ready(function(){
                         $('#is_clr_input').val(is_clr_input);
                         $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
-                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
-                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);
+                            $('#tblbmcmilkdispatchtxn-snf').removeClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-clr').addClass('no_pointer_disabled_with_clr');
                         } else {
-                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true);
-                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
+                            $('#tblbmcmilkdispatchtxn-snf').addClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-clr').removeClass('no_pointer_disabled_with_clr');
                         }
                     }
                 }
@@ -572,7 +572,6 @@ $script .= "
         BindData();
     }
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
-    console.log('1');
         $('#transactions-from').html('');
         $('#transactions-detial').html('');           
         BindData();      
