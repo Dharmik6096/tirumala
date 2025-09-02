@@ -370,6 +370,9 @@ $(document).ready(function(){
         isClrInput();
         checkQualityRanges();
     });
+    if(isSecondTransaction) {
+        isClrInput();
+    };
 
     $(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code', function() {
         checkQualityRanges();
@@ -446,11 +449,11 @@ $(document).ready(function(){
                         $('#is_clr_input').val(is_clr_input);
                         $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
-                            $('#tblbmcmilkdispatchtxn-snf').removeClass('no_pointer_disabled_with_clr');
-                            $('#tblbmcmilkdispatchtxn-clr').addClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true).addClass('no_pointer_disabled_with_clr');
                         } else {
-                            $('#tblbmcmilkdispatchtxn-snf').addClass('no_pointer_disabled_with_clr');
-                            $('#tblbmcmilkdispatchtxn-clr').removeClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true).addClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
                         }
                     }
                 }
@@ -644,7 +647,7 @@ $script = "$(document).ready(function(){
         }
     }
 });";
-$this->registerJs($script, View::POS_END, 'bmc-config-popup');
+$this->registerJs($script, View::POS_READY, 'bmc-config-popup');
 ?>
 <?php
 if (!$readonly) {
@@ -670,6 +673,6 @@ if (!$readonly) {
             }
         });
     });";
-    $this->registerJs($script, View::POS_END, 'to-date-from-date');
+    $this->registerJs($script, View::POS_READY, 'to-date-from-date');
 }
 ?>
