@@ -283,6 +283,7 @@ $form = ActiveForm::begin([
 </div>
 <div id='trip_auto_generate_data'></div>
 <?php
+Yii::$app->disable->getDisableFields($txn_model);
 $script = "
 var isTransactionFormLoad = false;
 var isTransactionDetailLoad = false;
@@ -774,7 +775,7 @@ $script .= "
                     if(isSecondTransaction){
                         isTransactionFormLoad = true;
                     }
-                    $('#transactions-from').html(data);                                                                 
+                    $('#transactions-from').html(data);
                 }
             });
         }
