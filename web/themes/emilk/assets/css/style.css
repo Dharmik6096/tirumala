@@ -5382,7 +5382,7 @@ tr.highlightRow {
     width: 90% !important;
 }
 .addTripButtonDiv {
-    margin: 17px 0px 0px 0px !important;
+    margin: 22px 0px 0px 0px !important;
 }
 .mb-manage .mb-3{
     margin-bottom: 0px !important;
@@ -6058,4 +6058,13 @@ div#dashboardFarmerPopup {
 }
 .fs24 {
     font-size: 24px;
+}
+.one-decimal-validate{
+    width: 100%;
+}
+.two-decimal-validate{
+    width: 100%;
+}
+.three-decimal-validate{
+    width: 100%;
 }
