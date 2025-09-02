@@ -22,7 +22,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         return [
                 [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status', 'remarks', 'land_class', 'bank_name', 'branch_name', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'approved_at', 'from_date', 'to_date', 'approved_status', 'employee_code', 'employee_name', 'region_code', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'witness_name', 'place', 'payment_type', 'recipt_ref_no', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'as_on_date'], 'required', 'on' => ['export_search']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['bulk_approval']]
+                [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => ['bulk_approval']]
         ];
     }
 
@@ -73,6 +73,9 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        if ($date_search == TRUE) {
+            $dataProvider->pagination = false;
+        }
 
         $this->load($params);
 
@@ -92,8 +95,8 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         if ($date_search) {
             $query->andWhere([
                 'tbl_member_provisional.plant_code' => $this->plant_code,
-                'tbl_member_provisional.mcc_plant_code' => $this->mcc_plant_code,
-                'tbl_member_provisional.bmc_code' => $this->bmc_code,]);
+                'tbl_member_provisional.mcc_plant_code' => $this->mcc_plant_code]);
+            $query->andFilterWhere(['tbl_member_provisional.bmc_code' => $this->bmc_code]);
         }
 
         if (!$this->validate()) {
