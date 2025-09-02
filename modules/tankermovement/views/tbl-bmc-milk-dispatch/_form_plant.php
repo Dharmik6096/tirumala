@@ -226,17 +226,19 @@ $(document).ready(function(){
     var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
-        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+        $('#tblbmcmilkdispatch-trip_code').on('change', function() {
             $('#addTripButtonDiv').hide();
-            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
-                if (tripGenerateBtn) {
-                    $('#addTripButtonDiv').show();   
-                } 
-            } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-                $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
+            var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(plantCode) && setData(transactionDate) && setData(vehicleCode)) {
+                var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
+                var tripCodeDropdownLength = tripCodeOptions.length;
+                if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
+                    $('#addTripButtonDiv').show();
+                } else if (tripCodeDropdownLength === 2) {
+                    $('#tblbmcmilkdispatch-trip_code').val(tripCodeOptions.last().val());
+                }
             }
         });
     }
@@ -370,6 +372,9 @@ $(document).ready(function(){
         isClrInput();
         checkQualityRanges();
     });
+    if(isSecondTransaction) {
+        isClrInput();
+    };
 
     $(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code', function() {
         checkQualityRanges();
@@ -446,11 +451,11 @@ $(document).ready(function(){
                         $('#is_clr_input').val(is_clr_input);
                         $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
-                            $('#tblbmcmilkdispatchtxn-snf').removeClass('no_pointer_disabled_with_clr');
-                            $('#tblbmcmilkdispatchtxn-clr').addClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true).addClass('no_pointer_disabled_with_clr');
                         } else {
-                            $('#tblbmcmilkdispatchtxn-snf').addClass('no_pointer_disabled_with_clr');
-                            $('#tblbmcmilkdispatchtxn-clr').removeClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true).addClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
                         }
                     }
                 }
@@ -644,7 +649,7 @@ $script = "$(document).ready(function(){
         }
     }
 });";
-$this->registerJs($script, View::POS_END, 'bmc-config-popup');
+$this->registerJs($script, View::POS_READY, 'bmc-config-popup');
 ?>
 <?php
 if (!$readonly) {
@@ -670,6 +675,6 @@ if (!$readonly) {
             }
         });
     });";
-    $this->registerJs($script, View::POS_END, 'to-date-from-date');
+    $this->registerJs($script, View::POS_READY, 'to-date-from-date');
 }
 ?>
