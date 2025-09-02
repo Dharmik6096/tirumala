@@ -226,17 +226,19 @@ $(document).ready(function(){
     var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
-        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+        $('#tblbmcmilkdispatch-trip_code').on('change', function() {
             $('#addTripButtonDiv').hide();
-            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
-                if (tripGenerateBtn) {
-                    $('#addTripButtonDiv').show();   
-                } 
-            } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-                $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
+            var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(plantCode) && setData(transactionDate) && setData(vehicleCode)) {
+                var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
+                var tripCodeDropdownLength = tripCodeOptions.length;
+                if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
+                    $('#addTripButtonDiv').show();
+                } else if (tripCodeDropdownLength === 2) {
+                    $('#tblbmcmilkdispatch-trip_code').val(tripCodeOptions.last().val());
+                }
             }
         });
     }
