@@ -213,6 +213,7 @@ $form = ActiveForm::begin([
 <div id='trip_auto_generate_data'></div>
 
 <?php
+Yii::$app->disable->getDisableFields($txn_model);
 $script = "
 var isTransactionDetailLoad = false;
 var isTransactionFormLoad = false;
@@ -445,11 +446,11 @@ $(document).ready(function(){
                         $('#is_clr_input').val(is_clr_input);
                         $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
-                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
-                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);
+                            $('#tblbmcmilkdispatchtxn-snf').removeClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-clr').addClass('no_pointer_disabled_with_clr');
                         } else {
-                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true);
-                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
+                            $('#tblbmcmilkdispatchtxn-snf').addClass('no_pointer_disabled_with_clr');
+                            $('#tblbmcmilkdispatchtxn-clr').removeClass('no_pointer_disabled_with_clr');
                         }
                     }
                 }
@@ -568,16 +569,19 @@ function setData(field = ''){
 
 $script .= "
     var isTxnEditable = " . json_encode($txnEdit) . ";
+    if(isSecondTransaction){
+        BindData();
+    }
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
+        $('#transactions-from').html('');
+        $('#transactions-detial').html('');           
+        BindData();      
+    }); 
+  
+    function BindData(){
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
         var plant_code = $('#tblbmcmilkdispatch-plant_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-        $('#transactions-from').html('');
-        $('#transactions-detial').html('');           
-        BindData(plant_code,bmc_milk_dispatch_code,union_code);      
-    }); 
-  
-    function BindData(plant_code,bmc_milk_dispatch_code,union_code){
         if(setData(plant_code) && !isTransactionFormLoad){
             $.ajax({
                 type: 'get',
@@ -608,7 +612,7 @@ $script .= "
         }
     }
 ";
-$this->registerJs($script, View::POS_END, 'panel-before-hide');
+$this->registerJs($script, View::POS_READY, 'panel-before-hide');
 ?>
 <?php
 $script = "$(document).ready(function(){
