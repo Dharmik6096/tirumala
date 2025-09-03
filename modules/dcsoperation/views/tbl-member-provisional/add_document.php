@@ -8,6 +8,8 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 use yii\web\View;
+
+$configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
 ?>
 
 <div class="panel panel-default panel-main hide-grid-settings">
@@ -120,7 +122,6 @@ use yii\web\View;
                             <div class="form-group">
                                 <?php
                                 echo Html::hiddenInput('request_button', 'save', ['id' => 'request_button']);
-                                $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
                                 if ($configValue == 1) {
                                     ?>
                                     <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
