@@ -220,25 +220,32 @@ var isTransactionFormLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
+isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
     var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
-        $('#tblbmcmilkdispatch-trip_code').on('change', function() {
+        $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
+            if (isTripTriggerChange) return;
+            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
             var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
             if (setData(plantCode) && setData(transactionDate) && setData(vehicleCode)) {
-                var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
-                var tripCodeDropdownLength = tripCodeOptions.length;
-                if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
-                    $('#addTripButtonDiv').show();
-                } else if (tripCodeDropdownLength === 2) {
-                    $('#tblbmcmilkdispatch-trip_code').val(tripCodeOptions.last().val());
-                }
+                setTimeout(function() {
+                    var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
+                    var tripCodeDropdownLength = tripCodeOptions.length;
+                    if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
+                        $('#addTripButtonDiv').show();
+                    } else if (tripCodeDropdownLength === 2) {
+                        var lastOptionValue = tripCodeOptions.last().val();
+                        $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
+                    }
+                    isTripTriggerChange = false;
+                }, 200);
             }
         });
     }
