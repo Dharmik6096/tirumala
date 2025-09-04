@@ -53,6 +53,9 @@ class TblEiplAppLoginSearch extends TblEiplAppLogin {
             // $query->where('0=1');
             return $dataProvider;
         }
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
 
         // grid filtering conditions
         $query->andFilterWhere([
