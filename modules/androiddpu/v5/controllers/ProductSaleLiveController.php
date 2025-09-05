@@ -36,17 +36,16 @@ class ProductSaleLiveController extends \app\modules\androiddpu\v4\controllers\P
                     $msg = 'Delete Request Already Available';
                 } else {
                     $productSaleAliasModel = new TblProductSaleAlias();
-                    $uuid = Yii::$app->general->getUuid();
                     $productSaleAliasModel->action_perform = 'DELETE';
                     $productSaleAliasModel->product_sale_code = $productSaleData->product_sale_code;
-                    $productSaleAliasModel->ref_product_sale_code = $uuid;
+                    $productSaleAliasModel->ref_product_sale_code = $content['ref_product_sale_code'];
                     $productSaleAliasModel->customer_type = $productSaleData->customer_type;
                     $productSaleAliasModel->customer_code = $productSaleData->customer_code;
                     $productSaleAliasModel->approval_status = 0;
                     $productSaleAliasModel->originating_type = $data['organization_type'];
                     $productSaleAliasModel->originating_org_code = $data['organization_code'];
                     $productSaleAliasModel->originating_org_type = $data['organization_type'];
-                    $productSaleAliasModel->x_col1 = $uuid;
+                    $productSaleAliasModel->x_col1 = Yii::$app->general->getUuid();
                     $productSaleAliasModel->save();
                     $msg = 'Delete Request saved successfully.';
                     $res_data['data'] = $productSaleAliasModel;
