@@ -305,7 +305,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
         if ($this->password) {
             $this->setPassword($this->password);
         }
-        if (parent::beforeSave($insert)) {
+        if (!\Yii::$app->user->identity || parent::beforeSave($insert)) {
             $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             if ($insert) {
                 $this->created_by = $user;

@@ -2128,7 +2128,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AssetDetailSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionFarmerPaymentWiseMilkWise() {
         $this->report = 'FarmerPaymentWiseMilkWise';
         if (Yii::$app->request->queryParams) {
@@ -4627,7 +4627,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'UserAttendanceDetails' => [
-                'param' => 'login_type:static:login_type,from_date:string,to_date:string',
+                'param' => 'union_code,login_type_report:static:login_type_report,from_date:string,to_date:string',
                 'sp_name' => 'get_user_attendance_details',
                 'scenario' => 'UserAttendanceDetails',
                 'title' => 'User Attendance Details',
@@ -4750,7 +4750,7 @@ class ReportsController extends \app\controllers\ChildController {
         $isZip = isset($this->data['append_link']) && $this->data['append_link'] == true;
         if ($isZip && !in_array('attachment_link', $file_header)) {
             $file_header[] = 'attachment_link';
-        }  
+        }
         $objPHPExcel = new Spreadsheet();
         $customWorksheet = new Worksheet($objPHPExcel, 'Sheet1');
         $objPHPExcel->addSheet($customWorksheet);
@@ -4824,28 +4824,28 @@ class ReportsController extends \app\controllers\ChildController {
 // //    we want to set these values (default is A1)
 //         );
         if ($isZip && !empty($this->output)) {
-                $rowIndex = 2;
-                foreach ($this->output as $row) {
-                    $moduleCode = isset($row['module_code']) ? $row['module_code'] : '';
-                    $moduleName = isset($row['module_name']) ? $row['module_name'] : '';
-                    $zipUrl = yii\helpers\Url::to([
-                                '/document/tbl-attachment/zip-attachment-download',
-                                'user_code' => Yii::$app->user->id,
-                                'module_code' => $moduleCode,
-                                'module_name' => $moduleName,
-                                    ], true);
-                    $row['attachment_link'] = 'Download';
-                    if (!empty($row['attachment_link'])) {
-                        $columnIndex = count($row) - 1;
-                        $cell = $customWorksheet->getCellByColumnAndRow($columnIndex, $rowIndex);
-                        $cellCoordinate = $cell->getCoordinate();
-                        $customWorksheet->setCellValue($cellCoordinate, 'Download');
-                        $customWorksheet->getCell($cellCoordinate)->getHyperlink()->setUrl($zipUrl);
-                        $customWorksheet->getStyle($cellCoordinate)->getFont()->setUnderline(true)->getColor()->setRGB('0000FF');
-                    }
-                    $rowIndex++;
+            $rowIndex = 2;
+            foreach ($this->output as $row) {
+                $moduleCode = isset($row['module_code']) ? $row['module_code'] : '';
+                $moduleName = isset($row['module_name']) ? $row['module_name'] : '';
+                $zipUrl = yii\helpers\Url::to([
+                            '/document/tbl-attachment/zip-attachment-download',
+                            'user_code' => Yii::$app->user->id,
+                            'module_code' => $moduleCode,
+                            'module_name' => $moduleName,
+                                ], true);
+                $row['attachment_link'] = 'Download';
+                if (!empty($row['attachment_link'])) {
+                    $columnIndex = count($row) - 1;
+                    $cell = $customWorksheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+                    $cellCoordinate = $cell->getCoordinate();
+                    $customWorksheet->setCellValue($cellCoordinate, 'Download');
+                    $customWorksheet->getCell($cellCoordinate)->getHyperlink()->setUrl($zipUrl);
+                    $customWorksheet->getStyle($cellCoordinate)->getFont()->setUnderline(true)->getColor()->setRGB('0000FF');
                 }
+                $rowIndex++;
             }
+        }
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'] .
