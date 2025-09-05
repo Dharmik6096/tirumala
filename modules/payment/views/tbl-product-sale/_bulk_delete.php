@@ -1,10 +1,10 @@
 <?php
-$title = (($type=='memberBulkDelete') ? 'Member' : 'Vendor');
-$this->title = Yii::t('app', 'Product Sale Delete '.$title);
+$title = ($type == 'memberBulkDeleteApproval') ? 'Member Approval' : (($type == 'vendorBulkDeleteApproval') ? 'Vendor Approval' : (($type == 'memberBulkDelete') ? 'Member' : 'Vendor'));
+$this->title = Yii::t('app', 'Product Sale Delete ' . $title);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
-        <?= $this->title; ?>           
+        <?= $this->title; ?>
     </div>
     <div class="panel-body">
         <div class="row theme_border_left theme_border_right theme_border_bottom">
@@ -18,11 +18,10 @@ $this->title = Yii::t('app', 'Product Sale Delete '.$title);
                 <div class="clearfix"></div>
                 <div class="large-search hidden-print">
                     <?php
-                        echo $this->render('_bulk_delete_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'type' => $type]);
+                    echo $this->render('_bulk_delete_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'type' => $type]);
                     ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
