@@ -89,18 +89,6 @@ class TblProductSaleAlias extends ChildModel {
         return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
-    public function afterSave($insert, $changedAttributes) {
-        if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24'])) {
-            $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
-            }
-        }
-    }
-
     public function afterDelete() {
         if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24'])) {
             $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type);
