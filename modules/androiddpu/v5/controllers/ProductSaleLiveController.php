@@ -42,7 +42,7 @@ class ProductSaleLiveController extends \app\modules\androiddpu\v4\controllers\P
                     $productSaleAliasModel->customer_type = $productSaleData->customer_type;
                     $productSaleAliasModel->customer_code = $productSaleData->customer_code;
                     $productSaleAliasModel->approval_status = 0;
-                    $productSaleAliasModel->originating_type = $data['organization_type'];
+                    $productSaleAliasModel->originating_type = '24';
                     $productSaleAliasModel->originating_org_code = $data['organization_code'];
                     $productSaleAliasModel->originating_org_type = $data['organization_type'];
                     $productSaleAliasModel->x_col1 = Yii::$app->general->getUuid();
