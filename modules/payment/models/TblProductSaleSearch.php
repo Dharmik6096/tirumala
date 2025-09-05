@@ -169,7 +169,7 @@ class TblProductSaleSearch extends TblProductSale {
         Yii::$app->general->filterByOrg($query, $this, 'ps', 'ps', 'ps');
         $flag = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'product_sale_delete_approval', 'PORTAL');
         if ($flag == 1) {
-            if ($approval) {
+            if ($approval === TRUE) {
                 $query->leftJoin('tbl_product_sale_alias psa', 'psa.product_sale_code = ps.product_sale_code');
                 $query->addSelect(['ps.*', 'psa.error_desc']);
                 $query->andWhere(['=', 'psa.action_perform', 'DELETE']);
