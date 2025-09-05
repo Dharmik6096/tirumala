@@ -3087,12 +3087,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_installed_mpp';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_mpp', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3102,12 +3104,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_installed_member';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_member', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3117,12 +3121,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_installed_employee';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_employee', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3132,12 +3138,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_installed_supervisor';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_supervisor', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3147,12 +3155,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_installed_az_manager';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_manager', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3162,12 +3172,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_installed_other_Staff';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3177,12 +3189,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_not_installed_mpp';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_not_installed_mpp', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3192,12 +3206,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_not_installed_member';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_not_installed_member', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3207,12 +3223,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_not_installed_employee';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_not_installed_employee', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3222,12 +3240,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_not_installed_supervisor';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_not_installed_supervisor', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3237,12 +3257,14 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_not_installed_az_manager';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_not_installed_manager', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
@@ -3252,18 +3274,21 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($_GET)) {
             $data = $_GET;
             $breadcrum_title = $this->setBreadcrums($data);
+            $union_code = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
             $sp_param = [];
             $sp_name = 'proc_mobile_user_count_list';
+            $sp_param[] = $union_code;
             $sp_param[] = 0;
             $sp_param[] = 'total_app_not_installed_other_Staff';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $blocks_data = $this->getMobileBlockStatus([1, '']);
+            $blocks_data = $this->getMobileBlockStatus([$union_code, 1, '']);
         }
         return $this->render('_dashboard_grid_not_installed_other_Staff', ['output' => $output, 'date' => $data['date'], 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
 
     public function actionLoadDashboardMobileData() {
         $sp_name = 'proc_mobile_user_count_list';
+        $sp_param[] = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
         $sp_param[] = 1;
         $sp_param[] = '';
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
@@ -3284,6 +3309,7 @@ class SiteController extends \app\controllers\ChildController {
     public function actionLoadMobilePieChart() {
         $sp_name = 'proc_mobile_user_count_and_list';
         $sp_param = [];
+        $sp_param[] = !empty($_POST['Dashboard']['union_code']) ? $_POST['Dashboard']['union_code'] : '';
         $sp_param[] = 1;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $series = [];

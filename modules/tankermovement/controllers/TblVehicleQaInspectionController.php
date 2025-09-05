@@ -98,6 +98,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                 foreach ($qaInspectionData as $key => $inspectionData) {
                     $historyModel = new TblVehicleQaInspectionHistory();
                     Yii::$app->operation->history($inspectionData, $historyModel, UPDATE);
+                    $inspectionData->scenario = 'qaInspection';
                     $inspectionData->status = 'closed';
                     $saveModel[] = $historyModel;
                     $saveModel[] = $inspectionData;

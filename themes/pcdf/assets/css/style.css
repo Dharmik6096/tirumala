@@ -6374,3 +6374,12 @@ div#dashboardFarmerPopup {
     pointer-events: none;
     background-color: #eee;
 }
+.one-decimal-validate{
+    width: 100%;
+}
+.two-decimal-validate{
+    width: 100%;
+}
+.three-decimal-validate{
+    width: 100%;
+}
