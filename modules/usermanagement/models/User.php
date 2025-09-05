@@ -142,7 +142,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
             'portal_type' => Yii::t('app', 'Portal Type'),
             'designation_code' => yii::t('app', 'Designation'),
             'employee_id' => yii::t('app', 'Employee Id'),
-            'date_of_joining' =>  yii::t('app', 'Date Of Joining'),
+            'date_of_joining' => yii::t('app', 'Date Of Joining'),
         ];
     }
 
@@ -176,15 +176,15 @@ class User extends \webvimark\modules\UserManagement\models\User {
     }
 
     public function validatePasswordStrength($attribute, $params) {
-         if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
-             $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
-         } 
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $this->$attribute)) {
+            $this->addError($attribute, 'Password must be at least 8 characters long and include at least one letter, one number, and one special character.');
+        }
         if ($this->scenario === 'passwordReset') {
-            if($this->validatePassword($this->password)){
+            if ($this->validatePassword($this->password)) {
                 $this->addError('password', 'New password cannot be the same as the old password.');
                 return;
             }
-            if($this->password === preg_replace('/^01#/', '', $this->username)){
+            if ($this->password === preg_replace('/^01#/', '', $this->username)) {
                 $this->addError('password', 'New password cannot be the same as the username.');
                 return;
             }
@@ -299,7 +299,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
         if ($this->password) {
             $this->setPassword($this->password);
         }
-        if (parent::beforeSave($insert)) {
+        if (!\Yii::$app->user->identity || parent::beforeSave($insert)) {
             $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             if ($insert) {
                 $this->created_by = $user;
