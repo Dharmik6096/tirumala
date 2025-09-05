@@ -23,7 +23,8 @@ class TblProductSaleSearch extends TblProductSale {
             [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
             [['is_installment', 'no_of_installment'], 'integer'],
-            [['plant_code', 'union_code', 'bmc_code', 'mcc_plant_code', 'from_date', 'to_date', 'dcs_code'], 'required', 'on' => ['memberBulkDelete', 'memberBulkDeleteApproval']],
+            [['plant_code', 'union_code', 'bmc_code', 'mcc_plant_code', 'from_date', 'to_date'], 'required', 'on' => ['memberBulkDelete', 'memberBulkDeleteApproval']],
+            [['dcs_code'], 'required', 'on' => ['memberBulkDelete']],
             [['plant_code', 'union_code', 'bmc_code', 'mcc_plant_code', 'from_date', 'to_date', 'customer_type'], 'required', 'on' => ['vendorBulkDelete', 'vendorBulkDeleteApproval']],
         ];
     }
@@ -155,41 +156,38 @@ class TblProductSaleSearch extends TblProductSale {
             return $dataProvider;
         }
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
-        $query->join('join', 'tbl_payment_cycle_applicability pca', 'pca.applicable_code=ps.bmc_code'
+        if ($approval == 'deleteGrid') {
+            $query->join('join', 'tbl_payment_cycle_applicability pca', 'pca.applicable_code=ps.bmc_code'
                 . ' and cast(ps.invoice_date as date) between cast(pca.from_date as date) and cast(pca.to_date as date)'
                 . ' and pca.applicable_for=\'BMC\' and pca.applicable_type = case when ps.customer_type=\'Member\'then \'DCS\' else ps.customer_type end'
                 . ' and pca.data_lock_member= case when ps.customer_type=\'Member\' then \'0\' else pca.data_lock_member end'
                 . ' and pca.billing_lock_member= case when ps.customer_type=\'Member\' then \'0\' else pca.billing_lock_member end'
                 . ' and pca.data_lock_bmc= case when ps.customer_type<>\'Member\' then \'0\' else pca.data_lock_bmc end'
                 . ' and pca.billing_lock_bmc= case when ps.customer_type<>\'Member\' then \'0\' else pca.billing_lock_bmc end');
+        }
 
         Yii::$app->general->filterByOrg($query, $this, 'ps', 'ps', 'ps');
         $flag = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'product_sale_delete_approval', 'PORTAL');
         if ($flag == 1) {
             if ($approval) {
                 $query->leftJoin('tbl_product_sale_alias psa', 'psa.product_sale_code = ps.product_sale_code');
+                $query->addSelect(['ps.*', 'psa.error_desc']);
                 $query->andWhere(['=', 'psa.action_perform', 'DELETE']);
-                $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-                $query->andFilterWhere(['>=', 'cast(psa.created_at as date)', $from_date]);
-                $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-                $query->andFilterWhere(['<=', 'cast(psa.created_at as date)', $to_date]);
             } else if ($approval == 'deleteGrid') {
                 $subQuery = TblProductSaleAlias::find()->select('product_sale_code')->where(['action_perform' => 'delete'])->column();
                 $query->andWhere(['NOT IN', 'ps.product_sale_code', $subQuery]);
             }
         }
 
-        if (!$approval) {
-            if (!empty($this->from_date)) {
-                $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-                $query->andFilterWhere(['>=', 'cast(ps.invoice_date as date)', $from_date]);
-            }
-
-            if (!empty($this->to_date)) {
-                $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-                $query->andFilterWhere(['<=', 'cast(ps.invoice_date as date)', $to_date]);
-            }
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(ps.invoice_date as date)', $from_date]);
         }
+
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(ps.invoice_date as date)', $to_date]);
+        }        
 
         if (!empty($this->dcs_code)) {
             $query->andFilterWhere(['ps.dcs_code' => $this->dcs_code]);

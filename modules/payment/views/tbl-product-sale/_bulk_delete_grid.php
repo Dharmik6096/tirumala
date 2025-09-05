@@ -63,6 +63,11 @@ $form = ActiveForm::begin([
             ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
             ['attribute' => 'amount_due', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
             ['attribute' => 'paid_amount', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
+            ['attribute' => 'error_desc', 'label' => Yii::t('app', 'Error Description'),
+                'value' => function ($searchModel) {
+                    return $searchModel->error_desc;
+                }, 'visible' => in_array($type, ['memberBulkDeleteApproval', 'vendorBulkDeleteApproval']),
+            ],
         ];
 
         $grid_option = [

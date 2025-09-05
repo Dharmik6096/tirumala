@@ -58,7 +58,7 @@ class TblProductSale extends \app\models\ChildModel {
     public $payment_cycle_code, $available_credit, $customer_name, $ex_code, $avl_credit, $general_party_master_code;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
-    public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock, $sap_batch_no, $product_stock_rate, $operation;
+    public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock, $sap_batch_no, $product_stock_rate, $operation, $error_desc;
     public $calculateTax = TRUE;
 
     /**
@@ -92,7 +92,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
             [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate', 'operation'], 'safe'],
+            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate', 'operation', 'error_desc'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
             [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
             [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
@@ -995,6 +995,32 @@ class TblProductSale extends \app\models\ChildModel {
         if ($config == 1 && TblProductSaleAlias::find()->where(['product_sale_code' => $this->product_sale_code, 'action_perform' => 'DELETE'])->exists()) {
             return FALSE;
         }
+        $date = Yii::$app->formatter->asDate($this->invoice_date, 'php:Y-m-d');
+        $type = ($this->customer_type == 'Member' ? 'DCS' : $this->customer_type);
+        $codeParam = $this->bmc_code;
+        $for = 'BMC';
+        $flagArray = ($this->customer_type == 'Member' ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc']);
+        $payment_model = new TblPaymentCycleApplicability;
+        $data = $payment_model->find()
+                ->where(['applicable_code' => $codeParam, 'applicable_for' => $for, 'applicable_type' => $type])
+                ->andWhere(['<=', 'CAST(from_date as date)', $date])
+                ->andWhere(['>=', 'CAST(to_date as date)', $date])
+                ->one();
+
+        if (!empty($data)) {
+            foreach ($flagArray as $flag) {
+                if ($data->$flag == 1) {
+                    return FALSE;
+                } else {
+                    return TRUE;
+                }
+            }
+        } else {
+            return TRUE;
+        }
+    }
+
+    public function getCheckPaymentCycleLockForApproval() {
         $date = Yii::$app->formatter->asDate($this->invoice_date, 'php:Y-m-d');
         $type = ($this->customer_type == 'Member' ? 'DCS' : $this->customer_type);
         $codeParam = $this->bmc_code;

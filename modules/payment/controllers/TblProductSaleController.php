@@ -501,6 +501,9 @@ class TblProductSaleController extends \app\controllers\ChildController {
         if ($productSaleDeleteApprovalConfig == 1 && in_array($approvalProcess, ['reject', 'approve'])) {
             $productSaleAliasData = TblProductSaleAlias::find()->where(['product_sale_code' => $id, 'action_perform' => 'DELETE'])->orderBy(['created_at' => SORT_DESC])->one();
             if ($productSaleAliasData) {
+                $productSaleAliasData->approval_status = ($approvalProcess == 'approve') ? 1 : 2;
+                $productSaleAliasData->approved_at = date('Y-m-d H:i:s');
+                $productSaleAliasData->approved_by = Yii::$app->session['UserCode'];
                 $productSaleAliasHistory = new TblProductSaleAliasHistory();
                 Yii::$app->operation->history($productSaleAliasData, $productSaleAliasHistory, DELETE);
                 $saveModel[] = $productSaleAliasHistory;
@@ -512,7 +515,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $deleteModel[] = $productSaleAliasData;
             }
             if ($approvalProcess == 'reject') {
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Milk Dispatch Approval', 'edit']);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale Approval', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $record = ['status' => 'success', 'msg' => 'Deleted Record successfully Rejected.'];
                 } else {
@@ -689,11 +692,28 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $deleteModel[] = $taxmodel[$key];
             $saveModel[] = $taxmodelHistory;
         }
-        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale', 'edit']);
-
+        if($this->model->checkPaymentCycleLockForApproval){
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale', 'edit']);
+        } else {
+            $transaction = 'customRender';
+        }
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
         } else {
+            if(isset($productSaleAliasData) && !empty($productSaleAliasData)){
+                $errors = 'Payment Cycle is locked for Sale Date.';
+                foreach ($saveModel as $model) {
+                    $modelErrors = $model->getErrors();
+                    foreach ($modelErrors as $attribute => $error) {
+                        $errors .= implode(', ', $error) . "\n";
+                    }
+                }
+                unset($productSaleAliasData->approved_at);
+                unset($productSaleAliasData->approved_by);
+                $productSaleAliasData->approval_status = 0;
+                $productSaleAliasData->error_desc = trim($errors);
+                $productSaleAliasData->save();
+            }            
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
         }
         return $record;
