@@ -43,6 +43,9 @@ use app\modules\collection\models\TblMilkCollection;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
 use app\modules\payment\models\TblMonthlyCreditLimit;
+use app\modules\payment\models\TblProductSaleAlias;
+use app\modules\payment\models\TblProductSaleAliasHistory;
+use app\modules\payment\models\TblProductSaleAliasReject;
 use app\modules\product\models\TblProduct;
 
 /**
@@ -227,7 +230,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionDelete() {
-        $record = $this->bulkdelete(Yii::$app->request->post('id'));
+        $record = $this->bulkdelete(Yii::$app->request->post('id'), $productSaleDeleteApprovalConfig);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
@@ -420,7 +423,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $headModel->customer_code = $customer_code;
             $data = Yii::$app->general->validateCustomerCode($headModel);
             $headModel->customer_code = $data;
-        } else if(!empty($type) && strtolower($type) == 'party') {
+        } else if (!empty($type) && strtolower($type) == 'party') {
             $headModel->customer_code = $customer_code;
             $data = Yii::$app->general->validateGeneratePartyMasterCode($headModel);
             $name = $data;
@@ -468,11 +471,59 @@ class TblProductSaleController extends \app\controllers\ChildController {
         }
     }
 
-    private function bulkdelete($id) {
-        $this->model = $this->findModel($id);
+    private function bulkdelete($id, &$productSaleDeleteApprovalConfig, $approvalProcess = FALSE) {
         $deleteModel = [];
         $saveModel = [];
-
+        $this->model = $this->findModel($id);
+        $productSaleDeleteApprovalConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'product_sale_delete_approval', 'PORTAL');
+        if ($productSaleDeleteApprovalConfig == 1 && !$approvalProcess) {
+            $productSaleAliasModel = new TblProductSaleAlias();
+            $productSaleAliasModel->attributes = $this->model->attributes;
+            $productSaleAliasModel->approval_status = 0;
+            $productSaleAliasModel->action_perform = 'DELETE';
+            $productSaleAliasModel->x_col1 = Yii::$app->general->getUuid();
+            unset($productSaleAliasModel->created_at);
+            unset($productSaleAliasModel->created_by);
+            unset($productSaleAliasModel->updated_at);
+            unset($productSaleAliasModel->updated_by);
+            unset($productSaleAliasModel->originating_org_code);
+            unset($productSaleAliasModel->originating_org_type);
+            unset($productSaleAliasModel->originating_type);
+            $saveModel[] = $productSaleAliasModel;
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Product Sale Alias', 'create']);
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'Record successfully deleted and sent for approval.'];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+            }
+            return $record;
+        }
+        if ($productSaleDeleteApprovalConfig == 1 && in_array($approvalProcess, ['reject', 'approve'])) {
+            $productSaleAliasData = TblProductSaleAlias::find()->where(['product_sale_code' => $id, 'action_perform' => 'DELETE'])->orderBy(['created_at' => SORT_DESC])->one();
+            if ($productSaleAliasData) {
+                $productSaleAliasData->approval_status = ($approvalProcess == 'approve') ? 1 : 2;
+                $productSaleAliasData->approved_at = date('Y-m-d H:i:s');
+                $productSaleAliasData->approved_by = Yii::$app->session['UserCode'];
+                $productSaleAliasHistory = new TblProductSaleAliasHistory();
+                Yii::$app->operation->history($productSaleAliasData, $productSaleAliasHistory, DELETE);
+                $saveModel[] = $productSaleAliasHistory;
+                if ($approvalProcess == 'reject') {
+                    $productSaleAliasReject = new TblProductSaleAliasReject();
+                    $productSaleAliasReject->attributes = $productSaleAliasData->attributes;
+                    $saveModel[] = $productSaleAliasReject;
+                }
+                $deleteModel[] = $productSaleAliasData;
+            }
+            if ($approvalProcess == 'reject') {
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale Approval', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    $record = ['status' => 'success', 'msg' => 'Deleted Record successfully Rejected.'];
+                } else {
+                    $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+                }
+                return $record;
+            }
+        }
         $historyModel = new TblProductSaleHistory();
         Yii::$app->operation->history($this->model, $historyModel, DELETE);
         $deleteModel[] = $this->model;
@@ -641,11 +692,28 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $deleteModel[] = $taxmodel[$key];
             $saveModel[] = $taxmodelHistory;
         }
-        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale', 'edit']);
-
+        if($this->model->checkPaymentCycleLockForApproval){
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale', 'edit']);
+        } else {
+            $transaction = 'customRender';
+        }
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
         } else {
+            if(isset($productSaleAliasData) && !empty($productSaleAliasData)){
+                $errors = 'Payment Cycle is locked for Sale Date.';
+                foreach ($saveModel as $model) {
+                    $modelErrors = $model->getErrors();
+                    foreach ($modelErrors as $attribute => $error) {
+                        $errors .= implode(', ', $error) . "\n";
+                    }
+                }
+                unset($productSaleAliasData->approved_at);
+                unset($productSaleAliasData->approved_by);
+                $productSaleAliasData->approval_status = 0;
+                $productSaleAliasData->error_desc = trim($errors);
+                $productSaleAliasData->save();
+            }            
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
         }
         return $record;
@@ -655,7 +723,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $searchModel = new TblProductSaleSearch();
         $type = 'vendorBulkDelete';
         $searchModel->scenario = $type;
-        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams, 'deleteGrid');
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $selectedIds = $_REQUEST['selection'];
@@ -665,7 +733,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $failed_cnt = 0;
                     $failed = [];
                     foreach ($selectedIds as $id) {
-                        $result = $this->bulkdelete($id);
+                        $result = $this->bulkdelete($id, $productSaleDeleteApprovalConfig);
                         if ($result['status'] == 'success') {
                             $cnt++;
                         } else {
@@ -674,7 +742,51 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         }
                     }
                     if ($total == $cnt) {
-                        $msg = 'Records are successfully deleted.';
+                        $msg = ($productSaleDeleteApprovalConfig == 1) ? 'Record successfully deleted and sent for approval.' : 'Record is successfully deleted.';
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                    } else if ($total > $cnt && $failed_cnt > 0) {
+                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                    }
+                    return $this->redirect(['index']);
+                }
+            }
+        } else {
+            return $this->render('_bulk_delete', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => $type,
+            ]);
+        }
+    }
+
+    public function actionDeleteProductSaleApproval() {
+        $searchModel = new TblProductSaleSearch();
+        $type = 'vendorBulkDeleteApproval';
+        $searchModel->scenario = $type;
+        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams, TRUE);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $selectedIds = $_REQUEST['selection'];
+                $total = count($_REQUEST['selection']);
+                if (!empty($selectedIds)) {
+                    $cnt = 0;
+                    $failed_cnt = 0;
+                    $failed = [];
+                    foreach ($selectedIds as $id) {
+                        $operation = Yii::$app->request->post('TblProductSale')['operation'];
+                        $result = $this->bulkdelete($id, $productSaleDeleteApprovalConfig, $operation);
+                        if ($result['status'] == 'success') {
+                            $cnt++;
+                        } else {
+                            $failed[] = $id;
+                            $failed_cnt++;
+                        }
+                    }
+                    if ($total == $cnt) {
+                        $msg = 'Deleted Record successfully ' . $operation;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     } else if ($total > $cnt && $failed_cnt > 0) {
@@ -698,7 +810,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $searchModel = new TblProductSaleSearch();
         $type = 'memberBulkDelete';
         $searchModel->scenario = $type;
-        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams, 'deleteGrid');
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $selectedIds = $_REQUEST['selection'];
@@ -708,7 +820,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $failed_cnt = 0;
                     $failed = [];
                     foreach ($selectedIds as $id) {
-                        $result = $this->bulkdelete($id);
+                        $result = $this->bulkdelete($id, $productSaleDeleteApprovalConfig);
                         if ($result['status'] == 'success') {
                             $cnt++;
                         } else {
@@ -717,7 +829,51 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         }
                     }
                     if ($total == $cnt) {
-                        $msg = 'Records are successfully deleted.';
+                        $msg = ($productSaleDeleteApprovalConfig == 1) ? 'Record successfully deleted and sent for approval.' : 'Record is successfully deleted.';
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                    } else if ($total > $cnt && $failed_cnt > 0) {
+                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                    }
+                    return $this->redirect(['index']);
+                }
+            }
+        } else {
+            return $this->render('_bulk_delete', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => $type,
+            ]);
+        }
+    }
+
+    public function actionDeleteProductSaleToMemberApproval() {
+        $searchModel = new TblProductSaleSearch();
+        $type = 'memberBulkDeleteApproval';
+        $searchModel->scenario = $type;
+        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams, TRUE);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $selectedIds = $_REQUEST['selection'];
+                $total = count($_REQUEST['selection']);
+                if (!empty($selectedIds)) {
+                    $cnt = 0;
+                    $failed_cnt = 0;
+                    $failed = [];
+                    foreach ($selectedIds as $id) {
+                        $operation = Yii::$app->request->post('TblProductSale')['operation'];
+                        $result = $this->bulkdelete($id, $productSaleDeleteApprovalConfig, $operation);
+                        if ($result['status'] == 'success') {
+                            $cnt++;
+                        } else {
+                            $failed[] = $id;
+                            $failed_cnt++;
+                        }
+                    }
+                    if ($total == $cnt) {
+                        $msg = 'Deleted Record successfully ' . $operation;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     } else if ($total > $cnt && $failed_cnt > 0) {
