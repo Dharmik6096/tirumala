@@ -42,12 +42,12 @@ use yii\widgets\ActiveForm;
                             ?>
                             <tr>
                                 <td class="hide_help_block"><?= $animal_type_name ?><?= Html::activeHiddenInput($model, '[' . $index . ']animal_type_code', ['value' => $index]) ?></td>
-                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_fat')->textInput(['class' => 'form-control number-validate', 'value' => $min_fat_value])->label(false) ?></td>
-                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_fat')->textInput(['class' => 'form-control number-validate', 'value' => $max_fat_value])->label(false) ?></td>
-                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_snf')->textInput(['class' => 'form-control number-validate', 'value' => $min_snf_value])->label(false) ?></td>
-                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_snf')->textInput(['class' => 'form-control number-validate', 'value' => $max_snf_value])->label(false) ?></td>
-                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_clr')->textInput(['class' => 'form-control number-validate', 'value' => $min_clr_value])->label(false) ?></td>
-                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_clr')->textInput(['class' => 'form-control number-validate', 'value' => $max_clr_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_fat')->textInput(['class' => 'form-control number-validate two-decimal-validate', 'value' => $min_fat_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_fat')->textInput(['class' => 'form-control number-validate two-decimal-validate', 'value' => $max_fat_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_snf')->textInput(['class' => 'form-control number-validate two-decimal-validate', 'value' => $min_snf_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_snf')->textInput(['class' => 'form-control number-validate two-decimal-validate', 'value' => $max_snf_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']min_clr')->textInput(['class' => 'form-control number-validate two-decimal-validate', 'value' => $min_clr_value])->label(false) ?></td>
+                                <td class="hide_help_block"><?= $form->field($model, '[' . $index . ']max_clr')->textInput(['class' => 'form-control number-validate two-decimal-validate', 'value' => $max_clr_value])->label(false) ?></td>
                             </tr>
                             <?php
                         }
