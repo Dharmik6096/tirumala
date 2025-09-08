@@ -45,6 +45,8 @@ class ProductSaleLiveController extends \app\modules\androiddpu\v4\controllers\P
                     $msg = 'Delete Request saved successfully.';
                     $res_data = $productSaleAliasModel->attributes;
                 }
+            } else {
+                $msg = 'Product sale data not found.';
             }
         } else {
             $msg = 'Empty request received.';
