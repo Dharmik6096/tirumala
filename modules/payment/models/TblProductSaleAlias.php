@@ -35,6 +35,8 @@ use yii\base\UserException;
  */
 class TblProductSaleAlias extends ChildModel {
 
+    public $is_sentbox = TRUE;
+
     /**
      * @inheritdoc
      */
@@ -47,7 +49,7 @@ class TblProductSaleAlias extends ChildModel {
      */
     public function rules() {
         return [
-            [['action_perform', 'product_sale_code', 'ref_product_sale_code', 'customer_type', 'customer_code', 'error_desc', 'approved_at', 'approved_by', 'approval_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['action_perform', 'product_sale_code', 'ref_product_sale_code', 'customer_type', 'customer_code', 'error_desc', 'approved_at', 'approved_by', 'approval_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_sentbox'], 'safe'],
         ];
     }
 
@@ -89,21 +91,39 @@ class TblProductSaleAlias extends ChildModel {
         return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
-    public function afterDelete() {
-        if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24'])) {
-            $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+    public function afterSave($insert, $changedAttributes) {
+        $productSaleData = $this->productSale;
+        if (in_array($productSaleData->originating_org_type, ['VLC', 'BMC']) && in_array($productSaleData->originating_type, ['23', '24'])) {
+            $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($productSaleData->originating_org_code, $productSaleData->originating_org_type, $productSaleData->union_code);
+            if ($flag == 'INSERT' && (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE))) {
+                if (!($sentbox->setSentbox($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
         }
     }
 
-    private function sentboxModel($code, $type) {
+    public function afterDelete() {
+        $productSaleData = $this->productSale;
+        $originatingOrgTypes = ['VLC', 'BMC'];
+        $originatingTypes = ['23', '24'];
+        if ((in_array($productSaleData->originating_org_type, $originatingOrgTypes) && in_array($productSaleData->originating_type, $originatingTypes)) || (in_array($this->originating_org_type, $originatingOrgTypes) && in_array($this->originating_type, $originatingTypes))) {
+            $orgCode = in_array($productSaleData->originating_org_type, $originatingOrgTypes) && in_array($productSaleData->originating_type, $originatingTypes) ? $productSaleData->originating_org_code : $this->originating_org_code;
+            $orgType = in_array($productSaleData->originating_org_type, $originatingOrgTypes) && in_array($productSaleData->originating_type, $originatingTypes) ? $productSaleData->originating_org_type : $this->originating_org_type;
+            $sentbox = $this->sentboxModel($orgCode, $orgType, $productSaleData->union_code);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === true)) {
+                if (!$sentbox->setSentbox($this, 'DELETE')) {
+                    throw new UserException("SentBox entry is not created, so transaction is rolled back!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type, $union) {
         $sentbox = new TblSentbox();
         $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->productSale->union_code;
+        $sentbox->source_org_id = $union;
         $sentbox->dest_org_type = $type;
         return $sentbox;
     }
