@@ -29,6 +29,7 @@ use app\components\ActiveForm;
             <?= Html::hiddenInput('union_code', $mappingModel->union_code, ['id' => 'union_code']); ?>
             <?= Html::hiddenInput('login_type', $mappingModel->login_type, ['id' => 'login_type']); ?>
             <?= Html::hiddenInput('department', $mappingModel->department, ['id' => 'department']); ?>
+            <?= Html::hiddenInput('app_type', $mappingModel->app_type, ['id' => 'app_type']); ?>
 
             <div class="panel-body">
                 <div class="col-md-12 padding_10_0 theme-box">

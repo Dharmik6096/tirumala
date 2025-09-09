@@ -6369,6 +6369,26 @@ div#dashboardFarmerPopup {
 .fs24 {
     font-size: 24px;
 }
+.sequence-well.sequence-box-well .list-group {
+    margin-bottom: 0px !important;
+}
+.sequence-box-well {
+    padding: 0px;
+    background-color: #fff;
+    height: 370px;
+    overflow: auto;
+}
+.sequence-box-well .list-group-item, .sequence-box-well .list-group-item:last-child, .sequence-box-well .list-group-item:first-child{
+    border-width: 1px !important;
+    padding: 4px;
+    font-size: 11px;
+    margin: 5px;
+    width: 1325px;
+    font-weight: 400;
+}
+.border-none{
+    border: none;
+}
 .no_pointer_disabled_with_clr {
     cursor: not-allowed;
     pointer-events: none;

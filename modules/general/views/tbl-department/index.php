@@ -1,6 +1,10 @@
 <?php
+
+use app\modules\usermanagement\components\GhostHtml;
+
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Department'));
 $this->params['menu'][] = Yii::$app->controls->add('Department');
+$this->params['menu'][] = GhostHtml::a('<i class="fa fa-exchange"></i>' . Yii::t('app', 'Change Department Sequence'), ['/general/tbl-department/change-department-seq'], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
