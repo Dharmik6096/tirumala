@@ -78,7 +78,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-money"></i>', ['/payment/tbl-product-sale/sale-installments', 'id' => $model->product_sale_code], $options);
         },
         'delete' => [
-            'option' => 'customer_type###customer_code###invoice_date.date,product_sale_code,/payment/tbl-product-sale/delete,checkPaymentCycleLock()',
+            'option' => 'customer_type###customer_code###invoice_date~date,product_sale_code,/payment/tbl-product-sale/delete,checkPaymentCycleLock()',
         ],
     ]
 ];

@@ -145,9 +145,16 @@ class Grid extends Widget {
                             $optionParts = explode('###', $option[0]);
                             $concatenatedName = '';
                             foreach ($optionParts as $part) {
+                                $isSign = strpos($part, '~') !== false;
+                                list($part, $format) = $isSign ? explode('~', $part) : [$part, ''];
                                 $nestedAttribute = explode('.', $part);
-                                $concatenatedName .= (count($nestedAttribute) == 2) ? (($nestedAttribute[1] == 'date') ? date('d-m-Y', strtotime($model->{$nestedAttribute[0]})) : $model->{$nestedAttribute[0]}->{$nestedAttribute[1]}) : $model->{$part};
-                                $concatenatedName .= ' > ';
+                                $value = count($nestedAttribute) == 2 ? $model->{$nestedAttribute[0]}->{$nestedAttribute[1]} : $model->{$part};
+                                switch ($format) {
+                                    case 'date':
+                                        $value = date('d-m-Y', strtotime($value));
+                                        break;
+                                }
+                                $concatenatedName .= $value . ' > ';
                             }
                             $dataName = rtrim($concatenatedName, ' > ');
 

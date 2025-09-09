@@ -21,12 +21,12 @@ $this->title = Yii::t('app', 'Product Sale Delete');
         echo Html::activeHiddenInput($searchModel, 'bmc_code', ['value' => $searchModel->bmc_code]);
         echo Html::activeHiddenInput($searchModel, 'from_date', ['value' => $searchModel->from_date]);
         echo Html::activeHiddenInput($searchModel, 'to_date', ['value' => $searchModel->to_date]);
+        $productSaleDeleteApprovalConfig = Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'product_sale_delete_approval', 'PORTAL');
         $attribute = [
             ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'checkboxOptions' => function ($model, $key, $index) {
-                    $productSaleDeleteApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'product_sale_delete_approval', 'PORTAL');
+                'checkboxOptions' => function ($model, $key, $index) use ($productSaleDeleteApprovalConfig) {
                     $disabled = ($productSaleDeleteApprovalConfig == 1 && in_array($model->originating_org_type, ['VLC', 'BMC']) && in_array($model->originating_type, ['23', '24']));
                     echo Html::activeHiddenInput($model, 'operation', ['value' => $model->operation, 'class' => 'set_operation']);
                     return ['class' => 'checkbox', 'value' => $model['product_sale_code'], 'disabled' => $disabled];
