@@ -992,9 +992,14 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function checkPaymentCycleLock() {
         $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'product_sale_delete_approval', 'PORTAL');
-        if ($config == 1 && TblProductSaleAlias::find()->where(['product_sale_code' => $this->product_sale_code, 'action_perform' => 'DELETE'])->exists()) {
-            return FALSE;
+        if ($config == 1) {
+            if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24'])) {
+                return FALSE;
+            } else if (TblProductSaleAlias::find()->where(['product_sale_code' => $this->product_sale_code, 'action_perform' => 'DELETE'])->exists()) {
+                return FALSE;
+            }
         }
+
         $date = Yii::$app->formatter->asDate($this->invoice_date, 'php:Y-m-d');
         $type = ($this->customer_type == 'Member' ? 'DCS' : $this->customer_type);
         $codeParam = $this->bmc_code;
