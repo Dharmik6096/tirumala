@@ -62,6 +62,7 @@ class TblDepartmentSearch extends TblDepartment {
         $query->andFilterWhere(['like', 'department_id', $this->department_id])
                 ->andFilterWhere(['like', 'department', $this->department])
                 ->andFilterWhere(['like', 'local_name', $this->local_name]);
+        $query->orderBy(['seq_no' => SORT_ASC]);
 
 
         return $dataProvider;

@@ -2,17 +2,16 @@
 
 namespace app\modules\general\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\general\models\TblDepartment;
 use app\modules\general\models\TblDepartmentSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TblDepartmentController implements the CRUD actions for TblDepartment model.
  */
-class TblDepartmentController extends \app\controllers\ChildController {
+class TblDepartmentController extends ChildController {
 
     /**
      * Lists all TblDepartment models.
@@ -38,6 +37,7 @@ class TblDepartmentController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->department_id = strtolower(str_replace(' ', '_', $this->model->department));
+            $this->model->seq_no = $this->model->find()->andWhere(['not in', 'department_id', ['farmer', 'vsp']])->max('seq_no') + 1 ?: 1;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Department', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -89,6 +89,34 @@ class TblDepartmentController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionChangeDepartmentSeq() {
+        $departmentModel = new TblDepartment();
+        $departments = $departmentModel->find()->andWhere(['not in', 'department_id', ['farmer', 'vsp']])->orderBy('seq_no', SORT_ASC)->all();
+
+        if (Yii::$app->request->isPost) {
+            $order = Yii::$app->request->post('order', '');
+            if (!empty($order)) {
+                $orderArray = explode(',', $order);
+                $saveModel = [];
+                foreach ($orderArray as $index => $id) {
+                    if ($department = TblDepartment::findOne($id)) {
+                        $department->seq_no = $index + 1;
+                        $saveModel[] = $department;
+                    }
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Change Department', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->{$transaction}();
+                }
+            }
+        }
+
+        return $this->render('change_department_seq', [
+                    'model' => $departmentModel,
+                    'departments' => $departments,
+        ]);
     }
 
 }
