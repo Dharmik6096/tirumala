@@ -91,27 +91,10 @@ class TblProductSaleAlias extends ChildModel {
         return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
-    public function afterSave($insert, $changedAttributes) {
-        $productSaleData = $this->productSale;
-        if (in_array($productSaleData->originating_org_type, ['VLC', 'BMC']) && in_array($productSaleData->originating_type, ['23', '24'])) {
-            $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($productSaleData->originating_org_code, $productSaleData->originating_org_type, $productSaleData->union_code);
-            if ($flag == 'INSERT' && (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE))) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                }
-            }
-        }
-    }
-
     public function afterDelete() {
         $productSaleData = $this->productSale;
-        $originatingOrgTypes = ['VLC', 'BMC'];
-        $originatingTypes = ['23', '24'];
-        if ((in_array($productSaleData->originating_org_type, $originatingOrgTypes) && in_array($productSaleData->originating_type, $originatingTypes)) || (in_array($this->originating_org_type, $originatingOrgTypes) && in_array($this->originating_type, $originatingTypes))) {
-            $orgCode = in_array($productSaleData->originating_org_type, $originatingOrgTypes) && in_array($productSaleData->originating_type, $originatingTypes) ? $productSaleData->originating_org_code : $this->originating_org_code;
-            $orgType = in_array($productSaleData->originating_org_type, $originatingOrgTypes) && in_array($productSaleData->originating_type, $originatingTypes) ? $productSaleData->originating_org_type : $this->originating_org_type;
-            $sentbox = $this->sentboxModel($orgCode, $orgType, $productSaleData->union_code);
+        if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24'])) {
+            $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type, $productSaleData->union_code);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === true)) {
                 if (!$sentbox->setSentbox($this, 'DELETE')) {
                     throw new UserException("SentBox entry is not created, so transaction is rolled back!");

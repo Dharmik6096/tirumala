@@ -39,7 +39,6 @@ class ProductSaleLiveController extends \app\modules\androiddpu\v4\controllers\P
                     $productSaleAliasModel->originating_org_code = $data['organization_code'];
                     $productSaleAliasModel->originating_org_type = $data['organization_type'];
                     $productSaleAliasModel->x_col1 = Yii::$app->general->getUuid();
-                    $productSaleAliasModel->is_sentbox = FALSE;
                     $productSaleAliasModel->save();
                     $msg = 'Delete Request saved successfully.';
                     $res_data = $productSaleAliasModel->attributes;

@@ -1,9 +1,5 @@
 <?php
 
-/*
- *
- */
-
 namespace app\components;
 
 use yii;
@@ -83,7 +79,7 @@ class Grid extends Widget {
             'options' => ['class' => 'grid-content',]]);
 
         $columns = [
-                ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
+            ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
         ];
 
         if (isset($grid_option->actions)) {
@@ -146,14 +142,16 @@ class Grid extends Widget {
                                 if (!$flag)
                                     $class = 'link-disable';
                             }
-                            $relation = explode('.', $option[0]);
-                            if (count($relation) == 2) {
-                                $option[0] = $model->{$relation[0]}->{$relation[1]};
-                            } else {
-                                $option[0] = $model->{$option[0]};
+                            $optionParts = explode('###', $option[0]);
+                            $concatenatedName = '';
+                            foreach ($optionParts as $part) {
+                                $nestedAttribute = explode('.', $part);
+                                $concatenatedName .= (count($nestedAttribute) == 2) ? (($nestedAttribute[1] == 'date') ? date('d-m-Y', strtotime($model->{$nestedAttribute[0]})) : $model->{$nestedAttribute[0]}->{$nestedAttribute[1]}) : $model->{$part};
+                                $concatenatedName .= ' > ';
                             }
+                            $dataName = rtrim($concatenatedName, ' > ');
 
-                            $options = ['class' => 'delete-record ' . $class, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'data-name' => $option[0], 'data-val' => $model->{$option[1]}];
+                            $options = ['class' => 'delete-record ' . $class, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'data-name' => $dataName, 'data-val' => $model->{$option[1]}];
                             return Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', $options);
                         }
                     },
@@ -255,7 +253,7 @@ class Grid extends Widget {
                     'after' => '<div class="text-right padding-right-5">{pager}</div>',
                     'footer' => false],
                 'toolbar' => [
-                        ['content' =>
+                    ['content' =>
                         Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
                     ['content' => $ignoreDynagrid ? '' : '{dynagrid}'],
@@ -385,37 +383,35 @@ class Grid extends Widget {
         }
         if ($bind_script) {
             $script = "
-      function VerifyAlert(vurl,rurl,message){
-       event.preventDefault();
-     bootbox.dialog({
-                message: message,         
-                buttons: {
-                    cancel: {
-                           label: 'Cancel',
-                           className: 'btn-danger',
-                           callback: function(){          
-                      }
-                      },
-                    confirm: {
-                           label: 'Verify',
-                           className: 'btn-primary',
-                             callback: function(){  
-                              window.location = vurl;
-                        }
-                      },
-                       reject: {
-                           label: 'Reject',
-                           className: 'btn-danger',
-                             callback: function(){  
-                              window.location = rurl;
-                      }
-                           
-                     }
-                 }             
-             });  
-}       
-
-";
+                function VerifyAlert(vurl,rurl,message){
+                    event.preventDefault();
+                    bootbox.dialog({
+                        message: message,         
+                        buttons: {
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-danger',
+                                callback: function(){          
+                                }
+                            },
+                            confirm: {
+                                label: 'Verify',
+                                className: 'btn-primary',
+                                callback: function(){  
+                                    window.location = vurl;
+                                }
+                            },
+                            reject: {
+                                label: 'Reject',
+                                className: 'btn-danger',
+                                callback: function(){  
+                                    window.location = rurl;
+                                }
+                            }
+                        }             
+                    });  
+                }
+            ";
             Yii::$app->view->registerJs($script, View::POS_END, 'verify-data');
         }
         return $grid_option;
