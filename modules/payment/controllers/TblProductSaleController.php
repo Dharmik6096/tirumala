@@ -476,7 +476,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $saveModel = [];
         $this->model = $this->findModel($id);
         $productSaleDeleteApprovalConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'product_sale_delete_approval', 'PORTAL');
-        if ($productSaleDeleteApprovalConfig == 1 && in_array($this->model->originating_org_type, ['VLC', 'BMC']) && in_array($this->model->originating_type, ['23', '24'])) {
+        if ($approvalProcess == FALSE && $productSaleDeleteApprovalConfig == 1 && in_array($this->model->originating_org_type, ['VLC', 'BMC']) && in_array($this->model->originating_type, ['23', '24'])) {
             return ['status' => 'error', 'msg' => 'This record is disabled and cannot be deleted.'];
         }
         if ($productSaleDeleteApprovalConfig == 1 && !$approvalProcess) {
