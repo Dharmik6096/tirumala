@@ -535,7 +535,6 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
         $tableName = $model->tableName();
         if (Yii::$app->request->post()) {
-            //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
             $master = [];
             $delete = [];
             $historyModel = new UserHistory();
@@ -573,25 +572,14 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                 }
             } else {
                 $model->addError('password', Yii::t('app', 'Email Is Not Available for This user'));
-                return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
+                return $this->renderIsAjax('reset_password', ['model' => $model]);
             }
-
             $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['Password', 'edit']);
-
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['index']);
             }
         }
-        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
-
-        if ($searchModel) {
-            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        } else {
-            $dataProvider = new ActiveDataProvider([
-                'query' => $model::find(),
-            ]);
-        }
-        return $this->renderIsAjax('reset_password', compact('model', 'dataProvider', 'searchModel'));
+        return $this->renderIsAjax('reset_password', ['model' => $model]);
     }
 
     public function actionOrganizationMap($id) {
