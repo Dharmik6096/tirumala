@@ -9,28 +9,28 @@ use kartik\grid\GridView;
 $this->title = Yii::t('app', 'Product Sale Delete');
 ?>
 <div class=" no-effect">
-<?php
-$form = ActiveForm::begin([
-            'id' => 'product-sale-bulk-delete',
-        ]);
-?>
-    <div class="">
     <?php
-    echo Html::activeHiddenInput($searchModel, 'union_code', ['value' => $searchModel->union_code]);
-    echo Html::activeHiddenInput($searchModel, 'plant_code', ['value' => $searchModel->plant_code]);
-    echo Html::activeHiddenInput($searchModel, 'mcc_plant_code', ['value' => $searchModel->mcc_plant_code]);
-    echo Html::activeHiddenInput($searchModel, 'bmc_code', ['value' => $searchModel->bmc_code]);
-    echo Html::activeHiddenInput($searchModel, 'from_date', ['value' => $searchModel->from_date]);
-    echo Html::activeHiddenInput($searchModel, 'to_date', ['value' => $searchModel->to_date]);
+    $form = ActiveForm::begin([
+                'id' => 'product-sale-bulk-delete',
+    ]);
     ?>
+    <div class="">
         <?php
+        echo Html::activeHiddenInput($searchModel, 'union_code', ['value' => $searchModel->union_code]);
+        echo Html::activeHiddenInput($searchModel, 'plant_code', ['value' => $searchModel->plant_code]);
+        echo Html::activeHiddenInput($searchModel, 'mcc_plant_code', ['value' => $searchModel->mcc_plant_code]);
+        echo Html::activeHiddenInput($searchModel, 'bmc_code', ['value' => $searchModel->bmc_code]);
+        echo Html::activeHiddenInput($searchModel, 'from_date', ['value' => $searchModel->from_date]);
+        echo Html::activeHiddenInput($searchModel, 'to_date', ['value' => $searchModel->to_date]);
+        $productSaleDeleteApprovalConfig = Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'product_sale_delete_approval', 'PORTAL');
         $attribute = [
             ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'checkboxOptions' => function ($model, $key, $index) {
+                'checkboxOptions' => function ($model, $key, $index) use ($productSaleDeleteApprovalConfig) {
+                    $disabled = ($productSaleDeleteApprovalConfig == 1 && in_array($model->originating_org_type, ['VLC', 'BMC']) && in_array($model->originating_type, ['23', '24']));
                     echo Html::activeHiddenInput($model, 'operation', ['value' => $model->operation, 'class' => 'set_operation']);
-                    return ['class' => 'checkbox', 'value' => $model['product_sale_code']];
+                    return ['class' => 'checkbox', 'value' => $model['product_sale_code'], 'disabled' => $disabled];
                 }],
             ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
             ['attribute' => 'bmc_code', 'value' => function ($searchModel) {
@@ -95,12 +95,9 @@ $form = ActiveForm::begin([
         ?>
             <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?>
         </div>
-            <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
     </div>
 </div>
-
-
-
 <?php
 $script = '
     $(".kv-panel-before").hide();
@@ -117,4 +114,5 @@ $script = '
     });
 ';
 $this->registerJs($script, View::POS_END, 'product-sale-bulk-delete');
+?>
 

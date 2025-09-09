@@ -93,10 +93,10 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
-            <?= $form->field($model, 'fat')->textInput() ?>
+            <?= $form->field($model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
-            <?= $form->field($model, 'snf')->textInput() ?>
+            <?= $form->field($model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'water')->textInput() ?>
