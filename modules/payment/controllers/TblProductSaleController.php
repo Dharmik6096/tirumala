@@ -476,6 +476,9 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $saveModel = [];
         $this->model = $this->findModel($id);
         $productSaleDeleteApprovalConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'product_sale_delete_approval', 'PORTAL');
+        if ($productSaleDeleteApprovalConfig == 1 && in_array($this->model->originating_org_type, ['VLC', 'BMC']) && in_array($this->model->originating_type, ['23', '24'])) {
+            return ['status' => 'error', 'msg' => 'This record is disabled and cannot be deleted.'];
+        }
         if ($productSaleDeleteApprovalConfig == 1 && !$approvalProcess) {
             $productSaleAliasModel = new TblProductSaleAlias();
             $productSaleAliasModel->attributes = $this->model->attributes;
@@ -692,7 +695,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $deleteModel[] = $taxmodel[$key];
             $saveModel[] = $taxmodelHistory;
         }
-        if($this->model->checkPaymentCycleLockForApproval){
+        if ($this->model->checkPaymentCycleLockForApproval) {
             $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale', 'edit']);
         } else {
             $transaction = 'customRender';
@@ -700,7 +703,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
         } else {
-            if(isset($productSaleAliasData) && !empty($productSaleAliasData)){
+            if (isset($productSaleAliasData) && !empty($productSaleAliasData)) {
                 $errors = 'Payment Cycle is locked for Sale Date.';
                 foreach ($saveModel as $model) {
                     $modelErrors = $model->getErrors();
@@ -713,7 +716,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $productSaleAliasData->approval_status = 0;
                 $productSaleAliasData->error_desc = trim($errors);
                 $productSaleAliasData->save();
-            }            
+            }
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
         }
         return $record;
@@ -746,7 +749,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     } else if ($total > $cnt && $failed_cnt > 0) {
-                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
+                        $msg = '' . $failed_cnt . ' records failed out of ' . $total;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     }
@@ -790,7 +793,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     } else if ($total > $cnt && $failed_cnt > 0) {
-                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
+                        $msg = '' . $failed_cnt . ' records failed out of ' . $total;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     }
@@ -833,7 +836,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     } else if ($total > $cnt && $failed_cnt > 0) {
-                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
+                        $msg = '' . $failed_cnt . ' records failed out of ' . $total;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     }
@@ -877,7 +880,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     } else if ($total > $cnt && $failed_cnt > 0) {
-                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
+                        $msg = '' . $failed_cnt . ' records failed out of ' . $total;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
                     }
