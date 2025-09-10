@@ -22,12 +22,17 @@ if (!empty($filter_data)) {
                 <?php
                 if (!empty($filter_data)) {
                     $aciton = isset($filter_data['action']) ? $filter_data['action'] : ['index'];
+                    $removefield = isset($filter_data['removefield']) ? $filter_data['removefield'] : [];
                     $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
                     $filters = $filter_data['filter'];
                     $count = count($filters);
                     if (!empty($filters) && in_array(Yii::$app->controller->action->id, $aciton) && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
                         $f_cnt = 0;
                         $aciton = [Yii::$app->controller->action->id];
+                        if(!empty($removefield) && array_key_exists(Yii::$app->controller->action->id, $removefield)){
+                            $filters = array_diff($filters, $removefield[Yii::$app->controller->action->id]);
+                            $filters = array_values($filters);
+                        }
                         $form = \yii\widgets\ActiveForm::begin([
                                     'action' => $aciton,
                                     'method' => $method,
@@ -421,6 +426,14 @@ if (!empty($filter_data)) {
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->UserList($model, $form, $field_class . '-f_mcc_code', 'mcc_user_code', FALSE, FALSE, FALSE, '/tms/tbl-user-tracking-movement/user-list'); ?>
+                                        </div>
+                                    <?php } ?> 
+                                    <?php
+                                    if (in_array($value, array('send_status'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownstatic('send_status', $model, $form, 'form-group padding-right-5 padding-left-0', FALSE, FALSE, 'data_post_status'); ?>
                                         </div>
                                     <?php } ?> 
                                 <?php } ?>
