@@ -1356,7 +1356,6 @@ class TblMilkCollection extends \app\models\ChildModel {
                             'date_time_of_collection' => $collection_datetime,
                             'shift_code' => $shift
                         ])
-                        ->andWhere(['<', 'right(member_code, 4)', 900])
                         ->all();
     }
 
