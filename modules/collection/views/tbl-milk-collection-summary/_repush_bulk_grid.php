@@ -2,12 +2,10 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\bootstrap\ActiveForm;
-
-$operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
+use app\components\ActiveForm;
 ?>
 
 <?php

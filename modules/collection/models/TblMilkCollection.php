@@ -1352,8 +1352,8 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function getCollectionSummaryData($dcs_code, $shift, $collection_datetime) {
         return $this->find()
                         ->where([
-                            'dcs_code' => $dcs_code,
                             'date_time_of_collection' => $collection_datetime,
+                            'dcs_code' => $dcs_code,
                             'shift_code' => $shift
                         ])
                         ->all();

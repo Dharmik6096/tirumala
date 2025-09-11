@@ -142,18 +142,6 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
             $query->where('0=1');
             return $dataProvider;
         }
-        if (!empty($this->date_time_of_collection))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
-        $query->andFilterWhere([
-            'milk_collection_summary_code' => $this->milk_collection_summary_code,
-            'avg_rate' => $this->avg_rate,
-            'sample_count' => $this->sample_count,
-            'auto_count' => $this->auto_count,
-            'manual_count' => $this->manual_count,
-            'tbl_milk_collection_summary.data_post_status' => $this->data_post_status
-        ]);
-
-
         return $dataProvider;
     }
 

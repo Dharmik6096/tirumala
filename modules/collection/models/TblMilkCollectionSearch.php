@@ -520,9 +520,9 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $query = TblMilkCollection::find();
 
         $query->andWhere([
+            'tbl_milk_collection.date_time_of_collection' => $this->date_time_of_collection,
             'tbl_milk_collection.dcs_code' => $this->dcs_code,
-            'tbl_milk_collection.shift_code' => $this->shift_code,
-            'tbl_milk_collection.date_time_of_collection' => $this->date_time_of_collection]);
+            'tbl_milk_collection.shift_code' => $this->shift_code]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

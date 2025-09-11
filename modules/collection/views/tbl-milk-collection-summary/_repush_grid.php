@@ -1,22 +1,14 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use app\modules\globalmaster\models\TblAnimalType;
-use webvimark\modules\UserManagement\components\GhostHtml;
-
-$milkType = new TblAnimalType();
-$milk_type = $milkType->getAnimalMilkTypeArray();
 ?>
-<div class=""></div>
 
 <?php
 $form = ActiveForm::begin([
             'id' => 'repush-milk-collection',
-//            'action' => $action,
         ]);
 ?>
 <div class="grid-search no-effect" >
