@@ -80,10 +80,10 @@ $form = ActiveForm::begin([
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php
     if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'Repush'), ['class' => 'btn btn-primary', 'id' => 'repush']);
+        echo Html::button(Yii::t('app', 'Repush'), ['class' => 'btn-login btn btn-primary', 'id' => 'repush']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
