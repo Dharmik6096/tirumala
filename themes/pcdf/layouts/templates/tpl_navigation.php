@@ -179,6 +179,7 @@ echo GhostMenu::widget([
                 //                ['label' => 'DPU Shift End Summary', 'url' => ['/collection/tbl-dpu-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-dpu-shift-end-summary')],
                 ['label' => Yii::t('app', 'BMC(FCT)/RCD Shift Summary'), 'url' => ['/collection/tbl-shift-summary/index'], 'active' => ($cntrl == 'tbl-shift-summary')],
                     ['label' => Yii::t('app', 'Milk Collection Summary'), 'url' => ['/collection/tbl-milk-collection-summary/index'], 'active' => ($cntrl == 'tbl-milk-collection-summary')],
+                    ['label' => Yii::t('app', 'Milk Collection Re-Push'), 'url' => ['/collection/tbl-milk-collection-summary/repush-bulk-data'], 'active' => ($cntrl == 'tbl-milk-collection-summary' && $action == 'repush-bulk-data')],
                     ['label' => Yii::t('app', 'BMC Testing Data'), 'url' => ['/collection/tbl-quality-collection/index'], 'active' => ($cntrl == 'tbl-quality-collection')],
                     ['label' => Yii::t('app', 'BMC Weight Data'), 'url' => ['/collection/tbl-weight-collection/index'], 'active' => ($cntrl == 'tbl-weight-collection')],
                 //['label' => 'Manual Milk Collection', 'url' => ['/collection/tbl-milk-collection-temp/index'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'index')],
