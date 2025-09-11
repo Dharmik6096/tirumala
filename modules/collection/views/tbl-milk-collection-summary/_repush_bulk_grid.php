@@ -84,7 +84,7 @@ use yii\web\View;
     ?>
 </div>
 
-<div class="col-sm-12 form-group" >
+<div class="col-sm-12 form-group mt-2" >
     <?php
     if (!empty($dataProvider->getModels())) {
         echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn-login btn btn-primary', 'id' => 'repush-bulk']);
