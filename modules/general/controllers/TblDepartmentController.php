@@ -37,7 +37,6 @@ class TblDepartmentController extends ChildController {
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->department_id = strtolower(str_replace(' ', '_', $this->model->department));
-            $this->model->seq_no = $this->model->find()->andWhere(['not in', 'department_id', ['farmer', 'vsp']])->max('seq_no') + 1 ?: 1;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Department', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -93,29 +92,36 @@ class TblDepartmentController extends ChildController {
 
     public function actionChangeDepartmentSeq() {
         $departmentModel = new TblDepartment();
-        $departments = $departmentModel->find()->andWhere(['not in', 'department_id', ['farmer', 'vsp']])->orderBy('seq_no', SORT_ASC)->all();
+        $allDepartments = $departmentModel->find()->where(['not in', 'department_id', ['vsp', 'farmer']])->all();
+
+        $available = array_filter($allDepartments, function ($department) {
+            return $department->seq_no === null;
+        });
+
+        $selected = array_filter($allDepartments, function ($department) {
+            return $department->seq_no !== null;
+        });
+
+        usort($selected, function ($a, $b) {
+            return $a->seq_no <=> $b->seq_no;
+        });
 
         if (Yii::$app->request->isPost) {
-            $order = Yii::$app->request->post('order', '');
-            if (!empty($order)) {
-                $orderArray = explode(',', $order);
-                $saveModel = [];
-                foreach ($orderArray as $index => $id) {
-                    if ($department = TblDepartment::findOne($id)) {
-                        $department->seq_no = $index + 1;
-                        $saveModel[] = $department;
-                    }
-                }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Change Department', 'create']);
-                if ($transaction == 'customRedirect') {
-                    return $this->{$transaction}();
-                }
+            $seqNos = Yii::$app->request->post('seq_no', []);
+            foreach ($allDepartments as $department) {
+                $department->seq_no = isset($seqNos[$department->department_id]) ? (int) $seqNos[$department->department_id] : NULL;
+            }
+
+            $transaction = $this->generalModel->saveTransaction($allDepartments, ['Change Department', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
             }
         }
 
         return $this->render('change_department_seq', [
                     'model' => $departmentModel,
-                    'departments' => $departments,
+                    'available' => array_values($available),
+                    'selected' => array_values($selected),
         ]);
     }
 

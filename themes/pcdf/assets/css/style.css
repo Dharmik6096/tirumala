@@ -6377,7 +6377,7 @@ div#dashboardFarmerPopup {
 .sequence-box-well {
     padding: 0px;
     background-color: #fff;
-    height: 370px;
+    height: 419px;
     overflow: auto;
 }
 .sequence-box-well .list-group-item, .sequence-box-well .list-group-item:last-child, .sequence-box-well .list-group-item:first-child{
@@ -6385,7 +6385,7 @@ div#dashboardFarmerPopup {
     padding: 4px;
     font-size: 11px;
     margin: 5px;
-    width: 1325px;
+    width: 643px;
     font-weight: 400;
 }
 .border-none{
@@ -6404,4 +6404,15 @@ div#dashboardFarmerPopup {
 }
 .three-decimal-validate{
     width: 100%;
+}
+.sequence-form-control{
+    margin: 10px 0px 0px 10px;
+    width: 643px;
+    height: 30px;
+}
+.seq-display-input{
+    display: inline-block;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    width: 20px; text-align: center;
 }

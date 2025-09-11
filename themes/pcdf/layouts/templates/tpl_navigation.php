@@ -353,6 +353,7 @@ echo GhostMenu::widget([
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff<b class="caret"></b></a>',
             'visible' => TRUE,
             'items' => [
+                    ['label' => Yii::t('app', 'Department'), 'url' => ['/general/tbl-department/index'], 'active' => ($cntrl == 'tbl-department')],
                     ['label' => Yii::t('app', 'Designation'), 'url' => ['/globalmaster/tbl-designation/index'], 'active' => ($cntrl == 'tbl-designation')],
                     ['label' => Yii::t('app', 'Staff Leave Master'), 'url' => ['/staffmanagement/tbl-staff-leave-master/index'], 'active' => ($cntrl == 'tbl-staff-leave-master')],
                     ['label' => Yii::t('app', 'Staff Salary Heads'), 'url' => ['/globalmaster/tbl-salary-heads/index'], 'active' => ($cntrl == 'tbl-salary-heads')],
@@ -1203,7 +1204,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Member Classification'), 'url' => ['/dcsoperation/tbl-member-classification/index'], 'active' => ($cntrl == 'tbl-member-classification')],
                             ['label' => Yii::t('app', 'Capacity'), 'url' => ['/globalmaster/tbl-capacity/index'], 'active' => ($cntrl == 'tbl-capacity')],
                             ['label' => Yii::t('app', 'Vehicle Type'), 'url' => ['/globalmaster/tbl-vehicle-type/index'], 'active' => ($cntrl == 'tbl-vehicle-type')],
-                            ['label' => Yii::t('app', 'Department'), 'url' => ['/general/tbl-department/index'], 'active' => ($cntrl == 'tbl-department')],
                             ['label' => Yii::t('app', 'Backend Data'), 'url' => ['/general/default/backend-data'], 'active' => ($cntrl == 'backend-data')],
                     ]
                 ],
