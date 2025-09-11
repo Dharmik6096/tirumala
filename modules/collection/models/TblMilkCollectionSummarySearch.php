@@ -19,10 +19,17 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
      */
     public function rules() {
         return [
-                [['milk_collection_summary_code', 'shift_code', 'sample_count', 'auto_count', 'manual_count'], 'integer'],
-                [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount'], 'number'],
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'operator_fat', 'operator_snf', 'operator_qty', 'ref_code', 'data_inserted_from'], 'safe'],
+            [['milk_collection_summary_code', 'shift_code', 'sample_count', 'auto_count', 'manual_count'], 'integer'],
+            [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'data_post_status'], 'safe'],
+            [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount'], 'number'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'operator_fat', 'operator_snf', 'operator_qty', 'ref_code', 'data_inserted_from'], 'safe'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'], 'safe'],
+            [['f_union_code'], 'required', 'on' => ['listSearch']],
+            [['to_date'], function ($attribute, $params) {
+                    if (empty($this->f_plant_code)) {
+                        Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 5, '>', 'Day Difference can not be greater than 5');
+                    }
+                }, 'on' => 'listSearch'],
         ];
     }
 
@@ -105,6 +112,36 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
                 ->andFilterWhere(['like', 'kg_snf', $this->kg_snf])
                 ->andFilterWhere(['like', 'kg_fat', $this->kg_fat]);
 
+        return $dataProvider;
+    }
+
+    public function searchrepush($params) {
+        $query = TblMilkCollectionSummary::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE
+        ]);
+
+        $this->load($params);
+
+        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_milk_collection_summary.dcs_code');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_collection_summary', 'tbl_milk_collection_summary', 'tbl_milk_collection_summary', 'tbl_milk_collection_summary');
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            $query->where('0=1');
+            return $dataProvider;
+        }
         return $dataProvider;
     }
 
