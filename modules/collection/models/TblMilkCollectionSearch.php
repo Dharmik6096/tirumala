@@ -514,5 +514,28 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         }
         return $dataProvider;
     }
+    
+    public function repushsearch($params) {
+        $this->load($params);
+        $query = TblMilkCollection::find();
+
+        $query->andWhere([
+            'tbl_milk_collection.date_time_of_collection' => $this->date_time_of_collection,
+            'tbl_milk_collection.dcs_code' => $this->dcs_code,
+            'tbl_milk_collection.shift_code' => $this->shift_code]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        return $dataProvider;
+    }
 
 }

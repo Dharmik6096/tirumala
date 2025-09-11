@@ -1348,5 +1348,15 @@ class TblMilkCollection extends \app\models\ChildModel {
             $this->addError($attribute, "Record is Already Exist For Approval.");
         }
     }
+    
+    public function getCollectionSummaryData($dcs_code, $shift, $collection_datetime) {
+        return $this->find()
+                        ->where([
+                            'date_time_of_collection' => $collection_datetime,
+                            'dcs_code' => $dcs_code,
+                            'shift_code' => $shift
+                        ])
+                        ->all();
+    }
 
 }
