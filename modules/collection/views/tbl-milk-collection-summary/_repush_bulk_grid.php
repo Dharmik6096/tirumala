@@ -5,14 +5,8 @@ use kartik\grid\GridView;
 use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
-use app\components\ActiveForm;
 ?>
 
-<?php
-$form = ActiveForm::begin([
-            'id' => 'repush-milk-collection-bulk',
-        ]);
-?>
 <div class="grid-searchno-effect" >
     <?php
     $attribute = [
@@ -98,7 +92,6 @@ $form = ActiveForm::begin([
     ?>
     <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?> 
 </div>
-<?php ActiveForm::end(); ?>
 <?php
 $script = '
     $("#repush-bulk").click(function() {
@@ -107,7 +100,14 @@ $script = '
              bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>' . Yii::t('app', 'Please select at least one Collection.') . '</span></div></div>");
                 return false;
             } else {
-            $("#repush-milk-collection-bulk").submit();
+            $.ajax({
+                type: "POST",
+                url: "' . Url::to(['/collection/tbl-milk-collection-summary/repush-bulk-data']) . '",
+                data: {selection: $("input[class=\"checkbox-collection kv-row-checkbox\"]:checked").map(function() { return this.value; }).get()},
+                success: function(data) {
+                    // Handle response data
+                }
+            });
             }
          });
       ';
