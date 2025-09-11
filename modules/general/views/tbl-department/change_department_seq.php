@@ -22,7 +22,7 @@ $this->title = Yii::t('app', 'Available Departments');
 
 <div class="row">
     <div class="col-sm-6">
-        <div class="panel panel-default panel-main">
+        <div class="panel panel-default panel-main pb-0">
             <div class="panel-heading"><?= $this->title ?></div>
             <div class="sequence-well sequence-box-well">
                 <input type="text" id="search-available" placeholder="Search available departments" class="form-control mb-2 sequence-form-control">
@@ -34,9 +34,6 @@ $this->title = Yii::t('app', 'Available Departments');
                             }, $available),
                     'options' => ['id' => 'available-list', 'class' => 'list-group border-none'],
                     'itemOptions' => ['class' => 'list-group-item'],
-                    'pluginOptions' => [
-                        'connectWith' => '#selected-list',
-                    ],
                 ]);
                 ?>
             </div>
@@ -44,7 +41,7 @@ $this->title = Yii::t('app', 'Available Departments');
     </div>
 
     <div class="col-sm-6">
-        <div class="panel panel-default panel-main">
+        <div class="panel panel-default panel-main pb-0">
             <div class="panel-heading"><?= Yii::t('app', 'Selected Departments') ?></div>
             <div class="sequence-well sequence-box-well">
                 <input type="text" id="search-selected" placeholder="Search selected departments" class="form-control mb-2 sequence-form-control">
@@ -64,16 +61,13 @@ $this->title = Yii::t('app', 'Available Departments');
                             }, $selected),
                     'options' => ['id' => 'selected-list', 'class' => 'list-group border-none'],
                     'itemOptions' => ['class' => 'list-group-item'],
-                    'pluginOptions' => [
-                        'connectWith' => '#available-list',
-                    ],
                 ]);
                 ?>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
             <?= Yii::$app->controls->cancel($model); ?>
@@ -82,11 +76,25 @@ $this->title = Yii::t('app', 'Available Departments');
 </div>
 
 <?php ActiveForm::end(); ?>
+<?php
+$jsFiles = [
+    'core.min.js',
+    'widget.min.js',
+    'mouse.min.js',
+    'sortable.min.js',
+];
 
+foreach ($jsFiles as $file) {
+    $this->registerJsFile(Yii::getAlias('@web') . "/themes/emilk/assets/js/{$file}", [
+        'depends' => [\yii\web\JqueryAsset::class],
+        'position' => \yii\web\View::POS_END,
+    ]);
+}
+?>
 <?php
 $script = "
 $('#available-list, #selected-list').sortable({
-    connectWith: '.list-group',
+    connectWith: '#available-list, #selected-list',
     placeholder: 'ui-state-highlight',
     update: function(event, ui) {
         var movedItem = ui.item;
