@@ -111,6 +111,7 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_contact_details.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'aadhaar_no', Yii::$app->general->encryptData($this->aadhaar_no)])
                 ->andFilterWhere(['like', 'tbl_dcs.ts_code_m', $this->ts_code_m])
+                ->andFilterWhere(['like', 'tbl_dcs.ts_code_e', $this->ts_code_e])
                 ->andFilterWhere(['like', 'tbl_dcs.type_of_dcs', $this->type_of_dcs]);
 
         return $dataProvider;
