@@ -96,7 +96,7 @@ $form = ActiveForm::begin([
         echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn-login btn btn-primary', 'id' => 'repush-bulk']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data', '', 'btn-login'); ?> 
 </div>
 <?php ActiveForm::end(); ?>
 <?php
