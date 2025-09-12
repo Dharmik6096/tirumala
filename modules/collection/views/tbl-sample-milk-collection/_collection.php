@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
@@ -145,12 +145,12 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
                     ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
+                    'options' => ['class' => 'btn btn-default btn-raised btn-login',
                         'type' => 'submit'],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
             </div>
         </div>
     </div>
