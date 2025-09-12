@@ -14,6 +14,9 @@ $updateTransaction = User::canRoute('/tankermovement/tbl-bmc-milk-dispatch/updat
         ['attribute' => 'milk_type_code', 'value' => function ($model) {
                 return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
             }, 'vAlign' => 'middle'],
+        ['attribute' => 'animal_type_additional_code', 'value' => function ($model) {
+                return Yii::$app->general->getforeignkey($model->animalType, 'additional_animal_type_name');
+            }, 'vAlign' => 'middle'],
         ['attribute' => 'milk_quality_type_code', 'value' => function ($model) {
                 return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
             }, 'vAlign' => 'middle'],

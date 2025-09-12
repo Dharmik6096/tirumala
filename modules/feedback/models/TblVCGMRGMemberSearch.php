@@ -21,7 +21,7 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
     {
         return [
             [['VCG_MRG_member_id', 'originating_type', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'member_code', 'member_tr_code', 'wef_date', 'end_date', 'status', 'type', 'attachment_sign_key', 'attachment_photo_key', 'remark', 'approved_at', 'approved_by', 'transaction_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['from_date', 'to_date', 'member_name', 'pagination'], 'safe'],
+            [['from_date', 'to_date', 'member_name', 'pagination', 'f_union_code'], 'safe'],
         ];
     }
 
@@ -126,6 +126,7 @@ class TblVCGMRGMemberSearch extends TblVCGMRGMember
                 'COUNT(member_code) AS total_mem',
             ]);
         $query->joinWith(['mccPlantCode', 'bmcCode', 'dcsCode']);
+        $query->andFilterWhere(['tbl_mcc_plant.union_code' => $this->f_union_code]);
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
         $query->andFilterWhere(['>=', 'cast(tbl_VCG_MRG_member.wef_date as date)', $from_date]);
 
