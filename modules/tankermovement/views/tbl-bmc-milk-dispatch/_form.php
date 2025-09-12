@@ -201,22 +201,22 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'fat')->textInput() ?>
+            <?= $form->field($txn_model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'snf')->textInput() ?>
+            <?= $form->field($txn_model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <?php if ($txnEdit) { ?>
             <div class="clearfix"></div>
         <?php } ?>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'clr')->textInput() ?>
+            <?= $form->field($txn_model, 'clr')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <?php if (!$txnEdit) { ?>
             <div class="clearfix"></div>
         <?php } ?>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput(['class' => 'one-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
@@ -283,6 +283,7 @@ $form = ActiveForm::begin([
 </div>
 <div id='trip_auto_generate_data'></div>
 <?php
+Yii::$app->disable->getDisableFields($txn_model);
 $script = "
 var isTransactionFormLoad = false;
 var isTransactionDetailLoad = false;
@@ -290,23 +291,32 @@ var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
 var txnEdit = `$txnEdit`;
+isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
     var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
-        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+        $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
+            if (isTripTriggerChange) return;
+            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
-            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
-                if (tripGenerateBtn) {
-                    $('#addTripButtonDiv').show();   
-                }
-            } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-                $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
+            var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(bmcCode) && setData(transactionDate) && setData(vehicleCode)) {
+                setTimeout(function() {
+                    var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
+                    var tripCodeDropdownLength = tripCodeOptions.length;
+                    if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
+                        $('#addTripButtonDiv').show();
+                    } else if (tripCodeDropdownLength === 2) {
+                        var lastOptionValue = tripCodeOptions.last().val();
+                        $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
+                    }
+                    isTripTriggerChange = false;
+                }, 200);
             }
         });
     }
@@ -774,7 +784,7 @@ $script .= "
                     if(isSecondTransaction){
                         isTransactionFormLoad = true;
                     }
-                    $('#transactions-from').html(data);                                                                 
+                    $('#transactions-from').html(data);
                 }
             });
         }

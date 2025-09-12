@@ -4615,7 +4615,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'UserAttendanceDetails' => [
-                'param' => 'login_type_report:static:login_type_report,from_date:string,to_date:string',
+                'param' => 'union_code,login_type_report:static:login_type_report,from_date:string,to_date:string',
                 'sp_name' => 'get_user_attendance_details',
                 'scenario' => 'UserAttendanceDetails',
                 'title' => 'User Attendance Details',
