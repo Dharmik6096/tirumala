@@ -18,10 +18,10 @@ use yii\web\View;
             }],
         ['attribute' => 'union_code', 'filter' => false, 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-            }],
+            }, 'visible' => FALSE],
         ['attribute' => 'plant_code', 'filter' => false, 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-            }],
+            }, 'visible' => FALSE],
         ['attribute' => 'mcc_plant_code', 'filter' => false, 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
             }],
@@ -74,7 +74,7 @@ use yii\web\View;
             'view' => TRUE,
             'repush-view' => function ($url, $model) {
                 $disable = '';
-                $options = ['title' => Yii::t('app', 'View Milk Collection'), 'class' => $disable];
+                $options = ['title' => Yii::t('app', 'View Milk Collection'), 'class' => $disable, 'target' => '_blank'];
                 return GhostHtml::a('<i class="fa fa-plus-square"></i>', ['/collection/tbl-milk-collection-summary/repush-data-view', 'id' => $model->milk_collection_summary_code], $options);
             },
         ],
