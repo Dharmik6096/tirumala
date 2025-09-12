@@ -340,6 +340,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection_qty') {
                 $flag = 'milk-collection-qty';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection_qty_wise';
+            } else if ($row->file_type == 'sample_milk_collection') {
+                $flag = 'sample-milk-collection';
+                $sp_name = 'DB_JOB_PORTAL_Sample_Milk_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -397,6 +400,10 @@ class SchedulerController extends ChildController {
                         } else {
                             $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
                             $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                        }
+                        $DefaultSampleNo = ['sample_milk_collection'];
+                        if (in_array($row->file_type, $DefaultSampleNo)) {
+                            $model->sample_no = 0;
                         }
                         $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                         $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
