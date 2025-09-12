@@ -19,7 +19,7 @@ class TblSampleMilkCollectionSearch extends TblSampleMilkCollection {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'sample_milk_collection_code', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'qty', 'converted_qty', 'rtpl', 'amount', 'shift_code', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'purchase_rate_code', 'qlty_auto', 'qty_auto', 'milk_analyser_type_code', 'ws_code', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'date_time_of_collection', 'qlty_time', 'qty_time', 'source_of_milk', 'remarks', 'version_no', 'own_bmc_code', 'own_mcc_plant_code', 'device_lat', 'device_long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'sample_milk_collection_code', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'qty', 'converted_qty', 'rtpl', 'amount', 'shift_code', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'purchase_rate_code', 'qlty_auto', 'qty_auto', 'milk_analyser_type_code', 'ws_code', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'date_time_of_collection', 'qlty_time', 'qty_time', 'source_of_milk', 'remarks', 'version_no', 'own_bmc_code', 'own_mcc_plant_code', 'device_lat', 'device_long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -101,6 +101,32 @@ class TblSampleMilkCollectionSearch extends TblSampleMilkCollection {
                 ->andFilterWhere(['like', 'amount', $this->amount])
                 ->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code]);
 
+        return $dataProvider;
+    }
+
+    public function createsearch() {
+        $query = TblSampleMilkCollection::find();
+        
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]], 
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andWhere([
+            'tbl_sample_milk_collection.union_code' => $this->union_code,
+            'tbl_sample_milk_collection.plant_code' => $this->plant_code,
+            'tbl_sample_milk_collection.bmc_code' => $this->bmc_code]);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_sample_milk_collection', 'tbl_sample_milk_collection', 'tbl_sample_milk_collection', 'tbl_sample_milk_collection');
+        $query->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        $query->andFilterWhere(['shift_code' => $this->shift_code]);
+        
         return $dataProvider;
     }
 

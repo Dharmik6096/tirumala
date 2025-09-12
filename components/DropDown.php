@@ -566,7 +566,7 @@ class DropDown extends Component {
 
     public function datewise_bmc_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
         $this->setClass($form, $name);
-        if($multiselect){
+        if ($multiselect) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readOnly);
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readOnly);
@@ -2297,6 +2297,11 @@ class DropDown extends Component {
                 'name' => 'app_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'HO'), 2 => Yii::t('app', 'Flutter'), 3 => Yii::t('app', 'Manual Collection'), 4 => Yii::t('app', 'Driver App')],
+            ],
+            'source_of_milk' => [
+                'name' => 'source_of_milk',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => 'Sample Milk', '1' => 'Flush Milk', '2' => 'Other'],
             ],
         ];
         return $records[$l];
