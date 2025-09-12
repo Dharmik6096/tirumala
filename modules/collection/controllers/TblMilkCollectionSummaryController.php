@@ -136,7 +136,7 @@ class TblMilkCollectionSummaryController extends \app\controllers\ChildControlle
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['repush-bulk-data']);
+                    return $this->redirect(Url::previous());
                 }
             }
         }
@@ -189,7 +189,7 @@ class TblMilkCollectionSummaryController extends \app\controllers\ChildControlle
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Milk Collection Summary Re-Push', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['repush-bulk-data']);
+                    return $this->redirect(Url::previous());
                 }
             }
         }
