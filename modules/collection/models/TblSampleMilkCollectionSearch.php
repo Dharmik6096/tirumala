@@ -124,7 +124,9 @@ class TblSampleMilkCollectionSearch extends TblSampleMilkCollection {
             'tbl_sample_milk_collection.bmc_code' => $this->bmc_code]);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_sample_milk_collection', 'tbl_sample_milk_collection', 'tbl_sample_milk_collection', 'tbl_sample_milk_collection');
-        $query->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        if (!empty($this->date_time_of_collection)) {
+            $query->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        }
         $query->andFilterWhere(['shift_code' => $this->shift_code]);
         
         return $dataProvider;
