@@ -101,7 +101,7 @@ $script = "
         if(appType == 4) {
             $('.department_div').hide();
             $('.login_type_div').hide();
-        } else if(login =='farmer') {
+        } else if(login =='farmer' || login == 'MEMBER') {
             $('.showHideData').show();
         } else if(login !='') {
             $('.showHideData').show();

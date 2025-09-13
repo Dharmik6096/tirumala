@@ -9,8 +9,9 @@ use yii\helpers\Url;
 <?php
 
 $attribute = [
-        ['attribute' => 'login_type', 'value' => function ($model) {
-            return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('login_type')['data'][$model->login_type] : '';
+        ['attribute' => 'department', 
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->departmentId, 'department');
         }, 'filter' => false],
 ];
 
