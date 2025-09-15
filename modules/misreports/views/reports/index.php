@@ -565,8 +565,17 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('store_location_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type', '', $model->getAttributeLabel('store_location_code')); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type_all', '', $model->getAttributeLabel('store_location_code')); ?>
                                             </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('store_location_type_all'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), FALSE, 'store_location_type_all', TRUE); ?>
+
+                                            </div>
+
                                             <?php
                                         }
                                         }
