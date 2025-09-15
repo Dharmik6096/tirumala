@@ -346,7 +346,19 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->andWhere(['IS NOT', 'arrival_time', null])
                 ->andWhere(['IS', 'departure_time', null])
                 ->count();
-        return $count == 1;
+        if ($count == 1) {
+            $bmcData = $this->bmcCode;
+            $stock = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])->one();
+            if (!empty($stock)) {
+                $shiftLock = TblMccShiftLock::find()->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])->orderBy(['date_time_of_collection' => SORT_DESC])->one();
+                $oldShiftLock = TblMccShiftLock::find()->where(['>=', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($stock->to_date))])->andWhere(['mcc_plant_code' => $bmcData->mcc_plant_code, 'bmc_lock' => 1])->orderBy(['date_time_of_collection' => SORT_ASC])->one();
+                if (strtolower($stock->type) != 'physical' && !empty($shiftLock) && $stock->to_date < $shiftLock->date_time_of_collection && !empty($oldShiftLock) && ($oldShiftLock->created_at >= $stock->created_at)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public function getFromDateToDate($is_physical_stock = false) {
