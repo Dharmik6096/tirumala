@@ -113,6 +113,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
+
     <div class="col-sm-2">
         <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor']); ?>
     </div>
@@ -207,7 +208,7 @@ $form = ActiveForm::begin([
     </div>
     <div class='pull-left col-sm-4'>
         <!-- <div class="ms-3"> -->
-            <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/><br/>
+        <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/><br/>
         <!-- </div> -->
         <div class="col-sm-4">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type', 'margin_left_20_reverse'); ?>
@@ -222,13 +223,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mb-3">
         <?= Yii::$app->dropdown->dropdownStatic('machine_owned_type', $model, $form, 'form-group', $model->getAttributeLabel('machine_owned'), false, 'machine_owned', false); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('type_of_dcs', $model, $form, 'form-group', $model->getAttributeLabel('type_of_dcs'), false, 'type_of_dcs', false); ?>
+    </div>
 </div>
 <div class="col-md-12 padding_10_0 theme-box">
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
         <h4 class="theme-box-heading">Address Details</h4>
     </div>
     <!--    <div class="col-sm-2">
-            <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+    <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
         </div>-->
     <div class="col-sm-2">
         <div class="col-sm-12">
@@ -356,7 +360,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
     </div>
     <div class="col-sm-2 mt23 ">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff' , 'margin_left_20_reverse'); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff', 'margin_left_20_reverse'); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Lower Milk Type', FALSE, 'lower_milk_type'); ?>
