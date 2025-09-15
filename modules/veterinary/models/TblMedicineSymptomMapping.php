@@ -5,10 +5,11 @@ namespace app\modules\veterinary\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_breed_master".
+ * This is the model class for table "tbl_medicine_symptom_mapping".
  *
- * @property integer $breed_id
- * @property string $breed_name
+ * @property integer $medicine_symptom_id
+ * @property integer $medicine_id
+ * @property integer $symptom_id
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -17,13 +18,13 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblBreedMaster extends \app\models\ChildModel {
+class TblMedicineSymptomMapping extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_breed_master';
+        return 'tbl_medicine_symptom_mapping';
     }
 
     /**
@@ -31,7 +32,7 @@ class TblBreedMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['breed_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['medicine_id', 'symptom_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
 
@@ -40,8 +41,9 @@ class TblBreedMaster extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'breed_id' => Yii::t('app', 'Breed ID'),
-            'breed_name' => Yii::t('app', 'Breed Name'),
+            'medicine_symptom_id' => Yii::t('app', 'Medicine Symptom ID'),
+            'medicine_id' => Yii::t('app', 'Medicine ID'),
+            'symptom_id' => Yii::t('app', 'Symptom ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
