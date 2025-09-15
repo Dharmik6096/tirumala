@@ -1349,6 +1349,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Disease Master'), 'url' => ['/veterinary/tbl-disease-master/index']],
                             ['label' => Yii::t('app', 'Symptom Master'), 'url' => ['/veterinary/tbl-symptom-master/index']],
                             ['label' => Yii::t('app', 'Medicine Master'), 'url' => ['/veterinary/tbl-medicine-master/index']],
+                            ['label' => Yii::t('app', 'Member Animal Tag Details'), 'url' => ['/veterinary/tbl-member-animal-tag-details/index']],
                     ],
                 ],
             ],
