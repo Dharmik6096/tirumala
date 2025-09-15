@@ -346,7 +346,14 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->andWhere(['IS NOT', 'arrival_time', null])
                 ->andWhere(['IS', 'departure_time', null])
                 ->count();
-        return $count == 1;
+        if ($count == 1) {
+            $fromDateToDateData = $this->getFromDateToDate();
+            if ($this->from_date != $fromDateToDateData['from_datetime'] || $this->to_date != $fromDateToDateData['to_datetime']) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     public function getFromDateToDate($is_physical_stock = false) {
