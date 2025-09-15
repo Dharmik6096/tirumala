@@ -2168,6 +2168,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'],
             ],
+            'type_of_dcs' => [
+                'name' => 'type_of_dcs',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'VLCC'), 1 => Yii::t('app', 'DOCK Farmer')],
+            ],
         ];
         return $records[$l];
     }
