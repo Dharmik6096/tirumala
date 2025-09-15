@@ -1341,6 +1341,13 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Veterinary<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Breed Master'), 'url' => ['/insurance/tbl-breed-master/index']],
+                    ],
+                ],
             ],
         ],
             [
