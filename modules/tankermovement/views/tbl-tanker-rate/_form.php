@@ -111,6 +111,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
 <?= $this->render('_excel_popup') ?>
 <?php
 $script = "
+    Dropzone.autoDiscover = false;
     $( document ).ready(function() {
            $('.shift select option:contains(\'All\')').remove();
     });

@@ -555,6 +555,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'MccVlcRecieptRouteWise';
         return $this->actionIndex();
     }
+    
+    public function actionBmcMilkPaymentVoucher() {
+        $this->report = 'BmcMilkPaymentVoucher';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1316,6 +1321,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/MccVlcRecieptRouteWise',
                 'scenario' => 'MccVlcRecieptRouteWise',
                 'title' => 'Mcc Vlc Reciept Route Wise',
+            ],
+            'BmcMilkPaymentVoucher' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/BmcMilkPaymentVoucher',
+                'scenario' => 'BmcMilkPaymentVoucher',
+                'title' => 'BMC Milk Payment Voucher',
             ],
             
         ];

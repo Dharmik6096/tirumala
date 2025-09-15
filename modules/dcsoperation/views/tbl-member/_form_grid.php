@@ -100,7 +100,7 @@ $attribute = [
         }, 'visible' => FALSE],
         ['attribute' => 'bank_remarks', 'filter' => false],
         ['attribute' => 'contact_remarks', 'filter' => false],
-        ['attribute' => 'sap_farmer_code', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'sap_farmer_code', 'filter' => TRUE],
         [
         'attribute' => 'is_dcs_member', 'filter' => FALSE, 'visible' => false,
         'value' => function($model) {

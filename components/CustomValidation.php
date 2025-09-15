@@ -1216,7 +1216,7 @@ class CustomValidation extends Component {
                     'default' => [
                             [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -1265,6 +1265,11 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                                     return $('#tblmemberprovisional-is_verify').prop('checked') == true;
                              }", 'on' => ['createProvisionalMember']],
+                    ]
+                ],
+                'BackGroundDataImport' => [
+                    'default' => [
+                        [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'on' => ['member']],
                     ]
                 ],
             ],
