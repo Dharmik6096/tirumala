@@ -42,10 +42,11 @@ class TblUnionConfigResult extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['config_code', 'config_result_code', 'originating_type'], 'safe'],
-                [['config_name', 'config_key', 'config_result_key', 'config_result', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-                [['created_at', 'updated_at', 'config_for'], 'safe'],
-                [['config_result_key'], 'required']
+            [['config_code', 'config_result_code', 'originating_type'], 'safe'],
+            [['config_name', 'config_key', 'config_result_key', 'config_result', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+            [['created_at', 'updated_at', 'config_for'], 'safe'],
+            [['config_result_key'], 'required'],
+            [['config_result_key'], 'validateMinMaxValue']
         ];
     }
 
@@ -105,6 +106,29 @@ class TblUnionConfigResult extends \app\models\ChildModel {
         $model = new TblConfigResult();
         $data = $model->find()->where(['config_code' => $code, 'is_active' => 1])->all();
         return $data;
+    }
+
+    protected $configRanges = [
+        'portal_max_login_attempts' => ['min' => 3, 'max' => 5],
+        'portal_login_suspension_time' => ['min' => 5, 'max' => 30],
+        'portal_otp_suspension_time' => ['min' => 5, 'max' => 30],
+    ];
+
+    public function validateMinMaxValue($attribute, $params) {
+        if (isset($this->configRanges[$this->config_key])) {
+            $min = $this->configRanges[$this->config_key]['min'];
+            $max = $this->configRanges[$this->config_key]['max'];
+            $value = $this->$attribute;
+
+            if (floor($value) != $value) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' (' . $this->config_name . ') must be an integer.'));
+                return;
+            }
+            if ($value < $min || $value > $max) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' (' . $this->config_name . ') must be between ' . $min . ' and ' . $max . '.'));
+                return;
+            }
+        }
     }
 
 }

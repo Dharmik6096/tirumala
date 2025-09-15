@@ -16,6 +16,24 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('approval_collection_type')['data'][$model->collection_type]) ? Yii::$app->dropdown->getRecords('approval_collection_type')['data'][$model->collection_type] : '';
         }],
+        ['attribute' => 'f_union_code', 'value' => function($model) {
+            return ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['unionCode'], 'union_name') : Yii::$app->general->getmultiforeignkey($model->bmcCode, ['unionCode'], 'union_name');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'f_plant_code', 'value' => function($model) {
+            return ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['plantCode'], 'name') : Yii::$app->general->getmultiforeignkey($model->bmcCode, ['plantCode'], 'name');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'f_mcc_code', 'value' => function($model) {
+            return ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['mccPlantCode'], 'name') : Yii::$app->general->getmultiforeignkey($model->bmcCode, ['tblMccPlant'], 'name');
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'f_bmc_code', 'value' => function($model) {
+            return ($model->collection_type == 1) ? Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'bmc_name') : Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'filter' => false],
+        ['attribute' => 'f_dcs_code', 'value' => function($model) {
+            return ($model->collection_type == 1) ? Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') : '';
+        }, 'filter' => false],
+        ['attribute' => 'code', 'label' => Yii::t('app', 'Ref. Code'), 'value' => function($model) {
+            return ($model->collection_type == 1) ? Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code') : Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'filter' => false],
         ['label' => 'Date', 'attribute' => 'date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

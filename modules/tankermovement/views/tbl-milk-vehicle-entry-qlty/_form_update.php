@@ -34,13 +34,13 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+        <?= $form->field($model, 'fat')->textInput(['class' => 'form-control two-decimal-validate', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 1 ? true : false])->label(); ?>
+        <?= $form->field($model, 'snf')->textInput(['class' => 'form-control two-decimal-validate', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 1 ? true : false])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 0 ? true : false])->label(); ?>
+        <?= $form->field($model, 'clr')->textInput(['class' => 'form-control two-decimal-validate', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 0 ? true : false])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
         <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -58,7 +58,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'freezing_point')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+        <?= $form->field($model, 'temp')->textInput(['class' => 'form-control one-decimal-validate', 'autocomplete' => "off"])->label(); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'tested_by')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -156,6 +156,7 @@ $script = "
     var union = `$model->union_code`;
     var is_clr_input = `$model->is_clr_input`;
     var plantCode = `$model->plant_code`;
+    var chamberNo = `$model->milk_vehicle_entry_qlty_code`;
 
     $(document).on('change', '#tblmilkvehicleentryqlty-fat, #tblmilkvehicleentryqlty-clr, #tblmilkvehicleentryqlty-snf', function() {
         calculateClr();
@@ -169,11 +170,11 @@ $script = "
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqlty-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqlty-snf').val('');
 
-        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+        if(setData(chamberNo) && ((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'chamberNo':chamberNo},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {

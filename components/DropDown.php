@@ -2066,7 +2066,7 @@ class DropDown extends Component {
             'login_type_report' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
+                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
             ],
             'erp_process_name' => [
                 'name' => 'process_name',
@@ -2317,6 +2317,7 @@ class DropDown extends Component {
             'vehicle_transpoter' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'whereCondition' => ['vehicle_use_type' => [1, 2], 'union_code' => !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '']],
             'bmc_chiller_info' => ['name' => 'chiller_info_code', 'fields' => 'chiller_info_code,owner_name,sap_vendor_code', 'prompt' => Yii::t('app', 'Select BMC Chiller Info'), 'model' => 'TblBmcChillerInfo', 'depend' => 'bmc_code'],
             'vehicle_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'vehicle_code'],
+            'animal_type_additional' => ['name' => 'animal_type_additional_code', 'fields' => 'animal_type_additional_code,additional_animal_type_name,', 'prompt' => Yii::t('app', 'Select Additional Animal Type'), 'model' => 'TblAnimalTypeAdditional'],
         ];
         return $label[$l];
     }

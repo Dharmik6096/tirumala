@@ -70,7 +70,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
     public function actionViewConfig($id) {
         $searchModel = new TblConfigTxnResultSearch();
         $searchModel->ref_code = $id;
-        $searchModel->config_for = 'BMC_DISPATCH';
+        $searchModel->config_for = ['BMC_DISPATCH', 'PLANT_DISPATCH'];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->renderAjax('config-view', [
                     'searchModel' => $searchModel,
@@ -508,6 +508,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
         $model->scenario = 'createPlantDispatch';
         $txn_model = new TblBmcMilkDispatchTxn();
+        $txn_model->scenario = 'createPlantDispatch';
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
             $model->to_date = date('Y-m-d', strtotime($model->to_date)) . ' ' . \Yii::$app->general->getshift($model->to_shift_code);
@@ -523,7 +524,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             if ($txnEdit) {
                 $type = 'edit';
             }
-            $txn_model->scenario = 'createPlantDispatch';
             $validation = TRUE;
             if ($txn_model->validate()) {
                 $saveModel = [];
@@ -723,7 +723,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             if (!empty($modelData)) {
                 $configData = TblConfigTxnResult::find()
                         ->select(['config_code', 'config_result'])
-                        ->where(['ref_code' => $_POST['bmc_milk_dispatch_txn_code'], 'config_for' => 'BMC_DISPATCH'])
+                        ->where(['ref_code' => $_POST['bmc_milk_dispatch_txn_code'], 'config_for' => ['BMC_DISPATCH', 'PLANT_DISPATCH']])
                         ->asArray()
                         ->all();
                 $config_data = ArrayHelper::map($configData, 'config_code', 'config_result');

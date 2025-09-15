@@ -12,6 +12,7 @@ use PHPExcel;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use app\modules\usermanagement\models\User;
+use PHPExcel_Cell_DataType;
 
 /**
  * Default controller for the `JasperReports` module
@@ -1025,8 +1026,8 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if ($value == 'date_payment_cycle' && !empty($model->{$value})) {
                 $pay_cycle_date = explode('to', $model->{$value});
-                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])).' 06:00:00';
-                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))).' 18:00:00';
+                $controls['from_date'] = date('Y-m-d', strtotime($pay_cycle_date[0])) . ' 06:00:00';
+                $controls['to_date'] = (trim(date('Y-m-d', strtotime($pay_cycle_date[1])))) . ' 18:00:00';
             } else {
                 $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
             }
@@ -2001,12 +2002,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspTransitRecovery';
         return $this->actionIndex();
     }
-    
+
     public function actionComplainActivityList() {
         $this->report = 'ComplainActivityList';
         return $this->actionIndex();
     }
-    
+
     public function actionRouteWiseCdaFormat() {
         $this->report = 'RouteWiseCdaFormat';
         if (Yii::$app->request->queryParams) {
@@ -2024,55 +2025,77 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MilkDispatchList';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkRejectList() {
         $this->report = 'MilkRejectList';
         return $this->actionIndex();
     }
-    
+
     public function actionChillerCostSummary() {
         $this->report = 'ChillerCostSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMonthlySahayakIncome() {
         $this->report = 'MonthlySahayakIncome';
         return $this->actionIndex();
     }
-    
+
     public function actionMisCcWiseClosingBalance() {
         $this->report = 'MisCcWiseClosingBalance';
         return $this->actionIndex();
     }
-    
+
     public function actionProcMisLotWiseDetails() {
         $this->report = 'ProcMisLotWiseDetails';
         return $this->actionIndex();
     }
-    
+
     public function actionComparisonReport() {
         $this->report = 'ComparisonReport';
         return $this->actionIndex();
     }
-    
+
     public function actionCmpReport() {
         $this->report = 'CmpReport';
         return $this->actionIndex();
     }
+
     public function actionMccMilkBillDetailsWithIncentiveRouteWise() {
         $this->report = 'MccMilkBillDetailsWithIncentiveRouteWise';
         return $this->actionIndex();
     }
-    
+
     public function actionMccMilkBillDetailsMccDayWise() {
         $this->report = 'MccMilkBillDetailsMccDayWise';
         return $this->actionIndex();
     }
-    
+
     public function actionMisMilkPurchase() {
         $this->report = 'MisMilkPurchase';
         return $this->actionIndex();
     }
+
+    public function actionUserAttendanceDetails() {
+        $this->report = 'UserAttendanceDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionAssetDetailSummary() {
+        $this->report = 'AssetDetailSummary';
+        return $this->actionIndex();
+    }
+    
+    public function actionFarmerPaymentWiseMilkWise() {
+        $this->report = 'FarmerPaymentWiseMilkWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'FarmerPaymentWiseMilkWiseSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3526,7 +3549,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_farmer_wise_milk_bill_date_shift_wise',
                 'scenario' => 'MemberMilkBill',
-                'title' => '113 - Farmer Wise Milk Bill',
+                'title' => '119 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'bkg_export' => TRUE
             ],
@@ -3534,7 +3557,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_farmer_wise_milk_bill_date_wise',
                 'scenario' => 'MemberMilkBill',
-                'title' => '113 - Farmer Wise Milk Bill',
+                'title' => '119 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'bkg_export' => TRUE
             ],
@@ -3542,7 +3565,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_farmer_wise_milk_bill_summary',
                 'scenario' => 'MemberMilkBill',
-                'title' => '113 - Farmer Wise Milk Bill',
+                'title' => '119 - Farmer Wise Milk Bill',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'bkg_export' => TRUE
             ],
@@ -4211,6 +4234,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ApprovedAttachmentDetails',
                 'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
                 'title' => 'Approved Attachment Details',
+//                'append_link' => TRUE
             ],
             'BmcCollectionRouteWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -4504,6 +4528,37 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Milk Purchase',
                 'bkg_export' => TRUE,
             ],
+            'UserAttendanceDetails' => [
+                'param' => 'union_code,login_type_report:static:login_type_report,from_date:string,to_date:string',
+                'sp_name' => 'get_user_attendance_details',
+                'scenario' => 'UserAttendanceDetails',
+                'title' => 'User Attendance Details',
+                'bkg_export' => TRUE,
+            ],
+            'AssetDetailSummary' => [
+                'param' => 'store_location_type,store_location_code,is_groupbyserial:static:boolean_value',
+                'sp_name' => 'get_asset_location_data',
+                'scenario' => 'AssetDetailSummary',
+                'title' => '922 - Asset Detail Summary',
+            ],
+            'FarmerPaymentWiseMilkWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise',
+                'scenario' => 'FarmerPaymentWiseMilkWise',
+                'title' => '119 - Farmer Wise Milk Bill 2',
+                'to_decrypt' => ['adhar_no'],
+                'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'FarmerPaymentWiseMilkWiseSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise_summary',
+                'scenario' => 'FarmerPaymentWiseMilkWise',
+                'title' => '119 - Farmer Wise Milk Bill 2',
+                'to_decrypt' => ['adhar_no'],
+                'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
         ];
         return $label[$l];
     }
@@ -4601,6 +4656,10 @@ class ReportsController extends \app\controllers\ChildController {
               \PHPExcel_Style_NumberFormat::FORMAT_TEXT
               ); */
             $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            $isZip = isset($this->data['append_link']) && $this->data['append_link'] == true;
+            if ($isZip && !in_array('attachment_link', $file_header)) {
+                $file_header[] = 'attachment_link';
+            }     
             /* $file_header = array_map(function($file_header) {
               return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
               }, array_values($file_header)); */
@@ -4617,6 +4676,30 @@ class ReportsController extends \app\controllers\ChildController {
                     'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
             );
+                   
+            if ($isZip && !empty($this->output)) {
+                $rowIndex = 2;
+                foreach ($this->output as $row) {
+                    $moduleCode = isset($row['module_code']) ? $row['module_code'] : '';
+                    $moduleName = isset($row['module_name']) ? $row['module_name'] : '';
+                    $zipUrl = yii\helpers\Url::to([
+                                '/document/tbl-attachment/zip-attachment-download',
+                                'user_code' => Yii::$app->user->id,
+                                'module_code' => $moduleCode,
+                                'module_name' => $moduleName,
+                                    ], true);
+                    $row['attachment_link'] = 'Download';
+                    if (!empty($row['attachment_link'])) {
+                        $columnIndex = count($row) - 1;
+                        $cell = $sheet->getCellByColumnAndRow($columnIndex, $rowIndex);
+                        $cellCoordinate = $cell->getCoordinate();
+                        $sheet->setCellValue($cellCoordinate, 'Download');
+                        $sheet->getCell($cellCoordinate)->getHyperlink()->setUrl($zipUrl);
+                        $sheet->getStyle($cellCoordinate)->getFont()->setUnderline(true)->getColor()->setRGB('0000FF');
+                    }
+                    $rowIndex++;
+                }
+            }
             $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
             $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
             $fileName = $labelT . '.' . $header['extension'] .

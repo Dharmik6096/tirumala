@@ -156,26 +156,19 @@ class TblMccPlantController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->setModel($this->model);
             $this->model->name = ucwords($this->model->name);
-            $milkType = TblMccMilkType::find()->where(['mcc_plant_code' => $this->model->mcc_plant_code, 'is_active' => 1])->all();
-            $returnedArray = \yii\helpers\ArrayHelper::map($milkType, 'milk_type_code', 'milk_type_code');
-
-            $toRevoke = array_diff($returnedArray, $this->model->milk_type_code);
-            $toAssign = array_diff($this->model->milk_type_code, $returnedArray);
-
-
-            foreach ($toRevoke as $value) {
-                $milkModel = TblMccMilkType::find()->where(['mcc_plant_code' => $this->model->mcc_plant_code, 'milk_type_code' => $value])->one();
+            $milkTypes = TblMccMilkType::findAll(['mcc_plant_code' => $this->model->mcc_plant_code]);
+            foreach ($milkTypes as $milkModel) {
                 $milkHistory = new TblMccMilkTypeHistory();
                 Yii::$app->operation->history($milkModel, $milkHistory, DELETE);
-                array_push($master, $milkHistory);
-                array_push($master, $milkModel);
+                $master[] = $milkHistory;
+                $master[] = $milkModel;
             }
-            foreach ($toAssign as $value) {
+            foreach ($this->model->milk_type_code as $value) {
                 $milkModel = new TblMccMilkType();
                 $milkModel->mcc_plant_code = $this->model->mcc_plant_code;
                 $milkModel->milk_type_code = $value;
                 $milkModel->is_active = $this->model->is_active;
-                array_push($master, $milkModel);
+                $master[] = $milkModel;
             }
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique($this->model, 'name', $_POST['TblMccPlant']['name']);

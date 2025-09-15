@@ -609,6 +609,7 @@ echo GhostMenu::widget([
                                     ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
+                                    ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill 2'), 'url' => ['/misreports/reports/farmer-payment-wise-milk-wise']],
                                     ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
@@ -929,6 +930,7 @@ echo GhostMenu::widget([
                             ['label' => '919-' . Yii::t('app', 'User Organization Mapping Report'), 'url' => ['/misreports/reports/user-organization-mapping-report']],
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
                             ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
+                            ['label' => '922-' . Yii::t('app', 'Asset Detail Summary'), 'url' => ['/misreports/reports/asset-detail-summary']],
                     ]
                 ],
                     [
@@ -1045,6 +1047,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
                             ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
+                            ['label' => Yii::t('app', 'User Attendance Details'), 'url' => ['/misreports/reports/user-attendance-details']],
                     ]
                 ],
             ],
