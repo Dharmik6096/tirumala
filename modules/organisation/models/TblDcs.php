@@ -1619,7 +1619,7 @@ class TblDcs extends ChildModel {
                             $master[] = FALSE;
                         }
                     } else {
-                        $memberModel->ref_code .= $this->{$pre};
+                        $memberModel->ref_code .= $memberModel->{$pre};
                     }
                 }
                 $memberModel->ref_code .= str_pad((int)$refCode + $x, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
@@ -1672,7 +1672,7 @@ class TblDcs extends ChildModel {
                                             $master[] = FALSE;
                                         }
                                     } else {
-                                        $masterHierarchy->{$key_name} .= $this->{$pre};
+                                        $masterHierarchy->{$key_name} .= $memberModel->{$pre};
                                     }
                                 }
                             }
@@ -1699,7 +1699,7 @@ class TblDcs extends ChildModel {
                                             $master[] = FALSE;
                                         }
                                     } else {
-                                        $masterHierarchy->{$key_name} .= $this->{$pre};
+                                        $masterHierarchy->{$key_name} .= $memberModel->{$pre};
                                     }
                                 }
                             }
@@ -1768,7 +1768,7 @@ class TblDcs extends ChildModel {
             }
             $rows[] = $row;
         }
-        $master[] = Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
+        Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
     }
 
 }
