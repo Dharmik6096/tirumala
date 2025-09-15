@@ -4548,7 +4548,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'AssetDetailSummary' => [
-                'param' => 'store_location_type,store_location_code,is_groupbyserial:static:boolean_value',
+                'param' => 'store_location_type_all,store_location_code,is_groupbyserial:static:boolean_value',
                 'sp_name' => 'get_asset_location_data',
                 'scenario' => 'AssetDetailSummary',
                 'title' => '922 - Asset Detail Summary',

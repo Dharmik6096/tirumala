@@ -86,7 +86,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill', 'BankAdvice', 'MpgBillStatement']],
             [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration', 'MccChillingBill', 'ProductSaleInvoice', 'DmrWeightedAverage', 'MccBonusReport', 'MccMaintanceReport']],
             [['from_shift', 'to_shift'], 'required', 'on' => ['DmrWeightedAverage', 'MccBonusReport', 'MccMaintanceReport']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract', 'BmcMilkPaymentVoucher']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs', 'VendorBillElanad', 'MemberPaymentNawasa']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport', 'MccVlcRecieptRouteWise']],
             [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
