@@ -93,14 +93,14 @@ $script = "
         }
     } 
     function updateGrid() {
-    $('.department_div').hide();
+        $('.department_div').hide();
         var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
         var login = $('#tbleiplappmenuactionsmapping-login_type').val();
         var department = $('#tbleiplappmenuactionsmapping-department').val();
         if(appType == 4) {
             $('.department_div').hide();
             $('.login_type_div').hide();
-        } else if(login =='farmer') {
+        } else if(login =='farmer' || login == 'MEMBER') {
             $('.showHideData').show();
         } else if(login !='') {
             $('.showHideData').show();
