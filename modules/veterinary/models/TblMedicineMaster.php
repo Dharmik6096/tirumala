@@ -32,7 +32,10 @@ class TblMedicineMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['medicine_name', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['medicine_name', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'is_active'], 'safe'],
+            [['medicine_name'], 'required'],
+            [['medicine_name'], 'unique'],
+            [['is_active'], 'default', 'value' => 1],
         ];
     }
 

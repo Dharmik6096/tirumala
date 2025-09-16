@@ -10,6 +10,10 @@ use yii\web\NotFoundHttpException;
 use app\controllers\ChildController;
 use app\modules\veterinary\models\TblDiseaseSymptomMapping;
 use app\modules\veterinary\models\TblDiseaseSymptomMappingSearch;
+use app\modules\veterinary\models\TblDiseaseSymptomMappingHistory;
+use yii\web\Response;
+use yii\helpers\Json;
+use yii\helpers\Url;
 
 /**
  * TblDiseaseMasterController implements the CRUD actions for TblDiseaseMaster model.
@@ -46,7 +50,6 @@ class TblDiseaseMasterController extends ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    
     public function actionCreate() {
         $this->model = new TblDiseaseMaster();
         $this->viewFile = 'create';
@@ -95,69 +98,103 @@ class TblDiseaseMasterController extends ChildController {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
-    public function actionMapRouteSource($id) {
+
+    public function actionMapSymptom($id) {
         $model = new TblDiseaseSymptomMapping();
-        $Symtom = $this->findModel($id);
-        $values = $model->getSymptoms($Symtom);
-        $dest = [];
+        $diseaseMaster = $this->findModel($id);
+        $values = $model->getSymptoms($diseaseMaster);
+        $symtom = [];
         $searchModel = new TblDiseaseSymptomMappingSearch();
         $searchModel->disease_id = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         foreach ($values['results'] as $value) {
-            $dest[$value['symptom_id'] . '-' . $value['symptom_name']] = $value['symptom_id'] . ' - ' . $value['symptom_name'];
+            $symtom[$value['symptom_id'] . '-' . $value['symptom_name']] = $value['symptom_id'] . ' - ' . $value['symptom_name'];
         }
         if (Yii::$app->request->post()) {
-            echo '<pre>';
-            print_r(Yii::$app->request->post('TblDiseaseSymptomMapping')['symptom_id']);
-            die;
-            $applicable_code = Yii::$app->request->post('TblDiseaseSymptomMapping')['symptom_id'];
-            $user_code = Yii::$app->request->post('TblOrganizationLatLongApplicability')['user_code'];
-            if (empty($applicable_code)) {
-                $model->addError('applicable_code', 'Please select at least one Source.');
+            $symptom_id = Yii::$app->request->post('TblDiseaseSymptomMapping')['symptom_id'];
+            $disease_id = Yii::$app->request->post('TblDiseaseSymptomMapping')['disease_id'];
+            if (empty($symptom_id)) {
+                $model->addError('applicable_code', 'Please select at least one Symptom.');
             } else {
-                $postData = array_filter($applicable_code);
-                $mapping = [];
+                $postData = array_filter($symptom_id);
                 $saveModel = [];
-                $error_msg = [];
                 $validatefalse = 0;
                 foreach ($postData as $data) {
-                    $modelnew = new TblOrganizationLatLongApplicability();
-                    $model->scenario = 'saveLatlongApplicability';
+                    $modelnew = new TblDiseaseSymptomMapping();
                     $d = explode('-', $data);
-                    $modelnew->applicable_code = $d[0];
-                    $modelnew->organization_latlong_code = $d[1];
-                    $modelnew->applicable_for = $d[2];
-                    $modelnew->user_code = $user_code;
-                    $modelnew->union_code = $modelApplicability->union_code;
+                    $modelnew->symptom_id = $d[0];
+                    $modelnew->disease_id = $disease_id;
                     if ($modelnew->validate()) {
                         $saveModel[] = $modelnew;
-                        
-                    }else{
+                    } else {
                         $validatefalse++;
                     }
-                    
                 }
-                if($validatefalse == 0){
-                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Org Latlong Mapping', 'create']);
+                if ($validatefalse == 0) {
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Symptom Mapping', 'create']);
                     if ($transaction) {
-                        Yii::$app->display->message(true, 'Organization Latlong Mapping', 'create');
-                        return $this->redirect(['map-route-source','id' => $id]);
+                        Yii::$app->display->message(true, 'Symptom Mapping', 'create');
+                        return $this->redirect(['map-symptom', 'id' => $id]);
                     }
                 }
-                
             }
         }
 
-        return $this->render('_map_route_source', [
-                    'model' => $model, 
-                    'Symtom' => $Symtom, 
-                    'destinations' => $dest,
-                   'selected' => $values['selected'],
-                    'defaultValue' => '', 
+        return $this->render('_map_symptom', [
+                    'model' => $model,
+                    'diseaseMaster' => $diseaseMaster,
+                    'symtom' => $symtom,
+                    'selected' => $values['selected'],
+                    'defaultValue' => '',
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
         ]);
+    }
+
+    public function actionDeleteSource() {
+        $saveModel = [];
+        $deleteModel = [];
+        $this->model = TblDiseaseSymptomMapping::findOne(Yii::$app->request->post('id'));
+        if (!empty($this->model)) {
+            $historyModel = new TblDiseaseSymptomMappingHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $saveModel[] = $historyModel;
+            $deleteModel[] = $this->model;
+            $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Symptom', 'delete']);
+            if ($transaction == 'customRedirect') {
+                $this->redirect(['map-symptom', 'id' => $this->model->disease_id]);
+            }
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+    
+    public function actionDeactivate($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblDiseaseMasterHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_active = 0;
+        if ($this->model->validate()) {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Disease', 'edit']);
+            if ($transaction !== FALSE) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => 'Disease deactivated successfully.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Could not deactivate. Please try again.']);
+            }
+        } else {
+            $msg = '';
+            foreach ($this->model->getErrors() as $errorkey => $value) {
+                $msg .= $value[0] . '<br/>';
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $msg]);
+            return $this->redirect(\yii\helpers\Url::previous());
+        }
+
+        return $this->redirect(Url::previous());
     }
 
 }

@@ -10,13 +10,12 @@ use app\modules\veterinary\models\TblBreedMaster;
 /**
  * TblBreedMasterSearch represents the model behind the search form about `app\modules\veterinary\models\TblBreedMaster`.
  */
-class TblBreedMasterSearch extends TblBreedMaster
-{
+class TblBreedMasterSearch extends TblBreedMaster {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['breed_id', 'originating_type'], 'integer'],
             [['breed_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
@@ -26,8 +25,7 @@ class TblBreedMasterSearch extends TblBreedMaster
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblBreedMasterSearch extends TblBreedMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblBreedMaster::find();
 
         // add conditions that should always apply here
@@ -56,21 +53,9 @@ class TblBreedMasterSearch extends TblBreedMaster
             // $query->where('0=1');
             return $dataProvider;
         }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'breed_id' => $this->breed_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
-        ]);
-
-        $query->andFilterWhere(['like', 'breed_name', $this->breed_name])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['like', 'breed_name', $this->breed_name]);
 
         return $dataProvider;
     }
+
 }

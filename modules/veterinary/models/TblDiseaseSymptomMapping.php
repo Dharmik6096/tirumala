@@ -3,6 +3,7 @@
 namespace app\modules\veterinary\models;
 
 use Yii;
+use app\modules\veterinary\models\TblSymptomMaster;
 
 /**
  * This is the model class for table "tbl_disease_symptom_mapping".
@@ -54,31 +55,10 @@ class TblDiseaseSymptomMapping extends \app\models\ChildModel {
         ];
     }
 
-//    public function getSymptoms() {
-//        return static::find()
-//                        ->select(['t2.symptom_id', 't2.symptom_name'])
-//                        ->leftJoin('tbl_symptom_master t2', 't2.symptom_id = tbl_disease_symptom_mapping.symptom_id')
-//                        ->where(['tbl_disease_symptom_mapping.disease_ids' => $this->disease_id])
-////                        ->andWhere(['t2.is_active' => 1])
-//                        ->asArray()
-//                        ->all();
-//    }
-
     public static function getSymptoms($code) {
-
-        $selectedSymptomIds = self::find()
-                ->select('symptom_id')
-                ->where(['disease_id' => $code->disease_id])
-                ->asArray()
-                ->all();
+        $selectedSymptomIds = self::find()->select('symptom_id')->where(['disease_id' => $code->disease_id])->asArray()->all();
         $selectedSymptomIds = array_column($selectedSymptomIds, 'symptom_id');
-        $results = TblSymptomMaster::find()
-                ->select(['symptom_id', 'symptom_name'])
-                ->where(['not in', 'symptom_id', $selectedSymptomIds])
-                ->asArray()
-                ->all();
-
-
+        $results = TblSymptomMaster::find()->select(['symptom_id', 'symptom_name'])->where(['not in', 'symptom_id', $selectedSymptomIds])->andWhere(['is_active' => 1])->asArray()->all();
         $selected = [];
         if (!empty($results)) {
             foreach ($results as $row) {
@@ -88,6 +68,10 @@ class TblDiseaseSymptomMapping extends \app\models\ChildModel {
             }
         }
         return ['results' => $results, 'selected' => $selected];
+    }
+    
+    public function getSymptom() {
+        return $this->hasOne(TblSymptomMaster::className(), ['symptom_id' => 'symptom_id']);
     }
 
 }

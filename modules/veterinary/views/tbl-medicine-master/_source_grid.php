@@ -10,11 +10,11 @@ $attribute = [
 ];
 
 $grid_option = [
-    'id' => 'symptom-grid',
+    'id' => 'medicine-grid',
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'delete' => ['option' => 'symptom_id,disease_symptom_id,tbl-disease-master/delete-source'],
+        'delete' => ['option' => 'symptom_id,medicine_symptom_id,tbl-medicine-master/delete-source'],
     ]
 ];
 

@@ -7,10 +7,10 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * This is the model class for table "tbl_disease_symptom_mapping".
+ * This is the model class for table "tbl_medicine_symptom_mapping".
  *
- * @property integer $disease_symptom_id
- * @property integer $disease_id
+ * @property integer $medicine_symptom_id
+ * @property integer $medicine_id
  * @property integer $symptom_id
  * @property string $created_at
  * @property string $created_by
@@ -20,14 +20,21 @@ use yii\data\ActiveDataProvider;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblDiseaseSymptomMappingSearch extends TblDiseaseSymptomMapping {
+class TblMedicineSymptomMappingSearch extends TblMedicineSymptomMapping {
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName() {
+        return 'tbl_medicine_symptom_mapping';
+    }
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['disease_id', 'symptom_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['medicine_id', 'symptom_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
 
@@ -47,7 +54,7 @@ class TblDiseaseSymptomMappingSearch extends TblDiseaseSymptomMapping {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblDiseaseSymptomMapping::find();
+        $query = TblMedicineSymptomMapping::find();
 
         // add conditions that should always apply here
 
@@ -65,8 +72,9 @@ class TblDiseaseSymptomMappingSearch extends TblDiseaseSymptomMapping {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'disease_id' => $this->disease_id,
+            'medicine_id' => $this->medicine_id,
         ]);
+
         return $dataProvider;
     }
 

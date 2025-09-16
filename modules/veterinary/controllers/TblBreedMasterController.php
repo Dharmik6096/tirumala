@@ -8,6 +8,7 @@ use app\modules\veterinary\models\TblBreedMasterHistory;
 use app\modules\veterinary\models\TblBreedMasterSearch;
 use yii\web\NotFoundHttpException;
 use app\controllers\ChildController;
+use yii\helpers\Url;
 
 /**
  * TblBreedMasterController implements the CRUD actions for TblBreedMaster model.
@@ -91,6 +92,32 @@ class TblBreedMasterController extends ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionDeactivate($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblBreedMasterHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_active = 0;
+        if ($this->model->validate()) {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Breed', 'edit']);
+            if ($transaction !== FALSE) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => 'Breed deactivated successfully.']);
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Could not deactivate. Please try again.']);
+            }
+        } else {
+            $msg = '';
+            foreach ($this->model->getErrors() as $errorkey => $value) {
+                $msg .= $value[0] . '<br/>';
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $msg]);
+            return $this->redirect(\yii\helpers\Url::previous());
+        }
+
+        return $this->redirect(Url::previous());
     }
 
 }

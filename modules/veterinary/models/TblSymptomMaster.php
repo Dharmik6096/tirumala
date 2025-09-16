@@ -31,7 +31,10 @@ class TblSymptomMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['symptom_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['symptom_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'is_active'], 'safe'],
+            [['symptom_name'], 'required'],
+            [['symptom_name'], 'unique'],
+            [['is_active'], 'default', 'value' => 1],
         ];
     }
 

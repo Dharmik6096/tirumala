@@ -3,6 +3,7 @@
 namespace app\modules\veterinary\models;
 
 use Yii;
+use app\modules\veterinary\models\TblSymptomMaster;
 
 /**
  * This is the model class for table "tbl_medicine_symptom_mapping".
@@ -18,7 +19,7 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblMedicineSymptomMapping extends \yii\db\ActiveRecord {
+class TblMedicineSymptomMapping extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
@@ -52,6 +53,25 @@ class TblMedicineSymptomMapping extends \yii\db\ActiveRecord {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+    
+    public static function getSymptoms($code) {
+        $selectedSymptomIds = self::find()->select('symptom_id')->where(['medicine_id' => $code->medicine_id])->asArray()->all();
+        $selectedSymptomIds = array_column($selectedSymptomIds, 'symptom_id');
+        $results = TblSymptomMaster::find()->select(['symptom_id', 'symptom_name'])->where(['not in', 'symptom_id', $selectedSymptomIds])->andWhere(['is_active' => 1])->asArray()->all();
+        $selected = [];
+        if (!empty($results)) {
+            foreach ($results as $row) {
+                if (in_array($row['symptom_id'], $selectedSymptomIds, true)) {
+                    $selected[] = $row['symptom_id'] . '-' . $row['symptom_name'];
+                }
+            }
+        }
+        return ['results' => $results, 'selected' => $selected];
+    }
+    
+    public function getSymptom() {
+        return $this->hasOne(TblSymptomMaster::className(), ['symptom_id' => 'symptom_id']);
     }
 
 }

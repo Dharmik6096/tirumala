@@ -31,7 +31,10 @@ class TblBreedMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['breed_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['breed_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'is_active'], 'safe'],
+            [['breed_name'], 'required'],
+            [['breed_name'], 'unique'],
+            [['is_active'], 'default', 'value' => 1],
         ];
     }
 

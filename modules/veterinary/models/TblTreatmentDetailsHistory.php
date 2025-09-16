@@ -5,12 +5,20 @@ namespace app\modules\veterinary\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_medicine_master_history".
+ * This is the model class for table "tbl_treatment_details_history".
  *
  * @property integer $id
+ * @property integer $treatment_id
+ * @property integer $animal_treatment_request_id
+ * @property integer $diagnosis_detail_id
+ * @property string $ref_code
  * @property integer $medicine_id
- * @property string $medicine_name
- * @property string $union_code
+ * @property string $batch_no
+ * @property string $qty
+ * @property integer $uom
+ * @property string $route
+ * @property string $remarks
+ * @property string $tran_datetime
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -22,13 +30,13 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblMedicineMasterHistory extends \yii\db\ActiveRecord {
+class TblTreatmentDetailsHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_medicine_master_history';
+        return 'tbl_treatment_details_history';
     }
 
     /**
@@ -36,7 +44,7 @@ class TblMedicineMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['medicine_id', 'medicine_name', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by', 'is_active'], 'safe'],
+            [['treatment_id', 'animal_treatment_request_id', 'diagnosis_detail_id', 'ref_code', 'medicine_id', 'batch_no', 'qty', 'uom', 'route', 'remarks', 'tran_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by',], 'safe'],
         ];
     }
 
@@ -46,9 +54,17 @@ class TblMedicineMasterHistory extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
+            'treatment_id' => Yii::t('app', 'Treatment ID'),
+            'animal_treatment_request_id' => Yii::t('app', 'Animal Treatment Request ID'),
+            'diagnosis_detail_id' => Yii::t('app', 'Diagnosis Detail ID'),
+            'ref_code' => Yii::t('app', 'Ref Code'),
             'medicine_id' => Yii::t('app', 'Medicine ID'),
-            'medicine_name' => Yii::t('app', 'Medicine Name'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'batch_no' => Yii::t('app', 'Batch No'),
+            'qty' => Yii::t('app', 'Qty'),
+            'uom' => Yii::t('app', 'Uom'),
+            'route' => Yii::t('app', 'Route'),
+            'remarks' => Yii::t('app', 'Remarks'),
+            'tran_datetime' => Yii::t('app', 'Tran Datetime'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),

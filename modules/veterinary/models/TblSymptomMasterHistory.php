@@ -35,7 +35,7 @@ class TblSymptomMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['symptom_id', 'symptom_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by'], 'safe'],
+            [['symptom_id', 'symptom_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by', 'is_active'], 'safe'],
         ];
     }
 

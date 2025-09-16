@@ -1,33 +1,27 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use yii\web\View;
+use app\components\ActiveForm;
 
-$title = Yii::$app->label->title('create', 'Organazation Mapping');
+$title = Yii::$app->label->title('create', 'Symptom Mapping');
 $button = Yii::$app->label->button('create');
 
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
 
-<div class="panel-heading">User</div>
+    <div class="panel-heading">Medicine : <?= $medicineMaster->medicine_id . '(' . strtoupper($medicineMaster->medicine_name) . ')' ?></div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [
                         'class' => 'save-form',
-                        //                'field-class' => 'form-group col-sm-3',
-                        'union_code' => 'form-group col-sm-3',
-                        'milk_quality_type_code' => 'form-group col-sm-2',
-                        'disease_id' => 'form-group col-sm-2',
-                        'tbldcs-is_bmc' => 'form-group col-sm-3'
+                        'medicine_id' => 'form-group col-sm-2',
                     ],
                     'validateOnBlur' => false,
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => false,
                     'validateOnSubmit' => false,
                     'fieldConfig' => [
-                    //'labelOptions' => [ 'class' => false],
         ]]);
         ?>
         <div class="row theme_border_left theme_border_right theme_border_bottom">
@@ -36,54 +30,42 @@ $this->title = Yii::t('app', $title);
                     <h5 class="theme-box-heading"><?php echo Yii::t('app', $title); ?></h5>
                 </div>
                 <?php echo $form->errorSummary($model); ?>
-                <?php echo Html::activeHiddenInput($model, 'disease_id', ['value' => $Symtom->disease_id]) ?>
+                <?php echo Html::activeHiddenInput($model, 'medicine_id', ['value' => $medicineMaster->medicine_id]) ?>
                 <div class="col-sm-12 margin-top-10">
                     <div class="col-sm-2  margin-bottom-10">
                         <div class="btn-group">
                             <span class="input-group-btn">
-                                <span id="show-only-selected-routes" class="btn btn-default btn-sm">
+                                <span id="show-only-selected-symptoms" class="btn btn-default btn-sm">
                                     <i class="fa fa-minus"></i> Show only selected
                                 </span>
-                                <span id="show-all-routes" class="btn btn-default hide btn-sm">
+                                <span id="show-all-symptoms" class="btn btn-default hide btn-sm">
                                     <i class="fa fa-plus"></i> Show all
                                 </span>
                             </span>
                         </div>
                         <div class="btn-group margin-top-10">
-                                <span class="input-group-btn">
-                                <span id="check-all-routes" class="btn btn-default btn-sm" data-checked ="true">
-                                   <i class="fa fa-check-square facheckfalse hide"></i> <i class="fa fa-square-o fachecktrue "></i> Select All
+                            <span class="input-group-btn">
+                                <span id="check-all-symptoms" class="btn btn-default btn-sm" data-checked ="true">
+                                    <i class="fa fa-check-square facheckfalse hide"></i> <i class="fa fa-square-o fachecktrue "></i> Select All
                                 </span>
                             </span>
                         </div>
                     </div>
-                    <!-- <div class="col-sm-2  margin-bottom-10">
-                        <div class="btn-group">
-                                <span class="input-group-btn">
-                                <span id="show-only-selected-routes selectallc" class="btn btn-default btn-sm">
-                                   <i class="fa fa-check-square"></i> <i class="fa fa-square-o hide"></i> Select All
-                                </span>
-                            </span>
-                        </div>
-                    </div> -->
                     <div class="col-sm-2 ">
                     </div>
                     <?php
                     $i = 0;
-//             var_dump($product_groups);
-//                exit;
-                    //foreach ($product_groups as $key => $row) {
                     ?>
                     <div class="col-sm-12">
                         <?php
                         echo $form->field($model, 'symptom_id')->checkboxList(
-                                $destinations, [
-                            'id' => 'routes-list',
+                                $symtom, [
+                            'id' => 'symptoms-list',
                             'class' => 'row mb15',
                             'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($selected, $defaultValue, $Symtom) {
+                            function ($index, $label, $name, $checked, $value) use ($selected, $defaultValue, $medicineMaster) {
                                 $checked = in_array($value, $selected);
-                                $Symtom->disease_id = Yii::$app->getRequest()->getQueryParam('id');
+                                $medicineMaster->medicine_id = Yii::$app->getRequest()->getQueryParam('id');
                                 $disabled = $checked ? ' disabled' : '';
                                 return "<div class='col-sm-2 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
                                             'value' => $value,
@@ -91,10 +73,10 @@ $this->title = Yii::t('app', $title);
                                             'labelOptions' => [
                                                 'class' => 'route-text' . $disabled,
                                             ],
-                                            'class' => 'route-checkbox',
+                                            'class' => 'symptom-checkbox',
                                             'id' => $value,
                                         ]) . "</div></div>";
-                            }, /* ,'template'=>'<div class="item">{input}{label}</div>' */])->label(false);
+                            }])->label(false);
                         ?>
                     </div>
                     <?php
@@ -115,25 +97,19 @@ $this->title = Yii::t('app', $title);
             $this->render('_source_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-                'Symtom' => $Symtom,
             ])
             ?>
         </div>
     </div>
-    <style>
-        .test > label{
-            margin-right: 20px;
-        }
-    </style>
     <?php
     $js = <<<JS
 
-var routeCheckboxes = $('.route-checkbox');
-var routeText = $('.dcs-checklist');
+var symptomCheckboxes = $('.symptom-checkbox');
+var symptomText = $('.dcs-checklist');
 
-// For checked routes
+// For checked symptoms
 var backgroundColor = '#D6FFDE';
-function showAllRoutesBack() {
+function showAllSymptomsBack() {
 	$('.dcs-checklist').each(function(){
 		$(this).removeClass('hide');
 	});
@@ -141,7 +117,7 @@ function showAllRoutesBack() {
 
 
 // Highlight selected checkboxes
-routeCheckboxes.each(function(){
+symptomCheckboxes.each(function(){
 	var _t = $(this);
 
 	if ( _t.is(':checked') )
@@ -151,7 +127,7 @@ routeCheckboxes.each(function(){
 });
 
 // Change background on check/uncheck
-routeCheckboxes.on('change', function(){
+symptomCheckboxes.on('change', function(){
 	var _t = $(this);
 
 	if ( _t.is(':checked') )
@@ -164,7 +140,7 @@ routeCheckboxes.on('change', function(){
 	}
 });
 
-$('#check-all-routes').on('click', function(){
+$('#check-all-symptoms').on('click', function(){
     var checkedAll = $(this).attr('data-checked');
     if(checkedAll == 'false'){
         $('.facheckfalse').addClass('hide');
@@ -176,7 +152,7 @@ $('#check-all-routes').on('click', function(){
         $(this).attr('data-checked','false');
     }
    
-	$('.route-checkbox').each(function(){
+	$('.symptom-checkbox').each(function(){
         var _t2 = $(this);
         var isChecked = _t2.is(':checked');
         _t2.prop('checked', checkedAll == 'true' ? true : false);
@@ -185,12 +161,12 @@ $('#check-all-routes').on('click', function(){
     });
 })
 
-// Hide on not selected routes
-$('#show-only-selected-routes').on('click', function(){
+// Hide on not selected symptoms
+$('#show-only-selected-symptoms').on('click', function(){
 	$(this).addClass('hide');
-	$('#show-all-routes').removeClass('hide');
+	$('#show-all-symptoms').removeClass('hide');
 
-	routeCheckboxes.each(function(){
+	symptomCheckboxes.each(function(){
 		var _t = $(this);
 
 		if ( ! _t.is(':checked') )
@@ -200,12 +176,12 @@ $('#show-only-selected-routes').on('click', function(){
 	});
 });
 
-// Show all routes back
-$('#show-all-routes').on('click', function(){
+// Show all symptoms back
+$('#show-all-symptoms').on('click', function(){
 	$(this).addClass('hide');
-	$('#show-only-selected-routes').removeClass('hide');
+	$('#show-only-selected-symptoms').removeClass('hide');
 
-	showAllRoutesBack();
+	showAllSymptomsBack();
 });
 
 JS;

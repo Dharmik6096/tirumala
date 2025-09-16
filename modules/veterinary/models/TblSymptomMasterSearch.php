@@ -10,13 +10,12 @@ use app\modules\veterinary\models\TblSymptomMaster;
 /**
  * TblSymptomMasterSearch represents the model behind the search form about `app\modules\veterinary\models\TblSymptomMaster`.
  */
-class TblSymptomMasterSearch extends TblSymptomMaster
-{
+class TblSymptomMasterSearch extends TblSymptomMaster {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['symptom_id', 'originating_type'], 'integer'],
             [['symptom_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
@@ -26,8 +25,7 @@ class TblSymptomMasterSearch extends TblSymptomMaster
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblSymptomMasterSearch extends TblSymptomMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblSymptomMaster::find();
 
         // add conditions that should always apply here
@@ -57,20 +54,9 @@ class TblSymptomMasterSearch extends TblSymptomMaster
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'symptom_id' => $this->symptom_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
-        ]);
-
-        $query->andFilterWhere(['like', 'symptom_name', $this->symptom_name])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['like', 'symptom_name', $this->symptom_name]);
 
         return $dataProvider;
     }
+
 }

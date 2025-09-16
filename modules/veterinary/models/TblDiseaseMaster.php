@@ -31,7 +31,10 @@ class TblDiseaseMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['disease_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['disease_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'is_active'], 'safe'],
+            [['disease_name'], 'required'],
+            [['disease_name'], 'unique'],
+            [['is_active'], 'default', 'value' => 1],
         ];
     }
 

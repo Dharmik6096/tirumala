@@ -15,6 +15,9 @@ echo $form->errorSummary($model);
 ?>
 
 <div class="row">
+    <div class="col-sm-4" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+    </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'medicine_name')->textInput(['maxlength' => true]) ?>
     </div>
