@@ -2,6 +2,8 @@
 
 namespace app\modules\veterinary\models;
 
+use app\models\ChildModel;
+use app\modules\globalmaster\models\TblUnits;
 use Yii;
 
 /**
@@ -26,7 +28,7 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblTreatmentDetails extends \yii\db\ActiveRecord
+class TblTreatmentDetails extends ChildModel
 {
     /**
      * @inheritdoc
@@ -60,10 +62,10 @@ class TblTreatmentDetails extends \yii\db\ActiveRecord
     {
         return [
             'treatment_id' => Yii::t('app', 'Treatment ID'),
-            'animal_treatment_request_id' => Yii::t('app', 'Animal Treatment Request ID'),
-            'diagnosis_detail_id' => Yii::t('app', 'Diagnosis Detail ID'),
+            'animal_treatment_request_id' => Yii::t('app', 'Animal Treatment Request'),
+            'diagnosis_detail_id' => Yii::t('app', 'Diagnosis Detail'),
             'ref_code' => Yii::t('app', 'Ref Code'),
-            'medicine_id' => Yii::t('app', 'Medicine ID'),
+            'medicine_id' => Yii::t('app', 'Medicine'),
             'batch_no' => Yii::t('app', 'Batch No'),
             'qty' => Yii::t('app', 'Qty'),
             'uom' => Yii::t('app', 'Uom'),
@@ -78,5 +80,21 @@ class TblTreatmentDetails extends \yii\db\ActiveRecord
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getAnimalTreatmentRequestId() {
+        return $this->hasOne(TblAnimalTreatmentRequest::className(), ['animal_treatment_request_id' => 'animal_treatment_request_id']);
+    }
+
+    public function getDiagnosisDetailId() {
+        return $this->hasOne(TblDiagnosisDetails::className(), ['diagnosis_detail_id' => 'diagnosis_detail_id']);
+    }
+
+    public function getMedicineId() {
+        return $this->hasOne(TblMedicineMaster::className(), ['medicine_id' => 'medicine_id']);
+    }
+
+    public function getUomDetail() {
+        return $this->hasOne(TblUnits::className(), ['unit_code' => 'uom']);
     }
 }

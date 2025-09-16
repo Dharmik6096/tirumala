@@ -89,8 +89,8 @@ class TblMemberAnimalTagDetails extends ChildModel
     {
         return [
             'member_animal_tag_id' => Yii::t('app', 'Member Animal Tag ID'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'member_code' => Yii::t('app', 'Member Code'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'member_code' => Yii::t('app', 'Member'),
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'email' => Yii::t('app', 'Email'),
             'tag_no' => Yii::t('app', 'Tag No'),
@@ -180,14 +180,6 @@ class TblMemberAnimalTagDetails extends ChildModel
         }
     }
 
-    public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
-    }
-
-    public function getMemberCode() {
-        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
-    }
-
     public function convertDateDot() {
         try {
             $this->last_date_of_calving = Yii::$app->controls->view_date($this->last_date_of_calving, 'php:d.m.Y');
@@ -201,5 +193,25 @@ class TblMemberAnimalTagDetails extends ChildModel
             $this->last_date_of_calving = !empty($this->last_date_of_calving) ? Yii::$app->controls->view_date($this->last_date_of_calving, 'php:Y-m-d') : NULL;
             $this->last_date_of_calving = $this->last_date_of_calving;
         }
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getAnimalTypeId() {
+        return $this->hasOne(TblMemberAnimalType::className(), ['animal_type_code' => 'animal_type_id']);
+    }
+
+    public function getBreedId() {
+        return $this->hasOne(TblBreedMaster::className(), ['breed_id' => 'breed_id']);
+    }
+
+    public function getGenderId() {
+        return $this->hasOne(TblGender::className(), ['gender_code' => 'gender_id']);
     }
 }

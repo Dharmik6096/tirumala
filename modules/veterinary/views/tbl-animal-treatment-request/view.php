@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
-$this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
+$this->title = Yii::$app->label->title('view', 'Animal Treatment Requests');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -47,14 +47,14 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                     'columns' => [
                         [
                             'attribute' => 'member_code',
-                            'label' => Yii::t('app', 'Member') . ' Code Ex',
-                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code'),
+                            'label' => ($model->member_type == 'NonMember') ? Yii::t('app', 'Member') . ' Code' : Yii::t('app', 'Member') . ' Code Ex',
+                            'value' => ($model->member_type == 'NonMember') ? $model->member_code : Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'member_code',
+                            'attribute' => 'member_name',
                             'label' => Yii::t('app', 'Member') . ' Name',
-                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
+                            'value' => ($model->member_type == 'NonMember') ? $model->member_name : Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -62,11 +62,11 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'mobile_no',
+                            'attribute' => 'mobile_number',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'email',
+                            'attribute' => 'address',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -74,26 +74,54 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'tag_no',
+                            'attribute' => 'member_type',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                        [
+                            'attribute' => 'case_type_id',
+                            'value' => Yii::$app->general->getforeignkey($model->caseTypeId, 'case_type_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                         [
+                            'attribute' => 'member_animal_tag_id',
+                            'value' => Yii::$app->general->getforeignkey($model->memberAnimalTagId, 'tag_no'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'disease_id',
+                            'value' => Yii::$app->general->getforeignkey($model->diseaseId, 'disease_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'animal_type_id',
                             'value' => Yii::$app->general->getforeignkey($model->animalTypeId, 'animal_type_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'gender_id',
                             'value' => Yii::$app->general->getforeignkey($model->genderId, 'gender'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [                        
                         [
                             'attribute' => 'breed_id',
                             'value' => Yii::$app->general->getforeignkey($model->breedId, 'breed_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'tran_datetime',
+                            'value' => Yii::$app->controls->view_date($model->tran_datetime),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -110,47 +138,8 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                         ],
                     ],
                 ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'no_of_calving',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'last_date_of_calving',
-                            'value' => Yii::$app->controls->view_date($model->last_date_of_calving),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'pregnancy_status',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'pregnancy_month',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'pregnancy_month_on_date',
-                            'value' => Yii::$app->controls->view_date($model->pregnancy_month_on_date),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'milking_status',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
             ];
 
-            // View file rendering the widget
             echo DetailView::widget([
                 'model' => $model,
                 'attributes' => $attributes,
@@ -164,11 +153,5 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
             ]);
             ?>
         </div>
-        <?=
-        $this->render('_document_grid', [
-            'attachmentDataProvider' => $dataProvider,
-            'attachment' => $attachment,
-        ]);
-        ?>
     </div>
 </div>

@@ -2,6 +2,7 @@
 
 namespace app\modules\veterinary\models;
 
+use app\models\ChildModel;
 use Yii;
 
 /**
@@ -28,7 +29,7 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblDiagnosisDetails extends \yii\db\ActiveRecord
+class TblDiagnosisDetails extends ChildModel
 {
     /**
      * @inheritdoc
@@ -44,16 +45,7 @@ class TblDiagnosisDetails extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['animal_treatment_request_id', 'symptom_id'], 'required'],
-            [['animal_treatment_request_id', 'status', 'symptom_id', 'originating_type'], 'integer'],
-            [['milk_production', 'case_fee'], 'number'],
-            [['tran_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['disease_id'], 'string', 'max' => 100],
-            [['remarks'], 'string', 'max' => 500],
-            [['lat_long'], 'string', 'max' => 200],
-            [['bank_name', 'gateway', 'payment_mode'], 'string', 'max' => 50],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+            [['animal_treatment_request_id','disease_id','disease_name','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','is_active'], 'safe'],
         ];
     }
 
@@ -64,11 +56,11 @@ class TblDiagnosisDetails extends \yii\db\ActiveRecord
     {
         return [
             'diagnosis_detail_id' => Yii::t('app', 'Diagnosis Detail ID'),
-            'animal_treatment_request_id' => Yii::t('app', 'Animal Treatment Request ID'),
-            'disease_id' => Yii::t('app', 'Disease ID'),
-            'status' => Yii::t('app', 'Status'),
+            'animal_treatment_request_id' => Yii::t('app', 'Animal Treatment Request'),
+            'disease_id' => Yii::t('app', 'Disease'),
+            'milking_status' => Yii::t('app', 'Milking Status'),
             'milk_production' => Yii::t('app', 'Milk Production'),
-            'symptom_id' => Yii::t('app', 'Symptom ID'),
+            'symptom_id' => Yii::t('app', 'Symptom'),
             'remarks' => Yii::t('app', 'Remarks'),
             'lat_long' => Yii::t('app', 'Lat Long'),
             'case_fee' => Yii::t('app', 'Case Fee'),
@@ -84,5 +76,19 @@ class TblDiagnosisDetails extends \yii\db\ActiveRecord
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getDiseaseId() {
+        $this->disease_id = explode(',',$this->disease_id);
+        return $this->hasMany(TblDiseaseMaster::className(), ['disease_id' => 'disease_id']);
+    }
+
+    public function getSymptomId() {
+        $this->symptom_id = explode(',',$this->symptom_id);
+        return $this->hasMany(TblSymptomMaster::className(), ['symptom_id' => 'symptom_id']);
+    }
+
+    public function getAnimalTreatmentRequestId() {
+        return $this->hasOne(TblAnimalTreatmentRequest::className(), ['animal_treatment_request_id' => 'animal_treatment_request_id']);
     }
 }

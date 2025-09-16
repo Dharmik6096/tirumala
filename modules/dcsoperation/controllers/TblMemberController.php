@@ -19,7 +19,6 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 use yii\imagine\Image;
 use yii\web\UploadedFile;
-use app\modules\general\models\TblAttachment;
 use app\modules\dcsoperation\models\TblMemberDeactiveSearch;
 use app\modules\document\controllers\TblAttachmentController;
 use app\modules\dcsoperation\models\TblMemberFamilyDetails;
@@ -34,6 +33,9 @@ use yii\bootstrap\ActiveForm;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberShareDetailsSearch;
 use app\modules\dcsoperation\models\TblMemberAnimalDetailsSearch;
+use app\modules\document\models\TblAttachment;
+use app\modules\veterinary\models\TblMemberAnimalTagDetailsSearch;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -79,6 +81,17 @@ class TblMemberController extends \app\controllers\ChildController {
         $shareMemberModel->member_code = $id;
         $shareDataProvider = $shareMemberModel->search(Yii::$app->request->queryParams);
 
+        $tagSearchModel = new TblMemberAnimalTagDetailsSearch();
+        $tagSearchModel->member_code = $id;
+        $tagDataProvider = $tagSearchModel->search(Yii::$app->request->queryParams);
+
+        // $attachment = new TblAttachment();
+        // $attachmentDataProvider = new ActiveDataProvider([
+        //     'query' => $attachment->find()->alias('a')
+        //                 ->innerJoin('tbl_member_animal_tag_details as tag', 'tag.member_animal_tag_id = a.module_code')
+        //                 ->where(['tag.member_code' => $id, 'a.module_name' => 'tbl_member_animal_tag_details']),
+        // ]);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
@@ -89,6 +102,12 @@ class TblMemberController extends \app\controllers\ChildController {
                     'animalDataProvider' => $animalDataProvider,
                     'shareMemberModel' => $shareMemberModel,
                     'shareDataProvider' => $shareDataProvider,
+                    'shareMemberModel' => $shareMemberModel,
+                    'shareDataProvider' => $shareDataProvider,
+                    'tagSearchModel' => $tagSearchModel,
+                    'tagDataProvider' => $tagDataProvider,
+                    // 'attachment' => $attachment,
+                    // 'attachmentDataProvider' => $attachmentDataProvider,
         ]);
     }
 
