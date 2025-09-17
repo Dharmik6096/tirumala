@@ -15,12 +15,12 @@ $grid_option = [
         'update' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->breed_id];
-            return Html::a('<i class="fa fa-pencil"></i>', ['/veterinary/tbl-breed-master/update', 'id' => $model->breed_id], $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', ['/veterinary/tbl-breed-master/update', 'id' => $model->breed_id], $options);
         },
         'disable' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-val' => $model->breed_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class];
-            return Html::a('<i class="fa fa-close"></i>', ['/veterinary/tbl-breed-master/deactivate', 'id' => $model->breed_id], $options);
+            return Html::a('<i class="fa fa-times"></i>', ['/veterinary/tbl-breed-master/deactivate', 'id' => $model->breed_id], $options);
         },
     ]
 ];

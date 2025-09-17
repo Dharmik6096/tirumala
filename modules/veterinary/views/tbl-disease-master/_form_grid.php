@@ -19,7 +19,7 @@ $grid_option = [
         'update' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->disease_id];
-            return Html::a('<i class="fa fa-pencil"></i>', ['/veterinary/tbl-disease-master/update', 'id' => $model->disease_id], $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', ['/veterinary/tbl-disease-master/update', 'id' => $model->disease_id], $options);
         },
         'mapping' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
@@ -29,7 +29,7 @@ $grid_option = [
         'disable' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-val' => $model->disease_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class];
-            return Html::a('<i class="fa fa-close"></i>', ['/veterinary/tbl-disease-master/deactivate', 'id' => $model->disease_id], $options);
+            return Html::a('<i class="fa fa-times"></i>', ['/veterinary/tbl-disease-master/deactivate', 'id' => $model->disease_id], $options);
         },
     ]
 ];

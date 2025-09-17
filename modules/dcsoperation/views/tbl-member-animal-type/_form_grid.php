@@ -15,12 +15,12 @@ $grid_option = [
         'update' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->animal_type_code];
-            return Html::a('<i class="fa fa-pencil"></i>', ['/dcsoperation/tbl-member-animal-type/update', 'id' => $model->animal_type_code], $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', ['/dcsoperation/tbl-member-animal-type/update', 'id' => $model->animal_type_code], $options);
         },
         'disable' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-val' => $model->animal_type_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class];
-            return Html::a('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member-animal-type/deactivate', 'id' => $model->animal_type_code], $options);
+            return Html::a('<i class="fa fa-times"></i>', ['/dcsoperation/tbl-member-animal-type/deactivate', 'id' => $model->animal_type_code], $options);
         },
     ]
 ];

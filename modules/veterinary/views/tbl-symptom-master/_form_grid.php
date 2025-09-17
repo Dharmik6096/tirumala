@@ -15,12 +15,12 @@ $grid_option = [
         'update' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $class, 'data-val' => $model->symptom_id];
-            return Html::a('<i class="fa fa-pencil"></i>', ['/veterinary/tbl-symptom-master/update', 'id' => $model->symptom_id], $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', ['/veterinary/tbl-symptom-master/update', 'id' => $model->symptom_id], $options);
         },
         'disable' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-val' => $model->symptom_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class];
-            return Html::a('<i class="fa fa-close"></i>', ['/veterinary/tbl-symptom-master/deactivate', 'id' => $model->symptom_id], $options);
+            return Html::a('<i class="fa fa-times"></i>', ['/veterinary/tbl-symptom-master/deactivate', 'id' => $model->symptom_id], $options);
         },
     ]
 ];

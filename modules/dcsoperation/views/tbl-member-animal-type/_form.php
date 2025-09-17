@@ -21,8 +21,8 @@ echo $form->errorSummary($model);
     <div class="col-sm-3">
         <?= $form->field($model, 'animal_type_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_milch', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+    <div class="col-sm-2 mt-4">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_milch'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
