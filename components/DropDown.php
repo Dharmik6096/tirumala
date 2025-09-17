@@ -2313,6 +2313,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Pregnancy Status'),
                 'data' => [0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')],
             ],
+            'diagnosis_milking_status' => [
+                'name' => 'milking_status',
+                'prompt' => Yii::t('app', 'Select Milking Status'),
+                'data' => [0 => Yii::t('app', 'Non'), 1 => Yii::t('app', 'Milking'), 2 => Yii::t('app', 'Pregenent')],
+            ],
         ];
         return $records[$l];
     }

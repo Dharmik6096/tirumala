@@ -528,6 +528,10 @@ class GeneralFunctions extends Component {
     }
 
     public function getforeignkey($value, $field) {
+        return !empty($value) ? $value->$field : '';
+    }
+
+    public function getforeignkeyWithArray($value, $field) {
         $returnValue = '';
         if(!empty($value[0])){
             foreach($value as $val){

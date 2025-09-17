@@ -85,13 +85,6 @@ class TblMemberController extends \app\controllers\ChildController {
         $tagSearchModel->member_code = $id;
         $tagDataProvider = $tagSearchModel->search(Yii::$app->request->queryParams);
 
-        // $attachment = new TblAttachment();
-        // $attachmentDataProvider = new ActiveDataProvider([
-        //     'query' => $attachment->find()->alias('a')
-        //                 ->innerJoin('tbl_member_animal_tag_details as tag', 'tag.member_animal_tag_id = a.module_code')
-        //                 ->where(['tag.member_code' => $id, 'a.module_name' => 'tbl_member_animal_tag_details']),
-        // ]);
-
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
@@ -106,8 +99,6 @@ class TblMemberController extends \app\controllers\ChildController {
                     'shareDataProvider' => $shareDataProvider,
                     'tagSearchModel' => $tagSearchModel,
                     'tagDataProvider' => $tagDataProvider,
-                    // 'attachment' => $attachment,
-                    // 'attachmentDataProvider' => $attachmentDataProvider,
         ]);
     }
 

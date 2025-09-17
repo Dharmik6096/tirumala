@@ -636,11 +636,7 @@ if ($model->is_active == 1) {
                     <h4 class="theme-box-heading">Member Animal Tag Detail</h4>
                 </div>
                 <div class="col-sm-12">
-                    <?php /*
-                    $this->render('../../../veterinary/views/tbl-member-animal-tag-details/_document_grid', [
-                        'attachmentDataProvider' => $attachmentDataProvider,
-                        'attachment' => $attachment,
-                    ]); */
+                    <?php
                     echo $this->render('../../../veterinary/views/tbl-member-animal-tag-details/index', [
                         'searchModel' => $tagSearchModel,
                         'dataProvider' => $tagDataProvider,

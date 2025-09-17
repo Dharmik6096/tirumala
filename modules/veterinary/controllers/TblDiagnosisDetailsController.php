@@ -41,7 +41,7 @@ class TblDiagnosisDetailsController extends ChildController
         $model = $this->findModel($id);
         $attachment = new TblAttachment();
         $dataProvider = new ActiveDataProvider([
-            'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_diagnosis_details']),
+            'query' => $attachment->find()->where(['module_code' => (string)$id, 'module_name' => 'tbl_diagnosis_details']),
         ]);
         return $this->render('view', [
             'model' => $model,

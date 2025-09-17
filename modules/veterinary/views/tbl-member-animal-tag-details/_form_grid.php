@@ -73,7 +73,6 @@ $grid_option = [
         'view-detail' => function ($url, $model) {
             $options = ['data-code' => $model->member_animal_tag_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Member Animal Tag Detail'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/veterinary/tbl-member-animal-tag-details/view', 'id' => $model->member_animal_tag_id], $options);
-            // return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
         },
     ]
 ];

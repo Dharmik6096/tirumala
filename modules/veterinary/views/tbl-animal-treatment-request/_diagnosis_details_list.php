@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 
 $attribute = [
@@ -7,8 +8,7 @@ $attribute = [
             return !empty($model->animal_treatment_request_id) ? Yii::$app->general->getforeignkey($model->animalTreatmentRequestId, 'case_no') : '';
         }, 'filter' => false],
     ['attribute' => 'disease_id', 'value' => function($model) {
-            // return !empty($model->disease_id) ? Yii::$app->general->getforeignkeyWithComma($model, $model->disease_id, 'diseaseId', 'disease_name') : '';
-            return !empty($model->disease_id) ? Yii::$app->general->getforeignkey($model->diseaseId, 'disease_name') : '';
+            return !empty($model->disease_id) ? Yii::$app->general->getforeignkeyWithArray($model->diseaseId, 'disease_name') : '';
         }, 'filter' => false],
     ['attribute' => 'milking_status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('diagnosis_milking_status', $searchModel, 'milking_status'),
@@ -17,7 +17,7 @@ $attribute = [
         },],
     ['attribute' => 'milk_production'],
     ['attribute' => 'symptom_id', 'value' => function($model) {
-            return !empty($model->symptom_id) ? Yii::$app->general->getforeignkey($model->symptomId, 'symptom_name') : '';
+            return !empty($model->symptom_id) ? Yii::$app->general->getforeignkeyWithArray($model->symptomId, 'symptom_name') : '';
         }, 'filter' => false],
     ['attribute' => 'remarks'],
     ['attribute' => 'lat_long'],
@@ -42,7 +42,10 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'view' => true,
+        'view-detail' => function ($url, $model) {
+            $options = ['data-code' => $model->diagnosis_detail_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'diagnosis detail'];
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/veterinary/tbl-diagnosis-details/view', 'id' => $model->diagnosis_detail_id], $options);
+        },
     ]
 ];
 ?>

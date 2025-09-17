@@ -6,6 +6,8 @@ use app\controllers\ChildController;
 use Yii;
 use app\modules\veterinary\models\TblAnimalTreatmentRequest;
 use app\modules\veterinary\models\TblAnimalTreatmentRequestSearch;
+use app\modules\veterinary\models\TblDiagnosisDetailsSearch;
+use app\modules\veterinary\models\TblTreatmentDetailsSearch;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -36,8 +38,18 @@ class TblAnimalTreatmentRequestController extends ChildController
      */
     public function actionView($id)
     {
+        $searchModel = new TblDiagnosisDetailsSearch();
+        $searchModel->animal_treatment_request_id = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $treatmentSearchModel = new TblTreatmentDetailsSearch();
+        $treatmentSearchModel->animal_treatment_request_id = $id;
+        $treatmentDataProvider = $treatmentSearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'treatmentSearchModel' => $treatmentSearchModel,
+            'treatmentDataProvider' => $treatmentDataProvider,
         ]);
     }
 

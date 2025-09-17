@@ -24,7 +24,7 @@ $this->title = Yii::$app->label->title('view', 'Member Animal Tag Details');
                         ],
                         [
                             'attribute' => 'disease_id',
-                            'value' => Yii::$app->general->getforeignkey($model->diseaseId, 'disease_name'),
+                            'value' => Yii::$app->general->getforeignkeyWithArray($model->diseaseId, 'disease_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -37,7 +37,7 @@ $this->title = Yii::$app->label->title('view', 'Member Animal Tag Details');
                         ],
                         [
                             'attribute' => 'symptom_id',
-                            'value' => Yii::$app->general->getforeignkey($model->symptomId, 'symptom_name'),
+                            'value' => Yii::$app->general->getforeignkeyWithArray($model->symptomId, 'symptom_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -70,6 +70,7 @@ $this->title = Yii::$app->label->title('view', 'Member Animal Tag Details');
                     'columns' => [
                         [
                             'attribute' => 'milking_status',
+                            'value' => Yii::$app->general->getStaticDropdownVal('diagnosis_milking_status', $model, 'milking_status'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [

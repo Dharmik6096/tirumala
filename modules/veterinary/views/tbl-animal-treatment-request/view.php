@@ -153,5 +153,35 @@ $this->title = Yii::$app->label->title('view', 'Animal Treatment Requests');
             ]);
             ?>
         </div>
+        <div class="row">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Diagnosis Details</h4>
+                </div>
+                <div class="col-sm-12">
+                    <?=
+                    $this->render('_diagnosis_details_list', [
+                        'dataProvider' => $dataProvider,
+                        'searchModel' => $searchModel,
+                    ])
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Treatment Details</h4>
+                </div>
+                <div class="col-sm-12">
+                    <?=
+                    $this->render('_treatment_details_list', [
+                        'dataProvider' => $treatmentDataProvider,
+                        'searchModel' => $treatmentSearchModel,
+                    ])
+                    ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

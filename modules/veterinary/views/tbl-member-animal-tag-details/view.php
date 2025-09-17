@@ -127,6 +127,7 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                     'columns' => [
                         [
                             'attribute' => 'pregnancy_status',
+                            'value' => Yii::$app->general->getStaticDropdownVal('pregnancy_status', $model, 'pregnancy_status'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
@@ -144,6 +145,7 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                         ],
                         [
                             'attribute' => 'milking_status',
+                            'value' => Yii::$app->general->getStaticDropdownVal('milking_status', $model, 'milking_status'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
