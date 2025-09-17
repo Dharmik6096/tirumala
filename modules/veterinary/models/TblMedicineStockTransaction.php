@@ -2,6 +2,7 @@
 
 namespace app\modules\veterinary\models;
 
+use app\models\ChildModel;
 use Yii;
 
 /**
@@ -29,21 +30,19 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblMedicineStockTransaction extends \yii\db\ActiveRecord
-{
+class TblMedicineStockTransaction extends ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_medicine_stock_transaction';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['medicine_id'], 'required'],
             [['medicine_id', 'originating_type'], 'integer'],
@@ -61,16 +60,15 @@ class TblMedicineStockTransaction extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'medicine_stock_transaction_id' => Yii::t('app', 'Medicine Stock Transaction ID'),
             'medicine_id' => Yii::t('app', 'Medicine ID'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'module_name' => Yii::t('app', 'Module Name'),
             'module_code' => Yii::t('app', 'Module Code'),
             'batch_no' => Yii::t('app', 'Batch No'),
-            'tran_datetime' => Yii::t('app', 'Tran Datetime'),
+            'tran_datetime' => Yii::t('app', 'Transaction Datetime'),
             'old_value' => Yii::t('app', 'Old Value'),
             'new_value' => Yii::t('app', 'New Value'),
             'final_value' => Yii::t('app', 'Final Value'),
@@ -87,4 +85,5 @@ class TblMedicineStockTransaction extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
 }
