@@ -3,7 +3,7 @@
 use kartik\grid\GridView;
 
 $attribute = [
-    ['attribute' => 'dcs_code'],
+    ['attribute' => 'dcs_code', 'filter' => false],
     ['label' => Yii::t('app', 'DCS') . ' Ref Code', 'attribute' => 'dcs_code', 'value' => function($model) {
             return !empty($model->dcs_code) ? Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code') : '';
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -12,34 +12,31 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code'), 'value' => function($model) {
             return ($model->member_type == 'NonMember') ? $model->member_code : Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
-        }, 'filter' => TRUE],
+        }, 'filter' => false],
     ['attribute' => 'member_name', 'label' => Yii::t('app', 'Member'). ' Name', 'value' => function($model) {
             return ($model->member_type == 'NonMember') ? $model->member_name : Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'filter' => TRUE],
+        }, 'filter' => false],
     ['attribute' => 'member_type'],
     ['attribute' => 'mobile_number'],
     ['attribute' => 'address'],
-
     ['attribute' => 'case_type_id', 'value' => function($model) {
             return !empty($model->case_type_id) ? Yii::$app->general->getforeignkey($model->caseTypeId, 'case_type_name') : '';
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'member_animal_tag_id', 'value' => function($model) {
             return !empty($model->member_animal_tag_id) ? Yii::$app->general->getforeignkey($model->memberAnimalTagId, 'tag_no') : '';
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'disease_id', 'value' => function($model) {
             return !empty($model->disease_id) ? Yii::$app->general->getforeignkey($model->diseaseId, 'disease_name') : '';
-        }, 'filter' => false],
-
-
+        }, 'filter' => true],
     ['attribute' => 'animal_type_id', 'value' => function($model) {
             return !empty($model->animal_type_id) ? Yii::$app->general->getforeignkey($model->animalTypeId, 'animal_type_name') : '';
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'gender_id', 'value' => function($model) {
             return !empty($model->gender_id) ? Yii::$app->general->getforeignkey($model->genderId, 'gender') : '';
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'breed_id', 'value' => function($model) {
             return !empty($model->breed_id) ? Yii::$app->general->getforeignkey($model->breedId, 'breed_name') : '';
-        }, 'filter' => false],
+        }, 'filter' => true],
     ['attribute' => 'year'],
     ['attribute' => 'month'],
     [
@@ -51,7 +48,7 @@ $attribute = [
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->tran_datetime);
-        }],
+        }, 'filter' => false],
 ];
 
 $grid_option = [
