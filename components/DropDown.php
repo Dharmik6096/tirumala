@@ -2316,7 +2316,7 @@ class DropDown extends Component {
             'diagnosis_milking_status' => [
                 'name' => 'milking_status',
                 'prompt' => Yii::t('app', 'Select Milking Status'),
-                'data' => [0 => Yii::t('app', 'Non'), 1 => Yii::t('app', 'Milking'), 2 => Yii::t('app', 'Pregenent')],
+                'data' => [0 => Yii::t('app', 'None'), 1 => Yii::t('app', 'Milking'), 2 => Yii::t('app', 'Pregenent')],
             ],
         ];
         return $records[$l];
