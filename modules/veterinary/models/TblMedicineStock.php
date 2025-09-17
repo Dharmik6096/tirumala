@@ -53,14 +53,13 @@ class TblMedicineStock extends ChildModel {
     public function rules() {
         return [
             [['medicine_id', 'union_code', 'module_name', 'module_code', 'stock', 'batch_no', 'expire_date', 'rate', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'user_code', 'organization_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'plant_code'], 'safe'],
-            [['medicine_id', 'user_code', 'stock', 'batch_no', 'expire_date', 'rate'], 'required'],
+            [['medicine_id', 'user_code', 'stock', 'batch_no', 'expire_date', 'rate'], 'required', 'on' => ['importCsv']],
             [['user_code'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_code' => 'id']],
             [['expire_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['expire_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['expire_date'], 'convertDate', 'on' => ['importCsv']],
-            [['module_name'], 'default', 'value' => 'user'],
+            [['module_name'], 'default', 'value' => 'USER'],
             [['user_code'], 'setImport', 'on' => ['importCsv']],
-            [['user_code'], 'updateStockByQty', 'on' => ['importCsv']],
             [['stock', 'rate'], 'number'],
             [['union_code'], 'string', 'max' => 5],
             [['module_name', 'module_code'], 'string', 'max' => 50],
@@ -189,57 +188,67 @@ class TblMedicineStock extends ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function updateStockByQty($attribute, $params) {
-        if ($this->stockUpdated) {
-            return true;
-        }
-        $medicineStockData = $this->find()->where(['union_code' => $this->union_code, 'medicine_id' => $this->medicine_id, 'module_name' => $this->module_name, 'module_code' => $this->module_code, 'batch_no' => $this->batch_no, 'expire_date' => date('Y-m-d', strtotime($this->expire_date)), 'rate' => $this->rate,])->one();
-        if (!empty($medicineStockData)) {
-            if (date('Y-m-d', strtotime($this->created_at)) == date('Y-m-d') || date('Y-m-d', strtotime($this->updated_at)) == date('Y-m-d')) {
-                $this->addError($attribute, 'Stock already updated for today.');
-                return false;
-            } else {
-                $this->stock = $medicineStockData->stock + $this->stock;
-                $this->stockUpdated = true;
+    public function setChildTable(&$model, &$saveModel, &$errors) {
+        if (!empty($model)) {
+            $medicineStockData = $this->find()->where(['union_code' => $this->union_code, 'medicine_id' => $this->medicine_id, 'module_name' => $this->module_name, 'module_code' => $this->module_code, 'batch_no' => $this->batch_no])->one();
+            $oldValue = 0;
+            $newValue = $model->stock;
+            if (!empty($medicineStockData)) {
+                $historyModel = new TblMedicineStockHistory();
+                Yii::$app->operation->history($medicineStockData, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $oldValue = $medicineStockData->stock;
+                $stock = $medicineStockData->stock + $model->stock;
+                $medicineStockData->stock = $stock;
+                $model = $medicineStockData;
             }
+
+            $medicineStockTxn = new TblMedicineStockTransaction();
+            $medicineStockTxn->attributes = $model->attributes;
+            $medicineStockTxn->tran_datetime = date('Y-m-d H:i:s');
+            $medicineStockTxn->old_value = $oldValue;
+            $medicineStockTxn->new_value = $newValue;
+            $medicineStockTxn->final_value = $oldValue + $newValue;
+            $medicineStockTxn->entry_type = 'OPENING';
+            $medicineStockTxn->updated_at = $medicineStockTxn->updated_by = null;
+            $saveModel[] = $medicineStockTxn;
         }
-        return true;
     }
 
     public function getUserList($type, $code) {
         $userData = User::find()
-            ->alias('u')
-            ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
-            ->innerJoin('tbl_medicine_stock', 'tbl_medicine_stock.module_code = u.user_code')
-            ->where(['>', 'tbl_medicine_stock.stock', 0])
-            ->andWhere(['in', 'tbl_user_organization_mapping.organization_type', $type])
-            ->andWhere(['tbl_user_organization_mapping.organization_code' => $code])
-            ->andWhere(['u.is_active' => 1])
-            ->select(['u.id', 'u.mobile_no', 'u.name'])
-            ->distinct()
-            ->all();
+                ->alias('u')
+                ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
+                ->innerJoin('tbl_medicine_stock', 'tbl_medicine_stock.module_code = u.user_code')
+                ->where(['>', 'tbl_medicine_stock.stock', 0])
+                ->andWhere(['in', 'tbl_user_organization_mapping.organization_type', $type])
+                ->andWhere(['tbl_user_organization_mapping.organization_code' => $code])
+                ->andWhere(['u.is_active' => 1])
+                ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->distinct()
+                ->all();
 
         $user = ArrayHelper::map($userData, 'id', function ($data) {
-            $extras = array_filter([$data['mobile_no'] ?? null]);
-            return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
-        });
+                    $extras = array_filter([$data['mobile_no'] ?? null]);
+                    return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
+                });
 
         return $user;
     }
 
     public function getAllUserList($code) {
         $userData = User::find()
-            ->alias('u')
-            ->joinWith(['unionCode','dcsCode', 'mccPlantCode', 'bmcCode', 'plantCode'])
-            ->innerJoin('tbl_user_organization_mappings', 'tbl_user_organization_mapping.user_id = u.user_code')
-            ->select(['u.id', 'u.mobile_no', 'u.name'])
-            ->distinct()
-            ->all();
+                ->alias('u')
+                ->joinWith(['unionCode', 'dcsCode', 'mccPlantCode', 'bmcCode', 'plantCode'])
+                ->innerJoin('tbl_user_organization_mappings', 'tbl_user_organization_mapping.user_id = u.user_code')
+                ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->distinct()
+                ->all();
 
         $user = ArrayHelper::map($userData, 'id', function ($data) {
-            $extras = array_filter([$data['mobile_no'] ?? null]);
-            return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
-        });
+                    $extras = array_filter([$data['mobile_no'] ?? null]);
+                    return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
+                });
 
         return $user;
     }
