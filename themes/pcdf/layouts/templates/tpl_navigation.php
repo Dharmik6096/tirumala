@@ -1347,8 +1347,8 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Veterinary<b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Breed Master'), 'url' => ['/veterinary/tbl-breed-master/index']],
-                            ['label' => Yii::t('app', 'Disease Master'), 'url' => ['/veterinary/tbl-disease-master/index']],
                             ['label' => Yii::t('app', 'Symptom Master'), 'url' => ['/veterinary/tbl-symptom-master/index']],
+                            ['label' => Yii::t('app', 'Disease Master'), 'url' => ['/veterinary/tbl-disease-master/index']],
                             ['label' => Yii::t('app', 'Medicine Master'), 'url' => ['/veterinary/tbl-medicine-master/index']],
                             ['label' => Yii::t('app', 'Member Animal Type'), 'url' => ['/dcsoperation/tbl-member-animal-type/index']],
                             ['label' => Yii::t('app', 'Member Animal Tag Details'), 'url' => ['/veterinary/tbl-member-animal-tag-details/index']],
