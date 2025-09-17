@@ -174,8 +174,6 @@ class TblMemberAnimalTagDetails extends ChildModel
             if ($gender->getGender($this->gender_id) <= 0) {
                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " Id '" . $this->gender_id . "'" . ' is invalid.'));
                 return false;
-            } else {
-                $this->gender_id = $gender->gender_code;
             }
         }
     }
