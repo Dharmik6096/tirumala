@@ -1435,6 +1435,22 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Veterinary<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Breed Master'), 'url' => ['/veterinary/tbl-breed-master/index']],
+                            ['label' => Yii::t('app', 'Disease Master'), 'url' => ['/veterinary/tbl-disease-master/index']],
+                            ['label' => Yii::t('app', 'Symptom Master'), 'url' => ['/veterinary/tbl-symptom-master/index']],
+                            ['label' => Yii::t('app', 'Medicine Master'), 'url' => ['/veterinary/tbl-medicine-master/index']],
+                            ['label' => Yii::t('app', 'Member Animal Type'), 'url' => ['/dcsoperation/tbl-member-animal-type/index']],
+                            ['label' => Yii::t('app', 'Member Animal Tag Details'), 'url' => ['/veterinary/tbl-member-animal-tag-details/index']],
+                            ['label' => Yii::t('app', 'Animal Treatment Request'), 'url' => ['/veterinary/tbl-animal-treatment-request/index']],
+                            // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
+                            // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
+                            ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
+                    ],
+                ],
             ],
         ],
             [

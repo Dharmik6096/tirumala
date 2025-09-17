@@ -529,7 +529,18 @@ class GeneralFunctions extends Component {
 
     public function getforeignkey($value, $field) {
         return !empty($value) ? $value->$field : '';
-// return '';
+    }
+
+    public function getforeignkeyWithArray($value, $field) {
+        $returnValue = '';
+        if(!empty($value[0])){
+            foreach($value as $val){
+                $returnValue = !empty($returnValue) ? $returnValue.', '.$val->$field : $val->$field;
+            }
+        } else {
+            $returnValue = !empty($value) ? $value->$field : '';
+        }
+        return $returnValue;
     }
 
     public function valiadteUnique($model, $field, $value, $msg = '') {

@@ -106,6 +106,7 @@ class Path extends Component {
         '\\app\modules\insurance\models\\' => ['TblInsuranceDetail', 'TblInsuranceDetailSearch', 'TblInsuranceDetailSummary', 'TblInsuranceDetailSummaryHistory', 'TblInsuranceDetailSummarySearch', 'TblInsuranceMaster', 'TblInsuranceMasterHistory', 'TblInsuranceMasterSearch'],
         '\\app\modules\usermanagement\models\\' => ['TblEiplAppUser', 'TblEiplAppUserHistory', 'TblEiplUserOrganizationMapping'],
         '\\app\modules\clienterp\models\\' => ['TblDataExchangeLog', 'TblDataExchangeLogHistory'],
+        '\\app\modules\veterinary\models\\' => ['TblMemberAnimalTagDetails', 'TblCaseType', 'TblAnimalTreatmentRequest', 'TblDiagnosisDetails', 'TblMedicineStock', 'TblMedicineStockTransaction', 'TblTreatmentDetails', 'TblMedicineMaster', 'TblMedicineStockHistory'],
     ];
 
     public function get($model) {
