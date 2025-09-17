@@ -210,7 +210,13 @@ class TblMedicineStock extends ChildModel {
             $medicineStockTxn->new_value = $newValue;
             $medicineStockTxn->final_value = $oldValue + $newValue;
             $medicineStockTxn->entry_type = 'OPENING';
-            $medicineStockTxn->updated_at = $medicineStockTxn->updated_by = null;
+            unset($medicineStockTxn->created_at);
+            unset($medicineStockTxn->created_by);
+            unset($medicineStockTxn->updated_at);
+            unset($medicineStockTxn->updated_by);
+            unset($medicineStockTxn->originating_org_code);
+            unset($medicineStockTxn->originating_org_type);
+            unset($medicineStockTxn->originating_type);
             $saveModel[] = $medicineStockTxn;
         }
     }
