@@ -4,7 +4,7 @@ use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 
 $attribute = [
-    ['attribute' => 'dcs_code'],
+    ['attribute' => 'dcs_code', 'filter' => false],
     ['label' => Yii::t('app', 'DCS') . ' Ref Code', 'attribute' => 'dcs_code', 'value' => function($model) {
             return !empty($model->dcs_code) ? Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code') : '';
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -13,22 +13,22 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
-        }, 'filter' => TRUE],
+        }, 'filter' => false],
     ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'). ' Name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'filter' => TRUE],
+        }, 'filter' => false],
     ['attribute' => 'mobile_no'],
     ['attribute' => 'email'],
     ['attribute' => 'tag_no'],
     ['attribute' => 'animal_type_id', 'value' => function($model) {
             return !empty($model->animal_type_id) ? Yii::$app->general->getforeignkey($model->animalTypeId, 'animal_type_name') : '';
-        }, 'filter' => false],
+        }],
     ['attribute' => 'gender_id', 'value' => function($model) {
             return !empty($model->gender_id) ? Yii::$app->general->getforeignkey($model->genderId, 'gender') : '';
-        }, 'filter' => false],
+        }],
     ['attribute' => 'breed_id', 'value' => function($model) {
             return !empty($model->breed_id) ? Yii::$app->general->getforeignkey($model->breedId, 'breed_name') : '';
-        }, 'filter' => false],
+        }],
     ['attribute' => 'year'],
     ['attribute' => 'month'],
     ['attribute' => 'no_of_calving'],

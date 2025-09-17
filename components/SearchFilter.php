@@ -672,6 +672,12 @@ class SearchFilter {
             'TblSampleMilkCollectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
+            'TblMemberAnimalTagDetailsSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'member_code'],
+            ],
+            'TblAnimalTreatmentRequestSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'member_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
