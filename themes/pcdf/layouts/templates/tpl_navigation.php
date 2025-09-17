@@ -1353,6 +1353,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Animal Treatment Request'), 'url' => ['/veterinary/tbl-animal-treatment-request/index']],
                             ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
                             ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
+                            ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
                     ],
                 ],
             ],
