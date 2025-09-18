@@ -11,7 +11,6 @@ $attribute = [
             return !empty($model->disease_id) ? Yii::$app->general->getforeignkeyWithArray($model->diseaseId, 'disease_name') : '';
         }, 'filter' => false],
     ['attribute' => 'milking_status',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('diagnosis_milking_status', $searchModel, 'milking_status'),
         'value' => function ($model) {
             return isset($model->milking_status) ? Yii::$app->dropdown->getRecords('diagnosis_milking_status')['data'][$model->milking_status] : '';
         },],

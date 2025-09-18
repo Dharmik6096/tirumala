@@ -1449,6 +1449,7 @@ echo GhostMenu::widget([
                             // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
                             // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
                             ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
+                            ['label' => Yii::t('app', 'Case Type Fees'), 'url' => ['/veterinary/tbl-case-type-fees/index']],
                     ],
                 ],
             ],
