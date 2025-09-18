@@ -5010,7 +5010,7 @@ tr.highlightRow {
 }
 
 .days-container input[type="checkbox"]:checked + label {
-    background-color: #00A3DE;
+    background-color: #2f3083;
     color: #ffffff;
 
 }
@@ -5075,13 +5075,13 @@ tr.highlightRow {
     display: inline;
 }
 .has-error .select2-container--krajee .select2-selection {
-    border-color: #00A3DE !important;
-    box-shadow: 0 0 6px #00a3de7a !important;
+    border-color: #2f3083 !important;
+    box-shadow: 0 0 6px #2f308359 !important;
 }
 .has-error .input-group-addon {
-    color: #00A3DE;
-    background-color: #00a3de7a;
-    border-color: #00A3DE;
+    color: #2f3083;
+    background-color: #2f308359;
+    border-color: #2f3083;
 }
 .error_message {
     font-size: 8px;
@@ -5120,7 +5120,7 @@ tr.highlightRow {
     text-align: center;
 }
 .mobile_dash_block_header {
-    color: #00A3DE !important;
+    color: #2f3083 !important;
     text-align: center !important;
     font-weight: 600;
     font-size: 14px;
@@ -5606,3 +5606,99 @@ div#dashboardFarmerPopup {
 .three-decimal-validate{
     width: 100%;
 }
+.accordion:after {
+    font-family: 'FontAwesome';
+    content: "\f068";
+    float: right;
+    margin-right: 5px;
+}
+
+.accordion.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f067";
+}
+
+.padding_left_45 {
+    border: 5px solid #ddd;
+}
+
+.child-grid .kv-expanded-row {
+    width: 94%;
+    margin: auto;
+    padding: 10px 0px;
+}
+.text-wrap td {
+    text-wrap: wrap !important;
+}
+
+.attachment{
+    text-align: center;
+}
+
+.attachment_head{
+    color: #2f3083;
+    padding: 14px 10px 0px;
+}
+
+.attachment_section{
+    display: flex;
+    padding: 5px;
+    justify-content: center;
+}
+
+.image_section{
+    padding: 5px;
+    border: 3px solid #2f3083;
+    margin: 5px;
+    border-radius: 5px;
+    width: 200px;
+    align-items: center;
+    display: inline-block;
+}
+.feedback_image{
+    border: 1px solid #cfcfcf;
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 5px;
+}
+
+.table-hover tbody td.action-cell a i.green {
+    color: green !important;
+}
+
+.table-hover tbody td.action-cell a i.red {
+    color: red !important;
+}
+
+.table-hover tbody td.action-cell a i.gray {
+    color: gray !important;
+}
+
+.text-gray {
+    color: gray !important;
+}
+.text-green {
+    color: green !important;
+}
+.text-red {
+    color: red !important;
+}
+.plus-button{
+    margin: 0 0 -29px 8px;
+    z-index: 1;
+}
+.custhead{
+    margin-inline: 25%;
+    border: 1px solid #2f3083;
+    max-width: 54%;
+}
+#MemberPaymentAdjustmentModel .hold_type {
+    width: auto;
+    font-size: 12px;
+    border-radius: 2px;
+    color: #607188;
+}
+.custom-radio-class {
+    margin-top: -3px !important;
+}
+
