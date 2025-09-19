@@ -6360,3 +6360,10 @@ div#dashboardFarmerPopup {
 .three-decimal-validate{
     width: 100%;
 }
+select option:hover {
+    background-color: #f0f0f0; /* Choose your desired hover color */
+    color: #333; /* Optional: Change text color on hover */
+}
+select:focus > option:checked { 
+    background: #000 !important;
+}
