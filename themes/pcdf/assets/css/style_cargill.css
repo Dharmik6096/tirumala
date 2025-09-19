@@ -5701,4 +5701,12 @@ div#dashboardFarmerPopup {
 .custom-radio-class {
     margin-top: -3px !important;
 }
+.no_pointer_disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.no_pointer_disabled .select2-selection {
+    background-color: #eee;
+}
 
