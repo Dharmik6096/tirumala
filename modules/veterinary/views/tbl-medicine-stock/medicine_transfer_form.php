@@ -42,7 +42,7 @@ echo $form->errorSummary($txModel);
         <div class="col-sm-2 reset_field">
             <?= Yii::$app->dropdown->medicineBatch($txModel, $form, 'tblmedicinestocktransfertxnsearch-union_code,tblmedicinestocktransfertxn-medicine_id,tblmedicinestocktransfertxnsearch-from_user_code', 'batch_no', $txModel->getAttributeLabel('batch_no'), FALSE); ?>
         </div>
-        <div class="col-sm-1 create_fields reset_field">
+        <div class="col-sm-2 create_fields reset_field">
             <?= $form->field($txModel, 'available_stock')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Available Stock')) ?>
         </div>
         <div class="col-sm-2 create_fields reset_field number-validate">

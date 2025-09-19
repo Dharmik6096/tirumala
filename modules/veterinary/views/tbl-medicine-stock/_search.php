@@ -3,7 +3,7 @@
 use app\components\ActiveForm;
 ?>
 
-<div class="grid-search search-filter large-search <?= isset($hideSearchBtn) && $hideSearchBtn ? 'no_pointer_disabled_with_clr' : '' ?>">
+<div class="search-filter large-search <?= isset($hideSearchBtn) && $hideSearchBtn ? 'no_pointer_disabled_with_clr' : '' ?>">
 
     <?php
     $form = ActiveForm::begin([
@@ -42,7 +42,7 @@ use app\components\ActiveForm;
         <?= $form->field($searchModel, 'medicine_wise', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     
-    <div class="col-sm-2 mt23 <?= isset($hideSearchBtn) && $hideSearchBtn ? 'default_hide_input' : '' ?>">
+    <div class="col-sm-1 mt23 <?= isset($hideSearchBtn) && $hideSearchBtn ? 'default_hide_input' : '' ?>">
         <?= Yii::$app->controls->search(); ?>
     </div>
     <?php ActiveForm::end(); ?>
