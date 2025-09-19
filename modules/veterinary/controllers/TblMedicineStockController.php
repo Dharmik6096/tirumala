@@ -107,6 +107,7 @@ class TblMedicineStockController extends ChildController {
             $txModel->union_code = $this->model->union_code;
             $txModel->medicine_stock_transfer_code = $this->model->medicine_stock_transfer_code;
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
+                $modelSave[] = $txModel;
                 $this->handleSingleTransfer($modelSave, $txModel);
                 $auto_key_config[1] = ['self_key' => 'medicine_stock_transfer_code', 'parent_key' => 'medicine_stock_transfer_code', 'parent_index' => 0];
                 $auto_key_config[4] = ['self_key' => 'transfer_ref_code', 'parent_key' => 'medicine_stock_transfer_txn_code', 'parent_index' => 1];
