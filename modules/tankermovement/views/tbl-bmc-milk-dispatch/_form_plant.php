@@ -114,6 +114,11 @@ $form = ActiveForm::begin([
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
             </div>
+        </div>
+        <div class="col-sm-2"> 
+            <?= Yii::$app->dropdown->dropdown('animal_type_additional', $txn_model, $form, '', true, FALSE, 'animal_type_additional_code'); ?>
+        </div>
+        <div class="<?= $txnEdit ? 'no_pointer_disabled' : ''; ?>">
             <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
             </div>
@@ -133,16 +138,16 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'fat')->textInput() ?>
+            <?= $form->field($txn_model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'snf')->textInput() ?>
+            <?= $form->field($txn_model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'clr')->textInput() ?>
+            <?= $form->field($txn_model, 'clr')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput(['class' => 'one-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
@@ -150,15 +155,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
         </div>
-        <?php if ($txnEdit) { ?>
-            <div class="clearfix"></div>
-        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
-        <?php if (!$txnEdit) { ?>
-            <div class="clearfix"></div>
-        <?php } ?>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>
@@ -214,29 +213,39 @@ $form = ActiveForm::begin([
 <div id='trip_auto_generate_data'></div>
 
 <?php
+Yii::$app->disable->getDisableFields($txn_model);
 $script = "
 var isTransactionDetailLoad = false;
 var isTransactionFormLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
+isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
     var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
-        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+        $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
+            if (isTripTriggerChange) return;
+            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
-            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
-                if (tripGenerateBtn) {
-                    $('#addTripButtonDiv').show();   
-                } 
-            } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-                $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
+            var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(plantCode) && setData(transactionDate) && setData(vehicleCode)) {
+                setTimeout(function() {
+                    var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
+                    var tripCodeDropdownLength = tripCodeOptions.length;
+                    if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
+                        $('#addTripButtonDiv').show();
+                    } else if (tripCodeDropdownLength === 2) {
+                        var lastOptionValue = tripCodeOptions.last().val();
+                        $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
+                    }
+                    isTripTriggerChange = false;
+                }, 200);
             }
         });
     }
@@ -370,6 +379,9 @@ $(document).ready(function(){
         isClrInput();
         checkQualityRanges();
     });
+    if(isSecondTransaction) {
+        isClrInput();
+    };
 
     $(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code', function() {
         checkQualityRanges();
@@ -447,9 +459,9 @@ $(document).ready(function(){
                         $('#tblbmcmilkdispatchtxn-is_clr_input').val(is_clr_input);
                         if (is_clr_input == 0) {
                             $('#tblbmcmilkdispatchtxn-snf').attr('readonly', false);
-                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true);
+                            $('#tblbmcmilkdispatchtxn-clr').attr('readonly', true).addClass('no_pointer_disabled_with_clr');
                         } else {
-                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true);
+                            $('#tblbmcmilkdispatchtxn-snf').attr('readonly', true).addClass('no_pointer_disabled_with_clr');
                             $('#tblbmcmilkdispatchtxn-clr').attr('readonly', false);
                         }
                     }
@@ -534,6 +546,7 @@ $(document).ready(function(){
                     });
                     $('#tblbmcmilkdispatchtxn-bmc_milk_dispatch_txn_code').val(data.modelData.bmc_milk_dispatch_txn_code);
                     $('#tblbmcmilkdispatchtxn-milk_type_code').trigger('change').trigger('select2:select');
+                    $('#tblbmcmilkdispatchtxn-animal_type_additional_code').trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatchtxn-milk_quality_type_code').trigger('change').trigger('select2:select');
                     $('#tblbmcmilkdispatchtxn-chamber_no').trigger('change').trigger('select2:select');
 
@@ -568,16 +581,19 @@ function setData(field = ''){
 
 $script .= "
     var isTxnEditable = " . json_encode($txnEdit) . ";
+    if(isSecondTransaction){
+        BindData();
+    }
     $(document).off('change', '.filldata').on('change', '.filldata', function () {
+        $('#transactions-from').html('');
+        $('#transactions-detial').html('');           
+        BindData();      
+    }); 
+  
+    function BindData(){
         var union_code = $('#tblbmcmilkdispatch-union_code').val();
         var plant_code = $('#tblbmcmilkdispatch-plant_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
-        $('#transactions-from').html('');
-        $('#transactions-detial').html('');           
-        BindData(plant_code,bmc_milk_dispatch_code,union_code);      
-    }); 
-  
-    function BindData(plant_code,bmc_milk_dispatch_code,union_code){
         if(setData(plant_code) && !isTransactionFormLoad){
             $.ajax({
                 type: 'get',
@@ -608,7 +624,7 @@ $script .= "
         }
     }
 ";
-$this->registerJs($script, View::POS_END, 'panel-before-hide');
+$this->registerJs($script, View::POS_READY, 'panel-before-hide');
 ?>
 <?php
 $script = "$(document).ready(function(){
@@ -640,7 +656,7 @@ $script = "$(document).ready(function(){
         }
     }
 });";
-$this->registerJs($script, View::POS_END, 'bmc-config-popup');
+$this->registerJs($script, View::POS_READY, 'bmc-config-popup');
 ?>
 <?php
 if (!$readonly) {
@@ -666,6 +682,6 @@ if (!$readonly) {
             }
         });
     });";
-    $this->registerJs($script, View::POS_END, 'to-date-from-date');
+    $this->registerJs($script, View::POS_READY, 'to-date-from-date');
 }
 ?>

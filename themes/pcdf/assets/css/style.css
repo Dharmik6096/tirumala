@@ -6343,3 +6343,20 @@ div#dashboardFarmerPopup {
 .transform-rotateY {
     transform: rotateY(180deg);
 }
+.fs24 {
+    font-size: 24px;
+}
+.no_pointer_disabled_with_clr {
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #eee;
+}
+.one-decimal-validate{
+    width: 100%;
+}
+.two-decimal-validate{
+    width: 100%;
+}
+.three-decimal-validate{
+    width: 100%;
+}

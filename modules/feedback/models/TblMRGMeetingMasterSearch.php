@@ -58,6 +58,13 @@ class TblMRGMeetingMasterSearch extends TblMRGMeetingMaster {
 
         $query->joinWith(['pibOfficeCode']);
         $query->innerJoin('tbl_MRG_meeting_org_mapping', 'tbl_MRG_meeting_org_mapping.MRG_M_Id = tbl_mrg_meeting_master.MRG_M_Id');
+        $query->innerJoin('tbl_mcc_plant as mcc', 'mcc.mcc_plant_code = tbl_MRG_meeting_org_mapping.mcc_plant_code');
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['mcc.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+        if (Yii::$app->session->get('Plant') !== '') {
+            $query->andFilterWhere(['mcc.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
         if (Yii::$app->session->get('MCC') !== '') {
             $query->andFilterWhere(['tbl_MRG_meeting_org_mapping.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         }

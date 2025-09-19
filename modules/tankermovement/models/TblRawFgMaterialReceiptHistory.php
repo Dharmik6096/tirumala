@@ -52,7 +52,7 @@ class TblRawFgMaterialReceiptHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['material_code', 'originating_type', 'gross_weight', 'tare_weight', 'raw_fg_material_receipt_code', 'party_code', 'vehicle_code', 'union_code', 'plant_code', 'document_type', 'document_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'receipt_datetime', 'document_date', 'gross_weight_datetime', 'tare_weight_datetime', 'created_at', 'updated_at', 'history_created_at', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no'], 'safe'],
+                [['material_code', 'originating_type', 'gross_weight', 'tare_weight', 'raw_fg_material_receipt_code', 'party_code', 'vehicle_code', 'union_code', 'plant_code', 'document_type', 'document_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'receipt_datetime', 'document_date', 'gross_weight_datetime', 'tare_weight_datetime', 'created_at', 'updated_at', 'history_created_at', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no', 'party_name'], 'safe'],
         ];
     }
 

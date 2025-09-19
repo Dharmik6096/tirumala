@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
 use kartik\grid\GridView;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 
 <?php
@@ -92,6 +93,10 @@ $grid_option = [
     'active_column' => FALSE,
     'actions' => [
         'view' => TRUE,
+        'milk-vehicle-entry-challan' => function ($url, $model) {
+            $options = ['title' => 'Print Challan', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-milk-vehicle-entry/challan', 'id' => $model->milk_vehicle_entry_code], $options);
+        },
     ]
 ];
 

@@ -33,7 +33,7 @@ $type = !empty($type) ? $type : '';
 
     <div class="col-sm-2">
         <?php
-        if ($type == 'memberBulkDelete') {
+        if (in_array($type, ['memberBulkDelete', 'memberBulkDeleteApproval'])) {
             echo Html::activeHiddenInput($searchModel, 'customer_type');
             echo Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblproductsalesearch-bmc_code', 'dcs_code', $searchModel->getAttributeLabel('dcs_code'));
         } else {
