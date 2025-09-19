@@ -143,8 +143,8 @@ $form = ActiveForm::begin([
 </div>
 <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?php if (!empty($modelData)) { ?>
-        <?= Html::submitButton(Yii::t('app', 'MEMBER Re-Push'), ['class' => 'btn btn-primary', 'id' => 'member-repush-btn']) ?>
-        <?= Html::submitButton(Yii::t('app', 'RATE Re-Push'), ['class' => 'btn btn-primary', 'id' => 'rate-repush-btn']) ?>
+        <?= Html::submitButton(Yii::t('app', 'MEMBER Re-Push'), ['class' => 'btn btn-primary btn-login btn', 'id' => 'member-repush-btn']) ?>
+        <?= Html::submitButton(Yii::t('app', 'RATE Re-Push'), ['class' => 'btn btn-primary btn-login btn', 'id' => 'rate-repush-btn']) ?>
     <?php } ?>
 </div>
 
