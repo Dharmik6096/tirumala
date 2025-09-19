@@ -99,13 +99,13 @@ echo $form->errorSummary($txModel);
                         }"),
                     ],
                     'options' => [
-                        'class' => 'btn btn-default btn-raised',
+                        'class' => 'btn btn-default btn-raised btn-login',
                         'type' => 'submit'
                     ],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
+                <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?>
             </div>
         </div>
     </div>
@@ -153,7 +153,7 @@ $('#tblmedicinestocktransfertxnsearch-union_code').on('change', function(){ getA
 $('#tblmedicinestocktransfertxnsearch-from_user_code').on('change', function(){ getAvailableStock(); });
 $('#tblmedicinestocktransfertxn-medicine_id').on('change', function(){ getAvailableStock(); });
 $('#tblmedicinestocktransfertxn-batch_no').on('change', function(){ getAvailableStock(); });
-$('#tblmedicinestocktransfertxn-batch_no').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+$('#tblmedicinestocktransfertxn-batch_no').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
     let varVal = $('#tblmedicinestocktransfertxn-batch_no option:nth-child(2)').val();
     if(varVal == undefined) {
         varVal = '';

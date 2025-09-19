@@ -38,11 +38,11 @@ use app\components\ActiveForm;
     <div class="col-sm-2 create_fields">
         <?= $form->field($searchModel, 'remarks')->textInput() ?>
     </div>
-    <div class="col-sm-2 mt20">
-        <?= $form->field($searchModel, 'medicine_wise', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    <div class="col-sm-2 mt25">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($searchModel, $form, 'medicine_wise'); ?>
     </div>
     
-    <div class="col-sm-1 mt23 <?= isset($hideSearchBtn) && $hideSearchBtn ? 'default_hide_input' : '' ?>">
+    <div class="col-sm-1 mt23 reverse-ml-30 <?= isset($hideSearchBtn) && $hideSearchBtn ? 'default_hide_input' : '' ?>">
         <?= Yii::$app->controls->search(); ?>
     </div>
     <?php ActiveForm::end(); ?>

@@ -91,13 +91,13 @@ use yii\web\JsExpression;
             }"),
         ],
         'options' => [
-            'class' => 'btn btn-default btn-raised',
+            'class' => 'btn btn-default btn-raised btn-login',
             'type' => 'button'
         ],
     ]);
     AjaxSubmitButton::end();
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>

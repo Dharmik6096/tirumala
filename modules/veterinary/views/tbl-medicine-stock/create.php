@@ -23,7 +23,7 @@ $this->title = Yii::$app->label->title('create', 'Medicine Stock Transfer');
                 }
                 ?>
                 <div class="col-sm-1"></div>
-                <div class="col-sm-10 theme_border_left theme_border_right theme_border_bottom padding_10_0">
+                <div class="col-sm-10 theme_border_left theme_border_right theme_border_bottom padding_10_0 offset-1">
                     <h4 class="theme-box-heading"><?= Yii::t('app', 'Medicine Stock Txn Transfer Details') ?></h4>
 
                     <div id="maincontent">

@@ -6117,3 +6117,6 @@ div#dashboardFarmerPopup {
     border: 1px solid #ccc;
     width: 20px; text-align: center;
 }
+.reverse-ml-30{
+    margin-left: -30px;
+}
