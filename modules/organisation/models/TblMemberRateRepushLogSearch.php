@@ -12,6 +12,8 @@ use app\modules\organisation\models\TblMemberRateRepushLog;
  */
 class TblMemberRateRepushLogSearch extends TblMemberRateRepushLog {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
@@ -19,6 +21,7 @@ class TblMemberRateRepushLogSearch extends TblMemberRateRepushLog {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'file_type', 'dpu_type', 'member_rate_repush_log_id', 'log_status', 'originating_type', 'purchase_rate_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dpu_type'], 'required', 'on' => ['repush']],
+                [['from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -55,6 +58,13 @@ class TblMemberRateRepushLogSearch extends TblMemberRateRepushLog {
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'cast(tbl_member_rate_repush_log.created_at as date)', $this->from_date]);
+
+        $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'cast(tbl_member_rate_repush_log.created_at as date)', $this->to_date]);
+
         Yii::$app->general->filterByOrg($query, $this, 'tbl_member_rate_repush_log', 'tbl_member_rate_repush_log', 'tbl_member_rate_repush_log', 'tbl_member_rate_repush_log');
 
         // grid filtering conditions
@@ -77,7 +87,7 @@ class TblMemberRateRepushLogSearch extends TblMemberRateRepushLog {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs', 'tbl_dcs', 'tbl_dcs','tbl_dcs');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs', 'tbl_dcs', 'tbl_dcs', 'tbl_dcs');
 
         if (!$this->validate()) {
             $query->where('0=1');

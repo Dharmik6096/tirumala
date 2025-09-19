@@ -1293,6 +1293,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                             ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                             ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
+                            ['label' => Yii::t('app', 'Member / Rate - Repush'), 'url' => ['/organisation/tbl-member-rate-repush-log/index'], 'active' => ($cntrl == 'tbl-member-rate-repush-log')],
                     //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],
@@ -1341,7 +1342,6 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
-                    ['label' => Yii::t('app', 'DPU Log'), 'url' => ['/organisation/tbl-member-rate-repush-log/index'], 'active' => ($cntrl == 'tbl-member-rate-repush-log')],
             ],
         ],
             [

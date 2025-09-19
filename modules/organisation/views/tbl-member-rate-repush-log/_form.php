@@ -153,19 +153,21 @@ $form = ActiveForm::begin([
 <?php
 $script = "
  $('#member-repush-btn').on('click', function(e) {
+        e.preventDefault(); 
         if (!validateDcsSelection()) {
-            e.preventDefault(); 
             return;
         }
+        $('#member-repush-btn').addClass('disabled no_pointer');
         $('#repush_file_type_hidden_input').val('MEMBER');
         $('#repush-form').submit();
     });
 
     $('#rate-repush-btn').on('click', function(e) {
+        e.preventDefault(); 
         if (!validateDcsSelection()) {
-            e.preventDefault(); 
             return;
         }
+        $('#rate-repush-btn').addClass('disabled no_pointer');
         $('#repush_file_type_hidden_input').val('RATE');
         $('#repush-form').submit();
     });
