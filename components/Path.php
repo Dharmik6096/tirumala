@@ -52,7 +52,7 @@ class Path extends Component {
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
             'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus', 'TblAllowDcsManualCollectionRange', 'TblChannelMaster', 'TblAnimalInspector', 'TblAnimalInspectorApplicability', 'TblAnimalInspectorRequest', 'TblCustomerMasterProvisional', 'TblMasterHierarchy', 'TblOrganizationLatlong', 'TblOrganizationLatlongSearch', 'TblOrganizationLatlongHistory', 'TblOrganizationLatlongApplicability', 'TblBankVerification', 'TblBankVerificationHistory', 'TblPlantDockMapping', 'TblPlantDockMappingHistory',
-            'TblBmcChillerInfo', 'TblBmcChillerInfoHistory', 'TblDcsProvisional', 'TblDcsProvisionalHistory', 'TblCustomerMasterProvisionalHistory'
+            'TblBmcChillerInfo', 'TblBmcChillerInfoHistory', 'TblDcsProvisional', 'TblDcsProvisionalHistory', 'TblCustomerMasterProvisionalHistory', 'TblMemberRateRepushLog'
         ],
         '\\app\modules\details\models\\' =>
             ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],

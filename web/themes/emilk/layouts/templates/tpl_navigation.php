@@ -857,6 +857,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
                                             ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
                                             ['label' => Yii::t('app', 'Format 4'), 'url' => ['/jasperreports/default/vsp-payment-nawasa']],
+                                            ['label' => Yii::t('app', 'BMC Milk Payment Voucher'), 'url' => ['/jasperreports/default/bmc-milk-payment-voucher']],
                                     ]
                                 ],
                                     [
@@ -1383,6 +1384,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                             ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                             ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
+                            ['label' => Yii::t('app', 'Member / Rate - Repush'), 'url' => ['/organisation/tbl-member-rate-repush-log/index'], 'active' => ($cntrl == 'tbl-member-rate-repush-log')],
                     //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],

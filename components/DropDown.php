@@ -2318,6 +2318,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Milking Status'),
                 'data' => [0 => Yii::t('app', 'None'), 1 => Yii::t('app', 'Milking'), 2 => Yii::t('app', 'Pregenent')],
             ],
+            'type_of_dcs' => [
+                'name' => 'type_of_dcs',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'VLCC'), 1 => Yii::t('app', 'DOCK Farmer')],
+            ],
+            'log_status' => [
+                'name' => 'log_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
+            ],
         ];
         return $records[$l];
     }
