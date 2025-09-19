@@ -1341,6 +1341,7 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
+                    ['label' => Yii::t('app', 'DPU Log'), 'url' => ['/organisation/tbl-member-rate-repush-log/index'], 'active' => ($cntrl == 'tbl-member-rate-repush-log')],
             ],
         ],
             [
