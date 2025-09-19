@@ -2484,6 +2484,7 @@ class DropDown extends Component {
             'vehicle_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'vehicle_code'],
             'animal_type_additional' => ['name' => 'animal_type_additional_code', 'fields' => 'animal_type_additional_code,additional_animal_type_name,', 'prompt' => Yii::t('app', 'Select Additional Animal Type'), 'model' => 'TblAnimalTypeAdditional'],
             'caseType' => ['name' => 'case_type_id', 'fields' => 'case_type_id,case_type_name,', 'prompt' => Yii::t('app', 'Select Case Type'), 'model' => 'TblCaseType', 'depend' => 'union_code'],
+            'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
@@ -2744,6 +2745,11 @@ class DropDown extends Component {
     public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-plant-dispatch/plant-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function medicineBatch($model, $form, $depends, $name, $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/veterinary/tbl-medicine-stock/medicine-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
 
 }

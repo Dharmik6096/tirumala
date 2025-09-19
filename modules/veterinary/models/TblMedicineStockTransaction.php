@@ -46,14 +46,8 @@ class TblMedicineStockTransaction extends ChildModel {
         return [
             [['medicine_id'], 'required'],
             [['medicine_id', 'originating_type'], 'integer'],
-            [['tran_datetime', 'expire_date', 'created_at', 'updated_at'], 'safe'],
-            [['old_value', 'new_value', 'final_value'], 'number'],
-            [['union_code'], 'string', 'max' => 5],
-            [['module_name', 'module_code', 'transfer_ref_code', 'transfer_ref_name'], 'string', 'max' => 50],
-            [['batch_no'], 'string', 'max' => 500],
-            [['entry_type'], 'string', 'max' => 20],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+            [['medicine_id', 'union_code', 'module_name', 'module_code', 'batch_no', 'tran_datetime', 'old_value', 'new_value', 'final_value', 'expire_date', 'entry_type', 'transfer_ref_code', 'transfer_ref_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['old_value', 'new_value', 'final_value'], 'number']
         ];
     }
 

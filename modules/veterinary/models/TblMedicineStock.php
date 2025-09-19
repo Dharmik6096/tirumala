@@ -36,9 +36,6 @@ use yii\helpers\ArrayHelper;
 class TblMedicineStock extends ChildModel {
 
     public $user_code, $organization_code;
-    public $mcc_plant_code, $bmc_code, $dcs_code, $plant_code;
-    public $from_user_code, $medicine_wise, $to_user_code;
-    private $stockUpdated = false;
 
     /**
      * @inheritdoc
@@ -52,7 +49,7 @@ class TblMedicineStock extends ChildModel {
      */
     public function rules() {
         return [
-            [['medicine_id', 'union_code', 'module_name', 'module_code', 'stock', 'batch_no', 'expire_date', 'rate', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'user_code', 'organization_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'plant_code'], 'safe'],
+            [['medicine_id', 'union_code', 'module_name', 'module_code', 'stock', 'batch_no', 'expire_date', 'rate', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'user_code', 'organization_code'], 'safe'],
             [['medicine_id', 'user_code', 'stock', 'batch_no', 'expire_date', 'rate'], 'required', 'on' => ['importCsv']],
             [['user_code'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_code' => 'id']],
             [['expire_date'], 'convertDateDot', 'on' => ['importCsv']],
@@ -88,10 +85,6 @@ class TblMedicineStock extends ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'plant_code' => Yii::t('app', 'Plant'),
-            'mcc_plant_code' => Yii::t('app', 'MCC'),
-            'bmc_code' => Yii::t('app', 'BMC'),
-            'dcs_code' => Yii::t('app', 'DCS'),
         ];
     }
 
@@ -242,12 +235,17 @@ class TblMedicineStock extends ChildModel {
         return $user;
     }
 
-    public function getAllUserList($code) {
+    public function getAllUserList($unionCode) {
         $userData = User::find()
                 ->alias('u')
-                ->joinWith(['unionCode', 'dcsCode', 'mccPlantCode', 'bmcCode', 'plantCode'])
-                ->innerJoin('tbl_user_organization_mappings', 'tbl_user_organization_mapping.user_id = u.user_code')
                 ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
+                ->leftJoin('tbl_unions', 'tbl_unions.union_code = tbl_user_organization_mapping.organization_code')
+                ->leftJoin('tbl_dcs', 'tbl_dcs.dcs_code = tbl_user_organization_mapping.organization_code')
+                ->leftJoin('tbl_mcc_plant', 'tbl_mcc_plant.mcc_plant_code = tbl_user_organization_mapping.organization_code')
+                ->leftJoin('tbl_bmc', 'tbl_bmc.bmc_code = tbl_user_organization_mapping.organization_code')
+                ->leftJoin('tbl_plant', 'tbl_plant.plant_code = tbl_user_organization_mapping.organization_code')
+                ->where(['tbl_unions.union_code' => $unionCode])
                 ->distinct()
                 ->all();
 
@@ -257,6 +255,18 @@ class TblMedicineStock extends ChildModel {
                 });
 
         return $user;
+    }
+
+    public function getMedicineBatchList($unionCode, $medicineId, $userCode) {
+        $data = $this->find()->where(['medicine_id' => $medicineId, 'union_code' => $unionCode, 'module_code' => $userCode])->all();
+        if (!empty($data)) {
+            $data = ArrayHelper::map($data, 'batch_no', 'batch_no');
+        }
+        return $data;
+    }
+
+    public function getExistStock() {
+        return $this->find()->where(['union_code' => $this->union_code, 'medicine_id' => $this->medicine_id, 'module_name' => $this->module_name, 'module_code' => $this->module_code, 'batch_no' => $this->batch_no])->one();
     }
 
 }
