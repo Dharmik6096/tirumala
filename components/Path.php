@@ -52,7 +52,7 @@ class Path extends Component {
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
             'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus', 'TblAllowDcsManualCollectionRange', 'TblChannelMaster', 'TblAnimalInspector', 'TblAnimalInspectorApplicability', 'TblAnimalInspectorRequest', 'TblCustomerMasterProvisional', 'TblMasterHierarchy', 'TblOrganizationLatlong', 'TblOrganizationLatlongSearch', 'TblOrganizationLatlongHistory', 'TblOrganizationLatlongApplicability', 'TblBankVerification', 'TblBankVerificationHistory', 'TblPlantDockMapping', 'TblPlantDockMappingHistory',
-            'TblBmcChillerInfo', 'TblBmcChillerInfoHistory', 'TblDcsProvisional', 'TblDcsProvisionalHistory', 'TblCustomerMasterProvisionalHistory'
+            'TblBmcChillerInfo', 'TblBmcChillerInfoHistory', 'TblDcsProvisional', 'TblDcsProvisionalHistory', 'TblCustomerMasterProvisionalHistory', 'TblMemberRateRepushLog'
         ],
         '\\app\modules\details\models\\' =>
             ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],
@@ -106,7 +106,7 @@ class Path extends Component {
         '\\app\modules\insurance\models\\' => ['TblInsuranceDetail', 'TblInsuranceDetailSearch', 'TblInsuranceDetailSummary', 'TblInsuranceDetailSummaryHistory', 'TblInsuranceDetailSummarySearch', 'TblInsuranceMaster', 'TblInsuranceMasterHistory', 'TblInsuranceMasterSearch'],
         '\\app\modules\usermanagement\models\\' => ['TblEiplAppUser', 'TblEiplAppUserHistory', 'TblEiplUserOrganizationMapping'],
         '\\app\modules\clienterp\models\\' => ['TblDataExchangeLog', 'TblDataExchangeLogHistory'],
-        '\\app\modules\veterinary\models\\' => ['TblMemberAnimalTagDetails', 'TblCaseType', 'TblAnimalTreatmentRequest', 'TblDiagnosisDetails', 'TblMedicineStock', 'TblMedicineStockTransaction', 'TblTreatmentDetails', 'TblMedicineMaster', 'TblMedicineStockHistory', 'TblCaseTypeFees', 'TblCaseTypeFeesSearch'],
+        '\\app\modules\veterinary\models\\' => ['TblMemberAnimalTagDetails', 'TblCaseType', 'TblAnimalTreatmentRequest', 'TblDiagnosisDetails', 'TblMedicineStock', 'TblMedicineStockTransaction', 'TblTreatmentDetails', 'TblMedicineMaster', 'TblMedicineStockHistory', 'TblCaseTypeFees', 'TblCaseTypeFeesSearch', 'TblMedicineStockTransfer', 'TblMedicineStockTransferTxn'],
     ];
 
     public function get($model) {

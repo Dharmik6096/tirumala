@@ -18,7 +18,7 @@ class TblMedicineStockSearch extends TblMedicineStock {
     public function rules() {
         return [
             [['medicine_stock_id', 'medicine_id', 'originating_type'], 'integer'],
-            [['union_code', 'module_name', 'module_code', 'batch_no', 'expire_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['union_code', 'module_name', 'module_code', 'batch_no', 'expire_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'show_zero_stock'], 'safe'],
             [['stock', 'rate'], 'number'],
         ];
     }
@@ -39,7 +39,7 @@ class TblMedicineStockSearch extends TblMedicineStock {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblMedicineStock::find();
+        $query = TblMedicineStock::find()->joinWith('medicineMasterCode');
 
         // add conditions that should always apply here
 
@@ -67,6 +67,33 @@ class TblMedicineStockSearch extends TblMedicineStock {
                 ->andFilterWhere(['like', 'module_name', $this->module_name])
                 ->andFilterWhere(['like', 'module_code', $this->module_code])
                 ->andFilterWhere(['like', 'batch_no', $this->batch_no]);
+
+        return $dataProvider;
+    }
+
+    public function searchForBulk($params) {
+        $query = TblMedicineStock::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'union_code' => $this->union_code,
+            'module_name' => 'USER',
+            'module_code' => $this->module_code,
+        ]);
 
         return $dataProvider;
     }

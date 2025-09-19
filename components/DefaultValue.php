@@ -35,6 +35,9 @@ class DefaultValue extends Component {
                 'TblMember' => [
                     'animal_type_code' => 1,
                 ],
+                'TblMemberRateRepushLogSearch' => [
+                    'dpu_type' => 91,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
