@@ -74,10 +74,10 @@ class TblMemberRateRepushLogController extends \app\controllers\ChildController 
         $transaction = $this->generalModel->saveTransaction($saveModel, ['Member / Rate Re-Push', 'create']);
 
         if ($transaction == 'customRedirect') {
-            Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => $file_type . ' Re-push process completed. Success Count : ' . $successCount . ', Error Count :' . $errorCount]);
+            Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => $file_type . ' Re-push process completed. <br/> Success Count : ' . $successCount . ' <br/> Error Count : ' . $errorCount]);
             return $this->redirect(['index']);
         } else {
-            Yii::$app->session->setFlash('success ', ['type' => 'error', 'message' => $file_type . ' Failed to save re-push logs. Success Count :  ' . $successCount . ', Error Count :' . $errorCount]);
+            Yii::$app->session->setFlash('success ', ['type' => 'error', 'message' => $file_type . ' Failed to save re-push logs. <br/> Success Count :  ' . $successCount . ' <br/> Error Count : ' . $errorCount]);
             return $this->redirect(['create']);
         }
     }
