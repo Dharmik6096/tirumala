@@ -108,7 +108,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                 header('Content-Type: ' . $header['mime']);
                 header('Content-Disposition: attachment;filename=' . $fileName);
                 header('Cache-Control: max-age=0');
-                $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+                $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, $header['writer']);
                 ob_end_clean();
                 $objWriter->save('php://output');
                 // exit();
@@ -182,7 +182,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
 
     public function uploadExcel($fileName, $purchaseRate) {
 
-        $objPHPExcel = \PHPExcel_IOFactory::load(IMPORT_PATH . $fileName);
+        $objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load(IMPORT_PATH . $fileName);
         $data = [];
         $rateTypeModel = new TblRateType();
         $milkTypeModel = new TblAnimalType();
