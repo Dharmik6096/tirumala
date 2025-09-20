@@ -133,7 +133,7 @@ $form = ActiveForm::begin([
                         </table>
                     </div>
                     <?php
-                } else {
+                } else if (!empty($bmcCode)) {
                     echo "<p class='text-center'>" . Yii::t('app', 'Data Not Available') . "</p>";
                 }
                 ?>
