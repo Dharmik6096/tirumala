@@ -244,7 +244,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                             if ($row != 2) {
                                 $oldrowrange = floatval($worksheet->getCell('A' . ($row - 1))->getValue());
                                 $newrowrange = floatval($worksheet->getCell('A' . $row)->getValue());
-                                if ((round(($newrowrange - $oldrowrange), 1) !== 0.1)) {
+                                if ((round(($newrowrange - $oldrowrange), 1) !== 0.1) && (round(($newrowrange - $oldrowrange), 2) !== 0.01)) {
                                     return [
                                         'status' => 'error',
                                         'message' => 'Invalid Sheet Format(Range Missing row) [' . $sheetTitle . ']'
@@ -261,7 +261,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                                 if ($col != 'B') {
                                     $oldcolrange = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . '1')->getValue());
                                     $newcolrange = floatval($worksheet->getCell($col . '1')->getValue());
-                                    if ((round(($newcolrange - $oldcolrange), 1) !== 0.1)) {
+                                    if ((round(($newcolrange - $oldcolrange), 1) !== 0.1) && (round(($newcolrange - $oldcolrange), 2) !== 0.01)) {
                                         return [
                                             'status' => 'error',
                                             'message' => 'Invalid Sheet Format (Range Missing col) [' . $sheetTitle . ']'
