@@ -18,7 +18,7 @@ class TblSchemeRateApplicabilitySearch extends TblSchemeRateApplicability {
     public function rules() {
         return [
                 [['scheme_rate_app_code', 'from_shift', 'to_shift'], 'integer'],
-                [['scheme_rate_code', 'is_member_rate', 'from_date', 'to_date', 'applicable_for', 'applicable_code', 'union_code', 'rate_class', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['scheme_rate_code', 'is_member_rate', 'from_date', 'to_date', 'applicable_for', 'applicable_code', 'union_code', 'rate_class', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'description'], 'safe'],
                 [['rtpl'], 'number'],
         ];
     }

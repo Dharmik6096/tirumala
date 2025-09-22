@@ -37,8 +37,23 @@ class TblProductDispatchController extends \app\controllers\ChildController {
      * Lists all TblProductDispatch models.
      * @return mixed
      */
+    // public function actionIndex() {
+    //     $searchModel = new TblProductDispatchSearch();
+    //     $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+    //     $title = 'Product Dispatch with Requisition';
+    //     if (Yii::$app->getRequest()->getQueryParam('flag') == 0) {
+    //         $title = 'Product Dispatch without Requisition';
+    //     }
+    //     return $this->render('index', [
+    //                 'searchModel' => $searchModel,
+    //                 'dataProvider' => $dataProvider,
+    //                 'title' => $title
+    //     ]);
+    // }
+
     public function actionIndex() {
-        $searchModel = new TblProductDispatchSearch();
+        $searchModel = new TblProductDispatchTransactionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $title = 'Product Dispatch with Requisition';
@@ -72,7 +87,7 @@ class TblProductDispatchController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionCreate() {
-//        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        //        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
         $this->model = new TblProductDispatch();
         $this->viewFile = 'create';
         $this->searchModel = new TblProductRequisitionSearch();
@@ -101,6 +116,7 @@ class TblProductDispatchController extends \app\controllers\ChildController {
             $list = [];
             $reqlist = [];
             $cnt = 1;
+            $dis_auto = 1;
 
             if (!$validate && $modelAttributes) {
                 $requisitionCodes = [];
@@ -108,7 +124,7 @@ class TblProductDispatchController extends \app\controllers\ChildController {
                     if (!isset($dcsarray[$modelAttributes[$key]->vendor_code])) {
                         $dispatch = new TblProductDispatch();
                         $dispatch->setAttributes($this->model->attributes);
-                        $dispatch->challan_no = Yii::$app->general->getPrimaryCode($this->model); //$this->model->getChallanNo($modelAttributes[$key]->sub_center_code);
+                        $dispatch->challan_no = Yii::$app->general->getPrimaryCode($this->model, $dis_auto); //$this->model->getChallanNo($modelAttributes[$key]->sub_center_code);
                         $dcsarray[$modelAttributes[$key]->vendor_code] = $dispatch->challan_no;
                         $dispatch->union_code = $modelAttributes[$key]->union_code;
                         $dispatch->plant_code = $modelAttributes[$key]->plant_code;
@@ -117,8 +133,11 @@ class TblProductDispatchController extends \app\controllers\ChildController {
                         $dispatch->dcs_code = $modelAttributes[$key]->dcs_code;
                         $dispatch->challan_date = date('Y-m-d', strtotime($this->model->challan_date));
                         $dispatch->dispatch_date = $dispatch->challan_date;
-//                        $dispatch->is_active = 1;
+                        $dispatch->vendor_code = empty($dispatch->vendor_code) ? $modelAttributes[$key]->vendor_code : $dispatch->vendor_code;
+                        $dispatch->vendor_type = empty($dispatch->vendor_type) ? $modelAttributes[$key]->vendor_type : $dispatch->vendor_type;
+                        //                        $dispatch->is_active = 1;
                         $list[] = $dispatch;
+                        $dis_auto++;
                     }
                     $dispatchitem = new TblProductDispatchTransaction();
                     $dispatchitem->setAttributes($modelAttributes[$key]->attributes);
@@ -135,19 +154,20 @@ class TblProductDispatchController extends \app\controllers\ChildController {
                     $historyModel = new TblProductRequisitionTransactionHistory();
                     Yii::$app->operation->history($reqTransaction, $historyModel, UPDATE);
                     $reqlist[] = $historyModel;
-//                    if ($modelAttributes[$key]->is_close == 1) {
-//                        $reqTransaction->status = 56;
-//                        $reqTransaction->is_sentbox = FALSE;
-//                    } else {
-//                    if (($reqTransaction->quantity == ($previousQty + $dispatchitem->dispatch_qty))) {
-//                        $reqTransaction->status = 36;
-//                    } else {
+                    //                    if ($modelAttributes[$key]->is_close == 1) {
+                    //                        $reqTransaction->status = 56;
+                    //                        $reqTransaction->is_sentbox = FALSE;
+                    //                    } else {
+                    //                    if (($reqTransaction->quantity == ($previousQty + $dispatchitem->dispatch_qty))) {
+                    //                        $reqTransaction->status = 36;
+                    //                    } else {
                     $reqTransaction->status = 'Dispatched'; //26;
                     $dispatchitem->status = 'Dispatched'; //26;
-//                    }
+                    //                    }
                     $reqTransaction->operation = FALSE;
-//                    }
+                    //                    }
                     $list[] = $dispatchitem;
+                    $reqTransaction->scenario = 'dispatchWithReq';
                     $reqlist[] = $reqTransaction;
                 }
                 foreach ($requisitionCodes as $requisitionCode) {
@@ -164,7 +184,7 @@ class TblProductDispatchController extends \app\controllers\ChildController {
                 }
                 $transaction = $this->generalModel->saveTransaction($list, $reqlist, ['Product Dispatch with Requisition', 'create']);
                 if ($transaction == 'customRedirect') {
-                    return $this->{$transaction}();
+                    return $this->redirect(['index', 'flag' => 1]);
                 }
             }
         }

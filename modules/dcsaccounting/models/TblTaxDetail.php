@@ -5,6 +5,7 @@ namespace app\modules\dcsaccounting\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\dcsaccounting\models\TblTax;
 
 /**
  * This is the model class for table "tbl_tax_detail".
@@ -130,6 +131,10 @@ class TblTaxDetail extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getTaxCode() {
+        return $this->hasOne(TblTax::className(), ['tax_code' => 'tax_code']);
     }
 
 }

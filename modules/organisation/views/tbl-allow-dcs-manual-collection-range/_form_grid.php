@@ -11,22 +11,22 @@ $url = Url::to(['update-status']);
 ?>
 <?php
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'plant_code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'bmc_code', 'value' => function($model) {
+        ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => FALSE],
-    ['attribute' => 'dcs_code', 'value' => function($model) {
+        ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => FALSE],
-    [
+        [
         'attribute' => 'from_date', 'filter' => true,
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -37,10 +37,10 @@ $attribute = [
             return Yii::$app->controls->view_date($model->from_date);
         },
     ],
-    ['attribute' => 'from_shift', 'value' => function($model) {
+        ['attribute' => 'from_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShift, 'shift');
         }, 'filter' => FALSE],
-    [
+        [
         'attribute' => 'to_date', 'filter' => true,
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -51,29 +51,36 @@ $attribute = [
             return Yii::$app->controls->view_date($model->to_date);
         },
     ],
-    ['attribute' => 'to_shift', 'value' => function($model) {
+        ['attribute' => 'to_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->toShift, 'shift');
         }, 'filter' => FALSE],
-    [
+        [
         'attribute' => 'is_weight_manual', 'filter' => false,
         'value' => function($model) {
             return ($model->is_weight_manual == 1) ? 'Yes' : 'No';
         }
     ],
-    [
+        [
         'attribute' => 'is_quality_manual', 'filter' => false,
         'value' => function($model) {
             return ($model->is_quality_manual == 1) ? 'Yes' : 'No';
         }
     ],
-    [
+        [
         'attribute' => 'status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('dcs_manual_collection_range_status', $searchModel, 'status'),
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('dcs_manual_collection_range_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('dcs_manual_collection_range_status')['data'][$model->status] : 'N/A';
         }
     ],
-    [
+        [
+        'attribute' => 'request_type',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('dcs_manual_collection_range_request_type', $searchModel, 'request_type'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('dcs_manual_collection_range_request_type')['data'][$model->request_type]) ? Yii::$app->dropdown->getRecords('dcs_manual_collection_range_request_type')['data'][$model->request_type] : 'N/A';
+        }
+    ],
+        [
         'attribute' => 'remark', 'filter' => false,
         'value' => function($model) {
             return $model->remark;

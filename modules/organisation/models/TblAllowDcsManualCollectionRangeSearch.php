@@ -17,8 +17,8 @@ class TblAllowDcsManualCollectionRangeSearch extends TblAllowDcsManualCollection
      */
     public function rules() {
         return [
-            [['manual_collection_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'status', 'remark'], 'safe'],
-            [['is_weight_manual', 'is_quality_manual', 'originating_type'], 'integer'],
+                [['manual_collection_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'status', 'remark', 'request_type'], 'safe'],
+                [['is_weight_manual', 'is_quality_manual', 'originating_type'], 'integer'],
         ];
     }
 
@@ -60,6 +60,7 @@ class TblAllowDcsManualCollectionRangeSearch extends TblAllowDcsManualCollection
             'is_weight_manual' => $this->is_weight_manual,
             'is_quality_manual' => $this->is_quality_manual,
             'status' => $this->status,
+            'request_type' => $this->request_type,
         ]);
         return $dataProvider;
     }

@@ -53,6 +53,9 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\product\models\TblDispatchCenter;
+use app\modules\product\models\TblDispatchCenterApplicability;
+use app\modules\product\models\TblProduct;
 use app\modules\product\models\TblGeneralPartyMaster;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
@@ -2958,6 +2961,75 @@ class GeneralFunctions extends Component {
         $fromDate = $dateTime->modify("first day of $modifier")->format('Y-m-d');
         $toDate = (new \DateTime($date))->modify("last day of $modifier")->format('Y-m-d');
         return [$fromDate, $toDate];
+    }
+
+    public function getDispCenterProducts($dispatch_center_code = "") {
+        $product_array = [];
+        $product_array['product_list'] = [];
+        $product_array['pass_where_close'] = 'Yes';
+        $user_dispatch_center_code = User::find()->select('dispatch_center_code')->where(['id' => Yii::$app->session->get('UserCode')])->one();
+
+        $getDataUsingDisCenter = false;
+        $dispCenterCode = '0';
+        if (!empty($user_dispatch_center_code) && !empty($user_dispatch_center_code->dispatch_center_code)) {
+            if (empty($dispatch_center_code) || $user_dispatch_center_code->dispatch_center_code == $dispatch_center_code) {
+                $getDataUsingDisCenter = true;
+                $dispCenterCode = $user_dispatch_center_code['dispatch_center_code'];
+            }
+        } else {
+            if (empty($dispatch_center_code)) {
+                $product_array['pass_where_close'] = 'No';
+            } else {
+                $getDataUsingDisCenter = true;
+                $dispCenterCode = $dispatch_center_code;
+            }
+        }
+        if ($getDataUsingDisCenter) {
+            $dispatch_center_type_code = TblDispatchCenter::find()->select('dispatch_center_type_code')->where(['dispatch_center_code' => $dispCenterCode])->one();
+            if (!empty($dispatch_center_type_code) && !empty($dispatch_center_type_code->dispatch_center_type_code)) {
+                $groupIds = explode(',', $dispatch_center_type_code['dispatch_center_type_code']);
+                $productData = TblProduct::find()->select(['product_code'])->where(['product_group_code' => $groupIds])->all();
+                $product_list = \yii\helpers\ArrayHelper::map($productData, 'product_code', 'product_code');
+                $product_array['product_list'] = $product_list;
+            }
+        }
+        return $product_array;
+    }
+
+    public function maskAadhar($aadhar_no) {
+        if (!empty($aadhar_no)) {
+            $maskedAadhar = 'xxxx-xxxx-' . substr($aadhar_no, 8);
+            return $maskedAadhar;
+        } else {
+            return '';
+        }
+    }
+
+    public function getCodeMax($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
+        $prefix = 'PORTAL-' . $organizations_code . '-';
+        $prefixLen = strlen($prefix);
+
+        $result = $model->find()
+                ->select(["MAX(CAST(SUBSTRING(" . $primaryKey . ", " . ($prefixLen + 1) . ", LEN(" . $primaryKey . ") - " . $prefixLen . ") AS INT)) AS max_code"])
+                ->where(['like', $primaryKey, $prefix])
+                ->asArray()
+                ->one();
+
+        $highestNumber = isset($result['max_code']) ? (int) $result['max_code'] + $autoInc : $autoInc;
+        $value = $prefix . $highestNumber;
+
+        return $value;
+    }
+
+    public function getDispatchCenter($applicable_code, $for, $product_code) {
+        return TblDispatchCenterApplicability::find()->select(['tbl_dispatch_center_applicability.dispatch_center_code'])
+                        ->join('INNER JOIN', 'tbl_dispatch_center', 'tbl_dispatch_center.dispatch_center_code=tbl_dispatch_center_applicability.dispatch_center_code')
+                        ->join('INNER JOIN', 'tbl_product', 'tbl_product.product_group_code in (SELECT code from SplitToTable (tbl_dispatch_center.dispatch_center_type_code,\',\'))')
+                        ->where(['tbl_dispatch_center_applicability.applicable_code' => $applicable_code, 'tbl_dispatch_center_applicability.applicable_for' => $for, 'tbl_product.product_code' => $product_code])
+                        ->asArray()
+                        ->one();
     }
 
     public function setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks = '') {

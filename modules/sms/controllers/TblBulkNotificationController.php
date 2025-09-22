@@ -15,6 +15,7 @@ use yii\helpers\Json;
 use app\modules\sms\models\TblBulkNotificationApplicability;
 use app\modules\sms\models\TblBulkNotificationApplicabilityHistory;
 use yii\widgets\ActiveForm;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
  * TblBulkNotificationController implements the CRUD actions for TblBulkNotification model.
@@ -55,7 +56,6 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->model = new TblBulkNotification();
         $this->viewFile = 'create';
         $this->model->app_type = 1;
-        $this->model->login_type = 'MEMBER';
         $saveModel = [];
         if (Yii::$app->request->post()) {
             if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
@@ -66,8 +66,36 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                 $this->model->entry_datetime = date('Y-m-d H:i:s');
                 $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
                 $this->model->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL;
+                $filesInDir = [];
+                $i = 1;
+                $auto_key_config = [];
+                $notification_type = $this->model->notification_type;
 
-                if ($this->model->notification_type == 4) {
+                if ($notification_type == 1) {
+                    Yii::$app->default->getDefaults($this->model);
+                }
+                if ($notification_type == 2) {
+                    $this->model->filename = $files;
+                    $this->model->file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . $this->model->filename;
+                }
+                if ($notification_type == 3) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/';
+                    if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/';
+                    $this->model->from_date = !empty($this->model->from_date) ? date('Y-m-d', strtotime($this->model->from_date)) . ' ' . (!empty($this->model->from_shift_code) ? Yii::$app->general->getshift($this->model->from_shift_code) : '00:00:00') : '';
+                    $this->model->to_date = !empty($this->model->to_date) ? date('Y-m-d', strtotime($this->model->to_date)) . ' ' . (!empty($this->model->to_shift_code) ? Yii::$app->general->getshift($this->model->to_shift_code) : '23:59:59') : '';
+                    $this->model->app_type = NULL;
+                    $this->model->login_type = NULL;
+                    $this->model->filename = !empty($filename) ? $filename . '.pdf' : '';
+                    $this->model->file_path = !empty($this->model->filename) ? $file_path . $this->model->filename : '';
+                }
+                if ($notification_type == 4 || $notification_type == 8) {
                     $this->model->filename = $files;
                     $filesArray = explode('.', $files);
                     $filename = $filesArray[0];
@@ -77,22 +105,93 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                     }
                     $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
-                        $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
-                        $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
-                        $crnt_dir = getcwd();
-                        chdir($utility_path);
-                        exec($command);
-                        chdir($crnt_dir);
-                    $i = 1;
-                    $auto_key_config = [];
-                    $from_date = "";
-                    $to_date = "";
-                    if (isset($this->model->payment_cycle_code) && $this->model->payment_cycle_code != '') {
-                        $paymentCycle = \app\modules\payment\models\TblPaymentCycle::find()->where(['payment_cycle_code' => $this->model->payment_cycle_code])->one();
+                    $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
+                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $crnt_dir = getcwd();
+                    chdir($utility_path);
+                    exec($command);
+                    chdir($crnt_dir);
+                    if ($notification_type == 4) {
+                        $from_date = "";
+                        $to_date = "";
+                        if (isset($this->model->payment_cycle_code) && $this->model->payment_cycle_code != '') {
+                            $paymentCycle = TblPaymentCycle::find()->where(['payment_cycle_code' => $this->model->payment_cycle_code])->one();
 
-                        $from_date = $paymentCycle->from_date;
-                        $to_date = $paymentCycle->to_date;
+                            $from_date = $paymentCycle->from_date;
+                            $to_date = $paymentCycle->to_date;
+                        }
                     }
+                }
+                if ($notification_type == 5) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $command = 'java -jar pdf-splitter-bactaria-1.0.jar "' . $new_directory . $this->model->filename . '"';
+                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $crnt_dir = getcwd();
+                    chdir($utility_path);
+                    exec($command);
+                    chdir($crnt_dir);
+
+                    foreach (scandir($new_directory) as $filePdf) {
+                        if (strlen($filePdf) > 2 && strpos($filePdf, '.pdf') > 0) {
+                            array_push($filesInDir, (int) explode('.', $filePdf)[0]);
+                        }
+                    }
+                }
+                if ($notification_type == 6) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $command = 'java -jar pdf-splitter-amul-invoice-1.0.jar "' . $new_directory . $this->model->filename . '"';
+                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $crnt_dir = getcwd();
+                    chdir($utility_path);
+                    exec($command);
+                    chdir($crnt_dir);
+                }
+                if ($notification_type == 7) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    if (!empty($this->model->filename) && Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $command = 'java -jar pdf-splitter-multi-1.0.jar "' . $new_directory . $this->model->filename . '"';
+                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $crnt_dir = getcwd();
+                    chdir($utility_path);
+                    exec($command);
+                    chdir($crnt_dir);
+
+                    foreach (scandir($new_directory) as $filePdf) {
+                        if (strlen($filePdf) > 2 && strpos($filePdf, '.pdf') > 0) {
+                            array_push($filesInDir, (int) explode('.', $filePdf)[0]);
+                        }
+                    }
+                }
+
+                if ($notification_type == 1 || $notification_type == 2 || $notification_type == 3) {
+                    $this->model->receiver_type = 'APP_NOTIFICATION';
+                    $this->model->dcs_code = !empty($this->model->dcs_code) ? $this->model->dcs_code[0] : '';
+                    $saveModel[] = $this->model;
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
+                } else {
                     foreach ($dcsCodes as $k => $dcs_data) {
                         $model = new TblBulkNotification();
                         $model->union_code = $dcs_data['union_code'];
@@ -101,13 +200,25 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->bmc_code = $dcs_data['bmc_code'];
                         $model->dcs_code = $dcs_data['dcs_code'];
                         $model->notification_type = $this->model->notification_type;
-                        $model->payment_cycle_code = $this->model->payment_cycle_code;
-                        $model->from_date = $from_date;
-                        $model->to_date = $to_date;
                         $model->login_type = $this->model->login_type;
                         if ($model->notification_type == 4) {
-                        $model->filename = ((int) $dcs_data['ref_code']) . '.pdf';                       
-                        $model->file_path = $file_path . $model->filename;
+                            $model->payment_cycle_code = $this->model->payment_cycle_code;
+                            $model->from_date = $from_date;
+                            $model->to_date = $to_date;
+                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['ref_code']) . '.pdf' : '';
+                            $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
+                        }
+                        if ($model->notification_type == 5 || $model->notification_type == 7) {
+                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
+                        }
+                        if ($model->notification_type == 6) {
+                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
+                        }
+                        if ($model->notification_type == 8) {
+                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         $model->campaign_name = $this->model->campaign_name;
                         $model->title = $this->model->title;
@@ -116,45 +227,18 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
                         $model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
                         $model->entry_datetime = date('Y-m-d H:i:s');
-                        $saveModel[$i] = $model;
-                        $i++;
-                        $appModel = new TblBulkNotificationApplicability();
-                        $appModel->attributes = $model->attributes;
-                        $appModel->applicable_for = 'DCS';
-                        $appModel->applicable_code = $model->dcs_code;
-                        $appModel->scenario = 'milkBillApplicability';
-                        $saveModel[$i] = $appModel;
-                        $auto_key_config[$i] = ['self_key' => 'bulk_notification_id', 'parent_key' => 'bulk_notification_id', 'parent_index' => $i - 1];
-                        $i++;
+
+                        if ($model->notification_type == 5 || $model->notification_type == 7) {
+                            if (in_array(((int) $dcs_data['dcs_code_ex']), $filesInDir)) {
+                                $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
+                            } else if (empty($model->filename)) {
+                                $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
+                            }
+                        } else {
+                            $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
+                        }
                     }
                     $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
-                } else if ($this->model->notification_type == 3) {
-                    $this->model->filename = $files;
-                    $filesArray = explode('.', $files);
-                    $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/';
-                    if (Yii::$app->general->checkDirectory($new_directory)) {
-                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
-                    }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/';
-                    $from_date = date('Y-m-d 00:00:00', strtotime($this->model->from_date));
-                    $to_date = date('Y-m-d 23:59:59', strtotime($this->model->to_date));
-                    $this->model->filename = $filename . '.pdf';
-                    $this->model->file_path = $file_path . $this->model->filename;
-                    $this->model->from_date = $from_date;
-                    $this->model->to_date = $to_date;
-                    $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
-                    $this->model->receiver_type = 'APP_NOTIFICATION';
-                    $this->model->entry_datetime = date('Y-m-d H:i:s');
-                    $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
-                    $this->model->app_type = NULL;
-                    $this->model->login_type = NULL;
-                    $saveModel[] = $this->model;
-                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
-                } else {
-                    $saveModel[] = $this->model;
-                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
                 }
                 if ($transaction == 'customRedirect') {
                     if ($this->model->login_type == 'all') {
@@ -185,6 +269,19 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function createApplicabilityData(&$saveModel, &$auto_key_config, $model, &$i, $scenario = 'milkBillApplicability') {
+        $saveModel[$i] = $model;
+        $i++;
+        $appModel = new TblBulkNotificationApplicability();
+        $appModel->attributes = $model->attributes;
+        $appModel->applicable_for = 'DCS';
+        $appModel->applicable_code = $model->dcs_code;
+        $appModel->scenario = $scenario;
+        $saveModel[$i] = $appModel;
+        $auto_key_config[$i] = ['self_key' => 'bulk_notification_id', 'parent_key' => 'bulk_notification_id', 'parent_index' => $i - 1];
+        $i++;
+    }
+
     /**
      * Updates an existing TblBulkNotification model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -198,6 +295,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $historyModel = new TblBulkNotificationHistory();
             Yii::$app->operation->history($this->model, $historyModel, 'UPDATE');
             $this->model->load(Yii::$app->request->post());
+            $this->model->dcs_code = !empty($this->model->dcs_code) ? $this->model->dcs_code[0] : '';
             $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
             $this->model->entry_datetime = !empty($this->model->entry_datetime) ? date('Y-m-d', strtotime($this->model->entry_datetime)) : '';
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bulk Notification', 'edit']);
@@ -304,12 +402,12 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         ];
         if ($model->notification_type == 3) {
             $appModel->fields['wef_date'] = ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
-                return Yii::$app->controls->view_date($model->wef_date);
-            }, 'filter' => FALSE];
-        }else{
-            $appModel->fields['wef_date'] = ['view' => ['grid','create'], 'type' => 'date', 'value' => function($model) {
-                return Yii::$app->controls->view_date($model->wef_date);
-            }, 'filter' => FALSE];
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }, 'filter' => FALSE];
+        } else {
+            $appModel->fields['wef_date'] = ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }, 'filter' => FALSE];
         }
         $appModel->actions = [
             'delete' => ['option' => 'applicable_code,bulk_notification_app_code,tbl-bulk-notification/delete-mapping'],

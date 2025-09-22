@@ -1151,7 +1151,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
                 $inPad = 78 - (30 + strlen($memName));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= 'R.Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
@@ -1587,7 +1587,7 @@ class PDF extends TCPDF {
                     $member_type = '';
                     $mDevideCount = 0;
                     $eDevideCount = 0;
-                    foreach ($value['details'] as $tbl_key => $tbl_value) {        
+                    foreach ($value['details'] as $tbl_key => $tbl_value) {
                         $collDate = (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['collection_date'] : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['collection_date'] : '')));
                         // $textContent .= $collDate;
                         $textContent .= str_pad($collDate, 4, ' ', STR_PAD_LEFT);
@@ -1668,11 +1668,12 @@ class PDF extends TCPDF {
                     $totalQty = $totalQtyP + $totalQtyA;
                     $totalAmt = $bmAmt + $bmAmtP;
                     $final_payable = $totalAmt + $total_addition - $total_deduction;
-                    $RTPL = number_format($final_payable / $totalQty,2);
+                    $RTPL = number_format($final_payable / $totalQty, 2);
 
                     $textContent .= str_pad('', 82, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad(number_format($totalQty,2), 14, ' ', STR_PAD_LEFT);
-                    $textContent .= "\n";;
+                    $textContent .= str_pad(number_format($totalQty, 2), 14, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";
+                    ;
                     $textContent .= str_pad('', 56, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad($total_deduction, 13, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
@@ -1703,6 +1704,76 @@ class PDF extends TCPDF {
             }
         }
     }
+
+    public function generatePdfAMULServiceCall($complaint_code) {
+        $sp_name = 'sp_portal_service_call_history';
+        $param = [];
+        $param[] = $complaint_code;
+        $output = \Yii::$app->general->getSpData($sp_name, $param);
+        if (!empty($output)) {
+            $output = $output[0];
+            $pageLayout = array(231, 154);
+            $pdf = new Yii::$app->pdf('L', PDF_UNIT, $pageLayout, true, 'UTF-8', false);
+            $pdf->SetCreator(PDF_CREATOR);
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+            $pdf->SetAutoPageBreak(False, 0);
+            $pdf->SetFont('helvetica', '', 8);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->SetMargins(5, 5, 5);
+            $pdf->AddPage();
+            $pdf->SetFont('dejavusans', '', 9, '', true);
+            $tableData = '<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-llyw{background-color:#c0c0c0;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-9u2q{background-color:#9b9b9b;border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg" border="1">
+<thead>
+  <tr>
+    <th class="tg-9u2q" colspan="4"><span style="font-weight:bold">SERVICE CALL HISTORY</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0pky" colspan="3"><br/>Everest Instruments Pvt. Limited  
+    <br/><br/>D-902, Ganesh Meridian Opp: Gujart High Court, <br/>Sarkhej - Gandhinagar Hwy, Ahmedabad, Gujarat 380060 </td>
+    <td class="tg-0pky"><img src="themes/pcdf/assets/images/logo.png" alt="Everest Logo" style="float:right;width:500px;height:150px;"></td>
+  </tr>
+  <tr>
+    <td class="tg-0pky" colspan="2"><b>Service Call No</b> &nbsp;&nbsp;&nbsp;: ' . $output['service_call_no'] . '<br/> <b>Service Call Date</b> : ' . $output['complaint_date'] . '</td>
+    <td class="tg-0pky" colspan="2"><b>Division&nbsp;&nbsp;</b> : IT <br/> <b>Call Type</b> : ' . $output['complaint_type'] . '<br/></td>
+  </tr>
+  <tr>
+    <td class="tg-llyw" colspan="4"><span style="font-weight:bold">Customer Details</span></td>
+  </tr>
+  <tr>
+    <td class="tg-0pky" colspan="2"><b>Parent Party</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['union_name'] . '<br/> <b>Customer Name</b> : ' . $output['dcs_name'] . '<br/> <b>Address</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['address'] . '<br/> <b>Contact Person</b> &nbsp;: ' . $output['contact_person'] . '<br/> <b>Mobile No</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['contact_person_no'] . '<br/> <b>Complaint</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['complaint_desc'] . '</td>
+    <td class="tg-0pky" colspan="2"><b>Product Name</b> : ' . $output['product_name'] . '<br/> <b>Product Sr.No</b> : ' . $output['product_code'] . '<br/> <b>Call Type</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : ' . $output['complaint_type'] . '<br/><br/><br/> <b>Remarks</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : ' . $output['remarks'] . '<br/></td>
+  </tr>
+  <tr>
+    <td class="tg-llyw" colspan="4"><span style="font-weight:bold">Allocation Details</span></td>
+  </tr>
+  <tr>
+    <td class="tg-0pky" colspan="2"><b>Call Logged On</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['created_at'] . '<br/> <b>Call Taken By</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['created_by'] . '<br/> </td>
+    <td class="tg-0pky" colspan="2"><b>Assign To</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['assign_to'] . '<br/> <b>Allocation Date</b>&nbsp;: ' . $output['assign_date'] . '<br/><b>Priority</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['priority'] . '<br/> <b>Main Status</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['complaint_status'] . '<br/></td>
+  </tr>
+</tbody>
+</table>';
+//    <td class="tg-0pky"><b>Revision No&nbsp;&nbsp;&nbsp;</b> : <br/> <b>Revision Date</b> : </td>
+//    <td class="tg-0pky" colspan="2"><b>Call Logged On</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['complaint_date'] . '<br/> <b>Call Taken By</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' . $output['created_by'] . '<br/> <b>Help Desk By</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br/> <b>Help Desk Start On</b>&nbsp;&nbsp;: <br/> <b>Help Desk End On</b>&nbsp;&nbsp;&nbsp;: </td>
+
+            $pdf->writeHTML($tableData, true, false, false, false, '');
+            $pdf->Output('service_bill_' . $complaint_code . '.pdf', 'D');
+            Yii::$app->end();
+        }
+    }
+
 }
 
 ?>

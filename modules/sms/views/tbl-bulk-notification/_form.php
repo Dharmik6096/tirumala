@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use zainiafzan\widget\Dropzone;
@@ -11,24 +11,33 @@ use yii\helpers\Url;
 $title = Yii::$app->label->title($type, 'Bulk Notification');
 $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', $title);
+$readonly = $type == 'create' ? FALSE : TRUE;
+$eipl_code = Yii::$app->session->get('eiplCode');
+$class = $type == 'create' ? '' : 'disable_div';
 ?>
 
 <?php
 $form = ActiveForm::begin([
             'id' => 'role-form',
             'validateOnBlur' => false,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
         ])
 ?>
 <?= $form->errorSummary($model); ?>
 
 <div class="row">
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('notification_type', $model, $form, 'form-group', $model->getAttributeLabel('notification_type'), FALSE, 'notification_type', false, true); ?>
+    <div class="col-sm-2 <?= $class ?> ">
+        <?= Yii::$app->dropdown->dropdownStatic('notification_type', $model, $form, 'form-group', $model->getAttributeLabel('notification_type'), false, 'notification_type', false); ?>
     </div>
-    <div class="col-sm-3 receiver_type">
+    <div class="col-sm-2 app_type">
+        <?= Yii::$app->dropdown->dropdown('app_type', $model, $form, '', TRUE, false, 'app_type'); ?>
+    </div>
+    <div class="col-sm-2 receiver_type">
         <?= Yii::$app->dropdown->dropdownStatic('receiver_type', $model, $form, '', $model->getAttributeLabel('receiver_type'), false, 'receiver_type', false); ?>  
     </div>
-    <div class="col-sm-3 login_type">
+    <div class="col-sm-2 login_type">
         <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>  
     </div>
     <div class="col-sm-2 union_dd">
@@ -43,6 +52,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 bmc_dd">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbulknotification-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblbulknotification-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), true); ?>         
+    </div>  
+    <div class="col-sm-2 app_type">
+        <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblbulknotification-dcs_code', '', Yii::t('app', 'Member')); ?>
+    </div>
     <div class="col-sm-2 payment_cycle_dd">
         <?php
         $where = json_encode(['data_lock_member' => 1, 'billing_lock_member' => 0]);
@@ -55,12 +70,22 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 f_date">
         <?= Yii::$app->controls->valid_date($model, $form, 'from_date'); ?>
     </div>
+    <div class="col-sm-2 shift f_shift">
+        <?php
+        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('from_shift_code'), false, 'from_shift_code');
+        ?>
+    </div> 
     <div class="col-sm-2 t_date">
         <?php
         echo Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, $model->getAttributeLabel('to_date'));
         ?>
     </div>  
-    <div class="col-sm-3">
+    <div class="col-sm-2 shift t_shift">
+        <?php
+        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('to_shift_code'), false, 'to_shift_code');
+        ?>
+    </div>
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, date('Y-m-d'), false, true); ?>
     </div>
     <div class="col-sm-2 campaign_name">
@@ -83,7 +108,7 @@ $form = ActiveForm::begin([
         Dropzone::widget([
             'id' => 'mainDrop',
             'options' => [
-                'acceptedMimeTypes' => ".pdf",
+                'acceptedMimeTypes' => ".jpg,.pdf,.jpeg,.png",
                 'url' => \yii\helpers\Url::to(['/sms/tbl-bulk-notification/import-file']),
                 'addRemoveLinks' => true,
                 'autoDiscover' => false,
@@ -128,9 +153,16 @@ $form = ActiveForm::begin([
                     'beforeSend' => new JsExpression("function(data){
                                                  var errMsg = '';
                                                     var notificationType= $('#tblbulknotification-notification_type').val();                                
-                                                    if((notificationType=='2' || notificationType=='4' || notificationType=='3') && ($('#file_name').val())==''){                                                                                  
-                                                        errMsg += 'Please Attach File.';
-                                                    } 
+                                                    if ('$eipl_code' != 'AMULAMCS') {
+                                                        if((notificationType=='2' || notificationType=='4' || notificationType=='3' ) && ($('#file_name').val())==''){                                       
+                                                            errMsg += 'Please Attach File.';
+                                                        }
+                                                    } else {
+                                                        if ((notificationType == '2' || notificationType=='8') && ($('#file_name').val())=='') {
+                                                            errMsg += 'Please Attach File.';
+                                                        }
+                                                    }
+
                                                     if(errMsg != ''){
                                                          bootbox.alert('<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle\'></i></div><div class=\'col-sm-10 padding-left-0\'>'+errMsg+'</div></div>');
                                                          return false;
@@ -190,93 +222,43 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end() ?>
 <?php
 $script = " 
-    $('.import-area').hide();
-    $('.plant_dd').hide();
-    $('.mcc_dd').hide();
-    $('.bmc_dd').hide();
-    $('.payment_cycle_dd').hide();
-        
-    $('.f_date').hide();
-    $('.t_date').hide();
-    $('.campaign_name').hide();
-    $('.title_s').hide();
-    $('.auto_scrol_s').hide();
     
-          
-    $(document).on('change', '#tblbulknotification-notification_type', function() {  
-          hideShowFields();
+function resetDateShiftFields() {
+    $('.f_date, .t_date, .f_shift, .t_shift, .auto_scrol_s').hide();
+    $('#tblbulknotification-from_date, #tblbulknotification-to_date').val('');
+    $('#tblbulknotification-from_shift, #tblbulknotification-to_shift').val('').trigger('select2:select');
+}
+    
+$(document).ready(function () {
+    $('.import-area, .payment_cycle_dd').hide();
+    resetDateShiftFields();
+    
+    $(document).on('change', '#tblbulknotification-notification_type', function() {
+        hideShowFields();
     });
     
       function hideShowFields(){
         var type = $('#tblbulknotification-notification_type').val();
         if(type == '1'){
-           $('.receiver_type').show();
-            $('.app_type').show();
-            $('.login_type').show();
-            $('.import-area').hide();
-            $('.plant_dd').hide();
-            $('.mcc_dd').hide();
-            $('.bmc_dd').hide();
-            $('.payment_cycle_dd').hide();
-            $('#tblbulknotification-plant_code').val('');
-            $('#tblbulknotification-plant_code').trigger('change');
-            $('#tblbulknotification-plant_code').trigger('select2:select');
-            $('#tblbulknotification-mcc_plant_code').val('');
-            $('#tblbulknotification-mcc_plant_code').trigger('select2:select');
-            $('#tblbulknotification-bmc_code').val('');
-            $('#tblbulknotification-bmc_code').trigger('select2:select');
-
-               $('.f_date').hide();
-             $('.t_date').hide();
-             $('.campaign_name').hide();
-             $('.title_s').hide();
-              $('.auto_scrol_s').hide();
-        }else if(type == '4'){
-            $('.receiver_type').show();
-            $('.import-area').show();
-//            $('.union_dd').show();
-            $('.plant_dd').show();
-            $('.mcc_dd').show();
-            $('.bmc_dd').show();
-            $('.payment_cycle_dd').show();
-            $('.app_type').hide();
-            $('.login_type').hide();
-            $('#tblbulknotification-login_type').val('vsp');
-            $('#tblbulknotification-login_type').trigger('change');
-            $('#tblbulknotification-login_type').trigger('select2:select');
-           
-            $('.f_date').hide();
-             $('.t_date').hide();
-             $('.campaign_name').hide();
-             $('.title_s').hide();
-              $('.auto_scrol_s').hide();
-
+            $('.receiver_type, .app_type, .login_type').show();
+            $('.import-area, .payment_cycle_dd').hide();
+            $('#tblbulknotification-login_type').val('farmer').trigger('change').trigger('select2:select');
+            resetDateShiftFields();
+        }else if(type == '2' || type == '4' || type == '5' || type == '6'|| type == '7' || type == '8'){
+            $('.receiver_type, .import-area, .payment_cycle_dd').show();
+            $('.app_type, .login_type').hide();
+            $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
+            resetDateShiftFields();
+            if (type == '4') {
+                $('#tblbulknotification-login_type').val('vsp').trigger('change').trigger('select2:select');
+            }
         }else if(type == '3'){
-            $('.app_type').hide();
-            $('.login_type').hide();
-            $('.import-area').show();
-            $('.plant_dd').hide();
-            $('.mcc_dd').hide();
-            $('.bmc_dd').hide();
-            // new added //
-              $('.f_date').show();
-             $('.t_date').show();
-             $('.campaign_name').show();
-             $('.title_s').show();
-              $('.auto_scrol_s').show();
-            //end 
-
-            $('.receiver_type').hide();
-            $('.payment_cycle_dd').hide();
-            $('#tblbulknotification-plant_code').val('');
-            $('#tblbulknotification-plant_code').trigger('change');
-            $('#tblbulknotification-plant_code').trigger('select2:select');
-            $('#tblbulknotification-mcc_plant_code').val('');
-            $('#tblbulknotification-mcc_plant_code').trigger('select2:select');
-            $('#tblbulknotification-bmc_code').val('');
-            $('#tblbulknotification-bmc_code').trigger('select2:select');
+            $('.import-area, .f_date, .t_date, .f_shift, .t_shift, .auto_scrol_s').show();
+            $('.app_type, .login_type, .receiver_type, .payment_cycle_dd').hide();
+            $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
         }
     }
+});
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

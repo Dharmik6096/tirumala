@@ -9,6 +9,7 @@ use app\modules\globalmaster\models\TblUnits;
 use yii\helpers\Json;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\product\models\TblDispatchCenter;
 
 /**
  * This is the model class for table "tbl_product_requisition_transaction".
@@ -47,6 +48,7 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
     public $operation = TRUE;
     public $uom;
     public $is_sentbox = TRUE;
+    public $remark;
 
 //    public $scheme_type;
 
@@ -62,18 +64,21 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_code', 'quantity', 'provisional_rate'], 'required', 'except' => ['submit', 'androidsync']],
-                [['requisition_transaction_code', 'check_record', 'req_action', 'union_code'], 'safe'],
+                [['product_code', 'quantity'], 'required', 'except' => ['submit', 'androidsync', 'dispatchWithReq']],
+                [['requisition_transaction_code', 'check_record', 'req_action', 'union_code', 'remark'], 'safe'],
                 [['requisition_transaction_code', 'requisition_on_date', 'product_requisition_code', 'product_code', 'status', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['quantity'], 'number', 'min' => 1, 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "01".'), 'tooBig' => '{attribute} Should be less than 999', 'tooSmall' => '{attribute} Should be greater than 1', 'except' => ['addSchemeProduct']],
+                [['quantity'], 'number', 'min' => 1, 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "01".'), 'tooBig' => '{attribute} Should be less than 999', 'tooSmall' => '{attribute} Should be greater than 1', 'except' => ['addSchemeProduct', 'dispatchWithReq']],
                 [['quantity', 'provisional_rate', 'provisional_amount', 'discount_amount', 'approved_quantity'], 'number'],
                 [['product_code'], 'validateProduct', 'on' => ['addProduct']],
-                [['requisition_on_date'], 'validateDeliveryDate', 'except' => ['androidsync']],
-                [['approved_quantity'], 'validateApprovedQty', 'except' => ['androidsync']],
+                [['requisition_on_date'], 'validateDeliveryDate', 'except' => ['androidsync', 'dispatchWithReq']],
+                [['approved_quantity'], 'validateApprovedQty', 'except' => ['androidsync', 'dispatchWithReq']],
                 [['is_approved', 'originating_type'], 'integer'],
                 [['approved_date', 'created_at', 'updated_at'], 'safe'],
                 ['discount_amount', 'default', 'value' => 0],
                 ['is_approved', 'default', 'value' => 0],
+                ['provisional_rate', 'default', 'value' => 0],
+                ['provisional_amount', 'default', 'value' => 0],
+                [['dispatch_center_code'], 'safe'],
         ];
     }
 
@@ -94,7 +99,7 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
             'approved_by' => Yii::t('app', 'Approved By'),
             'approved_quantity' => Yii::t('app', 'Approved Quantity'),
             'approved_date' => Yii::t('app', 'Approved Date'),
-            'requisition_on_date' => Yii::t('app', 'Delivery Date'),
+            'requisition_on_date' => Yii::t('app', 'Order Date'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -103,7 +108,7 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'x_col1' => Yii::t('app', 'X Col1'),
-            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col2' => Yii::t('app', 'Remarks'),
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
@@ -122,7 +127,7 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
     }
 
     public function validateDeliveryDate($attribute, $params) {
-
+        $chek_date = TRUE;
         if (Yii::$app->getRequest()->getQueryParam('id') == -1) {
             $reqModel = new TblProductRequisition();
             $jsonData = Json::decode($_POST['product_req']);
@@ -132,16 +137,20 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
             $delivery_date = $reqModel->req_date;
         } else {
             $product_requisition_code = Yii::$app->getRequest()->getQueryParam('id');
-            $reqModel = TblProductRequisition::find()->select('req_date')->leftJoin('tbl_product_requisition_transaction', 'tbl_product_requisition.product_requisition_code = tbl_product_requisition_transaction.product_requisition_code')->where(['tbl_product_requisition_transaction.requisition_transaction_code' => $product_requisition_code])->one();
-
-            $delivery_date = $reqModel['req_date'];
+            if (!empty($product_requisition_code)) {
+                $reqModel = TblProductRequisition::find()->select('req_date')->where(['tbl_product_requisition.product_requisition_code' => $this->product_requisition_code])->one();
+                $delivery_date = !empty($reqModel['req_date']) ? $reqModel['req_date'] : '';
+            } else {
+                $chek_date = FALSE;
+            }
         }
-
-        if ($this->requisition_on_date < $delivery_date) {
-            $date = date_create($delivery_date);
-            $date = date_format($date, 'd-m-Y');
-            $this->addError($attribute, Yii::t('app/validation', 'Delivery date must be greater than or equal to Requisition Date - ' . $date));
-            return false;
+        if ($chek_date) {
+            if (date('Y-m-d', strtotime($this->requisition_on_date)) < date('Y-m-d', strtotime($delivery_date))) {
+                $date = date_create($delivery_date);
+                $date = date_format($date, 'd-m-Y');
+                $this->addError($attribute, Yii::t('app/validation', 'Delivery date must be greater than or equal to Requisition Date - ' . $date));
+                return false;
+            }
         }
     }
 
@@ -215,6 +224,43 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
     public function getRecord($reqCode) {
         $records = $this->find()->where(['requisition_transaction_code' => $reqCode])->one();
         return $records;
+    }
+
+    public function getEntityName() {
+        $type = Yii::$app->general->getforeignkey($this->productRequisitionCode, 'vendor_type');
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['bmcCode'], 'bmc_name');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['dcsCode'], 'dcs_name');
+        }
+        return $name;
+    }
+
+    public function getEntityRefCode() {
+        $type = Yii::$app->general->getforeignkey($this->productRequisitionCode, 'vendor_type');
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['bmcCode'], 'ref_code');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['dcsCode'], 'ref_code');
+        }
+        return $name;
+    }
+
+    public function getEntityExCode() {
+        $type = Yii::$app->general->getforeignkey($this->productRequisitionCode, 'vendor_type');
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['bmcCode'], 'bmc_code_ex');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['dcsCode'], 'dcs_code_ex');
+        }
+        return $name;
+    }
+
+    public function getDispatchCenter() {
+        return $this->hasOne(TblDispatchCenter::className(), ['dispatch_center_code' => 'dispatch_center_code']);
     }
 
 }

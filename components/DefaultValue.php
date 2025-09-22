@@ -35,6 +35,9 @@ class DefaultValue extends Component {
                 'TblMember' => [
                     'animal_type_code' => 1,
                 ],
+                'TblMemberRateRepushLogSearch' => [
+                    'dpu_type' => 91,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -50,6 +53,11 @@ class DefaultValue extends Component {
                     'fuel_type_code' => 2,
                     'flag_wef_date' => date('Y-m-d'),
                     'billing_qty_flag' => 1,
+                ],
+            ],
+            'AMULAMCS' => [
+                'TblBulkNotification' => [
+                    'login_type' => 'farmer',
                 ],
             ],
             'COMFED' => [

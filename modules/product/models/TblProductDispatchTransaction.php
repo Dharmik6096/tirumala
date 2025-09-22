@@ -13,6 +13,8 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\syncutility\models\TblSentbox;
+use app\modules\product\models\TblProductDispatch;
 
 /**
  * This is the model class for table "tbl_product_dispatch_transaction".
@@ -67,6 +69,7 @@ class TblProductDispatchTransaction extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['dispatch_transaction_code'], 'safe'],
+                [['so_no', 'delivery_no', 'bill_no', 'remarks'], 'safe'],
                 [['dispatch_transaction_code', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'challan_no', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
                 [['dispatch_date', 'created_at', 'updated_at', 'is_close'], 'safe'],
                 [['rate', 'amount', 'discount_amount', 'dispatch_qty'], 'number'],
@@ -158,12 +161,12 @@ class TblProductDispatchTransaction extends \app\models\ChildModel {
     }
 
     public function getEntityName() {
-        $type = $this->vendor_type;
+        $type = Yii::$app->general->getforeignkey($this->productDispatchCode, 'vendor_type');
         $name = '';
         if ($type == 'BMC') {
-            $name = Yii::$app->general->getforeignkey($this->bmcCode, 'bmc_name');
+            $name = Yii::$app->general->getmultiforeignkey($this->productDispatchCode, ['bmcCode'], 'bmc_name');
         } else if ($type == 'DCS') {
-            $name = Yii::$app->general->getforeignkey($this->dcsCode, 'dcs_name');
+            $name = Yii::$app->general->getmultiforeignkey($this->productDispatchCode, ['dcsCode'], 'dcs_name');
         }
         return $name;
     }
@@ -207,6 +210,62 @@ class TblProductDispatchTransaction extends \app\models\ChildModel {
         $array = $model->getProduct(trim($productCode), $date);
 
         return $array;
+    }
+
+    public function getProductDispatchCode() {
+        return $this->hasOne(TblProductDispatch::className(), ['challan_no' => 'challan_no']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $type = Yii::$app->general->getforeignkey($this->productDispatchCode, 'vendor_type');
+        if (!empty($type)) {
+            $type = $type == 'DCS' ? 'VLC' : $type;
+            $sentboxArray[] = [
+                'code' => Yii::$app->general->getforeignkey($this->productDispatchCode, 'vendor_code'),
+                'type' => $type
+            ];
+            $this->union_code = Yii::$app->general->getforeignkey($this->productDispatchCode, 'union_code');
+        }
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function getEntityRefCode() {
+        $type = Yii::$app->general->getforeignkey($this->productRequisitionCode, 'vendor_type');
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['bmcCode'], 'ref_code');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['dcsCode'], 'ref_code');
+        }
+        return $name;
+    }
+
+    public function getEntityExCode() {
+        $type = Yii::$app->general->getforeignkey($this->productRequisitionCode, 'vendor_type');
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['bmcCode'], 'bmc_code_ex');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getmultiforeignkey($this->productRequisitionCode, ['dcsCode'], 'dcs_code_ex');
+        }
+        return $name;
     }
 
 }

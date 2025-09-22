@@ -13,6 +13,9 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\dcsaccounting\models\TblTax;
 use app\modules\product\models\TblProductPurchaseRate;
 use yii\helpers\ArrayHelper;
+use app\modules\product\models\TblDispatchCenter;
+use app\modules\usermanagement\models\TblUserDispatchCenterMapping;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_product".
@@ -48,47 +51,47 @@ class TblProduct extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_type'], function ($attribute, $params) {
+                [['product_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'product_type');
                 }, 'on' => 'importCsv'],
-            [['product_group_code', 'product_name', 'union_code', 'unit_code', 'tax_code', 'x_col3'], 'required', 'except' => ['androidsync', 'importCsv']],
-            [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['importCsv']],
-            [['product_group_code', 'is_active'], 'integer', 'except' => ['androidsync']],
-            [['product_name', 'product_desc', 'created_by', 'updated_by', 'local_name'], 'string', 'except' => ['androidsync']],
-            ['product_name', 'unique', 'when' => function($model) {
+                [['product_group_code', 'product_name', 'union_code', 'unit_code', 'tax_code', 'x_col3'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['importCsv']],
+                [['product_group_code', 'is_active'], 'integer', 'except' => ['androidsync']],
+                [['product_name', 'product_desc', 'created_by', 'updated_by', 'local_name'], 'string', 'except' => ['androidsync']],
+                ['product_name', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['union_code' => $model->union_code, 'product_name' => $model->product_name])->andWhere(['<>', 'product_code', $model->product_code])->one();
                     return ($data) ? true : false;
                 }, 'except' => ['androidsync']],
-            [['product_name'], function ($attribute, $params) {
+                [['product_name'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['local_name'], function ($attribute, $params) {
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'product_type', 'item_code', 'min_stock'], 'safe'],
-            [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code'], 'except' => ['androidsync']],
-            [['tax_code'], function ($attribute, $params) {
+                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'product_type', 'item_code', 'min_stock'], 'safe'],
+                [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code'], 'except' => ['androidsync']],
+                [['tax_code'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->productGroupCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'tax_code', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-            [['tax_code'], 'exist', 'skipOnEmpty' => true, 'targetClass' => TblTax::className(), 'targetAttribute' => ['tax_code' => 'tax_code'], 'on' => ['importCsv']],
-            [['dpu_product_code'], 'string', 'min' => 4, 'max' => 4, 'except' => ['androidsync']],
-            [['dpu_product_code'], 'integer', 'min' => 0, 'except' => ['androidsync']],
-            [['dpu_product_code'], 'required', 'when' => function ($model) {
+                [['tax_code'], 'exist', 'skipOnEmpty' => true, 'targetClass' => TblTax::className(), 'targetAttribute' => ['tax_code' => 'tax_code'], 'on' => ['importCsv']],
+                [['dpu_product_code'], 'string', 'min' => 4, 'max' => 4, 'except' => ['androidsync']],
+                [['dpu_product_code'], 'integer', 'min' => 0, 'except' => ['androidsync']],
+                [['dpu_product_code'], 'required', 'when' => function ($model) {
                     return $model->is_dpu_product == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproduct-is_dpu_product').is(':checked'); 
           }", 'except' => ['androidsync']],
-            [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent'], 'in', 'range' => ['0', '1'], 'on' => ['importCsv']],
-            [['product_group_code'], 'setImport', 'on' => ['importCsv']],
-            [['ref_code'], 'unique', 'targetAttribute' => ['union_code', 'ref_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
-            [['dpu_product_code'], 'unique', 'targetAttribute' => ['union_code', 'dpu_product_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['dpu_product_code'], 'validateDpuProduct', 'except' => ['androidsync']],
-            [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
-            [['product_type'], 'setProductType', 'on' => ['importCsv']],
-            [['x_col3'], 'default', 'value' => 2],
-            [['min_stock'], 'double', 'min' => 0],
-            [['min_stock'], 'default', 'value' => 0],
+                [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent'], 'in', 'range' => ['0', '1'], 'on' => ['importCsv']],
+                [['product_group_code'], 'setImport', 'on' => ['importCsv']],
+                [['ref_code'], 'unique', 'targetAttribute' => ['union_code', 'ref_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
+                [['dpu_product_code'], 'unique', 'targetAttribute' => ['union_code', 'dpu_product_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['dpu_product_code'], 'validateDpuProduct', 'except' => ['androidsync']],
+                [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
+                [['product_type'], 'setProductType', 'on' => ['importCsv']],
+                [['x_col3'], 'default', 'value' => 2],
+                [['min_stock'], 'double', 'min' => 0],
+                [['min_stock'], 'default', 'value' => 0],
         ];
     }
 
@@ -259,14 +262,46 @@ class TblProduct extends \app\models\ChildModel {
     }
 
     public function getProductList($unionCode, $type) {
-        $query = $this->find()->select(['product_code', 'product_name'])->where(['union_code' => $unionCode, 'is_active' => 1]);
-        if (!empty($type)) {
-            $query->andWhere(['x_col3' => $type]);
-        }
-        $value = $query->all();
+        $inventory_with_dispatch_center = Yii::$app->general->getUnionConfiguration($unionCode, 'inventory_with_dispatch_center', 'PORTAL') == 1 ? true : false;
+        if ($inventory_with_dispatch_center) {
+            $pgCode = NULL;
+            $user = Yii::$app->session->get('UserCode');
+            $userModel = new TblUserDispatchCenterMapping();
+            $userData = $userModel->find()->select('dispatch_center_code')->where(['user_code' => $user])->all();
+            if (!empty($userData)) {
+                $dispatchCenterCode = array_column($userData, 'dispatch_center_code');
+                $dispatchModel = new TblDispatchCenter();
+                $dispatchCentData = $dispatchModel->find()->where(['dispatch_center_code' => $dispatchCenterCode])->one();
+                $pgCode = !empty($dispatchCentData) ? $dispatchCentData->dispatch_center_type_code : NULL;
+            }
+            $pgCode = !empty($pgCode) ? explode(',', $pgCode) : '';
+            $query = $this->find()
+                    ->select(['product_code', 'product_name'])
+                    ->where(['union_code' => $unionCode, 'is_active' => 1, 'product_group_code' => $pgCode])
+                    ->all();
+            $value = ArrayHelper::map($query, 'product_code', 'product_name');
+            return $value;
+        } else {
+            $query = $this->find()->select(['product_code', 'product_name'])->where(['union_code' => $unionCode, 'is_active' => 1]);
+            if (!empty($type)) {
+                $query->andWhere(['x_col3' => $type]);
+            }
+            $value = $query->all();
 
-        $data = ArrayHelper::map($value, 'product_code', 'product_name');
-        return $data;
+            $data = ArrayHelper::map($value, 'product_code', 'product_name');
+            return $data;
+        }
+    }
+
+    public function validateRefCode($attribute, $params) {
+
+        if (!empty($this->product_code) && !empty($this->ref_code)) {
+
+            if (strlen($this->product_code) < strlen($this->ref_code)) {
+                $this->addError($attribute, Yii::t('app/validation', 'SAP Code Length Must be Less Than ' . strlen($this->getAttributeLabel('product_code'))));
+                return false;
+            }
+        }
     }
 
 }

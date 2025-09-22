@@ -15,9 +15,9 @@ class UserSearch extends \webvimark\modules\UserManagement\models\search\UserSea
 
     public function rules() {
         return [
-            [['id', 'superadmin', 'status', 'created_at', 'updated_at', 'email_confirmed', 'is_active'], 'integer'],
-            [['username', 'gridRoleSearch', 'registration_ip', 'email', 'user_code', 'name', 'user_type_id'], 'string'],
-            [['department', 'allow_app_login', 'mobile_no'], 'safe']
+                [['id', 'superadmin', 'status', 'created_at', 'updated_at', 'email_confirmed', 'is_active'], 'integer'],
+                [['username', 'gridRoleSearch', 'registration_ip', 'email', 'user_code', 'name', 'user_type_id'], 'string'],
+                [['department', 'allow_app_login', 'mobile_no', 'is_engineer'], 'safe']
         ];
     }
 
@@ -71,6 +71,7 @@ class UserSearch extends \webvimark\modules\UserManagement\models\search\UserSea
             'status' => $this->status,
             'user.is_active' => $this->is_active,
             'user.allow_app_login' => $this->allow_app_login,
+            'user.is_engineer' => $this->is_engineer,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])

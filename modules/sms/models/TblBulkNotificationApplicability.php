@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\sms\models\TblBulkNotification;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_bulk_notification_applicability".
@@ -104,7 +105,7 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
     }
 
     public function getPickRecords($limit = 5) {
-        return $query = $this->find()->select(['bulk_notification_id', 'applicable_for', 'wef_date'])->distinct()
+        return $query = $this->find()->select(['bulk_notification_id', 'applicable_for', 'wef_date', 'dcs_code', 'union_code'])->distinct()
                         ->where(['status' => $this->status, 'CAST(wef_date as date)' => date('Y-m-d')])
                         ->limit($limit)
                         ->orderBy([
@@ -202,6 +203,10 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
                 }
             }
         }
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }

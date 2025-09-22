@@ -222,6 +222,9 @@ var initDepdropMs;
             $.each(SearchParam, function (index, value) {
                 formString = index + '=' + value + '&' + formString;
             });
+            if ($('#import-form').length == 1) {
+                formString += '&' + $('#import-form').serialize();
+            }
             var encrypted = window.btoa(formString);
             encrypted = Base64UrlEncode(encrypted);
             if (frm.attr('id') != 'report-form') {

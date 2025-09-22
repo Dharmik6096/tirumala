@@ -255,6 +255,7 @@ $config = [
         'document' => ['class' => 'app\modules\document\Document',],
         'feedback' => ['class' => 'app\modules\feedback\Feedback',],
         'clienterp' => ['class' => 'app\modules\clienterp\Clienterp',],
+        'insurance' => ['class' => 'app\modules\insurance\insurance',],
         'exchangeutility' => ['class' => 'app\modules\webservice\exchangeutility\exchangeUtility',],
     ],
     'params' => require(__DIR__ . '/params.php'),

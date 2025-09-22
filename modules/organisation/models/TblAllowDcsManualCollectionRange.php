@@ -9,6 +9,8 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_allow_dcs_manual_collection_range".
@@ -40,6 +42,8 @@ use app\modules\dcsoperation\models\TblShift;
  */
 class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
 
+    public $is_sentbox = TRUE;
+
     /**
      * @inheritdoc
      */
@@ -52,16 +56,16 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['manual_collection_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'except' => 'updateStatus'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'created_at', 'updated_at'], 'safe'],
-            [['is_weight_manual', 'is_quality_manual', 'originating_type', 'status'], 'integer'],
-            [['manual_collection_code'], 'safe'],
-            [['created_by', 'updated_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'status', 'remark'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['from_date'], 'checkUnique', 'skipOnError' => true],
-            [['status', 'remark'], 'required', 'on' => 'updateStatus'],
+                [['manual_collection_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'except' => 'updateStatus'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'created_at', 'updated_at'], 'safe'],
+                [['is_weight_manual', 'is_quality_manual', 'originating_type', 'status'], 'integer'],
+                [['manual_collection_code'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'status', 'remark'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'request_type'], 'safe'],
+                [['from_date'], 'checkUnique', 'skipOnError' => true],
+                [['status', 'remark'], 'required', 'on' => 'updateStatus'],
         ];
     }
 
@@ -94,6 +98,7 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'request_type' => Yii::t('app', 'Request Type'),
         ];
     }
 
@@ -147,6 +152,41 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
             return 1;
         } else {
             return 0;
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->dcs_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
         }
     }
 

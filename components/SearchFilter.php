@@ -148,7 +148,7 @@ class SearchFilter {
                 'filter' => ['from_date', 'to_date'],
             ],
             'TblBulkNotificationSearch' => [
-                'filter' => ['f_union_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
             'TblBillHeadSearch' => [
                 'filter' => ['f_union_code'],
@@ -565,6 +565,69 @@ class SearchFilter {
             'TblWeightRejectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
+            'TblProductRequisitionTransactionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'dispatch_center_code', 'from_date', 'to_date'],
+            ],
+            'TblProductDispatchTransactionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'dispatch_center_code', 'from_date', 'to_date'],
+            ],
+            'TblLedgersSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblSubLedgersSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblMemberBillHeadSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblMemberBillCriteriaSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblEventSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblVoucherSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblVoucherTypeLedgerConfigSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblSubLedgerLedgerConfigSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblLedgerSubLedgersMappingSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblLedgerMappingTaxDetailSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblLedgerMappingProductGroupSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblLedgerMappingEventSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblLedgerMappingBillHeadSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblLedgerOpeningBalanceSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblSubLedgerOpeningBalanceSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblDcsYearClosingSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblInsuranceDetailSearch' => [
+                'filter' => ['insurance_master_code', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblSoftwareComplaintSearch' => [
+                'filter' => ['f_union_code', 'f_u_dcs_code'],
+            ],
+            'TblForceSyncRequestSearch' => [
+                'filter' => ['from_date', 'from_shift', 'to_date', 'to_shift', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
             'TblMilkVehicleEntryQltySearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'vehicle_code:union_vehicle', 'status:lot_quality_status', 'from_date', 'to_date'],
             ],
@@ -606,6 +669,9 @@ class SearchFilter {
             ],
             'TblSampleMilkCollectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblMemberRateRepushLogSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

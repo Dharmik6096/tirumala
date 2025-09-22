@@ -390,8 +390,32 @@ if (!empty($filter_data)) {
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'area_code'); ?>
                                         </div>
-                                    <?php } ?>
-                                    <?php
+                                        <?php
+                                    }
+                                    if (in_array($value, array('dispatch_center_code'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('dispatch_center', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
+                                        </div>
+                                        <?php
+                                    }
+                                    if (in_array($value, array('insurance_master_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('insurance_master_list', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
+                                        </div>
+                                        <?php
+                                    }
+                                    if (in_array($value, array('f_u_dcs_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, $field_class . '-f_union_code', '', 'Society'); ?>
+                                        </div>
+                                        <?php
+                                    }
                                     if (in_array($value, array('mcc_user_code'))) {
                                         $f_cnt++
                                         ?>

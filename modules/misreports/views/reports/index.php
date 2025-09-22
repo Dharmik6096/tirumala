@@ -300,7 +300,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'is_groupbyserial'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -533,6 +533,34 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('insurance_master_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('insurance_master_list', $model, $form, 'form-group col-sm-2 padding-right-5', $model->getAttributeLabel('insurance_master'), FALSE, FALSE); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('operation_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic('action_perform', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('dispatch_center_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('dispatch_center_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('dispatch_center_type'), false, 'dispatch_center_type'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('dispatch_center'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'reportsmodel-dispatch_center_type', 'dispatch_center', $model->getAttributeLabel('dispatch_center'), FALSE, FALSE); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('store_location_code'))) {
                                             ?>
                                             <div class="col-sm-3">
@@ -759,6 +787,14 @@ $('.mis_report_modal_toggle').on('click', function(){
                  hideShift();
             });
         }
+        
+        if('" . $report . "'=='LocalMilkSale'){
+            hideShiftCode();
+            $(document).on('change','#reportsmodel-milk_sale_on', function() {
+                 hideShiftCode();
+            });
+        }
+		
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -865,6 +901,21 @@ $('.mis_report_modal_toggle').on('click', function(){
         }
        
     }
+     
+    function hideShiftCode(){
+        if('" . $report . "'=='LocalMilkSale'){
+            var basis_on =  $('#reportsmodel-milk_sale_on option:selected').val();
+             if(basis_on == '1'){
+                $('.val_shift').show();
+            }else {
+                $('.val_shift').hide();
+                $('.val_shift select').val('');
+                $('.val_shift select').trigger('change');
+            }
+        }
+       
+    }
+	
 ";
 
 if ($defaultToggle) {
