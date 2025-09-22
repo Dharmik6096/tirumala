@@ -70,7 +70,7 @@ $grid_option = [
                 $disable = 'disabled';
             }
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View Rate Chart', 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/tankermovement/tbl-tanker-rate-details/rate-chart', 'id' => $model->tanker_rate_code, 'milk_type' => 1, 'milk_quality' => 1], $options);
+            return GhostHtml::a('<i class="fa fa-chart-bar" aria-hidden="true"></i>', ['/tankermovement/tbl-tanker-rate-details/rate-chart', 'id' => $model->tanker_rate_code, 'milk_type' => 1, 'milk_quality' => 1], $options);
         },
     ]
 ];
