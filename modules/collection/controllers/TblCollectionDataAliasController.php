@@ -27,6 +27,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
     public function actionMilkCollectionApprove() {
         $union = !empty(Yii::$app->request->queryParams['TblCollectionDataAliasSearch']) ? (!empty(Yii::$app->request->queryParams['TblCollectionDataAliasSearch']['union_code']) ? Yii::$app->request->queryParams['TblCollectionDataAliasSearch']['union_code'] : '') : '';
         $collection_config = Yii::$app->general->getUnionConfiguration($union, 'collection_approval', 'PORTAL');
+        $allowSentbox = Yii::$app->general->getUnionConfiguration($union, 'collection_approval_sentbox', 'PORTAL');
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $succCount = 0;
@@ -44,6 +45,11 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $approval_status = $existData->approval_status;
                     $status = '';
                     ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'MilkCollection' : '';
+                    if ($collection_config = 1) {
+                        $existData->approval_status = !empty($operation == 'approve') ? 'Approve' : 'Reject';
+                        $existData->approved_at = date('Y-m-d H:i:s');
+                        $existData->approved_by = Yii::$app->session['UserCode'];
+                    }
                     if ($operation == 'approve') {
                         $historyFlag = 'DELETE';
                         if ($existData->validate()) {
@@ -68,6 +74,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     $saveModel[] = $historyModel;
                                     $existMainData->attributes = $existData->attributes;
                                     $saveModel[] = $existMainData;
+                                    if ($collection_config == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                                        $existData->is_sentbox = TRUE;
+                                    }
                                 }
                             } else if ($action == 'DELETE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblMilkCollection();
@@ -77,11 +86,15 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     Yii::$app->operation->history($existMainData, $historyModel, 'DELETE');
                                     $saveModel[] = $historyModel;
                                     $deleteModel[] = $existMainData;
+                                    if ($collection_config == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                                        $existData->is_sentbox = TRUE;
+                                    }
                                 }
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
                         Yii::$app->operation->history($existData, $historyModel, $historyFlag);
+                        $existData->operation = 'UPDATE';
                         $saveModel[] = $historyModel;
                         if ($collection_config == 2) {
                             $existData->approval_status = $status;
@@ -99,6 +112,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                         $MainModel = new TblCollectionDataAliasReject();
                         $MainModel->attributes = $existData->attributes;
                         $saveModel[] = $MainModel;
+                        if ($collection_config == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                            $existData->is_sentbox = TRUE;
+                        }
                     }
                     if ($existData->validate()) {
                         $succCount++;

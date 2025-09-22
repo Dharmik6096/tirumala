@@ -328,6 +328,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $detailModel = $dataProvider->getModels();
         $message = 'Milk Collection';
         $type = 'edit';
+        $allowSentbox = Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'collection_approval_sentbox', 'PORTAL');
         $collectionApprovalConfig = Yii::$app->general->getUnionConfigResult($searchModel->union_code, 'collection_approval');
         $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
         $config = $configVal == 1 ? TRUE : FALSE;
@@ -365,6 +366,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $approvalModel->table_name = 'tbl_milk_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
+                            if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && $detalData->originating_org_type == 'VLC' && $detalData->originating_type == '23') {
+                                $approvalModel->approval_status = 'Pending';
+                                $approvalModel->is_sentbox = TRUE;
+                                $approvalModel->operation = 'INSERT';
+                            }
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
                                 $modelStages->setProcessWiseApprovalData($approvalModel, $approvalModel->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
@@ -498,12 +504,18 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     $existData = TblMilkCollection::find()->where($where)->one();
                     if (!empty($existData)) {
                         $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL');
+                        $allowSentbox = Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval_sentbox', 'PORTAL');
                         if (in_array($collectionApprovalConfig, [1, 2])) {
                             $ApprovalModel = new TblCollectionDataAlias();
                             $ApprovalModel->attributes = $existData->attributes;
                             $ApprovalModel->setOldAttributesValues($ApprovalModel);
                             $ApprovalModel->table_name = 'tbl_milk_collection';
                             $ApprovalModel->action_perform = 'DELETE';
+                            if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                                $ApprovalModel->approval_status = 'Pending';
+                                $ApprovalModel->is_sentbox = TRUE;
+                                $ApprovalModel->operation = 'INSERT';
+                            }
                             if ($collectionApprovalConfig == 2) {
                                 $modelStages = new TblApprovalStagesDetail();
                                 $modelStages->setProcessWiseApprovalData($ApprovalModel, $existData->union_code, 'tbl_milk_collection', $saveModel, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
