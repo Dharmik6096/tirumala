@@ -97,6 +97,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             // [['bank_name','ifsc','bank_account_no','bank_code','branch_name','branch_code','beneficiary_name'], 'checkBankValidate', 'on' => ['finalize_payment']],
             [['bmc_code'], 'checkBankValidate', 'on' => ['finalize_payment']],
                 [['hold_type'], 'safe'],
+                [['member_code'], 'removeDoubleSpace']
         ];
     }
 
@@ -432,4 +433,8 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         return $isValid;
     }
 
+    public function removeDoubleSpace(){
+        $this->member_name = !empty($this->member_name) ? str_replace('  ', ' ', trim($this->member_name)) : '';
+        $this->beneficiary_name = !empty($this->beneficiary_name) ? str_replace('  ', ' ', trim($this->beneficiary_name)) : '';
+    }
 }
