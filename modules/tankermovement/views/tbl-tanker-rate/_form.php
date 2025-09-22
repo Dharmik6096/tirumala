@@ -83,11 +83,11 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                                             $("#"+key).closest(".form-group").addClass("has-error");
                                              if(key=="tbltankerrate-originating_org_code"){
                                                 cnt++;
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle text-danger\'></i></div><div class=\'col-sm-10 padding-left-0\'>"+val+"</div></div>",function(){ location.reload() });
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+val+"</span></div></div>",function(){ location.reload() });
                                             }
                                         });
                                         if(cnt==0 && typeof data.message != "undefined")                                           
-                                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle text-danger\'></i></div><div class=\'col-sm-10 padding-left-0\'>"+data.message+"</div></div>",function(){ location.reload() });
+                                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+data.message+"</span></div></div>",function(){ location.reload() });
                                             
                                     }
                      }'),

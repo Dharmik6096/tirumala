@@ -95,7 +95,7 @@ $grid_option = [
         'view' => TRUE,
         'milk-vehicle-entry-challan' => function ($url, $model) {
             $options = ['title' => 'Print Challan', 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/tankermovement/tbl-milk-vehicle-entry/challan', 'id' => $model->milk_vehicle_entry_code], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-milk-vehicle-entry/challan', 'id' => $model->milk_vehicle_entry_code], $options);
         },
     ]
 ];
