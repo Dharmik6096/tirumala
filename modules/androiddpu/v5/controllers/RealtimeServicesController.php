@@ -13,6 +13,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\collection\controllers\TblMccShiftLockController;
+use app\modules\tankermovement\models\TblVehicleCleaningInspection;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -122,6 +123,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                             $remarks = $plantData->ref_code . '-' . $plantData->name;
                             $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
                             Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+                            $tripModel->addAutoQaCleaning($remarks);
                         }
                     }
                 }

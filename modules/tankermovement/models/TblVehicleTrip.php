@@ -474,4 +474,39 @@ class TblVehicleTrip extends \app\models\ChildModel {
         }
     }
 
+    public function addAutoQaCleaning($remarks) {
+        $isVirtualLocation = TblVehicleTripDetail::find()->alias('td')
+                        ->select(['td.is_virtual_location'])
+                        ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+                        ->where(['td.trip_code' => $this->trip_code, 'td.source_org_type' => 'plant', 'td.source_org_code' => $this->plant_code, 'td.is_last_destination' => 1])
+                        ->orderBy(['td.sequence_no' => SORT_ASC])
+                        ->asArray()
+                        ->one()['is_virtual_location'];
+
+        if ($isVirtualLocation == '2') {
+            $vehicleCleaningInspection = new TblVehicleCleaningInspection();
+            $vehicleCleaningInspection->union_code = $this->union_code;
+            $vehicleCleaningInspection->vehicle_code = $this->vehicle_code;
+            $vehicleCleaningInspection->transporter_code = $this->vehicleCode->transporter_code;
+            $vehicleCleaningInspection->trip_code = $this->trip_code;
+            $vehicleCleaningInspection->transaction_datetime = date('Y-m-d H:i:s');
+            if ($vehicleCleaningInspection->save()) {
+                $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                $this->trip_sub_status = 'qa_pending';
+                $this->sub_status_time = date('Y-m-d H:i:s', strtotime('+1 second', strtotime($this->sub_status_time)));
+                Yii::$app->general->setVehicleTripTrackingDetail($this, $trackingDetail, $remarks);
+            }
+
+            $vehicleQaInspection = new TblVehicleQaInspection();
+            $vehicleQaInspection->attributes = $vehicleCleaningInspection->attributes;
+            $vehicleQaInspection->status = $this->trip_status;
+            if ($vehicleQaInspection->save()) {
+                $this->trip_sub_status = 'tanker_qualified';
+                $this->sub_status_time = date('Y-m-d H:i:s', strtotime('+1 second', strtotime($this->sub_status_time)));
+                $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                Yii::$app->general->setVehicleTripTrackingDetail($this, $trackingDetail, $remarks);
+            }
+        }
+    }
+
 }
