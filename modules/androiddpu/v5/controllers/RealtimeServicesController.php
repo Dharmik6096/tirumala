@@ -13,7 +13,6 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\collection\controllers\TblMccShiftLockController;
-use app\modules\tankermovement\models\TblVehicleCleaningInspection;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
