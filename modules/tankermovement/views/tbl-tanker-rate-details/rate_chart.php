@@ -43,9 +43,9 @@ $this->title = Yii::t('app', 'Rate Chart');
                                     if (count($snf) == 1 && $snf[0]->snf == NULL) {
                                         echo "<tr><th>" . $attr->rateTypeCode . "</th><th>RTPL</th></tr> ";
                                     } else {
-                                        echo "<tr><th class='width100px'>" . $attr->rateTypeCode . "</th>";
+                                        echo "<tr><th class='w50'>" . $attr->rateTypeCode . "</th>";
                                         foreach ($snf as $s) {
-                                            echo "<th class='width100px'>" . $s->snf . "</th>";
+                                            echo "<th class='w50'>" . $s->snf . "</th>";
                                         }
                                         echo "</tr>";
                                     }
