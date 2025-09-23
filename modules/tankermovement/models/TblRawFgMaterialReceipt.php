@@ -90,6 +90,7 @@ class TblRawFgMaterialReceipt extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'party_name' => Yii::t('app', 'Party Name'),
+            'receipt_seq_number' => Yii::t('app', 'Receipt Seq. Number'),
         ];
     }
 
