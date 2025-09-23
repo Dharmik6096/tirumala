@@ -223,7 +223,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                     } else {
                         $purchaseBasedModel = new TblTankerRateBased();
                         $purchaseBasedModel->tanker_rate_code = $purchaseRate->tanker_rate_code;
-                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->tanker_rate_code . ($purchaseBasedModel->getCode() + $baseCode);
+                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->getCode() + $baseCode;
                         $purchaseBasedModel->milk_type_code = $milk_type_code;
                         $purchaseBasedModel->rate_type_code = $rate_type_code;
                         $purchaseBasedModel->fat_rate = number_format((float) $worksheet->getCell('A2')->getValue(), 1);
