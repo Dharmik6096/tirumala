@@ -432,12 +432,13 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                             ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, 9) = :seq_number", [':seq_number' => $receiptSeqNumberSubstr]))
                             ->andWhere(['is not', 'receipt_seq_number', null])
                             ->scalar();
-
+                    $msg = 'Data Found.';
                     if (!empty($maxReceiptSequenceNumber)) {
-                        $msg = 'Data Found.';
                         $last4Digits = (int) $maxReceiptSequenceNumber + 1;
                         $paddedSequenceNumber = str_pad($last4Digits, 4, '0', STR_PAD_LEFT);
                         $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . $paddedSequenceNumber];
+                    } else {
+                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . '0001'];
                     }
                 }
             }
