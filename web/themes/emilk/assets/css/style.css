@@ -6086,3 +6086,6 @@ div#dashboardFarmerPopup {
 .three-decimal-validate{
     width: 100%;
 }
+.w50{
+    min-width: 50px;
+}
