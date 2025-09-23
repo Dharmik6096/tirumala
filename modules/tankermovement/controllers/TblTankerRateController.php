@@ -268,26 +268,26 @@ class TblTankerRateController extends \app\controllers\ChildController {
                                         ];
                                     }
                                 }
-                                if (is_float($cell)) {
-                                    $currentcell = floatval($cell);
-                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
-                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
-                                    if ($row == 2) {
-                                        if ($col != 'B' && $currentcell < $previouscell) {
-                                            $error = TRUE;
-                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-                                        }
-                                    } else {
-                                        if ($col == 'B' && $currentcell < $previousrow) {
-                                            $error = TRUE;
-                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-                                        } else if ($col != 'B') {
-                                            if ($currentcell < $previouscell) {
-                                                $error = TRUE;
-                                                $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-                                            }
-                                        }
-                                    }
+                                if (is_integer($cell) || is_int($cell) || is_float($cell) || is_double($cell)) {
+//                                    $currentcell = floatval($cell);
+//                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
+//                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
+//                                    if ($row == 2) {
+//                                        if ($col != 'B' && $currentcell < $previouscell) {
+//                                            $error = TRUE;
+//                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+//                                        }
+//                                    } else {
+//                                        if ($col == 'B' && $currentcell < $previousrow) {
+//                                            $error = TRUE;
+//                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+//                                        } else if ($col != 'B') {
+//                                            if ($currentcell < $previouscell) {
+//                                                $error = TRUE;
+//                                                $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+//                                            }
+//                                        }
+//                                    }
                                     if (!$error) {
                                         $data [$i] [] = [
                                             // $purchaseRate->tanker_rate_code . ($purchaseModel->getCode() + $cnt),

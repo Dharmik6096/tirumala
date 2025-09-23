@@ -6367,3 +6367,6 @@ select option:hover {
 select:focus > option:checked { 
     background: #000 !important;
 }
+.w50{
+    min-width: 50px;
+}
