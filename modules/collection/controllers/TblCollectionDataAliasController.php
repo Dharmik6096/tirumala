@@ -70,15 +70,17 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             } else if ($action == 'UPDATE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
-                                if (!empty($existMainData)) {
+                                if (!empty($existMainData) && ($existMainData->fat != $existData->attributes['fat'] || $existMainData->snf != $existData->attributes['snf'] || $existMainData->rtpl != $existData->attributes['rtpl'] || $existMainData->qty != $existData->attributes['qty'] || $existMainData->milk_type_code != $existData->attributes['milk_type_code'] || $existMainData->milk_quality_type_code != $existData->attributes['milk_quality_type_code'] || $existMainData->antibiotic != $existData->attributes['antibiotic'])) {
                                     $historyModel = new TblMilkCollectionHistory();
                                     Yii::$app->operation->history($existMainData, $historyModel, 'UPDATE');
                                     $saveModel[] = $historyModel;
-                                    $existMainData->attributes = $existData->attributes;
-                                    $saveModel[] = $existMainData;
-                                    if ($collection_config == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                                    $excludedAttributes = ['sync_status', 'send_status', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2'];
+                                    $filteredAttributes = array_diff_key($existData->attributes, array_flip($excludedAttributes));
+                                    $existMainData->attributes = $filteredAttributes;
+                                    if ($collection_config == 1 && $allowSentbox == 1 && ($existMainData->originating_org_type == 'VLC' || $existMainData->originating_org_type == 'BMC') && ($existMainData->originating_type == '23' || $existMainData->originating_type == '24')) {
                                         $existData->is_sentbox = TRUE;
                                     }
+                                    $saveModel[] = $existMainData;
                                 }
                             } else if ($action == 'DELETE' && (strtolower($status) == 'approve' || empty($approval_code))) {
                                 $MainModel = new TblMilkCollection();
@@ -88,7 +90,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                     Yii::$app->operation->history($existMainData, $historyModel, 'DELETE');
                                     $saveModel[] = $historyModel;
                                     $deleteModel[] = $existMainData;
-                                    if ($collection_config == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                                    if ($collection_config == 1 && $allowSentbox == 1 && ($existMainData->originating_org_type == 'VLC' || $existMainData->originating_org_type == 'BMC') && ($existMainData->originating_type == '23' || $existMainData->originating_type == '24')) {
                                         $existData->is_sentbox = TRUE;
                                     }
                                 }
@@ -114,7 +116,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                         $MainModel = new TblCollectionDataAliasReject();
                         $MainModel->attributes = $existData->attributes;
                         $saveModel[] = $MainModel;
-                        if ($collection_config == 1 && $allowSentbox == 1 && $existData->originating_org_type == 'VLC' && $existData->originating_type == '23') {
+                        $collModel = new TblMilkCollection();
+                        $existMainData = $collModel->getExistingCollection($existData);
+                        if ($action != 'CREATE' && $collection_config == 1 && $allowSentbox == 1 && ($existMainData->originating_org_type == 'VLC' || $existMainData->originating_org_type == 'BMC') && ($existMainData->originating_type == '23' || $existMainData->originating_type == '24')) {
                             $existData->is_sentbox = TRUE;
                         }
                     }

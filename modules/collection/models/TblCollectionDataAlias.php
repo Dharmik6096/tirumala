@@ -113,10 +113,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'integer'],
-                [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
-                [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code', 'shift_code', 'own_bmc_code', 'antibiotic_sms_sent', 'antibiotic', 'is_sms_sent', 'old_customer_code', 'can_no', 'old_route_code', 'old_antibiotic', 'converted_amount', 'process_approval_code', 'approved_at', 'approved_by', 'approval_status', 'vehicle_code', 'is_sentbox'], 'safe'],
+                [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code', 'shift_code', 'own_bmc_code', 'antibiotic_sms_sent', 'antibiotic', 'is_sms_sent', 'old_customer_code', 'can_no', 'old_route_code', 'old_antibiotic', 'converted_amount', 'process_approval_code', 'approved_at', 'approved_by', 'approval_status', 'vehicle_code', 'is_sentbox', 'fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type', 'table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'qlty_auto', 'qty_auto'], 'safe'],
                 [['dcs_code'], 'validateMilkCollection', 'on' => ['MilkCollection']],
                 [['customer_code'], 'validateBmcCollection', 'on' => ['BmcCollection']],
                 [['dcs_code'], 'validateMilkDispatch', 'on' => ['MilkDispatch']],
@@ -385,10 +382,10 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
-        if (in_array($this->originating_org_type, ['VLC']) && in_array($this->originating_type, ['23']) && $flag == 'INSERT') {
-            $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type, $this->union_code);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+        if ($this->is_sentbox == TRUE) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+            if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24']) && $flag == 'INSERT') {
+                $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type, $this->union_code);
                 if (!($sentbox->setSentbox($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
@@ -397,10 +394,10 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     }
 
     public function afterDelete() {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : 'DELETE';
-        if (in_array($this->originating_org_type, ['VLC']) && in_array($this->originating_type, ['23'])) {
-            $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type, $this->union_code);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === true)) {
+        if ($this->is_sentbox == TRUE) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : 'DELETE';
+            if (in_array($this->originating_org_type, ['VLC', 'BMC']) && in_array($this->originating_type, ['23', '24'])) {
+                $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type, $this->union_code);
                 if (!$sentbox->setSentbox($this, $flag)) {
                     throw new UserException("SentBox entry is not created, so transaction is rolled back!");
                 }
