@@ -13,6 +13,8 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\collection\controllers\TblMccShiftLockController;
+use app\modules\tankermovement\models\TblRawFgMaterialReceipt;
+use yii\db\Expression;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -122,6 +124,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                             $remarks = $plantData->ref_code . '-' . $plantData->name;
                             $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
                             Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+                            $tripModel->addAutoQaCleaning($remarks);
                         }
                     }
                 }
@@ -410,6 +413,37 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_tanker_destination_list', ['union_code' => $orgDetail['union_code']]);
             }
         }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionGetReceiptSeqNumber() {
+        $res_data = [];
+        $msg = 'Data Not Found.';
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code']) && !empty($content['receipt_seq_number'])) {
+                $receiptSeqNumberSubstr = substr($content['receipt_seq_number'], 0, 9);
+                if (strtoupper($data['organization_type']) == 'PLANT') {
+                    $maxReceiptSequenceNumber = TblRawFgMaterialReceipt::find()
+                            ->select([new Expression("MAX(CONVERT(INT, substring(receipt_seq_number, 10, 4))) as max_receipt_seq_number")])
+                            ->where(['plant_code' => $data['organization_code']])
+                            ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, 9) = :seq_number", [':seq_number' => $receiptSeqNumberSubstr]))
+                            ->andWhere(['is not', 'receipt_seq_number', null])
+                            ->scalar();
+                    $msg = 'Data Found.';
+                    if (!empty($maxReceiptSequenceNumber)) {
+                        $last4Digits = (int) $maxReceiptSequenceNumber + 1;
+                        $paddedSequenceNumber = str_pad($last4Digits, 4, '0', STR_PAD_LEFT);
+                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . $paddedSequenceNumber];
+                    } else {
+                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . '0001'];
+                    }
+                }
+            }
+        }
+        $this->response['error']['message'] = [$msg];
         $this->response['data'] = $res_data;
         return $this->response;
     }

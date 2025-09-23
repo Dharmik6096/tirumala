@@ -19,7 +19,7 @@ class TblRawFgMaterialReceiptSearch extends TblRawFgMaterialReceipt {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'union_code', 'plant_code', 'gross_weight', 'tare_weight', 'material_code', 'originating_type', 'raw_fg_material_receipt_code', 'receipt_datetime', 'party_code', 'vehicle_code', 'document_type', 'document_date', 'document_no', 'gross_weight_datetime', 'tare_weight_datetime', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no', 'party_name'], 'safe'],
+                [['from_date', 'to_date', 'union_code', 'plant_code', 'gross_weight', 'tare_weight', 'material_code', 'originating_type', 'raw_fg_material_receipt_code', 'receipt_datetime', 'party_code', 'vehicle_code', 'document_type', 'document_date', 'document_no', 'gross_weight_datetime', 'tare_weight_datetime', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no', 'party_name', 'receipt_seq_number'], 'safe'],
         ];
     }
 
@@ -81,6 +81,7 @@ class TblRawFgMaterialReceiptSearch extends TblRawFgMaterialReceipt {
                 ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.material_entry_type', $this->material_entry_type])
                 ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.remarks', $this->remarks])
                 ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.dock_no', $this->dock_no])
+                ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.receipt_seq_number', $this->receipt_seq_number])
                 ->andFilterWhere(['like', 'tbl_raw_fg_material_receipt.party_name', $this->party_name]);
 
         return $dataProvider;
