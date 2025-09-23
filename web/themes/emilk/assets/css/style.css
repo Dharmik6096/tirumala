@@ -6120,3 +6120,6 @@ div#dashboardFarmerPopup {
 .reverse-ml-30{
     margin-left: -30px;
 }
+.w50{
+    min-width: 50px;
+}
