@@ -499,12 +499,13 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
             $vehicleQaInspection = new TblVehicleQaInspection();
             $vehicleQaInspection->attributes = $vehicleCleaningInspection->attributes;
-            $vehicleQaInspection->status = $this->trip_status;
+            $vehicleQaInspection->status = 'pending';
             if ($vehicleQaInspection->save()) {
                 $this->trip_sub_status = 'tanker_qualified';
                 $this->sub_status_time = date('Y-m-d H:i:s', strtotime('+1 second', strtotime($this->sub_status_time)));
                 $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
                 Yii::$app->general->setVehicleTripTrackingDetail($this, $trackingDetail, $remarks);
+                $this->save();
             }
         }
     }

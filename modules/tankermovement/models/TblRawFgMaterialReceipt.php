@@ -54,7 +54,7 @@ class TblRawFgMaterialReceipt extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['raw_fg_material_receipt_code'], 'required', 'except' => ['androidsync']],
-                [['material_ref_code', 'union_code', 'plant_code', 'document_type', 'document_no', 'raw_fg_material_receipt_code', 'party_code', 'vehicle_code', 'gross_weight', 'tare_weight', 'material_code', 'originating_type', 'receipt_datetime', 'document_date', 'gross_weight_datetime', 'tare_weight_datetime', 'created_at', 'updated_at', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no', 'party_name'], 'safe'],
+                [['material_ref_code', 'union_code', 'plant_code', 'document_type', 'document_no', 'raw_fg_material_receipt_code', 'party_code', 'vehicle_code', 'gross_weight', 'tare_weight', 'material_code', 'originating_type', 'receipt_datetime', 'document_date', 'gross_weight_datetime', 'tare_weight_datetime', 'created_at', 'updated_at', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'material_entry_type', 'remarks', 'dock_no', 'tanker_no', 'party_name', 'receipt_seq_number'], 'safe'],
         ];
     }
 

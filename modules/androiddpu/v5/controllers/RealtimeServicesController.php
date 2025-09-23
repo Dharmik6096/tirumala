@@ -13,6 +13,8 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\collection\controllers\TblMccShiftLockController;
+use app\modules\tankermovement\models\TblRawFgMaterialReceipt;
+use yii\db\Expression;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -411,6 +413,33 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_tanker_destination_list', ['union_code' => $orgDetail['union_code']]);
             }
         }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionGetReceiptSeqNumber() {
+        $res_data = [];
+        $msg = 'Data Not Found.';
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code']) && !empty($content['dock_no'])) {
+                if (strtoupper($data['organization_type']) == 'PLANT') {
+                $receiptSeqNumber = TblRawFgMaterialReceipt::find()
+                    ->select([new Expression('MAX(receipt_seq_number) as max_receipt_seq_number')])
+                    ->where(['plant_code' => $data['organization_code']])
+                    ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, 9) = :doc_seq_number", [':doc_seq_number' => substr($content['dock_no'], 0, 9)]))
+                    ->andWhere(['is not', 'receipt_seq_number', null])
+                    ->scalar();
+
+                if(!empty($receiptSeqNumber)){
+                    $msg = 'Data Found.';
+                    $res_data = ['receiptSeqNumber' => $receiptSeqNumber];
+                }
+                }
+            }
+        }
+        $this->response['error']['message'] = [$msg];
         $this->response['data'] = $res_data;
         return $this->response;
     }
