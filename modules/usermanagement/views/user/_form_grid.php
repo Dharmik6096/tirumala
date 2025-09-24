@@ -147,11 +147,6 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'update' => true,
-        'delete_user' => function ($url, $model) {
-            $disable = ($model->checkNotSelf() && $model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'data-val' => $model->id, 'data-name' => $model->name, 'class' => 'user-record ' . $disable];
-            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/user-management/user/deactivate-user'], $options);
-        },
         'role' => function ($url, $model) {
             $disable = ($model->checkNotSelf()) ? '' : 'link-disable';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Role', 'class' => $disable];
@@ -192,58 +187,7 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 <div id='deactive_user'></div>
 
 <?php
-$script = "
-            $('#user-grid').on('click','.user-record',function(e){
-            //$('.delete-property').on('click',function(){
-                   // var id = $(this).attr('value');
-                    var id= $(this).attr('data-val');
-                    var name = $(this).attr('data-name');
-                    bootbox.confirm({
-                        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to deactivate user \"'+name+'\"?</span></div></div>',
-                        buttons: {
-                            'cancel': {
-                                            label: 'Cancel',
-                                            className: 'btn btn-danger'
-                              },
-                            'confirm': {
-                                            label: 'Ok',
-                                            className: 'btn btn-primary'
-                             }
-                        },
-                        callback: function(result) {
-                            if (result) {
-                              $('#loader').show();
-                                 $.ajax({
-                                        type: 'get',
-                                        url: '" . Url::to(['/user-management/user/delete']) . "?id=' + id,
-                                        //data: 'id='+id,
-                                        success: function(data) {
-
-                                            var obj1 = $.parseJSON(data);
-                                            if (obj1.status == 'success')
-                                            {
-                                                $.pjax.reload({container: '#user-grid'});
-//                                                bootbox.alert(obj1.msg);
-                                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                                                //$.snackbar({content: 'Record successfully deleted.', timeout: 8000, style: 'successbar'});
-                                            }
-                                            else if (obj1.status == 'error'){
-//                                                bootbox.alert(obj1.msg);
-                                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                                                //$.snackbar({content: 'Record is not deleted.', timeout: 8000, style: 'errorbar'});
-                                            }
-                                        },
-                                        error:function(data){
-                                                    //alert('Your data has not been submitted..Please try again');
-                                                }
-                            });
-                            }
-                        }
-                    });
-                });";
-
-
-$script .= "$(document).ready(function(){
+$script = "$(document).ready(function(){
     $(document).on('click','.deactive-user',function(e){
     var id= $(this).attr('data-val');
          AddRecoveryData(id);
