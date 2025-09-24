@@ -372,7 +372,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $approvalModel->x_col3 = \Yii::$app->session->get('organizations_code');
                             $approvalModel->x_col4 = 'PORTAL';
                             $approvalModel->x_col5 = 0;
-                            if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && ($detalData->originating_org_type == 'VLC' || $detalData->originating_org_type == 'BMC') && ($detalData->originating_type == '23' || $detalData->originating_type == '24')) {
+                            if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && in_array($detalData->originating_org_type, ['VLC', 'BMC']) && in_array($detalData->originating_type, ['23', '24'])) {
                                 $approvalModel->approval_status = 'Pending';
                                 $approvalModel->is_sentbox = TRUE;
                                 $approvalModel->operation = 'INSERT';
@@ -523,7 +523,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $ApprovalModel->x_col3 = \Yii::$app->session->get('organizations_code');
                             $ApprovalModel->x_col4 = 'PORTAL';
                             $ApprovalModel->x_col5 = 0;
-                            if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && ($existData->originating_org_type == 'VLC' || $existData->originating_org_type == 'BMC') && ($existData->originating_type == '23' || $existData->originating_type == '24')) {
+                            if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && in_array($existData->originating_org_type, ['VLC', 'BMC']) && in_array($existData->originating_type, ['23', '24'])) {
                                 $ApprovalModel->approval_status = 'Pending';
                                 $ApprovalModel->is_sentbox = TRUE;
                                 $ApprovalModel->operation = 'INSERT';
