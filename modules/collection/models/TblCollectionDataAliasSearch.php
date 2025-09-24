@@ -76,6 +76,14 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
             'tbl_collection_data_alias.bmc_code' => $this->bmc_code,
             'tbl_collection_data_alias.table_name' => $this->table_name]);
 
+        if (empty($this->from_date)) {
+            $this->from_date = date('d-m-Y');
+            $this->from_shift = 1;
+        }
+        if (empty($this->to_date)) {
+            $this->to_date = date('d-m-Y');
+            $this->to_shift = 2;
+        }
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
