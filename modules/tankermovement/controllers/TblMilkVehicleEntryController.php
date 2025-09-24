@@ -232,6 +232,9 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                         }
                         $trackingDetail = ['visibility_status' => 2, 'module_code' => $this->model->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
                         Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+                        if (!empty($tripModel)) {
+                            $tripModel->addAutoQaCleaning($remarks);
+                        }
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
                         $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key, 'gross_weight' => $this->model->gross_weight, 'tare_weight' => $this->model->tare_weight, 'tare_weight_time' => $this->model->tare_weight_time];
                     } else {
