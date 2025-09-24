@@ -1306,6 +1306,9 @@ class TblMilkCollection extends \app\models\ChildModel {
             $approvalModel->attributes = $model->attributes;
             $approvalModel->table_name = 'tbl_milk_collection';
             $approvalModel->action_perform = 'CREATE';
+            if ($flag == 'create') {
+                $approvalModel->x_col1 = Yii::$app->general->getUuid();
+            }
             $approvalModel->setOldAttributesValues($approvalModel);
             if ($collectionApprovalConfig == 2) {
                 $i = 0;
