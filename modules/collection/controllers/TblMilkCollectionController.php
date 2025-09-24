@@ -353,7 +353,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->antibiotic != $detalData->oldAttributes['antibiotic'])) {
                         if (in_array($collectionApprovalConfig, [1, 2])) {
                             $approvalModel = new TblCollectionDataAlias();
-                            $excludedAttributes = ['sync_status', 'send_status', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2'];
+                            $excludedAttributes = ['sync_status', 'send_status', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2'];
                             $filteredAttributes = array_diff_key($detalData->attributes, array_flip($excludedAttributes));
                             $approvalModel->attributes = $filteredAttributes;
                             $approvalModel->old_qty = $detalData->oldAttributes['qty'];
@@ -369,6 +369,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
                             $approvalModel->x_col1 = Yii::$app->general->getUuid();
+                            $approvalModel->x_col3 = \Yii::$app->session->get('organizations_code');
+                            $approvalModel->x_col4 = 'PORTAL';
+                            $approvalModel->x_col5 = 0;
                             if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && ($detalData->originating_org_type == 'VLC' || $detalData->originating_org_type == 'BMC') && ($detalData->originating_type == '23' || $detalData->originating_type == '24')) {
                                 $approvalModel->approval_status = 'Pending';
                                 $approvalModel->is_sentbox = TRUE;
@@ -510,13 +513,16 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $allowSentbox = Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval_sentbox', 'PORTAL');
                         if (in_array($collectionApprovalConfig, [1, 2])) {
                             $ApprovalModel = new TblCollectionDataAlias();
-                            $excludedAttributes = ['sync_status', 'send_status', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2'];
+                            $excludedAttributes = ['sync_status', 'send_status', 'error_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2'];
                             $filteredAttributes = array_diff_key($existData->attributes, array_flip($excludedAttributes));
                             $ApprovalModel->attributes = $filteredAttributes;
                             $ApprovalModel->setOldAttributesValues($ApprovalModel);
                             $ApprovalModel->table_name = 'tbl_milk_collection';
                             $ApprovalModel->action_perform = 'DELETE';
                             $ApprovalModel->x_col1 = Yii::$app->general->getUuid();
+                            $ApprovalModel->x_col3 = \Yii::$app->session->get('organizations_code');
+                            $ApprovalModel->x_col4 = 'PORTAL';
+                            $ApprovalModel->x_col5 = 0;
                             if ($collectionApprovalConfig == 1 && $allowSentbox == 1 && ($existData->originating_org_type == 'VLC' || $existData->originating_org_type == 'BMC') && ($existData->originating_type == '23' || $existData->originating_type == '24')) {
                                 $ApprovalModel->approval_status = 'Pending';
                                 $ApprovalModel->is_sentbox = TRUE;
