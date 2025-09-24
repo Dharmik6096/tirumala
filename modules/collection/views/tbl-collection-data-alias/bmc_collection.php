@@ -13,7 +13,7 @@ $is_dcs_editable = (Yii::$app->general->getUnionConfiguration($searchModel->unio
         </div>
         <div class="clearfix"></div>
         <?php
-        echo $this->render('_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'id' => $id, 'showField' => $showField, 'url' => $url, 'showType' => $showType, 'is_dcs_editable' => $is_dcs_editable, 'is_concate' => true]);
+        echo $this->render('_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'id' => $id, 'url' => $url, 'showType' => $showType, 'is_dcs_editable' => $is_dcs_editable, 'is_concate' => true]);
         ?>
     </div>
 </div>
