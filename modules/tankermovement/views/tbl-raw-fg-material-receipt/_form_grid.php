@@ -51,6 +51,7 @@ $attribute = [
         ['attribute' => 'material_entry_type'],
         ['attribute' => 'remarks'],
         ['attribute' => 'dock_no'],
+        ['attribute' => 'receipt_seq_number'],
 ];
 
 $grid_option = [

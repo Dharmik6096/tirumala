@@ -23,12 +23,13 @@ use app\modules\usermanagement\components\GhostHtml;
             'checkboxOptions' => function($model, $key, $index) use ($is_concate) {
                 echo Html::activeHiddenInput($model, 'action_perform', ['value' => $model->action_perform]);
                 echo Html::activeHiddenInput($model, 'operation', ['value' => $model->operation, 'class' => 'set_operation']);
-                $code  = $model['collection_data_alias_code'];
-                if(!empty($is_concate)){
-                    $code = $model['collection_data_alias_code'] . '###' . $model['process_approval_code'];
+                $code = $model['collection_data_alias_code'] . '###' . $model['action_perform'];
+                if (!empty($is_concate)) {
+                    $code = $model['collection_data_alias_code'] . '###' . $model['process_approval_code'] . '###' . $model['action_perform'];
                 }
                 return ['class' => 'checkbox-collection', 'value' => $code];
             }],
+            ['attribute' => 'action_perform', 'filter' => false, 'visible' => TRUE],
             ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE, 'visible' => !empty($showType) ? TRUE : FALSE],
@@ -72,15 +73,15 @@ use app\modules\usermanagement\components\GhostHtml;
             ['attribute' => 'old_customer_code', 'filter' => false, 'visible' => (isset($is_dcs_editable) && $is_dcs_editable)],
             ['attribute' => 'old_milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldMilkTypeCode, 'animal_type_name');
-            }, 'filter' => false, 'visible' => $showField],
+            }, 'filter' => false, 'visible' => TRUE],
             ['attribute' => 'old_milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldMilkQualityCode, 'milk_quality_type_name');
-            }, 'filter' => false, 'visible' => $showField],
-            ['attribute' => 'old_qty', 'filter' => false, 'visible' => $showField],
-            ['attribute' => 'old_fat', 'filter' => false, 'visible' => $showField],
-            ['attribute' => 'old_snf', 'filter' => false, 'visible' => $showField],
-            ['attribute' => 'old_rtpl', 'filter' => false, 'visible' => $showField],
-            ['attribute' => 'old_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => $showField],
+            }, 'filter' => false, 'visible' => TRUE],
+            ['attribute' => 'old_qty', 'filter' => false, 'visible' => TRUE],
+            ['attribute' => 'old_fat', 'filter' => false, 'visible' => TRUE],
+            ['attribute' => 'old_snf', 'filter' => false, 'visible' => TRUE],
+            ['attribute' => 'old_rtpl', 'filter' => false, 'visible' => TRUE],
+            ['attribute' => 'old_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => TRUE],
             ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
             }, 'filter' => FALSE],

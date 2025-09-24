@@ -12,7 +12,7 @@ $this->title = Yii::t('app', 'Milk Dispatch Approval');
         </div>
         <div class="clearfix"></div>
         <?php
-        echo $this->render('_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'id' => $id, 'showField' => $showField, 'url' => $url, 'is_concate' => false]);
+        echo $this->render('_form_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'id' => $id, 'url' => $url, 'is_concate' => false]);
         ?>
     </div>
 </div>
