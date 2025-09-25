@@ -1622,7 +1622,7 @@ class TblDcs extends ChildModel {
                         $memberModel->ref_code .= $memberModel->{$pre};
                     }
                 }
-                $memberModel->ref_code .= str_pad((int) $refCode + $x, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+                $memberModel->ref_code = str_pad($memberModel->ref_code, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
             } elseif ($keyPattern['ref_code_type'] == 2) {
                 $memberModel->ref_code = $pk_code;
             }
