@@ -424,21 +424,26 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         if (!empty($data['content'])) {
             $content = $data['content'];
             if (!empty($data['organization_type']) && !empty($data['organization_code']) && !empty($content['receipt_seq_number'])) {
-                $receiptSeqNumberSubstr = substr($content['receipt_seq_number'], 0, 15);
+                $receiptSeqNumber = $content['receipt_seq_number'];
+                $lastSlashPos = strrpos($receiptSeqNumber, '/');
+                $prefixLength = $lastSlashPos;
+                $seqLength = strlen($receiptSeqNumber) - $lastSlashPos - 1;
+                $receiptSeqNumberSubstr = substr($receiptSeqNumber, 0, $prefixLength);
                 if (strtoupper($data['organization_type']) == 'PLANT') {
                     $maxReceiptSequenceNumber = TblRawFgMaterialReceipt::find()
-                            ->select([new Expression("MAX(CONVERT(INT, substring(receipt_seq_number, 16, 4))) as max_receipt_seq_number")])
+                            ->select([new Expression("MAX(CONVERT(INT, REVERSE(SUBSTRING(REVERSE(receipt_seq_number), 1, :seq_length)))) as max_receipt_seq_number", [':seq_length' => $seqLength])])
                             ->where(['plant_code' => $data['organization_code']])
-                            ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, 15) = :seq_number", [':seq_number' => $receiptSeqNumberSubstr]))
+                            ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, :prefix_length) = :seq_number", [':seq_number' => $receiptSeqNumberSubstr, ':prefix_length' => strlen($receiptSeqNumberSubstr)]))
                             ->andWhere(['is not', 'receipt_seq_number', null])
                             ->scalar();
                     $msg = 'Data Found.';
                     if (!empty($maxReceiptSequenceNumber)) {
-                        $last4Digits = (int) $maxReceiptSequenceNumber + 1;
-                        $paddedSequenceNumber = str_pad($last4Digits, 4, '0', STR_PAD_LEFT);
-                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . $paddedSequenceNumber];
+                        $lastDigits = (int) $maxReceiptSequenceNumber + 1;
+                        $paddedSequenceNumber = str_pad($lastDigits, $seqLength, '0', STR_PAD_LEFT);
+                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . '/' . $paddedSequenceNumber];
                     } else {
-                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . '0001'];
+                        $paddedSequenceNumber = str_pad(1, $seqLength, '0', STR_PAD_LEFT);
+                        $res_data = ['receiptSeqNumber' => $receiptSeqNumberSubstr . '/' . $paddedSequenceNumber];
                     }
                 }
             }
