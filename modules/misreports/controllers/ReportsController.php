@@ -2134,6 +2134,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionPaymentCycleReport() {
+        $this->report = 'PaymentCycleReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionYearlyFarmerCollectionReport() {
+        $this->report = 'YearlyFarmerCollectionReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'YearlyVspCollectionReport';
+            }
+        }
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4643,6 +4658,29 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '119 - Farmer Wise Milk Bill 2',
                 'to_decrypt' => ['adhar_no'],
                 'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'PaymentCycleReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_get_payment_cycle_report',
+                'scenario' => 'PaymentCycleReport',
+                'title' => '515 - Payment Cycle Report',
+                'bkg_export' => TRUE
+            ],
+            'YearlyFarmerCollectionReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'get_yearly_farmer_collection_report',
+                'scenario' => 'YearlyFarmerCollectionReport',
+                'title' => 'Supply Status Reports',
+                'report_type' => [Yii::t('app', 'Farmer'), Yii::t('app', 'VSP')],
+                'bkg_export' => TRUE
+            ],
+            'YearlyVspCollectionReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'get_yearly_vsp_collection_report',
+                'scenario' => 'YearlyFarmerCollectionReport',
+                'title' => 'Supply Status Reports',
+                'report_type' => [Yii::t('app', 'Farmer'), Yii::t('app', 'VSP')],
                 'bkg_export' => TRUE
             ],
         ];
