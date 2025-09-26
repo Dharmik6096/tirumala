@@ -424,12 +424,12 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
         if (!empty($data['content'])) {
             $content = $data['content'];
             if (!empty($data['organization_type']) && !empty($data['organization_code']) && !empty($content['receipt_seq_number'])) {
-                $receiptSeqNumberSubstr = substr($content['receipt_seq_number'], 0, 9);
+                $receiptSeqNumberSubstr = substr($content['receipt_seq_number'], 0, 15);
                 if (strtoupper($data['organization_type']) == 'PLANT') {
                     $maxReceiptSequenceNumber = TblRawFgMaterialReceipt::find()
-                            ->select([new Expression("MAX(CONVERT(INT, substring(receipt_seq_number, 10, 4))) as max_receipt_seq_number")])
+                            ->select([new Expression("MAX(CONVERT(INT, substring(receipt_seq_number, 16, 4))) as max_receipt_seq_number")])
                             ->where(['plant_code' => $data['organization_code']])
-                            ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, 9) = :seq_number", [':seq_number' => $receiptSeqNumberSubstr]))
+                            ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, 15) = :seq_number", [':seq_number' => $receiptSeqNumberSubstr]))
                             ->andWhere(['is not', 'receipt_seq_number', null])
                             ->scalar();
                     $msg = 'Data Found.';
