@@ -29,6 +29,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\collection\models\TblIotTemperatureSearch;
+use app\components\Worksheet;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -1423,15 +1424,17 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             'writer' => IOFactory::WRITER_XLS,
         ];
         $objPHPExcel = new Spreadsheet();
-        $sheet = $objPHPExcel->getActiveSheet();
+        $customWorksheet = new Worksheet($objPHPExcel, 'Sheet1');
+        $objPHPExcel->addSheet($customWorksheet);
+        $objPHPExcel->removeSheetByIndex(0);
         $file_header = !empty($download) ? array_keys($download[0]) : [];
-        $sheet->fromArray(
+        $customWorksheet->fromArray(
                 $file_header, // The data to set
                 NULL, // Array values with this value will not be set
                 'A1'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
-        $sheet->fromArray(
+        $customWorksheet->fromArray(
                 $download, // The data to set
                 NULL, // Array values with this value will not be set
                 'A2'         // Top left coordinate of the worksheet range where
