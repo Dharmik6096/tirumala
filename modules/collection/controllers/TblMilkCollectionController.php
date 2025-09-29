@@ -1440,6 +1440,15 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
+        foreach ($file_header as $index => $header) {
+            $column = chr(65 + $index);
+            $maxLength = strlen((string) $header);
+            if (!empty($download)) {
+                $data = array_column($download, $header);
+                $maxLength = max($maxLength, max(array_map('strlen', $data)));
+            }
+            $customWorksheet->getColumnDimension($column)->setWidth($maxLength + 2);
+        }
         $file_name = $title . '.' . 'xls';
         $path = Yii::$app->basePath . '/web/sap_data_files/';
         Yii::$app->general->checkDirectory($path);
