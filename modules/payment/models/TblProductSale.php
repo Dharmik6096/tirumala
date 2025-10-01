@@ -79,6 +79,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport', 'saleProductOnDispatch']],
             [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport', 'saleProductOnDispatch']],
             [['union_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
+            [['mcc_plant_code', 'plant_code'], 'required', 'on' => ['saleProduct']],
             [['ex_code'], 'required', 'on' => 'saleProduct', 'when' => function () {
                     return ($this->customer_type != 'PARTY');
                 }, 'whenClient' => "function (attribute, value) { 
