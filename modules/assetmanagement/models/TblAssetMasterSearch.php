@@ -47,6 +47,7 @@ class TblAssetMasterSearch extends TblAssetMaster {
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
