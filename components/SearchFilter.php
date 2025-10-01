@@ -675,6 +675,18 @@ class SearchFilter {
             'TblMemberRateRepushLogSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
+            'TblAssetGroupSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblAssetMasterSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblStoreLocationSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblAssetSetSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
