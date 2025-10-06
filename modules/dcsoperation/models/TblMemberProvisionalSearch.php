@@ -79,7 +79,9 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
 
         $this->load($params);
 
-        $query->joinWith(['memberTypeCode', 'dcsCode', 'regionCode', 'userName', 'shareCode']);
+        $query->joinWith(['memberTypeCode', 'dcsCode', 'regionCode', 'userName', 'shareCode', 'unionCode', 'tblDcsBmc', 'bloodGroupCode', 'genderCode',
+            'qualificationCode', 'casteCategoryCode', 'religionCode', 'relationship', 'animalTypeCode', 'stateCode', 'districtCode', 'subDistrictCode',
+            'villageCode', 'hamletCode', 'bankCode', 'branchCode']);
 
         if ($pending_approval) {
             $approval = new TblProcessApproval();
@@ -88,6 +90,12 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $query->addSelect(['tbl_member_provisional.*', 'ap.process_approval_code as process_approval_code']);
             $this->provisional_status = ['Register', 'Inprogress'];
             $query->where(['tbl_member_provisional.provisional_status' => $this->provisional_status, 'tbl_member_provisional.is_active' => 1]);
+        }
+
+        if (!$date_search) {
+            $from_date = !empty($this->from_date) ? $this->from_date : date('Y-m-d');
+            $to_date = !empty($this->to_date) ? $this->to_date : date('Y-m-d');
+            $query->andFilterWhere(['between', 'tbl_member_provisional.created_at', date('Y-m-d', strtotime($from_date)) . ' 00:00:00.000', date('Y-m-d', strtotime($to_date)) . ' 23:59:59.000']);
         }
 
         Yii::$app->general->filterByOrg($query, $this);
@@ -111,13 +119,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
 
         // grid filtering conditions
-        if (!$date_search) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'CAST(tbl_member_provisional.created_at as date)', $from_date]);
 
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'CAST(tbl_member_provisional.created_at as date)', $to_date]);
-        }
 
         $query->andFilterWhere([
             'tbl_member_provisional.is_active' => $this->is_active,
