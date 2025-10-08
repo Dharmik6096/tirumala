@@ -130,42 +130,49 @@ class WebApi {
     }
 
     public function ExchangeDataCurl() {
-        $url = $this->serverUrl . $this->apiurl;
-        $data = $this->body;
-        $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
-        $header = array_merge($main_header, $this->header_info);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HEADER, FALSE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        if ($this->return_actual) {
+        try {
+            $log_model = new TblPortalDataPostLog();
+            $log_model->created_at = date('Y-m-d H:i:s');
+            $log_model->vendor_code = $this->vendor_code;
+            $url = $this->serverUrl . $this->apiurl;
+            $data = $this->body;
+            $log_model->request = $data;
+            $log_model->url = $url;
+            $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
+            $header = array_merge($main_header, $this->header_info);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HEADER, FALSE);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        }  // Skip SSL Verification
-        //  curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
-        $result = curl_exec($ch);
-        if ($result === false) {
-            throw new \Exception(curl_error($ch), curl_errno($ch));
-        }
-        curl_close($ch);
+            if ($this->return_actual) {
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            }  // Skip SSL Verification
+            //  curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
+            $result = curl_exec($ch);
+            if ($result === false) {
+                throw new \Exception(curl_error($ch), curl_errno($ch));
+            }
+            curl_close($ch);
 //        var_dump($result);
 //        die;
-        $res = json_decode($result);
-        $log_model = new TblPortalDataPostLog();
-        $log_model->created_at = date('Y-m-d H:i:s');
-        $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
-        $log_model->vendor_code = $this->vendor_code;
-        $log_model->url = $url;
-        $log_model->request = $data;
-        $log_model->response = $result;
-        $log_model->save();
-        if ($this->return_actual) {
-            return $result;
+            $res = json_decode($result);
+            $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
+            $log_model->response = $result;
+            $log_model->updated_at = date('Y-m-d H:i:s');
+            $log_model->save();
+            if ($this->return_actual) {
+                return $result;
+            }
+            return $res;
+        } catch (\Throwable $ex) {
+            $log_model->response = substr($ex->getMessage(), 0, 250);
+            $log_model->updated_at = date('Y-m-d H:i:s');
+            $log_model->save();
         }
-        return $res;
     }
 
     public function SapDataIntegration() {
