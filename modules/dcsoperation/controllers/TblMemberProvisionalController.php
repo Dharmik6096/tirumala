@@ -351,9 +351,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $status = 'Register';
                             }
                             if (!empty(Yii::$app->request->post()['operation'] == 'reroute')) {
-                                $model = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
+                                $provisionalModel = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
                                 $historyModel = new TblMemberProvisionalHistory();
-                                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                                Yii::$app->operation->history($provisionalModel, $historyModel, UPDATE);
                                 $save_model[] = $historyModel;
                                 $model->remarks = !empty(Yii::$app->request->post()['remarks']) ? Yii::$app->request->post()['remarks'] : '';
                                 if (!empty($approval_stages)) {
