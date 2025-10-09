@@ -152,6 +152,7 @@ class DataExchangeController extends ChildController {
     }
 
     private function processXmlResponse($soapResponse, $sp_name, $exchangeData, $output, $request) {
+        $status = 0;
         $xml = simplexml_load_string($soapResponse);
         $namespaces = $xml->getNamespaces(true);
         foreach ($namespaces as $prefix => $uri) {
