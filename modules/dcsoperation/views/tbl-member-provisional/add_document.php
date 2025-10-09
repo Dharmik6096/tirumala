@@ -125,7 +125,7 @@ $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'wo
                                 if ($configValue == 1) {
                                     ?>
                                     <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-                                    <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
+                                    <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
                                     <?php
                                 }
                                 AjaxSubmitButton::begin([

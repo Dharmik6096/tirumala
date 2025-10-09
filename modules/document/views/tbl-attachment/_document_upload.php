@@ -202,7 +202,7 @@ if (!empty($doc_model)) {
                         <div class="form-group">
                             <?php if ($master_type == 'provisional_dcs' || $master_type == 'provisional_customer') { ?>
                                 <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal']) ?>
+                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-login  btn-primary apply-shortcut', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal']) ?>
                             <?php } ?>
                             <?php
                             AjaxSubmitButton::begin([
