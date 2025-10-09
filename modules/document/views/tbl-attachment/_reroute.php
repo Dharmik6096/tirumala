@@ -10,7 +10,7 @@ use yii\web\View;
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×  </button>
                     <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Re Route Provisional Process') ?></h4>
                 </div>
 
@@ -28,8 +28,8 @@ use yii\web\View;
                         </div>
                         <div class="modal-footer mt10 col-sm-12">
                             <div class="col-md-12 top-bottom-15 padding-50">
-                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut re-route', 'value' => 'reroute']) ?>
-                                <?= Html::resetButton('Reset', ['class' => 'btn btn-primary']) ?>
+                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn-login btn btn-primary apply-shortcut re-route', 'value' => 'reroute']) ?>
+                                <?= Html::resetButton('Reset', ['class' => 'btn-login btn btn-primary']) ?>
                             </div>
                         </div>
                     </div>
