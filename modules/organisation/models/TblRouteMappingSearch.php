@@ -164,7 +164,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_type', $this->route_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_type', $this->from_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_dest', $this->from_dest])
-                ->andFilterWhere(['like', 'UPPER(tbl_route_mapping.to_type)', strtoupper($this->to_type)])
+                ->andFilterWhere(['like', 'UPPER(tbl_route_mapping.to_type)', !empty($this->to_type) ? strtoupper($this->to_type) : $this->to_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.sap_route_code', $this->sap_route_code])
                 ->andFilterWhere(['like', 'tbl_route_mapping.to_dest', $this->to_dest]);
 
