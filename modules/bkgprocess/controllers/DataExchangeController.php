@@ -105,11 +105,10 @@ class DataExchangeController extends ChildController {
                         $status = 2;
                         $log_model->status = 1;
                         $log_model->response = $response;
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $ex) {
                         $status = 3;
                         $log_model->status = 0;
-                        $log_model->response = "SOAP Error: " . htmlspecialchars($e->getMessage());
-                        echo "<h3>SOAP Error</h3><pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
+                        $log_model->response = "SOAP Error: " . htmlspecialchars($ex->getMessage());
                     }
                     $log_model->updated_at = date('Y-m-d H:i:s');
                     $log_model->save();

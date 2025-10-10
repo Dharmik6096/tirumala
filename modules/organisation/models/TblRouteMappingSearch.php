@@ -56,8 +56,8 @@ class TblRouteMappingSearch extends TblRouteMapping {
 //        $query->joinWith(['dcsCode', 'mccCode', 'dcsBmcCode']);
 //        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant', 'tbl_bmc');
         $query->leftJoin('tbl_dcs', 'tbl_dcs.route_code = tbl_route_mapping.route_code');
-        $query->leftJoin('tbl_mcc_plant', 'tbl_mcc_plant.mcc_plant_code = tbl_route_mapping.to_dest AND tbl_route_mapping.to_type = \'MCC\'');
-        $query->leftJoin('tbl_bmc', 'tbl_bmc.bmc_code = tbl_route_mapping.to_dest AND tbl_route_mapping.to_type = \'BMC\'');
+        $query->leftJoin('tbl_mcc_plant', 'tbl_mcc_plant.mcc_plant_code = tbl_route_mapping.to_dest AND tbl_route_mapping.to_type = \'' . strtoupper('mcc') . '\'');
+        $query->leftJoin('tbl_bmc', 'tbl_bmc.bmc_code = tbl_route_mapping.to_dest AND tbl_route_mapping.to_type = \'' . strtoupper('bmc') . '\'');
 
         $model_class = (new \ReflectionClass($this))->getShortName();
         $q_param = Yii::$app->request->queryParams;
@@ -115,13 +115,13 @@ class TblRouteMappingSearch extends TblRouteMapping {
         if (Yii::$app->session->get('BMC') !== '') {
             $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
             //$where_bmc['tbl_bmc.bmc_code'] = explode(',', Yii::$app->session->get('BMC'));
-            $where_bmc['tbl_route_mapping.to_typde'] = 'bmc';
+            $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
         }
 
         $where_mcc = [];
         if (Yii::$app->session->get('MCC') !== '') {
             $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
-           // $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
+            // $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
             $where_mcc['tbl_route_mapping.to_type'] = 'mcc';
 
             if (Yii::$app->session->get('BMC') == '') {
