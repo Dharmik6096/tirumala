@@ -682,7 +682,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $trip_detail->destination_code = $dloc_detail[0];
                         $trip_detail->destination_type = !empty($dloc_detail[1]) ? $dloc_detail[1] : 'bmc';
                     } else {
-                        if (!$is_auto_trip) {
+                        if (!$is_auto_trip || (isset($sloc_detail[1]) && $sloc_detail[1] == 'plant')) {
                             $trip_detail->is_last_destination = 1;
                         }
                     }

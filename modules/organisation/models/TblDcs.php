@@ -176,7 +176,7 @@ class TblDcs extends ChildModel {
             // [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
             [['allow_multi_family_member', /* 'destination_type', */], 'integer', 'except' => ['routeMapping']],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
-            [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date'], 'safe'],
+            [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date', 'type_of_dcs'], 'safe'],
                 [['fssi_expiry_date'], 'required', 'when' => function ($model) {
                     return !empty($model->fssi);
                 }, 'whenClient' => "function (attribute, value) {return $('#tbldcs-fssi').val() !== '';
@@ -459,6 +459,7 @@ class TblDcs extends ChildModel {
             'security_return_date' => Yii::t('app', 'Security Return Date'),
             'security_return_amt' => Yii::t('app', 'Security Return Amount'),
             'security_return_mode' => Yii::t('app', 'Security Return Mode'),
+            'type_of_dcs' => Yii::t('app', 'Type Of DCS'),
         ];
     }
 
@@ -1479,16 +1480,16 @@ class TblDcs extends ChildModel {
         }
 
         $exCodeData = $memberMod->find()
-            ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
-            ->where([$keyPattern['ex_code_reset_on'] => $this->{$keyPattern['ex_code_reset_on']}])
-            ->asArray()
-            ->one();
+                ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
+                ->where([$keyPattern['ex_code_reset_on'] => $this->{$keyPattern['ex_code_reset_on']}])
+                ->asArray()
+                ->one();
 
         $refAutoCodeData = $memberMod->find()
-            ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $keyPattern['ref_code_length'] . ') as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
-            ->where(['union_code' => $this->union_code])
-            ->asArray()
-            ->one();
+                ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $keyPattern['ref_code_length'] . ') as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+                ->where(['union_code' => $this->union_code])
+                ->asArray()
+                ->one();
 
         $exCode = str_pad($exCodeData['ex_code'], $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
         $autoCode = $refAutoCodeData['auto_code'];
@@ -1510,9 +1511,9 @@ class TblDcs extends ChildModel {
                     if (!isset($prefixData[$key])) {
                         $query = new \yii\db\Query();
                         $prefixData[$key] = $query->select($append_field)
-                            ->from($table_name)
-                            ->where([$where_key => $this->{$where_val}])
-                            ->one();
+                                ->from($table_name)
+                                ->where([$where_key => $this->{$where_val}])
+                                ->one();
                     }
                 }
             }
@@ -1543,9 +1544,9 @@ class TblDcs extends ChildModel {
                                 if (!isset($childPrefixData[$key])) {
                                     $query = new \yii\db\Query();
                                     $childPrefixData[$key] = $query->select($append_field)
-                                        ->from($table_name)
-                                        ->where([$where_key => $this->{$where_val}])
-                                        ->one();
+                                            ->from($table_name)
+                                            ->where([$where_key => $this->{$where_val}])
+                                            ->one();
                                 }
                             }
                         }
@@ -1566,9 +1567,9 @@ class TblDcs extends ChildModel {
                                 if (!isset($childSuffixData[$key])) {
                                     $query = new \yii\db\Query();
                                     $childSuffixData[$key] = $query->select($append_field)
-                                        ->from($table_name)
-                                        ->where([$where_key => $this->{$where_val}])
-                                        ->one();
+                                            ->from($table_name)
+                                            ->where([$where_key => $this->{$where_val}])
+                                            ->one();
                                 }
                             }
                         }
@@ -1580,19 +1581,19 @@ class TblDcs extends ChildModel {
                 $key_length = (int) $childKeyPattern['key_length'];
                 $masterHierarchy = new TblMasterHierarchy();
                 $childRefCodeData[$key_name] = $masterHierarchy->find()
-                    ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ') as bigint)),0)+1'])
-                    ->where(['union_code' => $this->union_code])
-                    ->asArray()
-                    ->one();
+                        ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ') as bigint)),0)+1'])
+                        ->where(['union_code' => $this->union_code])
+                        ->asArray()
+                        ->one();
                 $activeCounts[$key_name] = $masterHierarchy->getActiveCount($key_name, $childKeyPattern['key_reset_on']);
             }
         }
 
-        for ($x = 1; $x <= $config; $x++) {
+        for ($x = 0; $x < $config; $x++) {
             $memberModel = new TblMember();
             $memberModel->attributes = $this->attributes;
 
-            $memberModel->ex_member_code = str_pad((int)$exCode + $x, $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            $memberModel->ex_member_code = str_pad((int) $exCode + $x, $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
             $memberModel->auto_code = $autoCode + $x;
 
             $pk_code = $this->union_code . str_pad($memberModel->auto_code, 3, '0', STR_PAD_LEFT);
@@ -1618,10 +1619,10 @@ class TblDcs extends ChildModel {
                             $master[] = FALSE;
                         }
                     } else {
-                        $memberModel->ref_code .= $this->{$pre};
+                        $memberModel->ref_code .= $memberModel->{$pre};
                     }
                 }
-                $memberModel->ref_code .= str_pad((int)$refCode + $x, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+                $memberModel->ref_code = str_pad($memberModel->ref_code, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
             } elseif ($keyPattern['ref_code_type'] == 2) {
                 $memberModel->ref_code = $pk_code;
             }
@@ -1671,7 +1672,7 @@ class TblDcs extends ChildModel {
                                             $master[] = FALSE;
                                         }
                                     } else {
-                                        $masterHierarchy->{$key_name} .= $this->{$pre};
+                                        $masterHierarchy->{$key_name} .= $memberModel->{$pre};
                                     }
                                 }
                             }
@@ -1698,7 +1699,7 @@ class TblDcs extends ChildModel {
                                             $master[] = FALSE;
                                         }
                                     } else {
-                                        $masterHierarchy->{$key_name} .= $this->{$pre};
+                                        $masterHierarchy->{$key_name} .= $memberModel->{$pre};
                                     }
                                 }
                             }
@@ -1727,7 +1728,7 @@ class TblDcs extends ChildModel {
                         }
                     }
                     $memberModel->set_master_hierarchy[] = $masterHierarchy;
-                }   
+                }
             }
 
             Yii::$app->default->getDefaults($memberModel);
@@ -1767,7 +1768,7 @@ class TblDcs extends ChildModel {
             }
             $rows[] = $row;
         }
-        $master[] = Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
+        Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
     }
 
 }

@@ -22,7 +22,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Not Installed VLC'
 
                         <div class="col-sm-6 farmer_rmrd_block">
                             <?php
-                            echo $this->render('_dashboard_grid_mobile_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data]);
+                            echo $this->render('_dashboard_grid_mobile_block', ['date' => $date, 'class_cols' => $class_cols, 'blocks_data' => $blocks_data, 'union_code' => $union_code]);
                             ?>
                         </div>
                         <div id="recovery_grid" class="col-sm-6">

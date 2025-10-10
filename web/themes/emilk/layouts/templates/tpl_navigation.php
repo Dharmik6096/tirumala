@@ -709,6 +709,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Total sale invoice'), 'url' => ['/jasperreports/default/product-sale-invoice']],
                                     ]
                                 ],
+                                ['label' => Yii::t('app', 'Supply Status Reports'), 'url' => ['/misreports/reports/yearly-farmer-collection-report']],
                             ]
                         ],
                             [
@@ -837,6 +838,7 @@ echo GhostMenu::widget([
                             ['label' => '512 -' . Yii::t('app', 'Chilling Bill Invoice'), 'url' => ['/jasperreports/default/mcc-chilling-bill-invoice']],
                             ['label' => '513 -' . Yii::t('app', 'TP Bill'), 'url' => ['/jasperreports/default/party-payment-bill']],
                             ['label' => '514 -' . Yii::t('app', 'Handling & Storage Charges(chiller) Summary'), 'url' => ['/misreports/reports/chiller-cost-summary']],
+                            ['label' => '515 -' . Yii::t('app', 'Payment Cycle Report'), 'url' => ['/misreports/reports/payment-cycle-report']],
                     ]
                 ],
                     [
@@ -857,6 +859,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 2'), 'url' => ['/jasperreports/default/vendor-milk-bill-summary-glt']],
                                             ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
                                             ['label' => Yii::t('app', 'Format 4'), 'url' => ['/jasperreports/default/vsp-payment-nawasa']],
+                                            ['label' => Yii::t('app', 'BMC Milk Payment Voucher'), 'url' => ['/jasperreports/default/bmc-milk-payment-voucher']],
                                     ]
                                 ],
                                     [
@@ -1383,6 +1386,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                             ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                             ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
+                            ['label' => Yii::t('app', 'Member / Rate - Repush'), 'url' => ['/organisation/tbl-member-rate-repush-log/index'], 'active' => ($cntrl == 'tbl-member-rate-repush-log')],
                     //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],

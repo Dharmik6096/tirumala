@@ -1723,9 +1723,17 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollectionSummaryRahema() {
         $this->report = 'BmcCollectionSummaryRahema';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BmcCollectionDateWiseRheman';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'BmcCollectionConsolidatedRaheman';
+            }
+        }
         return $this->actionIndex();
     }
-
+    
     public function actionMobileAppReport() {
         $this->report = 'MobileAppReport';
         return $this->actionIndex();
@@ -2134,6 +2142,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionPaymentCycleReport() {
+        $this->report = 'PaymentCycleReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionYearlyFarmerCollectionReport() {
+        $this->report = 'YearlyFarmerCollectionReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'YearlyVspCollectionReport';
+            }
+        }
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4063,6 +4086,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_date_shift_wise_rheman',
                 'scenario' => 'BmcCollectionSummaryRahema',
                 'title' => 'BMC Collection Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BmcCollectionDateWiseRheman' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_date_wise_rheman',
+                'scenario' => 'BmcCollectionSummaryRahema',
+                'title' => 'BMC Collection Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BmcCollectionConsolidatedRaheman' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_consolidated_rheman',
+                'scenario' => 'BmcCollectionSummaryRahema',
+                'title' => 'BMC Collection Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'MobileAppReport' => [
                 'param' => 'user_login_type,login_user_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -4622,7 +4660,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'AssetDetailSummary' => [
-                'param' => 'store_location_type,store_location_code,is_groupbyserial:static:boolean_value',
+                'param' => 'store_location_type_all,store_location_code,is_groupbyserial:static:boolean_value',
                 'sp_name' => 'get_asset_location_data',
                 'scenario' => 'AssetDetailSummary',
                 'title' => '922 - Asset Detail Summary',
@@ -4643,6 +4681,29 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '119 - Farmer Wise Milk Bill 2',
                 'to_decrypt' => ['adhar_no'],
                 'report_type' => [Yii::t('app', 'Register'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'PaymentCycleReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_get_payment_cycle_report',
+                'scenario' => 'PaymentCycleReport',
+                'title' => '515 - Payment Cycle Report',
+                'bkg_export' => TRUE
+            ],
+            'YearlyFarmerCollectionReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'get_yearly_farmer_collection_report',
+                'scenario' => 'YearlyFarmerCollectionReport',
+                'title' => 'Supply Status Reports',
+                'report_type' => [Yii::t('app', 'Farmer'), Yii::t('app', 'VSP')],
+                'bkg_export' => TRUE
+            ],
+            'YearlyVspCollectionReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'get_yearly_vsp_collection_report',
+                'scenario' => 'YearlyFarmerCollectionReport',
+                'title' => 'Supply Status Reports',
+                'report_type' => [Yii::t('app', 'Farmer'), Yii::t('app', 'VSP')],
                 'bkg_export' => TRUE
             ],
         ];
