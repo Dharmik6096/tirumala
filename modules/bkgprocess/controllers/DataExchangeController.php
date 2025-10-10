@@ -105,13 +105,15 @@ class DataExchangeController extends ChildController {
                         $status = 2;
                         $log_model->status = 1;
                         $log_model->response = $response;
+                        log_model->updated_at = date('Y-m-d H:i:s');
+                        $log_model->save();
                     } catch (\Throwable $ex) {
                         $status = 3;
                         $log_model->status = 0;
                         $log_model->response = "SOAP Error: " . htmlspecialchars($ex->getMessage());
+                        $log_model->updated_at = date('Y-m-d H:i:s');
+                        $log_model->save();
                     }
-                    $log_model->updated_at = date('Y-m-d H:i:s');
-                    $log_model->save();
                 } else {
                     $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
