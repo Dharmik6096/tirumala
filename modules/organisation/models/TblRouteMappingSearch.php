@@ -115,19 +115,19 @@ class TblRouteMappingSearch extends TblRouteMapping {
         if (Yii::$app->session->get('BMC') !== '') {
             $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
             //$where_bmc['tbl_bmc.bmc_code'] = explode(',', Yii::$app->session->get('BMC'));
-            $where_bmc['UPPER(tbl_route_mapping.to_type)'] = 'bmc';
+            $where_bmc['LOWER(tbl_route_mapping.to_type)'] = 'bmc';
         }
 
         $where_mcc = [];
         if (Yii::$app->session->get('MCC') !== '') {
             $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
             // $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
-            $where_mcc['UPPER(tbl_route_mapping.to_type)'] = 'mcc';
+            $where_mcc['LOWER(tbl_route_mapping.to_type)'] = 'mcc';
 
             if (Yii::$app->session->get('BMC') == '') {
 //                $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
                 $where_bmc['tbl_bmc.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
-                $where_bmc['UPPER(tbl_route_mapping.to_type)'] = 'bmc';
+                $where_bmc['LOWER(tbl_route_mapping.to_type)'] = 'bmc';
             }
         }
         $query->andWhere(['or', $where_bmc, $where_mcc]);
@@ -164,7 +164,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_type', $this->route_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_type', $this->from_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_dest', $this->from_dest])
-                ->andFilterWhere(['like', 'UPPER(tbl_route_mapping.to_type)', $this->to_type])
+                ->andFilterWhere(['like', 'UPPER(tbl_route_mapping.to_type)', strtoupper($this->to_type)])
                 ->andFilterWhere(['like', 'tbl_route_mapping.sap_route_code', $this->sap_route_code])
                 ->andFilterWhere(['like', 'tbl_route_mapping.to_dest', $this->to_dest]);
 
