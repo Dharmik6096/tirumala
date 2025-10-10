@@ -349,22 +349,24 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
                             if (!empty($approval_stages)) {
                                 $status = 'Register';
+                                $model->scenario = 'MemberDocument';
                             }
                             if (!empty(Yii::$app->request->post()['operation'] == 'reroute')) {
-                                $model = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
+                                $provisionalModel = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
                                 $historyModel = new TblMemberProvisionalHistory();
-                                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                                Yii::$app->operation->history($provisionalModel, $historyModel, UPDATE);
                                 $save_model[] = $historyModel;
                                 $model->remarks = !empty(Yii::$app->request->post()['remarks']) ? Yii::$app->request->post()['remarks'] : '';
                                 if (!empty($approval_stages)) {
                                     $status = 'Reroute';
                                 }
+                                $model->scenario = 'MemberReroute';
                             }
                             $model->provisional_status = empty($approval_stages) ? 'Approve' : $status;
                             if (strtolower($model->provisional_status) == 'approve') {
                                 $model->member_status = 1; //Created
+                                $model->scenario = 'MemberDocument';
                             }
-                            $model->scenario = 'MemberDocument';
                             $save_model[] = $model;
                         } else {
                             if (Yii::$app->request->post('request_button') === 'approve') {

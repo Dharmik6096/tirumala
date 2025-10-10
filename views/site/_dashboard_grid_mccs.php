@@ -159,7 +159,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                     if (!empty($output)) {
                                                         $i = 0;
                                                         foreach ($output as $data) {
-                                                            $totalQuantityStyle = ($data['ld_quantity'] > $data['total_quantity']) ? 'style="background-color: #ff000099; color: #fff;"' : 'style="background-color: #008000c4; color: #fff;"';
+                                                            $totalQuantityStyle = ($data['ld_quantity'] > $data['total_quantity']) ? 'style="background-color: #ff000099;"' : 'style="background-color: #008000c4;"';
                                                             $totalQuantity += $data['total_quantity'];
                                                             $totalFatSolid += $data['fat_solid'];
                                                             $totalSnfSolid += $data['snf_solid'];
@@ -185,7 +185,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                                 <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['lysd_quantity'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['ld_quantity'] ?></td>
-                                                                <td class="number_align custom_grid_normal" <?= $totalQuantityStyle ?>><?= $data['total_quantity'] ?></td>
+                                                                <td class="number_align custom_grid_normal color_fff" <?= $totalQuantityStyle ?>><?= $data['total_quantity'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['avgSNF'] ?></td>
                                                                 <td class="number_align custom_grid_normal" ><?= $data['avgRate'] ?></td>
