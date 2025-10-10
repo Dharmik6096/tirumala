@@ -105,7 +105,7 @@ class DataExchangeController extends ChildController {
                         $status = 2;
                         $log_model->status = 1;
                         $log_model->response = $response;
-                        log_model->updated_at = date('Y-m-d H:i:s');
+                        $log_model->updated_at = date('Y-m-d H:i:s');
                         $log_model->save();
                     } catch (\Throwable $ex) {
                         $status = 3;
