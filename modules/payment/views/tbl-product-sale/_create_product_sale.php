@@ -15,6 +15,7 @@ $cashSale = isset($cashSale) ? $cashSale : '';
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_product_rate', 'PORTAL');
 $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRate == 1) ? 'TRUE' : 'FALSE';
+$setProductRateBatchWise = true;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -286,8 +287,11 @@ $script = "
             setRate();
         }
         setDeductionStartDate();
-        if($('#tblproductsale-ex_code').val() != '') {
-          reloadGrid('show_loader');
+        var bmc_code = $('#tblproductsale-bmc_code').val();
+        var dcs_code = $('#tblproductsale-dcs_code').val();
+        var customer_type = $('#tblproductsale-customer_type').val();
+        if($(this).val() != '' && bmc_code != '' && (dcs_code != '' || customer_type != '')) {
+            reloadGrid('show_loader');
         }
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
@@ -304,7 +308,10 @@ $script = "
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
-        reloadGrid('show_loader');
+        var invoice_date = $('#tblproductsale-invoice_date').val();
+        if($(this).val() != '' && invoice_date != '') {
+            reloadGrid('show_loader');
+        }
     });
     $(document).on('change','#tblproductsale-customer_type',function(){
         $('#tblproductsale-ex_code').val('');
@@ -319,13 +326,23 @@ $script = "
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
-//        reloadGrid();
+        var invoice_date = $('#tblproductsale-invoice_date').val();
+        var bmc_code = $('#tblproductsale-bmc_code').val();
+        if($(this).val() != '' && bmc_code != '' && invoice_date != '') {
+            reloadGrid();
+        }
     });
     $(document).on('change','#tblproductsale-customer_code',function(){
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
-        reloadGrid();
+        var invoice_date = $('#tblproductsale-invoice_date').val();
+        var bmc_code = $('#tblproductsale-bmc_code').val();
+        var customer_type = $('#tblproductsale-customer_type').val();
+        var dcs_code = $('#tblproductsale-dcs_code').val();
+        if($(this).val() != '' && bmc_code != '' && invoice_date != '' && (dcs_code != '' || customer_type != '')){
+            reloadGrid();
+        }
     });
     $(document).on('change','#tblproductsaletransaction-product_code',function(){
         if(batchNoWiseRate == 'FALSE') {

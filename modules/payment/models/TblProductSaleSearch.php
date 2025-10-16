@@ -102,7 +102,7 @@ class TblProductSaleSearch extends TblProductSale {
         return $dataProvider;
     }
 
-    public function searchSaleDetails($params) {
+    public function searchSaleDetails($params, $break_query = false) {
         $query = TblProductSaleTransaction::find();
 
         // add conditions that should always apply here
@@ -112,14 +112,12 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['productSaleCode', 'saleInstallments']);
-        $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
-        if (!$this->validate()) {
+        if (!$this->validate() || $break_query) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['productSaleCode', 'saleInstallments']);
         if (!empty($this->invoice_date)) {
             $model = new TblPaymentCycleApplicability();
             $model->applicable_type = $this->customer_type;
@@ -127,14 +125,18 @@ class TblProductSaleSearch extends TblProductSale {
             $model->applicable_for = 'BMC';
             $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
             if (!empty($modelData)) {
-                $query->andFilterWhere(['or', ['between', 'cast(tbl_product_sale.invoice_date as date)', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))], ['between', 'tbl_product_sale_installment.installment_date', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))]]);
+                $query->andFilterWhere(['or', ['between', 'tbl_product_sale.invoice_date', date('Y-m-d', strtotime($modelData->from_date)).' 00:00:00', date('Y-m-d', strtotime($modelData->to_date)).' 23:59:00'], ['between', 'tbl_product_sale_installment.installment_date', date('Y-m-d', strtotime($modelData->from_date)).' 00:00:00', date('Y-m-d', strtotime($modelData->to_date)).' 23:59:00']]);
             } else {
-                $query->andFilterWhere(['or', ['cast(tbl_product_sale.invoice_date as date)' => date('Y-m-d', strtotime($this->invoice_date))], ['tbl_product_sale_installment.installment_date' => date('Y-m-d', strtotime($this->invoice_date))]]);
+                $query->andFilterWhere(['or', ['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date)).' 00:00:00'], ['tbl_product_sale_installment.installment_date' => date('Y-m-d', strtotime($this->invoice_date))]]);
             }
         }
         $query->andFilterWhere([
-            'tbl_product_sale.customer_type' => $this->customer_type,
             'tbl_product_sale.customer_code' => $this->customer_code,
+            'tbl_product_sale.customer_type' => $this->customer_type,
+        ]);
+        $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
+        $query->andFilterWhere([
             'tbl_product_sale.union_code' => $this->union_code,
         ]);
         return $dataProvider;
