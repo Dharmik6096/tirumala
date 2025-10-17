@@ -61,18 +61,21 @@ class TblProductSaleSearch extends TblProductSale {
             $query->andFilterWhere(['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date)).' 00:00:00']);
 
         if (!empty($this->created_at)) {
-            $query->andFilterWhere(['between', 'tbl_product_sale.created_at', date('Y-m-d', strtotime($this->created_at)).' 00:00:00', date('Y-m-d', strtotime($this->created_at)).' 23:59:00']);
+            $created_at_start = date('Y-m-d', strtotime($this->created_at)) . ' 00:00:00';
+            $created_at_end = date('Y-m-d', strtotime($this->created_at)) . ' 23:59:00';
+
+            $query->andFilterWhere(['and',
+                ['>=', 'tbl_product_sale.created_at', $created_at_start],
+                ['<=', 'tbl_product_sale.created_at', $created_at_end]
+            ]);
         }
 
-        if (!empty($this->from_date)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'tbl_product_sale.invoice_date', $from_date.' 00:00:00']);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'tbl_product_sale.invoice_date', $from_date.' 00:00:00']);
 
-        if (!empty($this->to_date)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'tbl_product_sale.invoice_date', $to_date.' 23:59:00']);
-        }
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_product_sale.invoice_date', $to_date.' 23:59:00']);
+
         Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -125,20 +128,22 @@ class TblProductSaleSearch extends TblProductSale {
             $model->applicable_for = 'BMC';
             $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
             if (!empty($modelData)) {
-                $query->andFilterWhere(['or', ['between', 'tbl_product_sale.invoice_date', date('Y-m-d', strtotime($modelData->from_date)).' 00:00:00', date('Y-m-d', strtotime($modelData->to_date)).' 23:59:00'], ['between', 'tbl_product_sale_installment.installment_date', date('Y-m-d', strtotime($modelData->from_date)).' 00:00:00', date('Y-m-d', strtotime($modelData->to_date)).' 23:59:00']]);
+                $from_date = date('Y-m-d', strtotime($modelData->from_date)) . ' 00:00:00';
+                $to_date = date('Y-m-d', strtotime($modelData->to_date)) . ' 23:59:00';
+
+                $query->andFilterWhere(['or',
+                    ['and', ['>=', 'tbl_product_sale.invoice_date', $from_date], ['<=', 'tbl_product_sale.invoice_date', $to_date]],
+                    ['and', ['>=', 'tbl_product_sale_installment.installment_date', $from_date], ['<=', 'tbl_product_sale_installment.installment_date', $to_date]]
+                ]);
             } else {
                 $query->andFilterWhere(['or', ['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date)).' 00:00:00'], ['tbl_product_sale_installment.installment_date' => date('Y-m-d', strtotime($this->invoice_date))]]);
             }
         }
-        $query->andFilterWhere([
-            'tbl_product_sale.customer_code' => $this->customer_code,
-            'tbl_product_sale.customer_type' => $this->customer_type,
-        ]);
+        $query->andFilterWhere(['tbl_product_sale.customer_code' => $this->customer_code]);
         $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
+        $query->andFilterWhere(['tbl_product_sale.customer_type' => $this->customer_type]);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
-        $query->andFilterWhere([
-            'tbl_product_sale.union_code' => $this->union_code,
-        ]);
+        $query->andFilterWhere(['tbl_product_sale.union_code' => $this->union_code]);
         return $dataProvider;
     }
 
