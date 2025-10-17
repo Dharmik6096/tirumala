@@ -176,7 +176,7 @@ $user_type = Yii::$app->session->get('UserType');
 ?>
 
 <div class="panel-group row panel-fixed dashboard_search_filter" id="filter">
-    <div class="panel panel-default min_h_0">
+    <div class="panel panel-default min_h_0 mt50">
         <div id="collapse1" >
             <div class="panel-body">
                 <div class="col-sm-12 padding_left_right_0">
@@ -214,18 +214,20 @@ $user_type = Yii::$app->session->get('UserType');
                             <?php echo Html::hiddenInput('load_all', true, ['id' => 'load_all']); ?>
                             <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false, false, false); ?>
                         </div>
-                        <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
-                            <button type="button" class="widget_table_setting_btn" data-bs-toggle="collapse" data-bs-target="#modal_widget_selection"><i class="fa fa-cog faa-spin animated faa-slow"></i></button>
-                        </div>
-                        <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
-                            <?= Yii::$app->controls->search(); ?>
-                        </div>
-                        <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
-                            <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile-alt" title="Member Mobile Info."></i></a>
-                        </div>
-                        <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
-                            <a type="button" class="pull-Left dpu_data_icon pie_chart_icon" data-bs-toggle="collapse" data-bs-target="#dpu_widget_filter"><img src="<?= $imageIconPath . 'dpu_data.png' ?>"></img></a>
-                            <!-- <a class="dpu_data_popup"></a> -->
+                        <div class="report-grids">
+                            <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
+                                <button type="button" class="widget_table_setting_btn" data-bs-toggle="collapse" data-bs-target="#modal_widget_selection"><i class="fa fa-cog faa-spin animated faa-slow"></i></button>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
+                                <?= Yii::$app->controls->search(); ?>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
+                                <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile-alt" title="Member Mobile Info."></i></a>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
+                                <a type="button" class="pull-Left dpu_data_icon pie_chart_icon" data-bs-toggle="collapse" data-bs-target="#dpu_widget_filter"><img src="<?= $imageIconPath . 'dpu_data.png' ?>"></img></a>
+                                <!-- <a class="dpu_data_popup"></a> -->
+                            </div>
                         </div>
                     </span>
 
