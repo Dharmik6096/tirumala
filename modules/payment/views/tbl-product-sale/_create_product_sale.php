@@ -286,9 +286,7 @@ $script = "
             setRate();
         }
         setDeductionStartDate();
-        if($('#tblproductsale-ex_code').val() != '') {
-          reloadGrid('show_loader');
-        }
+        reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
         $('#tblproductsale-ex_code').val('');
@@ -296,7 +294,7 @@ $script = "
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
-//        reloadGrid('show_loader');
+       reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-dcs_code',function(){
         $('#tblproductsale-ex_code').val('');
@@ -319,13 +317,15 @@ $script = "
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
-//        reloadGrid();
+        reloadGrid();
     });
     $(document).on('change','#tblproductsale-customer_code',function(){
         if(batchNoWiseRate == 'FALSE') {
             setRate();
         }
-        reloadGrid();
+        if(setData($(this).val())){
+            reloadGrid();
+        }
     });
     $(document).on('change','#tblproductsaletransaction-product_code',function(){
         if(batchNoWiseRate == 'FALSE') {
@@ -486,7 +486,7 @@ $script = "
     }
     function setRate(){
         $('#tblproductsaletransaction-rate').val('');
-//        $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
+        //        $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
         $('#tblproductsaletransaction-x_col1').val('');
         $('#tblproductsaletransaction-unit_code').val('');
         $('#tblproductsaletransaction-product_sale_rate_applicability_code').val('');
@@ -516,7 +516,7 @@ $script = "
             success: function(data) {
                 var d=JSON.parse(data);
                 $('#tblproductsaletransaction-rate').val(d.sale_rate);
-//                $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
+        //                $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
                 $('#tblproductsaletransaction-x_col1').val(d.sale_rate);
                 $('#tblproductsaletransaction-unit_code').val(d.unit_code);
                 $('#tblproductsaletransaction-unit_code').trigger('change');
@@ -527,7 +527,7 @@ $script = "
             error:function(data){
                     }
         });
-//        $('#tblproductsaletransaction-rate').val('10');
+        //        $('#tblproductsaletransaction-rate').val('10');
     }
     
     function setAmount(){
@@ -557,8 +557,7 @@ $script = "
     }
     
     function reloadGrid(loaderType = 'hide_loader') {
-        var saleDate = $('#tblproductsale-invoice_date').val();
-        if(saleDate != '' && saleDate != undefined && saleDate != null) {
+        if(checkData()) {
             var url = '" . Url::to(['/payment/tbl-product-sale/list-grid']) . "'+ '?' + $('#create-product-sale-form').serialize();
             $.ajax({
                 type: 'get',
@@ -575,6 +574,19 @@ $script = "
             });
         } else {
             $('#gridcontentSet').html('');
+        }
+    }
+
+    function checkData() {
+        var bmc_code = $('#tblproductsale-bmc_code').val();
+        var invoice_date = $('#tblproductsale-invoice_date').val();
+        var dcs_code = $('#tblproductsale-dcs_code').val();
+        var customer_type = $('#tblproductsale-customer_type').val();
+        // if(setData(bmc_code) && setData(invoice_date) && setData(customer_type) && (customer_type == 'Member' ? setData(dcs_code) : true){
+        if(setData(bmc_code) && setData(invoice_date) && setData(customer_type) && ((customer_type == 'Member' ? setData(dcs_code) : true))){
+            return true;
+        } else {
+            return false;
         }
     }
     
@@ -694,28 +706,28 @@ $script = "
         }
        
         if(setData(type) && setData(code) && setData(product)){
-             $.ajax({
-                    type: 'post',
-                    url:'" . Url::to(['get-available-stock']) . "',
-                    data: {'product':product,'type':type,'code':code,'union_code':union,'sap_batch_no':sap_batch_no},
-                    success: function(data) {                                        
-                        var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
-                        {
-                            $('#tblproductsaletransaction-available_stock').val(obj.stock);
-                            if(batchNoWiseRate == 'TRUE') {
-                                $('#tblproductsaletransaction-rate').val(obj.sale_rate);
-                                $('#tblproductsaletransaction-x_col1').val(obj.sale_rate);
-                                $('#tblproductsaletransaction-unit_code').val(obj.unit_code);
-                                $('#tblproductsaletransaction-unit_code').trigger('change');
-                                $('#tblproductsaletransaction-unit_code').trigger('select2:select');
-                            }
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['get-available-stock']) . "',
+                data: {'product':product,'type':type,'code':code,'union_code':union,'sap_batch_no':sap_batch_no},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success')
+                    {
+                        $('#tblproductsaletransaction-available_stock').val(obj.stock);
+                        if(batchNoWiseRate == 'TRUE') {
+                            $('#tblproductsaletransaction-rate').val(obj.sale_rate);
+                            $('#tblproductsaletransaction-x_col1').val(obj.sale_rate);
+                            $('#tblproductsaletransaction-unit_code').val(obj.unit_code);
+                            $('#tblproductsaletransaction-unit_code').trigger('change');
+                            $('#tblproductsaletransaction-unit_code').trigger('select2:select');
                         }
-                    },
-                    error:function(data){
-
                     }
-                });
+                },
+                error:function(data){
+
+                }
+            });
         } 
     
     }
@@ -735,37 +747,35 @@ $script = "
            var code = $('#tblproductsale-customer_code').val();
 
 
-//        var code ='';
-//        if(type=='Member'){
-//            var code = $('#tblproductsale-dcs_code').val();
-//        }else{
-//            var code = $('#tblproductsale-bmc_code').val();
-//        }
+            //        var code ='';
+            //        if(type=='Member'){
+            //            var code = $('#tblproductsale-dcs_code').val();
+            //        }else{
+            //            var code = $('#tblproductsale-bmc_code').val();
+            //        }
 
         if(setData(date) && setData(type) && setData(code)){
-             $.ajax({
-                    type: 'post',
-                    url:'" . Url::to(['set-available-credit']) . "',
-                    data: {'date':date,'type':type,'code':code,'union':union,'bmc':bmc,'pay_mode':pay_mode,'amount_due':amount_due,'noi':noi},
-                    success: function(data) {                                        
-                        var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
-                        {
-                           $('#tblproductsale-avl_credit').val(obj.credit);
-                        }else{
-   bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Payment Cycle aplicability not available for Sale Date.') . "</span></div></div>', function(result){
-                       setTimeout(function(){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['set-available-credit']) . "',
+                data: {'date':date,'type':type,'code':code,'union':union,'bmc':bmc,'pay_mode':pay_mode,'amount_due':amount_due,'noi':noi},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        $('#tblproductsale-avl_credit').val(obj.credit);
+                    } else {
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Payment Cycle aplicability not available for Sale Date.') . "</span></div></div>', function(result){
+                            setTimeout(function(){
                                 $('#tblproductsale-ex_code').focus();
                             },100);
                         });                         
-}
-                    },
-                    error:function(data){
-
                     }
-                });
-        } 
-    
+                },
+                error:function(data){
+
+                }
+            });
+        }
     }
     function setData(field = ''){
         if(field != '' && field != null && field != undefined && field != 'Loading ...'){
