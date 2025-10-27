@@ -8,6 +8,7 @@ $this->params['menu'][] = Yii::$app->controls->add('Asset Transfer (' . Yii::t('
 $this->params['menu'][] = Yii::$app->controls->import('asset-detail', $this);
 //$this->params['menu'][] = Yii::$app->controls->import('asset-detail-bom', $this, Yii::t('app', 'Asset Detail Bom Import'));
 $this->params['menu'][] = Yii::$app->controls->import('asset-detail-bom', $this, Yii::t('app', 'Asset Detail Bom Import'), [], 'asset_detail_bom_1');
+$this->params['menu'][] = Yii::$app->controls->import('asset-cluster-vendor-info', $this, Yii::t('app', 'Import Mobile/Email'), [], 'asset_cluster_vendor_info');
 
 //$this->params['menu'][] = Yii::$app->controls->import('asset-detail-bom', $this);
 ?>
