@@ -223,7 +223,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                     } else {
                         $purchaseBasedModel = new TblTankerRateBased();
                         $purchaseBasedModel->tanker_rate_code = $purchaseRate->tanker_rate_code;
-                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->tanker_rate_code . ($purchaseBasedModel->getCode() + $baseCode);
+                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->getCode() + $baseCode;
                         $purchaseBasedModel->milk_type_code = $milk_type_code;
                         $purchaseBasedModel->rate_type_code = $rate_type_code;
                         $purchaseBasedModel->fat_rate = number_format((float) $worksheet->getCell('A2')->getValue(), 1);
@@ -244,7 +244,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                             if ($row != 2) {
                                 $oldrowrange = floatval($worksheet->getCell('A' . ($row - 1))->getValue());
                                 $newrowrange = floatval($worksheet->getCell('A' . $row)->getValue());
-                                if ((round(($newrowrange - $oldrowrange), 1) !== 0.1)) {
+                                if ((round(($newrowrange - $oldrowrange), 1) !== 0.1) && (round(($newrowrange - $oldrowrange), 2) !== 0.01)) {
                                     return [
                                         'status' => 'error',
                                         'message' => 'Invalid Sheet Format(Range Missing row) [' . $sheetTitle . ']'
@@ -261,33 +261,33 @@ class TblTankerRateController extends \app\controllers\ChildController {
                                 if ($col != 'B') {
                                     $oldcolrange = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . '1')->getValue());
                                     $newcolrange = floatval($worksheet->getCell($col . '1')->getValue());
-                                    if ((round(($newcolrange - $oldcolrange), 1) !== 0.1)) {
+                                    if ((round(($newcolrange - $oldcolrange), 1) !== 0.1) && (round(($newcolrange - $oldcolrange), 2) !== 0.01)) {
                                         return [
                                             'status' => 'error',
                                             'message' => 'Invalid Sheet Format (Range Missing col) [' . $sheetTitle . ']'
                                         ];
                                     }
                                 }
-                                if (is_float($cell)) {
-                                    $currentcell = floatval($cell);
-                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
-                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
-                                    if ($row == 2) {
-                                        if ($col != 'B' && $currentcell < $previouscell) {
-                                            $error = TRUE;
-                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-                                        }
-                                    } else {
-                                        if ($col == 'B' && $currentcell < $previousrow) {
-                                            $error = TRUE;
-                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-                                        } else if ($col != 'B') {
-                                            if ($currentcell < $previouscell) {
-                                                $error = TRUE;
-                                                $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-                                            }
-                                        }
-                                    }
+                                if (is_integer($cell) || is_int($cell) || is_float($cell) || is_double($cell)) {
+//                                    $currentcell = floatval($cell);
+//                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
+//                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
+//                                    if ($row == 2) {
+//                                        if ($col != 'B' && $currentcell < $previouscell) {
+//                                            $error = TRUE;
+//                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+//                                        }
+//                                    } else {
+//                                        if ($col == 'B' && $currentcell < $previousrow) {
+//                                            $error = TRUE;
+//                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+//                                        } else if ($col != 'B') {
+//                                            if ($currentcell < $previouscell) {
+//                                                $error = TRUE;
+//                                                $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+//                                            }
+//                                        }
+//                                    }
                                     if (!$error) {
                                         $data [$i] [] = [
                                             // $purchaseRate->tanker_rate_code . ($purchaseModel->getCode() + $cnt),

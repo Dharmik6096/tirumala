@@ -3096,4 +3096,17 @@ class GeneralFunctions extends Component {
         return $response;
     }
 
+    public static function generateDepartmentId($model, $autoIncrement = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $tableName = $model->tableName();
+        $maxValue = (new Query())
+                ->select([("ISNULL(MAX({$primaryKey}), 0) AS max_value")])
+                ->from($tableName)
+                ->where("ISNUMERIC({$primaryKey}) = 1")
+                ->scalar();
+
+        $newId = (int) $maxValue + $autoIncrement;
+        return (string) $newId;
+    }
+
 }

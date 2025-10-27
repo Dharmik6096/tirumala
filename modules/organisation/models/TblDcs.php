@@ -1480,16 +1480,16 @@ class TblDcs extends ChildModel {
         }
 
         $exCodeData = $memberMod->find()
-            ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
-            ->where([$keyPattern['ex_code_reset_on'] => $this->{$keyPattern['ex_code_reset_on']}])
-            ->asArray()
-            ->one();
+                ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
+                ->where([$keyPattern['ex_code_reset_on'] => $this->{$keyPattern['ex_code_reset_on']}])
+                ->asArray()
+                ->one();
 
         $refAutoCodeData = $memberMod->find()
-            ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $keyPattern['ref_code_length'] . ') as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
-            ->where(['union_code' => $this->union_code])
-            ->asArray()
-            ->one();
+                ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $keyPattern['ref_code_length'] . ') as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+                ->where(['union_code' => $this->union_code])
+                ->asArray()
+                ->one();
 
         $exCode = str_pad($exCodeData['ex_code'], $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
         $autoCode = $refAutoCodeData['auto_code'];
@@ -1511,9 +1511,9 @@ class TblDcs extends ChildModel {
                     if (!isset($prefixData[$key])) {
                         $query = new \yii\db\Query();
                         $prefixData[$key] = $query->select($append_field)
-                            ->from($table_name)
-                            ->where([$where_key => $this->{$where_val}])
-                            ->one();
+                                ->from($table_name)
+                                ->where([$where_key => $this->{$where_val}])
+                                ->one();
                     }
                 }
             }
@@ -1544,9 +1544,9 @@ class TblDcs extends ChildModel {
                                 if (!isset($childPrefixData[$key])) {
                                     $query = new \yii\db\Query();
                                     $childPrefixData[$key] = $query->select($append_field)
-                                        ->from($table_name)
-                                        ->where([$where_key => $this->{$where_val}])
-                                        ->one();
+                                            ->from($table_name)
+                                            ->where([$where_key => $this->{$where_val}])
+                                            ->one();
                                 }
                             }
                         }
@@ -1567,9 +1567,9 @@ class TblDcs extends ChildModel {
                                 if (!isset($childSuffixData[$key])) {
                                     $query = new \yii\db\Query();
                                     $childSuffixData[$key] = $query->select($append_field)
-                                        ->from($table_name)
-                                        ->where([$where_key => $this->{$where_val}])
-                                        ->one();
+                                            ->from($table_name)
+                                            ->where([$where_key => $this->{$where_val}])
+                                            ->one();
                                 }
                             }
                         }
@@ -1581,19 +1581,19 @@ class TblDcs extends ChildModel {
                 $key_length = (int) $childKeyPattern['key_length'];
                 $masterHierarchy = new TblMasterHierarchy();
                 $childRefCodeData[$key_name] = $masterHierarchy->find()
-                    ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ') as bigint)),0)+1'])
-                    ->where(['union_code' => $this->union_code])
-                    ->asArray()
-                    ->one();
+                        ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ') as bigint)),0)+1'])
+                        ->where(['union_code' => $this->union_code])
+                        ->asArray()
+                        ->one();
                 $activeCounts[$key_name] = $masterHierarchy->getActiveCount($key_name, $childKeyPattern['key_reset_on']);
             }
         }
 
-        for ($x = 1; $x <= $config; $x++) {
+        for ($x = 0; $x < $config; $x++) {
             $memberModel = new TblMember();
             $memberModel->attributes = $this->attributes;
 
-            $memberModel->ex_member_code = str_pad((int)$exCode + $x, $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            $memberModel->ex_member_code = str_pad((int) $exCode + $x, $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
             $memberModel->auto_code = $autoCode + $x;
 
             $pk_code = $this->union_code . str_pad($memberModel->auto_code, 3, '0', STR_PAD_LEFT);
@@ -1622,7 +1622,7 @@ class TblDcs extends ChildModel {
                         $memberModel->ref_code .= $memberModel->{$pre};
                     }
                 }
-                $memberModel->ref_code .= str_pad((int)$refCode + $x, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+                $memberModel->ref_code = str_pad($memberModel->ref_code, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
             } elseif ($keyPattern['ref_code_type'] == 2) {
                 $memberModel->ref_code = $pk_code;
             }
@@ -1728,7 +1728,7 @@ class TblDcs extends ChildModel {
                         }
                     }
                     $memberModel->set_master_hierarchy[] = $masterHierarchy;
-                }   
+                }
             }
 
             Yii::$app->default->getDefaults($memberModel);

@@ -36,7 +36,7 @@ class TblDepartmentController extends ChildController {
         $this->model = new TblDepartment();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->department_id = strtolower(str_replace(' ', '_', $this->model->department));
+            $this->model->department_id = Yii::$app->general->generateDepartmentId($this->model);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Department', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
