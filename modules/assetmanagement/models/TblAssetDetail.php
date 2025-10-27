@@ -9,6 +9,7 @@ use app\modules\assetmanagement\models\TblStoreLocation;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\assetmanagement\models\TblAssetClusterVendorInfo;
 
 /**
  * This is the model class for table "tbl_asset_detail".
@@ -34,6 +35,7 @@ class TblAssetDetail extends \app\models\ChildModel {
 
     public $is_serial_number, $store_location_type;
     public $to_plant, $to_mcc, $to_bmc, $to_dcs, $sr_number;
+    public $cluster_email, $cluster_mobile, $vendor_email, $vendor_mobile;
 
     /**
      * @inheritdoc
@@ -193,6 +195,10 @@ class TblAssetDetail extends \app\models\ChildModel {
                 $this->detail_code = $detailCode;
             }
         }
+    }
+    
+    public function getAssetClusterVendorInfo() {
+        return $this->hasOne(TblAssetClusterVendorInfo::className(), ['asset_code' => 'asset_code', 'serial_number' => 'serial_number']);
     }
 
 }

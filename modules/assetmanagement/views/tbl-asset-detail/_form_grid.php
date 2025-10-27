@@ -65,6 +65,18 @@ $attribute = [
             return (isset($model['assetDetail']->current_status) && $model['assetDetail']->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model['assetDetail']->current_status] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('asset_detail_status', $searchModel, 'current_status')],
     ['attribute' => 'remarks', 'filter' => false, 'visible' => false],
+    ['attribute' => 'cluster_email', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'cluster_email');
+        }, 'filter' => TRUE, 'visible' => false],
+    ['attribute' => 'cluster_mobile', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'cluster_mobile');
+        }, 'filter' => TRUE, 'visible' => false],
+    ['attribute' => 'vendor_email', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'vendor_email');
+        }, 'filter' => TRUE, 'visible' => false],
+    ['attribute' => 'vendor_mobile', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'vendor_mobile');
+        }, 'filter' => TRUE, 'visible' => false],
 ];
 
 $grid_option = [
