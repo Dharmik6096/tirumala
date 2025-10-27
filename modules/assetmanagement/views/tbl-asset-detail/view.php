@@ -18,6 +18,15 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'asset_detail_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -57,7 +66,6 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
                 ],
                 [
                     'columns' => [
-
                         [
                             'attribute' => 'manufacturer_code',
                             'value' => Yii::$app->general->getforeignkey($model->manufacturerCode, 'customer_name'),
@@ -111,14 +119,29 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'union_code',
-                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'attribute' => 'cluster_email',
+                            'value' => Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'cluster_email'),
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
-//                        [
-//                            'attribute' => 'is_active',
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
+                        [
+                            'attribute' => 'cluster_mobile',
+                            'value' => Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'cluster_mobile'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'vendor_email',
+                            'value' => Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'vendor_email'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'vendor_mobile',
+                            'value' => Yii::$app->general->getforeignkey($model->assetClusterVendorInfo, 'vendor_mobile'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                     ],
                 ],
             ];
