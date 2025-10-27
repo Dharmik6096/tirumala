@@ -46,7 +46,6 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function search($params) {
         $query = TblProductSale::find();
-//        $query->select('test');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -57,33 +56,33 @@ class TblProductSaleSearch extends TblProductSale {
 //        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'memberCode', 'bmcCode', 'bmcCode.tblMccPlant']);
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
         $query->join('LEFT JOIN', 'tbl_dcs as dcs', 'dcs.dcs_code = tbl_product_sale.dcs_code');
+
+        if (!empty($this->invoice_date))
+            $query->andFilterWhere(['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date)).' 00:00:00']);
+
+        if (!empty($this->created_at)) {
+            $created_at_start = date('Y-m-d', strtotime($this->created_at)) . ' 00:00:00';
+            $created_at_end = date('Y-m-d', strtotime($this->created_at)) . ' 23:59:00';
+
+            $query->andFilterWhere(['and',
+                ['>=', 'tbl_product_sale.created_at', $created_at_start],
+                ['<=', 'tbl_product_sale.created_at', $created_at_end]
+            ]);
+        }
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'tbl_product_sale.invoice_date', $from_date.' 00:00:00']);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_product_sale.invoice_date', $to_date.' 23:59:00']);
+
         Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-//        if ($this->member_code) {
-//            $query->joinWith(['memberCode']);
-//            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);
-//        }
-        if (!empty($this->invoice_date))
-            $query->andFilterWhere(['like', 'tbl_product_sale.invoice_date', date('Y-m-d', strtotime($this->invoice_date))]);
-        // grid filtering conditions
-
-
-        if (!empty($this->from_date)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'cast(tbl_product_sale.invoice_date as date)', $from_date]);
-        }
-
-        if (!empty($this->to_date)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'cast(tbl_product_sale.invoice_date as date)', $to_date]);
-        }
-        if (!empty($this->created_at)) {
-            $query->andFilterWhere(['like', 'cast(tbl_product_sale.created_at as date)', date('Y-m-d', strtotime($this->created_at))]);
-        }
+        
         $query->andFilterWhere([
             'tbl_product_sale.amount' => $this->amount,
             'tbl_product_sale.other_amount' => $this->other_amount,
@@ -106,7 +105,7 @@ class TblProductSaleSearch extends TblProductSale {
         return $dataProvider;
     }
 
-    public function searchSaleDetails($params) {
+    public function searchSaleDetails($params, $break_query = false) {
         $query = TblProductSaleTransaction::find();
 
         // add conditions that should always apply here
@@ -116,14 +115,12 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['productSaleCode', 'saleInstallments']);
-        $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
-        if (!$this->validate()) {
+        if (!$this->validate() || $break_query) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['productSaleCode', 'saleInstallments']);
         if (!empty($this->invoice_date)) {
             $model = new TblPaymentCycleApplicability();
             $model->applicable_type = $this->customer_type;
@@ -131,16 +128,22 @@ class TblProductSaleSearch extends TblProductSale {
             $model->applicable_for = 'BMC';
             $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
             if (!empty($modelData)) {
-                $query->andFilterWhere(['or', ['between', 'cast(tbl_product_sale.invoice_date as date)', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))], ['between', 'tbl_product_sale_installment.installment_date', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))]]);
+                $from_date = date('Y-m-d', strtotime($modelData->from_date)) . ' 00:00:00';
+                $to_date = date('Y-m-d', strtotime($modelData->to_date)) . ' 23:59:00';
+
+                $query->andFilterWhere(['or',
+                    ['and', ['>=', 'tbl_product_sale.invoice_date', $from_date], ['<=', 'tbl_product_sale.invoice_date', $to_date]],
+                    ['and', ['>=', 'tbl_product_sale_installment.installment_date', $from_date], ['<=', 'tbl_product_sale_installment.installment_date', $to_date]]
+                ]);
             } else {
-                $query->andFilterWhere(['or', ['cast(tbl_product_sale.invoice_date as date)' => date('Y-m-d', strtotime($this->invoice_date))], ['tbl_product_sale_installment.installment_date' => date('Y-m-d', strtotime($this->invoice_date))]]);
+                $query->andFilterWhere(['or', ['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date)).' 00:00:00'], ['tbl_product_sale_installment.installment_date' => date('Y-m-d', strtotime($this->invoice_date))]]);
             }
         }
-        $query->andFilterWhere([
-            'tbl_product_sale.customer_type' => $this->customer_type,
-            'tbl_product_sale.customer_code' => $this->customer_code,
-            'tbl_product_sale.union_code' => $this->union_code,
-        ]);
+        $query->andFilterWhere(['tbl_product_sale.customer_code' => $this->customer_code]);
+        $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
+        $query->andFilterWhere(['tbl_product_sale.customer_type' => $this->customer_type]);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
+        $query->andFilterWhere(['tbl_product_sale.union_code' => $this->union_code]);
         return $dataProvider;
     }
 

@@ -11,6 +11,7 @@ use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\document\models\TblAttachment;
+use app\modules\assetmanagement\models\TblAssetClusterVendorInfo;
 
 /**
  * This is the model class for table "tbl_asset_transaction".
@@ -339,6 +340,10 @@ class TblAssetTransaction extends \app\models\ChildModel {
                 $this->detail_code = $detailCode;
             }
         }
+    }
+    
+    public function getAssetClusterVendorInfo() {
+        return $this->hasOne(TblAssetClusterVendorInfo::className(), ['asset_code' => 'asset_code', 'serial_number' => 'serial_number']);
     }
 
 }

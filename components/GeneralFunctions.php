@@ -728,26 +728,12 @@ class GeneralFunctions extends Component {
             }
             $tablename = $model->tableSchema->fullName;
 
-            if (in_array('f_union_code', $filters)) {
-                $union_table = !empty($union_table) ? $union_table : $tablename;
-                if (Yii::$app->session->get('Unions') !== '')
-                    $query->andFilterWhere([$union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-                if (!empty($model->f_union_code))
-                    $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
-            }
-
-            if (in_array('f_plant_code', $filters)) {
-                if (Yii::$app->session->get('Plant') !== '')
-                    $query->andFilterWhere([$plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
-                if (!empty($model->f_plant_code))
-                    $query->andFilterWhere([$plant_table . '.plant_code' => $model->f_plant_code]);
-            }
-
-            if (in_array('f_mcc_code', $filters)) {
-                if (Yii::$app->session->get('MCC') !== '')
-                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
-                if (!empty($model->f_mcc_code))
-                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => $model->f_mcc_code]);
+            if (in_array('f_dcs_code', $filters)) {
+                $dcsTable = !empty($dcs_table) ? $dcs_table : $tablename;
+                if (Yii::$app->session->get('Dcs') !== '')
+                    $query->andFilterWhere([$dcsTable . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+                if (!empty($model->f_dcs_code))
+                    $query->andFilterWhere([$dcsTable . '.dcs_code' => $model->f_dcs_code]);
             }
 
             if (in_array('f_bmc_code', $filters)) {
@@ -757,12 +743,26 @@ class GeneralFunctions extends Component {
                     $query->andFilterWhere([$bmc_table . '.bmc_code' => $model->f_bmc_code]);
             }
 
-            if (in_array('f_dcs_code', $filters)) {
-                $dcsTable = !empty($dcs_table) ? $dcs_table : $tablename;
-                if (Yii::$app->session->get('Dcs') !== '')
-                    $query->andFilterWhere([$dcsTable . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
-                if (!empty($model->f_dcs_code))
-                    $query->andFilterWhere([$dcsTable . '.dcs_code' => $model->f_dcs_code]);
+            if (in_array('f_mcc_code', $filters)) {
+                if (Yii::$app->session->get('MCC') !== '')
+                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+                if (!empty($model->f_mcc_code))
+                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => $model->f_mcc_code]);
+            }
+
+            if (in_array('f_plant_code', $filters)) {
+                if (Yii::$app->session->get('Plant') !== '')
+                    $query->andFilterWhere([$plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+                if (!empty($model->f_plant_code))
+                    $query->andFilterWhere([$plant_table . '.plant_code' => $model->f_plant_code]);
+            }
+
+            if (in_array('f_union_code', $filters)) {
+                $union_table = !empty($union_table) ? $union_table : $tablename;
+                if (Yii::$app->session->get('Unions') !== '')
+                    $query->andFilterWhere([$union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+                if (!empty($model->f_union_code))
+                    $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
             }
         }
     }
