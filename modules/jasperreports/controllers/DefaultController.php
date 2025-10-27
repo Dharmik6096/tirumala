@@ -560,6 +560,16 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'BmcMilkPaymentVoucher';
         return $this->actionIndex();
     }
+    
+    public function actionDayWiseSummary() {
+        $this->report = 'DayWiseSummary';
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post('ReportsModel')['report_type'] == '1') {
+                $this->report = 'RouteWiseSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1327,6 +1337,20 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/BmcMilkPaymentVoucher',
                 'scenario' => 'BmcMilkPaymentVoucher',
                 'title' => 'BMC Milk Payment Voucher',
+            ],
+            'DayWiseSummary' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DayWiseSummary',
+                'scenario' => 'DayWiseSummary',
+                'title' => 'Day Wise Summary',
+                'report_type' => [Yii::t('app', 'Day Wise Summary'), Yii::t('app', 'Route Wise Summary')],
+            ],
+            'RouteWiseSummary' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/RouteWiseSummary',
+                'scenario' => 'DayWiseSummary',
+                'title' => 'Route Wise Summary',
+                'report_type' => [Yii::t('app', 'Day Wise Summary'), Yii::t('app', 'Route Wise Summary')],
             ],
             
         ];

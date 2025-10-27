@@ -228,7 +228,7 @@ class TblMemberProvisional extends ChildModel {
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
-                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument', 'MemberReroute']],
                 [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['createProvisionalMember']],
