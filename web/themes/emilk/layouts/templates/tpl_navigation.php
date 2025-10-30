@@ -354,6 +354,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
                     ]
                 ],
+                ['label' => 'Aadesh Master', 'url' => ['/product/tbl-aadesh-master/index'], 'active' => ($cntrl == 'tbl-aadesh-master')],
             ],
         ],
             [
@@ -791,6 +792,7 @@ echo GhostMenu::widget([
                             ['label' => '312 -' . Yii::t('app', 'MCC Wise Product Sale for Piad Installment'), 'url' => ['/misreports/reports/mcc-product-sale-for-paid-installment']],
                             ['label' => '313 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
                             ['label' => '314 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
+                            ['label' => '315 -' . Yii::t('app', 'Product Sale Log'), 'url' => ['/misreports/reports/product-sale-log-history']],
                     ]
                 ],
                     [
