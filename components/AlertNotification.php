@@ -23,7 +23,9 @@ class AlertNotification {
                 //if {msg} found in value then replace it with actual text message     
                 $value = (strpos($a['key_value'], '{mobileno}') !== false) ? str_replace('{mobileno}', $mob_no, $a['key_value']) : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
                 $value = ($a['key_value'] == '{timeStamp}') ? date('dmYHms') : $value;
-                if (!empty($a['header_flag']) && $a['header_flag'] == 1) {
+                if (!empty($a['url_append'])) {
+                    $url = $url.$a['url_append'].$value;
+                } elseif (!empty($a['header_flag']) && $a['header_flag'] == 1) {
                     $headers[$a['parameter_key']] = $value; // Add to headers
                 } elseif (!empty($a['parent_tag'])) {
                     if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
