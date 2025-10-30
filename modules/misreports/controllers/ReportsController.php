@@ -1234,7 +1234,7 @@ class ReportsController extends \app\controllers\ChildController {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
             } else {
-                $this->downloadData();
+                $this->downloadData($controls);
             }
         }
     }
@@ -1733,7 +1733,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionMobileAppReport() {
         $this->report = 'MobileAppReport';
         return $this->actionIndex();
@@ -2131,7 +2131,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'AssetDetailSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionFarmerPaymentWiseMilkWise() {
         $this->report = 'FarmerPaymentWiseMilkWise';
         if (Yii::$app->request->queryParams) {
@@ -2146,7 +2146,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'PaymentCycleReport';
         return $this->actionIndex();
     }
-    
+
     public function actionYearlyFarmerCollectionReport() {
         $this->report = 'YearlyFarmerCollectionReport';
         if (Yii::$app->request->queryParams) {
@@ -2156,17 +2156,22 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionAadeshLatter() {
         $this->report = 'AadeshLatter';
         return $this->actionIndex();
     }
-    
+
     public function actionProductSaleLogHistory() {
         $this->report = 'ProductSaleLogHistory';
         return $this->actionIndex();
     }
-    
+
+    public function actionFarmerMilkBillConsolidatedSummary() {
+        $this->report = 'FarmerMilkBillConsolidatedSummary';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4730,11 +4735,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Product Sale Log',
                 'bkg_export' => TRUE
             ],
+            'FarmerMilkBillConsolidatedSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_wise_milk_bill_summary',
+                'multiple_sheet' => ['summary' => 'sp_mis_farmer_payment_wise_milk_wise_summary'],
+                'scenario' => 'FarmerMilkBillConsolidatedSummary',
+                'title' => '119 - Farmer Wise Milk Bill Consolidated With Summary',
+            ],
         ];
         return $label[$l];
     }
 
-    public function downloadData() {
+    public function downloadData($controls) {
 //        $extention = 'xls';
 //        $header = [
 //            'mime' => 'application/ms-excel',
@@ -4830,7 +4842,7 @@ class ReportsController extends \app\controllers\ChildController {
             $isZip = isset($this->data['append_link']) && $this->data['append_link'] == true;
             if ($isZip && !in_array('attachment_link', $file_header)) {
                 $file_header[] = 'attachment_link';
-            }     
+            }
             /* $file_header = array_map(function($file_header) {
               return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
               }, array_values($file_header)); */
@@ -4847,7 +4859,7 @@ class ReportsController extends \app\controllers\ChildController {
                     'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
             );
-                   
+
             if ($isZip && !empty($this->output)) {
                 $rowIndex = 2;
                 foreach ($this->output as $row) {
@@ -4869,6 +4881,16 @@ class ReportsController extends \app\controllers\ChildController {
                         $sheet->getStyle($cellCoordinate)->getFont()->setUnderline(true)->getColor()->setRGB('0000FF');
                     }
                     $rowIndex++;
+                }
+            }
+            if (isset($this->data['multiple_sheet'])) {
+                foreach ($this->data['multiple_sheet'] as $new_sheet_name => $new_sp_name) {
+                    $newsheet = $objPHPExcel->createSheet();
+                    $newsheet->setTitle($new_sheet_name);
+                    $newoutput = \Yii::$app->general->getSpData($new_sp_name, $controls);
+                    $new_file_header = !empty($newoutput) ? array_keys($newoutput[0]) : [];
+                    $newsheet->fromArray($new_file_header, NULL, 'A1');
+                    $newsheet->fromArray($newoutput, NULL, 'A2');
                 }
             }
             $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
