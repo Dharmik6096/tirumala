@@ -22,7 +22,8 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
     public function rules() {
         return [
                 [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date', 'update_key', 'data_post_status', 'originating_type', 'process_name', 'process_code', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'resp_status', 'resp_desc', 'resp_msg', 'resp_param_1', 'resp_param_2', 'resp_param_3', 'resp_param_4', 'resp_param_5', 'resp_param_6'], 'safe'],
-                [['f_bmc_code', 'f_mcc_plant_code', 'f_plant_code', 'f_union_code', 'process_name', 'from_date', 'to_date', 'data_post_status'], 'required', 'on' => ['dataExcahnge']],
+                [['f_mcc_plant_code', 'f_plant_code', 'f_union_code', 'process_name', 'from_date', 'to_date', 'data_post_status'], 'required', 'on' => ['dataExcahnge']],
+                [['to_date'], 'validateToDate', 'on' => ['dataExcahnge']],
         ];
     }
 
@@ -46,7 +47,6 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false,
         ]);
 
         $this->load($params);
@@ -98,6 +98,7 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
         $query = TblMemberProvisional::find()->alias('mp');
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this, 'mp', 'mp', 'mp', 'mp');
 
         if ($this->process_name == 'Member Provisional Family Detail') {
             $query->innerJoin(['f' => 'tbl_member_provisional_family_details'], 'f.provisional_member_code = mp.provisional_member_code');
@@ -175,6 +176,27 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
         }
 
         return $dataProvider;
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $fDate = date('Y-m-d', strtotime($this->from_date));
+            $tDate = date('Y-m-d', strtotime($this->to_date));
+            if ($tDate < $fDate) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > 15) {
+                    $this->addError('to_date', Yii::t('app/validation', 'Day Difference can not be greater than 15.'));
+                    return false;
+                }
+            }
+        }
     }
 
 }
