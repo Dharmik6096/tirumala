@@ -2157,6 +2157,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
+    public function actionAadeshLatter() {
+        $this->report = 'AadeshLatter';
+        return $this->actionIndex();
+    }
+    
+    public function actionProductSaleLogHistory() {
+        $this->report = 'ProductSaleLogHistory';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4704,6 +4714,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'YearlyFarmerCollectionReport',
                 'title' => 'Supply Status Reports',
                 'report_type' => [Yii::t('app', 'Farmer'), Yii::t('app', 'VSP')],
+                'bkg_export' => TRUE
+            ],
+            'AadeshLatter' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,customer_type,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_aadesh_latter',
+                'scenario' => 'AadeshLatter',
+                'title' => 'Aadesh Patra',
+                'bkg_export' => TRUE
+            ],
+            'ProductSaleLogHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_product_sale_log_history',
+                'scenario' => 'ProductSaleLogHistory',
+                'title' => 'Product Sale Log',
                 'bkg_export' => TRUE
             ],
         ];

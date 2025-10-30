@@ -78,10 +78,10 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth', 'RootWiseDifference', 'AppStartupReport']],
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment', 'RouteWiseReconciliation', 'MonthlySahayakIncome', 'MisCcWiseClosingBalance', 'MccMilkBillDetailsWithIncentiveRouteWise', 'MccMilkBillDetailsMccDayWise', 'MisMilkPurchase']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory', 'StockRegisterBmcToSap', 'BillHeadDetail', 'ComplainActivityList']],
-                [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
+                [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory', 'MemberMilkBill']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingShift', 'CleaningFormat', 'VlccTransactionDataReport', 'IndentMemberDetail']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SapMilkCollectionData']],
-                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['AlertNotification', 'GheeGroupIndentReport', 'CfGroupIndentReport', 'SapGheeGroupIndentReport', 'SapCfGroupIndentReport', 'ChillerCostSummary']],
+                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['AlertNotification', 'GheeGroupIndentReport', 'CfGroupIndentReport', 'SapGheeGroupIndentReport', 'SapCfGroupIndentReport', 'ChillerCostSummary', 'AadeshLatter', 'ProductSaleLogHistory']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SapMilkCollectionData']],
                 [['union_code', 'p_date'], 'required', 'on' => ['StockSummary']],
                 [['union_code', 'mcc_code', 'org_type', 'from_date', 'to_date'], 'required', 'on' => ['StockDetail']],
@@ -119,7 +119,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['BmcCollectionHistory']],
                 [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 16, '>', 'Day Difference can not be greater than 16.');
-                }, 'skipOnEmpty' => false, 'on' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill', 'FarmerPaymentWiseMilkWise']],
+                }, 'skipOnEmpty' => false, 'on' => ['MemberDailyCollection', 'MilkCollectionData', 'FarmerPaymentWiseMilkWise']],
                 [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
                 }, 'skipOnEmpty' => false, 'except' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill']],
