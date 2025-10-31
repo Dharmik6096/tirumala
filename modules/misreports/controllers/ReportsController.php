@@ -2159,6 +2159,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAadeshLatter() {
         $this->report = 'AadeshLatter';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AadeshLatterSummary';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -4722,10 +4727,19 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'AadeshLatter' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,customer_type,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_aadesh_latter',
                 'scenario' => 'AadeshLatter',
                 'title' => 'Aadesh Patra',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'AadeshLatterSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_aadesh_latter_summary',
+                'scenario' => 'AadeshLatter',
+                'title' => 'Aadesh Patra',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
                 'bkg_export' => TRUE
             ],
             'ProductSaleLogHistory' => [
