@@ -59,9 +59,9 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
         if (!empty($this->from_date) && !empty($this->to_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andWhere(['between', 'cast(mp.created_at as date)', $from_date, $to_date]);
+            $query->andWhere(['between', 'cast(del.created_at as date)', $from_date, $to_date]);
         } else {
-            $query->andWhere(['cast(mp.created_at as date)' => date('Y-m-d', strtotime('-2 days'))]);
+            $query->andWhere(['cast(del.created_at as date)' => date('Y-m-d', strtotime('-2 days'))]);
         }
 
         Yii::$app->general->filterByOrg($query, $this, 'mp', 'mp', 'mp', 'mp');

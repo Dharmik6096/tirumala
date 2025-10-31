@@ -1,13 +1,14 @@
 <?php
 
 use yii\helpers\Html;
+//use yii\widgets\ActiveForm;
 use app\components\ActiveForm;
+
 ?>
 
 <div class="search-filter large-search">
 
     <?php
-    
     $form = ActiveForm::begin([
                 'method' => 'get',
     ]);
