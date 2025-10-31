@@ -302,8 +302,8 @@ class DropDown extends Component {
                 var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                 var fieldName = '" . strtolower($name) . "';
                 $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                    var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
-                    var plant = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                    var length = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').length;
+                    var plant = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').val();
                     var unionCode = $('#" . $depends . "').val();
                     if(unionCode != '' && unionCode != null && unionCode != undefined && unionCode != 'Loading ...' && length == 1) {
                         $('#'+modelname+'-'+fieldName).val(plant);
@@ -327,8 +327,8 @@ class DropDown extends Component {
             var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
             var fieldName = '" . strtolower($name) . "';
             $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
-                var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+               var length = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').length;
+                var mcc = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').val();
                 var plantCode = $('#" . $depends . "').val();
                 if(plantCode!='' && plantCode != null && plantCode != undefined && plantCode != 'Loading ...' && length == 1) {
                     $('#'+modelname+'-'+fieldName).val(mcc);
@@ -350,8 +350,8 @@ class DropDown extends Component {
                     var fieldName = '" . strtolower($name) . "';
                     var hasBMC = `$hasBMC`;
                     $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                        var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
-                        var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                       var length = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').length;
+                        var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').val();
                             var mccCode = $('#" . $depends . "').val();
                         if(mccCode!='' && mccCode != null && mccCode != undefined && mccCode != 'Loading ...' && length == 0) {
                             $('#'+modelname+'-'+fieldName).parent('div').parent().show();
@@ -440,7 +440,7 @@ class DropDown extends Component {
                         var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                         var fieldName = '" . strtolower($name) . "';
                         $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                            var length = $('#'+modelname+'-'+fieldName+' option[value!=\"all\"][value!=\'\']').length;
                             if(length == 0) {
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
                             } else if(length == 1) {
@@ -2687,26 +2687,49 @@ class DropDown extends Component {
 
         $selected = Json::encode($data);
         if (!empty($selected)) {
-            $script = "$(document).ready(function() {
-                        var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
-                        var fieldName = '" . strtolower($name) . "';
-                        var selected_val = '" . $selected . "';
-                        var selected_val_json = $.parseJSON(selected_val);
-                        var array_val = [];
-                        var depend = '" . $depends [0] . "';
-//                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
-                            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                                $.each(selected_val_json, function(index, value) {
-                                    $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
-                                    array_val.push(value);
-                                });
-                                // console.log('#'+modelname+'-'+fieldName);
-                                // $('#'+modelname+'-'+fieldName).val(array_val);
-//                                $('#'+modelname+'-'+fieldName).trigger('change');
-                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                            });
-                    });";
             $id_dropdown = strtolower((new ReflectionClass($model))->getShortName()) . '-' . strtolower($name);
+            $script = "$(document).ready(function() {
+                    var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                    var fieldName = '" . strtolower($name) . "';
+                    var selected_val = '" . $selected . "';
+                    var selected_val_json = $.parseJSON(selected_val);
+                    var array_val = [];
+                    var dropdown = $('#' + modelname + '-' + fieldName);
+                    var multiple = " . json_encode($multiple) . ";
+
+                    dropdown.on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                        if (selected_val_json) {
+                            var array_val = [];
+                            $.each(selected_val_json, function(index, value) {
+                                $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
+                                array_val.push(value);
+                            });
+                            dropdown.val(array_val).trigger('change');
+                        }
+                        if (multiple) {
+                            dropdown.find('option[value=\"all\"][value=\'\']').remove();
+                            if (dropdown.find('option').length > 0) {
+                                var selectOption = new Option('Select all', 'all', false, false);
+                                dropdown.prepend(selectOption);
+                            }
+                        } 
+                    });
+
+                    if (multiple) {
+                        dropdown.on('select2:select', function (e) {
+                            if (e.params && e.params.data && e.params.data.id === 'all') {
+                                var select = $(this);
+                                select.find('option:not([value=\"all\"])').prop('selected', true);
+                                select.find('option[value=\"all\"]').prop('selected', false).trigger('change');
+                            }
+                        });
+                        dropdown.on('select2:unselect', function(e) {
+                            if (e.params && e.params.data && e.params.data.id !== 'all') {
+                            $(this).find('option[value=\"all\"]').prop('selected', false).trigger('select2:select');
+                            }
+                        });
+                    }
+                });";
             Yii::$app->view->registerJs($script, View::POS_END, $id_dropdown);
         }
     }
