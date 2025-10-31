@@ -4749,10 +4749,11 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FarmerMilkBillConsolidatedSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'sp_mis_farmer_wise_milk_bill_summary',
+                'sp_name' => 'sp_mis_farmer_payment_wise_milk_wise',
                 'multiple_sheet' => ['summary' => 'sp_mis_farmer_payment_wise_milk_wise_summary'],
                 'scenario' => 'FarmerMilkBillConsolidatedSummary',
-                'title' => '119 - Farmer Wise Milk Bill Consolidated With Summary',
+                'title' => '119 - Farmer Wise Milk Bill Register With Summary',
+                'to_decrypt' => ['adhar_no', 'bank_account_no', 'ifsc', 'mobile_no'],
             ],
         ];
         return $label[$l];
