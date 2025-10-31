@@ -232,18 +232,21 @@ class ARImportStrategy extends CsvimporterARImportStrategy {
                         $trans->rollback();
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
-                            $message .= $value[0] . '<br/>';
+                            $val = is_array($value) ? $value[0] : $value;
+                            $message .= $val . '<br/>';
                         }
                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '-' . $message];
                     }
                 } else {
                     $message = '';
                     foreach ($model->getErrors() as $errorkey => $value) {
-                        $message .= $value[0];
+                        $val = is_array($value) ? $value[0] : $value;
+                        $message .= $val;
                     }
                     foreach ($errors as $array) {
                         foreach ($array as $errorkey => $value) {
-                            $message .= $value[0] . '<br/>';
+                            $val = is_array($value) ? $value[0] : $value;
+                            $message .= $val . '<br/>';
                         }
                     }
                     return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '-' . $message];
