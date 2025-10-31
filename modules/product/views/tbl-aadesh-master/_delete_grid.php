@@ -60,10 +60,10 @@ $this->title = Yii::t('app', 'Delete Bulk Applicability');
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary', 'id' => 'delete']);
+                echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn-login btn btn-primary', 'id' => 'delete']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'delete-bulk-applicability'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'delete-bulk-applicability','','btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

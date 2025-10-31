@@ -4,7 +4,7 @@ $this->params['menu'][] = Yii::$app->controls->add('Aadesh Master');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Bulk Delete Applicability', 'delete-bulk-applicability', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 $this->params['menu'][] = Yii::$app->controls->import('aadesh_master_bulk', $this);
 $this->params['menu'][] = Yii::$app->controls->import('aadeshmasterapplicability-bulk', $this, Yii::t('app', 'Applicability Import'), [], 'aadesh_master_applicability');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Aadesh Patra', '//misreports/reports/aadesh-latter', '', 'btn btn-danger btn-block', '<i class="fa fa-file-pdf-o"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Aadesh Patra', '//misreports/reports/aadesh-latter', '', 'btn btn-danger btn-block', '<i class="far fa-file-pdf"></i>');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
