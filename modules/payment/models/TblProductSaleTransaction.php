@@ -36,7 +36,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     public $is_sentbox = TRUE;
     public $saveDeleteChildRecords = TRUE;
     public $available_stock;
-    public $union_code;
+    public $union_code, $mcc_plant_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -57,10 +57,10 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
             [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync', 'androidsyncsplit']],
                 [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
-                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks'], 'safe'],
+                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks', 'mcc_plant_code', 'bmc_code'], 'safe'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
-            [['quantity'], 'validateQty', 'on' => ['saleProduct', 'saleProductOnDispatch']],
+            [['quantity'], 'validateQty', 'on' => ['saleProduct']],
                 [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
                 [['sap_batch_no'], 'required', 'when' => function ($model) {
                     $product = $model->productCode;
@@ -74,6 +74,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
             //   [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
             [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
+                [['quantity'], 'validateDispatchQty', 'on' => ['saleProductOnDispatch']],
         ];
     }
 
@@ -436,14 +437,25 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         }
     }
 
-    public function validProduct($attribute, $param){
+    public function validProduct($attribute, $param) {
         $product = TblProduct::find()->where(['product_code' => $this->product_code, 'is_active' => 1])->one();
-        if(!empty($product)){
+        if (!empty($product)) {
             $this->unit_code = $product->unit_code;
             return true;
         }
         $this->addError($attribute, Yii::t('app/validation', 'Product Record Not Found'));
         return false;
+    }
+
+    public function validateDispatchQty($attribute, $param) {
+        $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
+        $productType = Yii::$app->general->getforeignkey($this->productCode, 'x_col3');
+        if ($config == 1 && $productType != 1) {
+            $totalAvailableStock = TblProductStock::find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'product_code' => $this->product_code])->andWhere(['AND', ['is', 'dcs_code', NULL]])->andWhere(['>', 'stock', 0])->sum('stock');
+            if ($totalAvailableStock < $this->quantity) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $totalAvailableStock));
+            }
+        }
     }
 
 }
