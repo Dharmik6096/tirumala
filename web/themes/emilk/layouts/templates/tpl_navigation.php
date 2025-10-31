@@ -697,7 +697,7 @@ echo GhostMenu::widget([
                                     ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill 2'), 'url' => ['/misreports/reports/farmer-payment-wise-milk-wise']],
-                                    ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill Consolidated With Summary'), 'url' => ['/misreports/reports/farmer-milk-bill-consolidated-summary']],
+                                    ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill Register With Summary'), 'url' => ['/misreports/reports/farmer-milk-bill-consolidated-summary']],
                                     ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
