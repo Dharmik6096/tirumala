@@ -15,6 +15,7 @@ class BackGroundDataImport extends Model {
     public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks, $sap_batch_no, $rate_wharehouse;
     public $shift_applicability, $amount, $allotted_share, $proposed_share, $total_share, $share_amount, $till_date, $folio_no, $member_vendor_code, $from_date, $to_date, $total_qty, $pouring_days, $avg_fat, $avg_snf, $milk_amount, $bonus_criteria, $incentive_amount, $special_code;
     public $asset_code, $serial_number, $cluster_email, $cluster_mobile, $vendor_email, $vendor_mobile;
+    public $product_mrp, $distributor_landing_rate, $sachiv_price, $member_price, $aadesh_master_code;
 
     function __construct() {
         
@@ -46,8 +47,8 @@ class BackGroundDataImport extends Model {
             [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['product_master']],
             [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'is_member_rate'], 'in', 'range' => ['0', '1'], 'on' => ['product_master']],
             [['dpu_product_code'], 'required', 'when' => function ($model) {
-                return $model->is_dpu_product == 1;
-            }, 'on' => ['product_master']],
+                    return $model->is_dpu_product == 1;
+                }, 'on' => ['product_master']],
             [['union_code', 'product_code', 'sale_rate', 'wef_date', 'is_member_rate'], 'required', 'on' => ['product_sale_rate', 'product_sale_rate_gyan', 'aadesh_master']],
             [['commission'], 'required', 'when' => function ($model) {
                     return $model->is_member_rate == 1;
