@@ -100,8 +100,6 @@ class TblAadeshMasterApplicabilitySearch extends TblAadeshMasterApplicability {
         }
 
         $query->andFilterWhere([
-//            'tbl_aadesh_master_applicability.plant_code' => $this->plant_code,
-//            'tbl_aadesh_master_applicability.mcc_plant_code' => $this->mcc_plant_code,
             'tbl_aadesh_master_applicability.applicable_for' => $this->applicable_for,
             'tbl_aadesh_master_applicability.applicable_code' => $this->applicable_code,
             'tbl_aadesh_master_applicability.is_member_rate' => $this->is_member_rate,

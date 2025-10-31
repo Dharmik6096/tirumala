@@ -34,13 +34,9 @@ $depend = 'tblaadeshmasterapplicabilitysearch';
         <?= Yii::$app->dropdown->customer_code($model, $form, 'tblaadeshmasterapplicabilitysearch-bmc_code,tblaadeshmasterapplicabilitysearch-applicable_for', 'applicable_code', $model->getAttributeLabel('applicable Name'), FALSE); ?>
     </div>
     <div class="clearfix"></div>
-
-    <?php // if (empty($dataProvider->getModels())) { ?>
     <div class="col-sm-2 mt20">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
-    <?php // } ?>
-
     <?php ActiveForm::end(); ?>
 </div>
 <?php

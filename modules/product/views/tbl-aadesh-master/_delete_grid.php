@@ -47,9 +47,6 @@ $this->title = Yii::t('app', 'Delete Bulk Applicability');
                 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }, 'filter' => FALSE],
-//            ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
-//                    return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
-//                }],
         ];
 
         $grid_option = [

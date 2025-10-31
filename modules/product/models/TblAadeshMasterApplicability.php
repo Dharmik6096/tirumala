@@ -34,7 +34,6 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblAadeshMasterApplicability extends \app\models\ChildModel {
 
-    public $is_sentbox = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern, $ex_code;
 
     /**

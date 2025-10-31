@@ -23,7 +23,6 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblAadeshMaster extends \app\models\ChildModel {
 
-    public $is_sentbox = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern;
 
     /**
