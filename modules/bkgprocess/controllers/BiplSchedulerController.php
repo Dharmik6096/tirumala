@@ -21,7 +21,7 @@ use app\modules\bkgprocess\models\TblOrgFileLog;
 
 class BiplSchedulerController extends ChildController {
 
-    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data'];
+    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master'];
     public $errorPath = '';
 
     public function init() {
@@ -541,6 +541,20 @@ class BiplSchedulerController extends ChildController {
                 $ftp->CreateDirectory();
                 Yii::$app->general->checkDirectory(\Yii::$app->params['sapDirPath'] . $dir);
             }
+        }
+    }
+
+    public function actionUploadErrorFilesMasters() {
+        $model = new TblOrgFileLog();
+        $model->file_status = 0;
+        $model->status = 3;
+        $modelData = $model->getPendingData();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->org_file_log_id;
+            }, $modelData);
+            $model->updateFileStatus($ids);
+            $this->upload_files($modelData, TRUE);
         }
     }
 
