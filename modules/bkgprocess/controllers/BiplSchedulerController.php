@@ -263,12 +263,15 @@ class BiplSchedulerController extends ChildController {
                 }
                 $cnt++;
                 if ($connection) {
-                    if ($create_dir && $row->CheckDirectory() == '0') {
-                        $sapDir = \Yii::$app->general->getSapDirStructure($row->module_code);
-                        foreach ($sapDir as $dir) {
-                            $ftp->ftp_path = $dir;
+                    if ($create_dir) {
+                        $ftpDir = \Yii::$app->general->getFTPDirStructure($row->ref_code);
+                        foreach ($ftpDir as $dir) {
+                            $ftp->ftp_path = 'EKOMILK' . $dir;
+                            $localDirPath = \Yii::$app->params['biplDirPath'] . $dir;
+                            $localDirPath = Yii::$app->basePath . '/' . str_replace(Yii::$app->basePath, '', $localDirPath);
+                            $localDirPath = str_replace('\\', '/', $localDirPath);
                             $ftp->CreateDirectory();
-                            Yii::$app->general->checkDirectory(\Yii::$app->params['sapDirPath'] . $dir);
+                            Yii::$app->general->checkDirectory($localDirPath);
                         }
                     }
                     $ftp_path = !empty($row->file_path) ? explode('/', $row->file_path) : [];
