@@ -544,7 +544,7 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
-    public function actionUploadErrorFilesMasters() {
+    public function actionUploadErrorFilesMaster() {
         $model = new TblOrgFileLog();
         $model->file_status = 0;
         $model->status = 3;
