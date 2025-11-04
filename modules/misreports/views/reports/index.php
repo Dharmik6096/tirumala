@@ -578,6 +578,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
                                             <?php
                                         }
+                                        if (in_array($value, array('product_group_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('product_group', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product Group'); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);

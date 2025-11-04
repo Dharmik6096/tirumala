@@ -205,19 +205,19 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                             $model->payment_cycle_code = $this->model->payment_cycle_code;
                             $model->from_date = $from_date;
                             $model->to_date = $to_date;
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['ref_code']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['ref_code']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         if ($model->notification_type == 5 || $model->notification_type == 7) {
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         if ($model->notification_type == 6) {
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         if ($model->notification_type == 8) {
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         $model->campaign_name = $this->model->campaign_name;
