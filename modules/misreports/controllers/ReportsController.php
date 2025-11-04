@@ -5109,6 +5109,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
+        // Adjust column widths
+        $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
+        for ($col = 'A'; $col <= $highestColumn; $col++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth(strlen($objPHPExcel->getActiveSheet()->getCell($col . '1')->getValue()) + 2);
+        }
         $file_name = $title . '.' . 'xls';
         $path = Yii::$app->basePath . '/web/sap_data_files/';
         Yii::$app->general->checkDirectory($path);
