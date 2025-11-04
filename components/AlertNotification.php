@@ -148,7 +148,7 @@ class AlertNotification {
                 $transportProperty = $reflectionMailer->getProperty('_transport');
                 $transportProperty->setAccessible(true);
                 $transport = $transportProperty->getValue($mailer);
-                $transport['password'] = $pwd;
+                $transport->setPassword($pwd);
                 $mailer->setTransport($transport);
             }
             $email = $mailer->compose()

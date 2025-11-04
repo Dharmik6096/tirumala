@@ -2164,6 +2164,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAadeshLatter() {
         $this->report = 'AadeshLatter';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AadeshLatterSummary';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -4734,10 +4739,19 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'AadeshLatter' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,customer_type,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_group_code,from_date:string,to_date:string,header_reference:txt,assignment:txt',
                 'sp_name' => 'sp_mis_aadesh_latter',
                 'scenario' => 'AadeshLatter',
                 'title' => 'Aadesh Patra',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'AadeshLatterSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_group_code,from_date:string,to_date:string,header_reference:txt,assignment:txt',
+                'sp_name' => 'sp_mis_aadesh_latter_summary',
+                'scenario' => 'AadeshLatter',
+                'title' => 'Aadesh Patra',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
                 'bkg_export' => TRUE
             ],
             'ProductSaleLogHistory' => [
@@ -5095,6 +5109,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
+        // Adjust column widths
+        $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
+        for ($col = 'A'; $col <= $highestColumn; $col++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth(strlen($objPHPExcel->getActiveSheet()->getCell($col . '1')->getValue()) + 2);
+        }
         $file_name = $title . '.' . 'xls';
         $path = Yii::$app->basePath . '/web/sap_data_files/';
         Yii::$app->general->checkDirectory($path);
