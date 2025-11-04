@@ -4727,7 +4727,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'AadeshLatter' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,customer_type,product_group_code,from_date:string,to_date:string,header_reference:txt,assignment:txt',
                 'sp_name' => 'sp_mis_aadesh_latter',
                 'scenario' => 'AadeshLatter',
                 'title' => 'Aadesh Patra',
@@ -4735,7 +4735,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'AadeshLatterSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,customer_type,product_group_code,from_date:string,to_date:string,header_reference:txt,assignment:txt',
                 'sp_name' => 'sp_mis_aadesh_latter_summary',
                 'scenario' => 'AadeshLatter',
                 'title' => 'Aadesh Patra',
