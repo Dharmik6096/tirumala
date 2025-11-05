@@ -155,7 +155,8 @@ class DefaultController extends Controller {
                     $header = [];
                     $row->status = 2;
                     $notification = $row->bulkNotification;
-                    $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $notification->message];
+                    $msg = !empty($notification->file_path) ? $notification->message . ' ' . $notification->file_path : $notification->message;
+                    $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $msg];
                     $messageJson = json_encode($message);
                     $header['apiFor'] = 'default';
                     $header['channel'] = 'default';

@@ -256,7 +256,7 @@ $(document).ready(function () {
             $('.app_type, .login_type, .department').hide();
             $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
             resetDateShiftFields();
-            if (type == '4') {
+            if (type == '4' || type == '8') {
                 $('#tblbulknotification-login_type').val('DCS').trigger('change').trigger('select2:select');
                 $('#tblbulknotification-department').val('').trigger('change').trigger('select2:select');
             }
