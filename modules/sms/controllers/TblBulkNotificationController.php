@@ -64,7 +64,8 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             'VRS_GLT',
             'VRS_MLP',
             'VRS_SBD',
-            'VRS_NEWASA'
+            'VRS_NEWASA',
+            'AMULAMCS'
         ];
 
         if (Yii::$app->request->post()) {
@@ -117,7 +118,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                             rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                         }
                         $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
-                        $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
+                        $command = 'java -jar pdf-splitter-1.0.jar' . ' ' . $eipl_code . ' ' . $new_directory . $this->model->filename;
                         $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
                         $crnt_dir = getcwd();
                         chdir($utility_path);
