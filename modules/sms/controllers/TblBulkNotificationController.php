@@ -61,10 +61,10 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             'BANAS',
             'EMILKPRO',
             'GYAN',
-            'VRS_GLT',
-            'VRS_MLP',
-            'VRS_SBD',
-            'VRS_NEWASA',
+//            'VRS_GLT',
+//            'VRS_MLP',
+//            'VRS_SBD',
+//            'VRS_NEWASA',
             'AMULAMCS'
         ];
 
