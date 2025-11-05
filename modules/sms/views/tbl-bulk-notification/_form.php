@@ -249,7 +249,7 @@ $(document).ready(function () {
             $('.app_type, .login_type').hide();
             $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
             resetDateShiftFields();
-            if (type == '4') {
+            if (type == '4' || type == '8') {
                 $('#tblbulknotification-login_type').val('vsp').trigger('change').trigger('select2:select');
             }
         }else if(type == '3'){

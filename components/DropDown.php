@@ -1888,7 +1888,7 @@ class DropDown extends Component {
             'notification_type' => [
                 'name' => 'notification_type',
                 'prompt' => Yii::t('app', 'Select Notification Type'),
-                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test'), 6 => Yii::t('app', 'Eipl Bill'), 7 => Yii::t('app', 'Multi Priptra'), 8 => Yii::t('app', 'AMCS Milk Bill')],
+                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill') . ' (' . Yii::t('app', 'DCS') . ' Ref Code )', 5 => Yii::t('app', 'Bacteria Test'), 6 => Yii::t('app', 'Eipl Bill'), 7 => Yii::t('app', 'Multi Priptra'), 8 => Yii::t('app', 'Milk Bill') . ' (' . Yii::t('app', 'DCS') . ' Code Ex )'],
             ],
             'month' => [
                 'name' => 'month',

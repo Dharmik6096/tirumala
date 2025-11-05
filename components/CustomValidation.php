@@ -1269,7 +1269,7 @@ class CustomValidation extends Component {
                 ],
                 'BackGroundDataImport' => [
                     'default' => [
-                        [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'on' => ['member']],
+                            [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'on' => ['member']],
                     ]
                 ],
             ],
