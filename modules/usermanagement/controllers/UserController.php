@@ -28,6 +28,7 @@ use app\modules\usermanagement\models\TblUserEngineerMapping;
 use app\modules\usermanagement\models\TblUserEngineerMappingSearch;
 use app\modules\usermanagement\models\TblUserEngineerMappingHistory;
 use yii\helpers\ArrayHelper;
+use app\modules\sms\models\TblAlertTemplate;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -616,18 +617,16 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $apiMasterData = $apiMaster->getAPI();
 
                     if (!empty($apiMasterData)) {
-                        $htmlContent = "";
-                        $message = "";
-                        $this->setHtmlContent($model->password, $htmlContent, $message, $model->username);
-
+                        $templateModel = new TblAlertTemplate();
+                        $templateData = $templateModel->getTemplateData('portal_password_reset_admin', 'EMAIL', $apiMaster->union_code);
                         $notificationModel = new TblAlertNotification();
                         $notificationModel->receiver_type = 'EMAIL';
-                        $notificationModel->message = $htmlContent;
-                        $notificationModel->header_info = $message;
+                        $notificationModel->message = str_replace('{PWD}', $model->password, $templateData->message);;
+                        $notificationModel->header_info = str_replace('{name}', substr($model->username, 3), $templateData->header_info);;
                         $notificationModel->send_status = 0;
                         $notificationModel->content_id = $apiMasterData->api_master_id;
                         $notificationModel->refecence_code = $model->id;
-                        $notificationModel->module_type = "OTP - Forgot Password";
+                        $notificationModel->module_type = "portal_password_reset_admin";
                         $notificationModel->entry_datetime = date('Y-m-d H:i:s');
                         $notificationModel->send_mail = 1;
                         $notificationModel->receiver_detail = $model->email;
@@ -771,17 +770,6 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             Yii::$app->operation->defaults($modelNew, INSERT);
             $modelNew->save(TRUE, FALSE);
         }
-    }
-
-    public function setHtmlContent($OTP, &$htmlContent, &$message, $username) {
-        $message = 'New Reset Password for ' . $username;
-        $htmlContent = '';
-        $htmlContent = '<p>Dear Sir, <br/><br/>';
-        $htmlContent .= '<br/>Your password has been reset by admin. </p>';
-        $htmlContent .= '<br/>new password is: <b>' . $OTP . '</b></p>';
-        $htmlContent .= '<br/><br/>';
-        $htmlContent .= '<p>Regards,';
-        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
     /**
