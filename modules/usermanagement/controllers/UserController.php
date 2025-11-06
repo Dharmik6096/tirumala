@@ -555,18 +555,20 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     if (!empty($apiMasterData)) {
                         $templateModel = new TblAlertTemplate();
                         $templateData = $templateModel->getTemplateData('portal_password_reset_admin', 'EMAIL', $apiMaster->union_code);
-                        $notificationModel = new TblAlertNotification();
-                        $notificationModel->receiver_type = 'EMAIL';
-                        $notificationModel->message = str_replace('{PWD}', $model->password, $templateData->message);;
-                        $notificationModel->header_info = str_replace('{name}', substr($model->username, 3), $templateData->header_info);;
-                        $notificationModel->send_status = 0;
-                        $notificationModel->content_id = $apiMasterData->api_master_id;
-                        $notificationModel->refecence_code = $model->id;
-                        $notificationModel->module_type = "portal_password_reset_admin";
-                        $notificationModel->entry_datetime = date('Y-m-d H:i:s');
-                        $notificationModel->send_mail = 1;
-                        $notificationModel->receiver_detail = $model->email;
-                        $master[] = $notificationModel;
+                        if (!empty($templateData)) {
+                            $notificationModel = new TblAlertNotification();
+                            $notificationModel->receiver_type = 'EMAIL';
+                            $notificationModel->message = str_replace('{PWD}', $model->password, $templateData->message);
+                            $notificationModel->header_info = str_replace('{name}', substr($model->username, 3), $templateData->header_info);
+                            $notificationModel->send_status = 0;
+                            $notificationModel->content_id = $apiMasterData->api_master_id;
+                            $notificationModel->refecence_code = $model->id;
+                            $notificationModel->module_type = "portal_password_reset_admin";
+                            $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                            $notificationModel->send_mail = 1;
+                            $notificationModel->receiver_detail = $model->email;
+                            $master[] = $notificationModel;
+                        }
                     }
                 }
             } else {
