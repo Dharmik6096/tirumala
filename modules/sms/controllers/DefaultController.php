@@ -180,18 +180,21 @@ class DefaultController extends Controller {
                         $row->status = 3;
                         $row->resp_desc = 'error';
                     }
-                    if ($row->status == 2) {
+                    $sentboxModel = new TblSentbox();
+                    $addressBook = $sentboxModel->isAddressBook('tbl_bulk_notification');
+                    if ($row->status == 2 && !empty($addressBook)) {
                         if (in_array($notification->notification_type, [2, 3, 5, 7, 8])) {
                             $sentboxArray = [];
                             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $row->dcs_code);
-
                             foreach ($sentboxArray as $sent) {
-                                $flag = 'INSERT';
-                                sleep(10);
-                                $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $row);
-                                if (TRUE) {
-                                    if (!($sentbox->setSentbox($row, $flag))) {
-                                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                                if (in_array($sent['type'], ['VLC'])) {
+                                    $flag = 'INSERT';
+                                    sleep(10);
+                                    $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $row);
+                                    if (TRUE) {
+                                        if (!($sentbox->setSentbox($row, $flag))) {
+                                            throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                                        }
                                     }
                                 }
                             }
