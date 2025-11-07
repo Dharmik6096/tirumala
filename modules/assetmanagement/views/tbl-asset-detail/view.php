@@ -11,7 +11,7 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
         <?= Yii::$app->controls->cancel($model); ?>
         <?= Html::encode($this->title) ?>
     </div>
-    <div class="panel-body">
+    <div class="panel-body hide-grid-settings">
         <div class="table-responsive">
             <?php
             $attributes = [
@@ -163,14 +163,33 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
             ]);
             ?>
         </div>
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Asset Transaction</h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('asset_transaction_detail', [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-            ])
-            ?>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Attachment</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('_attachment_list', [
+                    'attachment' => $attachment,
+                    'attachmentDataProvider' => $attachmentDataProvider
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Asset Transaction</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('asset_transaction_detail', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ])
+                ?>
+            </div>
         </div>
     </div>
 </div>
