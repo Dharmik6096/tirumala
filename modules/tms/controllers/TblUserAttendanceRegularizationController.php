@@ -65,7 +65,7 @@ class TblUserAttendanceRegularizationController extends ChildController {
                 $regularizationModel->rejection_remark = Yii::$app->request->post('TblUserAttendanceRegularization')['rejection_remark'];
 
                 if ($regularizationModel->validate()) {
-                    $modelSave[] = $regularizationModel;
+                    $model_save[] = $regularizationModel;
                     $transaction = $this->generalModel->saveTransaction($model_save, ['Regularization Reject', 'edit']);
                     if ($transaction === 'customRedirect') {
                         Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => 'Regularization has been successfully rejected.']);

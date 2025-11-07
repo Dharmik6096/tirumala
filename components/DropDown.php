@@ -2360,6 +2360,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
             ],
+            'attendances_regularization_status' => [
+                'name' => 'is_approved',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partial Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }
