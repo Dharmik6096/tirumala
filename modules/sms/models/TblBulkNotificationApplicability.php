@@ -104,7 +104,7 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblBulkNotification::className(), ['bulk_notification_id' => 'bulk_notification_id']);
     }
 
-    public function getPickRecords($limit = 5) {
+    public function getPickRecords($limit = 100) {
         return $query = $this->find()->select(['bulk_notification_id', 'applicable_for', 'wef_date', 'dcs_code', 'union_code'])->distinct()
                         ->where(['status' => $this->status, 'CAST(wef_date as date)' => date('Y-m-d')])
                         ->limit($limit)
