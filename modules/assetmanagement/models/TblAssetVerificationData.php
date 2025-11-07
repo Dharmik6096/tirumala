@@ -5,6 +5,7 @@ namespace app\modules\assetmanagement\models;
 use app\modules\organisation\models\TblUnions;
 use app\modules\staffmanagement\models\TblStaffMemberDesignation;
 use Yii;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_asset_verification_data".
@@ -46,14 +47,19 @@ class TblAssetVerificationData extends \app\models\ChildModel {
         return [
             [['asset_code', 'serial_number'], 'required', 'on' => 'importCsv'],
             [['asset_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetMaster::className(), 'targetAttribute' => ['asset_code' => 'asset_code']],
+            [['asset_code'], 'validateUser', 'on' => ['importCsv']],
             [['serial_number'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
             [['is_verified'], 'integer'],
-            [['asset_group_code', 'asset_code', 'serial_number', 'manufacturer_serial_number', 'is_verified', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'customer_type', 'customer_code', 'verification_date', 'asset_verification_code'], 'safe'],
+            [['asset_group_code', 'asset_code', 'serial_number', 'manufacturer_serial_number', 'is_verified', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'customer_type', 'customer_code', 'verification_date', 'asset_verification_code', 'user_code', 'date_of_cap', 'remarks', 'scan_status', 'physical_verification_status'], 'safe'],
             [['asset_group_code', 'asset_code'], 'string', 'max' => 12],
             [['serial_number', 'manufacturer_serial_number'], 'string', 'max' => 50],
             [['is_verified'], 'default', 'value' => 0, 'on' => 'importCsv'],    
-            [['asset_code'], 'unique', 'targetAttribute' => ['asset_code', 'serial_number'], 'message' => 'The combination of asset Code and Serial Number has already been taken.'],
+//            [['asset_code'], 'unique', 'targetAttribute' => ['asset_code', 'serial_number'], 'message' => 'The combination of asset Code and Serial Number has already been taken.'],
             [['asset_verification_code'], 'unique'],
+            
+            [['date_of_cap'], 'convertDateDot', 'on' => ['importCsv']],
+            [['date_of_cap'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['date_of_cap'], 'convertDate', 'on' => ['importCsv']],
         ];
     }
 
@@ -76,11 +82,11 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'x_col1' => Yii::t('app', 'X Col1'),
-            'x_col2' => Yii::t('app', 'X Col2'),
-            'x_col3' => Yii::t('app', 'X Col3'),
-            'x_col4' => Yii::t('app', 'X Col4'),
-            'x_col5' => Yii::t('app', 'X Col5'),
+            'user_code' => Yii::t('app', 'Employ ID'),
+            'date_of_cap' => Yii::t('app', 'Date Of Cap'),
+            'remarks' => Yii::t('app', 'Remarks'),
+            'scan_status' => Yii::t('app', 'SCAN STATUS'),
+            'physical_verification_status' => Yii::t('app', 'Physical Verification Status'),
         ];
     }
 
@@ -107,8 +113,10 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             $this->union_code = $assetCode->union_code;
 
             $assetTransactionData = TblAssetTransaction::find()->select(['to_type','to_dest'])->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code])->orderBy(['created_at' => SORT_DESC])->one();
-        
-            if (!empty($assetTransactionData)) {
+            if (!empty($this->user_code)) {
+                $this->customer_type = 'USER';
+                $this->customer_code = $this->user_code;
+            } elseif (!empty($assetTransactionData)) {
                 $this->customer_type = $assetTransactionData->to_type;
                 $referenceCode = TblStoreLocation::find()->select(['reference_code'])->where(['store_location_code' => $assetTransactionData->to_dest, 'store_location_type' => $assetTransactionData->to_type, 'is_active' => '1'])->scalar();
                 $this->customer_type = $this->storeLocType->slt_name;
@@ -138,6 +146,47 @@ class TblAssetVerificationData extends \app\models\ChildModel {
                 $assetDetailData->verification_date = NULL;
                 array_push($modelSave, $assetDetailData);
             }
+        }
+    }
+    
+    public function validateUser($attribute) {
+        if (!empty($this->user_code)) {
+            $primaryUser = User::find()->where(['or', ['employee_id' => $this->user_code], ['user_code' => $this->user_code]])->andWhere(['is_active' => 1])->one();
+            if ($primaryUser) {
+                $this->user_code = $primaryUser->user_code;
+            } else {
+                $this->addError('user_code', Yii::t('app/validation', 'Invalid User Code.'));
+                return false;
+            }
+        }
+        $exists = $this->find()->where(['asset_code' => $this->asset_code, 'serial_number' => $this->serial_number]);
+        if (!empty($this->user_code)) {
+            $exists = $exists->andWhere(['user_code' => $this->user_code])->one();
+            if (!empty($exists)) {
+                $this->addError($attribute, Yii::t('app/validation', 'The combination of asset Code, Serial Number and User Code has already been taken.'));
+                return false;
+            }
+        } else {
+            $exists = $exists->one();
+            if (!empty($exists)) {
+                $this->addError($attribute, Yii::t('app/validation', 'The combination of asset Code and Serial Number has already been taken.'));
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public function convertDateDot() {
+        try {
+            $this->date_of_cap = Yii::$app->controls->view_date($this->date_of_cap, 'php:d.m.Y');
+        } catch (\Throwable $e) {
+            $this->date_of_cap = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->date_of_cap = !empty($this->date_of_cap) ? Yii::$app->controls->view_date($this->date_of_cap, 'php:Y-m-d') : NULL;
         }
     }
 
