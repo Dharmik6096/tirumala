@@ -3,7 +3,6 @@
 namespace app\modules\assetmanagement\models;
 
 use app\modules\organisation\models\TblUnions;
-use app\modules\staffmanagement\models\TblStaffMemberDesignation;
 use Yii;
 use app\modules\usermanagement\models\User;
 
@@ -82,7 +81,7 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'user_code' => Yii::t('app', 'Employ ID'),
+            'user_code' => Yii::t('app', 'Employee ID'),
             'date_of_cap' => Yii::t('app', 'Date Of Cap'),
             'remarks' => Yii::t('app', 'Remarks'),
             'scan_status' => Yii::t('app', 'SCAN STATUS'),
@@ -188,6 +187,10 @@ class TblAssetVerificationData extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->date_of_cap = !empty($this->date_of_cap) ? Yii::$app->controls->view_date($this->date_of_cap, 'php:Y-m-d') : NULL;
         }
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
     }
 
 }
