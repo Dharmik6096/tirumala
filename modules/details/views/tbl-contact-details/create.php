@@ -77,7 +77,7 @@ $script = "
                     success: function(data) {
                         $('#tblcontactdetails-mobile_no').prop('readonly', true);
                         $.each(data.modelData, function(index, value) {
-                            $('#tblcontactdetails-'+index).val(value);
+                            $('#tblcontactdetails-' + index).val(value).trigger('change');
                         });
                          $('#loadercontent').hide();
                          $('#pageloader').hide();

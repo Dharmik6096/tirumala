@@ -10,7 +10,6 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblMccPlant;
-use app\modules\document\models\TblAttachment;
 use app\modules\assetmanagement\models\TblAssetClusterVendorInfo;
 
 /**
@@ -324,11 +323,6 @@ class TblAssetTransaction extends \app\models\ChildModel {
                         ->andWhere(['tbl_store_location.store_location_type' => $type])
                         ->andWhere(['tbl_store_location.reference_code' => $ref_code])
                         ->asArray()->all();
-    }
-
-    public function getAttachment() {
-        $this->asset_transaction_code = (string) $this->asset_transaction_code;
-        return $this->hasOne(TblAttachment::className(), ['module_code' => 'asset_transaction_code']);
     }
 
     public function getDetailCode() {

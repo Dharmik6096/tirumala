@@ -57,12 +57,6 @@ $grid_option = [
     'id' => 'transaction-detail',
     'attributes' => $attribute,
     'active_column' => false,
-    'actions' => [
-        'view-attachment' => function ($url, $model) {
-            $attachment = Yii::$app->general->getforeignkey($model->attachment, 'attachment');
-            return Html::a('<i class="fa fa-eye"></i>', $attachment, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Attachment', 'target' => '_blank']);
-        },
-    ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

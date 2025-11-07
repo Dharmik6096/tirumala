@@ -92,7 +92,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_asset_transaction', 'tbl_dcs', 'tbl_dcs', 'tbl_dcs');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

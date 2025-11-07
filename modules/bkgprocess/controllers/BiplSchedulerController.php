@@ -21,7 +21,7 @@ use app\modules\bkgprocess\models\TblOrgFileLog;
 
 class BiplSchedulerController extends ChildController {
 
-    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data'];
+    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master'];
     public $errorPath = '';
 
     public function init() {
@@ -263,12 +263,15 @@ class BiplSchedulerController extends ChildController {
                 }
                 $cnt++;
                 if ($connection) {
-                    if ($create_dir && $row->CheckDirectory() == '0') {
-                        $sapDir = \Yii::$app->general->getSapDirStructure($row->module_code);
-                        foreach ($sapDir as $dir) {
-                            $ftp->ftp_path = $dir;
+                    if ($create_dir) {
+                        $ftpDir = \Yii::$app->general->getFTPDirStructure($row->ref_code);
+                        foreach ($ftpDir as $dir) {
+                            $ftp->ftp_path = 'EKOMILK' . $dir;
+                            $localDirPath = \Yii::$app->params['biplDirPath'] . $dir;
+                            $localDirPath = Yii::$app->basePath . '/' . str_replace(Yii::$app->basePath, '', $localDirPath);
+                            $localDirPath = str_replace('\\', '/', $localDirPath);
                             $ftp->CreateDirectory();
-                            Yii::$app->general->checkDirectory(\Yii::$app->params['sapDirPath'] . $dir);
+                            Yii::$app->general->checkDirectory($localDirPath);
                         }
                     }
                     $ftp_path = explode('/', $row->file_path);
@@ -541,6 +544,20 @@ class BiplSchedulerController extends ChildController {
                 $ftp->CreateDirectory();
                 Yii::$app->general->checkDirectory(\Yii::$app->params['sapDirPath'] . $dir);
             }
+        }
+    }
+
+    public function actionUploadErrorFilesMaster() {
+        $model = new TblOrgFileLog();
+        $model->file_status = 0;
+        $model->status = 3;
+        $modelData = $model->getPendingData();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->org_file_log_id;
+            }, $modelData);
+            $model->updateFileStatus($ids);
+            $this->upload_files($modelData, TRUE);
         }
     }
 
