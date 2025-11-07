@@ -181,7 +181,7 @@ class DefaultController extends Controller {
                     }
                     $sentboxModel = new TblSentbox();
                     $addressBook = $sentboxModel->isAddressBook('tbl_bulk_notification');
-                    if ($row->status == 3 && !empty($addressBook)) {
+                    if ($row->status == 2 && !empty($addressBook)) {
                         if (in_array($notification->notification_type, [2, 3, 5, 7, 8])) {
                             $sentboxArray = [];
                             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $row->dcs_code);
