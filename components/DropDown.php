@@ -1847,7 +1847,7 @@ class DropDown extends Component {
             'notification_type' => [
                 'name' => 'notification_type',
                 'prompt' => Yii::t('app', 'Select Notification Type'),
-                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test'), 6 => Yii::t('app', 'Eipl Bill'), 7 => Yii::t('app', 'Multi Priptra'), 8 => Yii::t('app', 'AMCS Milk Bill')],
+                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'AMCS Special Message'), 4 => Yii::t('app', 'Milk Bill') . ' (' . Yii::t('app', 'DCS') . ' Ref Code )', 5 => Yii::t('app', 'Bacteria Test'), 6 => Yii::t('app', 'Eipl Bill'), 7 => Yii::t('app', 'Multi Priptra'), 8 => Yii::t('app', 'Milk Bill') . ' (' . Yii::t('app', 'DCS') . ' Code Ex )'],
             ],
             'month' => [
                 'name' => 'month',
@@ -2327,6 +2327,11 @@ class DropDown extends Component {
                 'name' => 'log_status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
+            ],
+            'attendances_regularization_status' => [
+                'name' => 'is_approved',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partial Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject')],
             ],
         ];
         return $records[$l];

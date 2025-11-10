@@ -15,6 +15,7 @@ class BackGroundDataImport extends Model {
     public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks, $sap_batch_no, $rate_wharehouse;
     public $shift_applicability, $amount, $allotted_share, $proposed_share, $total_share, $share_amount, $till_date, $folio_no, $member_vendor_code, $from_date, $to_date, $total_qty, $pouring_days, $avg_fat, $avg_snf, $milk_amount, $bonus_criteria, $incentive_amount, $special_code;
     public $asset_code, $serial_number, $cluster_email, $cluster_mobile, $vendor_email, $vendor_mobile;
+    public $product_mrp, $distributor_landing_rate, $sachiv_price, $member_price, $aadesh_master_code;
 
     function __construct() {
         
@@ -32,8 +33,8 @@ class BackGroundDataImport extends Model {
             [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
                     return strtoupper($model->applicable_for) != 'DCS';
                 }, 'on' => ['rateapplicability']],
-            [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate', 'product_sale_rate_gyan']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate', 'product_sale_rate_gyan']],
+            [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate', 'product_sale_rate_gyan', 'aadesh_master', 'aadesh_master_applicability']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate', 'product_sale_rate_gyan', 'aadesh_master', 'aadesh_master_applicability']],
             [['wef_date'], 'validateRateId', 'on' => ['rateapplicability']],
             [['shift_code'], 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
             [['shift_applicability'], 'in', 'range' => ['M', 'E', 'm', 'e', 'A', 'a', 'All', 'all'], 'on' => ['rateapplicability']],
@@ -48,10 +49,10 @@ class BackGroundDataImport extends Model {
             [['dpu_product_code'], 'required', 'when' => function ($model) {
                     return $model->is_dpu_product == 1;
                 }, 'on' => ['product_master']],
-            [['union_code', 'product_code', 'sale_rate', 'wef_date', 'is_member_rate'], 'required', 'on' => ['product_sale_rate', 'product_sale_rate_gyan']],
+            [['union_code', 'product_code', 'sale_rate', 'wef_date', 'is_member_rate'], 'required', 'on' => ['product_sale_rate', 'product_sale_rate_gyan', 'aadesh_master']],
             [['commission'], 'required', 'when' => function ($model) {
                     return $model->is_member_rate == 1;
-                }, 'on' => ['product_sale_rate', 'product_sale_rate_gyan']
+                }, 'on' => ['product_sale_rate', 'product_sale_rate_gyan', 'aadesh_master']
             ],
             ['rate_class', 'in', 'range' => ['A', 'B', 'C'], 'on' => ['member_rateclass']],
             [['deduction_start_date'], 'required', 'on' => ['product_sale', 'product_sale_member'], 'when' => function () {
@@ -69,6 +70,7 @@ class BackGroundDataImport extends Model {
             [['from_date', 'to_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['member_incentive_detail_import']],
             [['dcs_code', 'member_code', 'special_code'], 'required', 'on' => ['member_update_special_code']],
             [['asset_code', 'serial_number', 'cluster_email', 'cluster_mobile', 'vendor_email', 'vendor_mobile'], 'required', 'on' => ['asset_cluster_vendor']],
+            [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date', 'aadesh_master_code'], 'required', 'on' => ['aadesh_master_applicability']],
 //            [['sap_batch_no'], 'required', 'on' => ['product_sale_batch', 'product_sale_member_batch']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);

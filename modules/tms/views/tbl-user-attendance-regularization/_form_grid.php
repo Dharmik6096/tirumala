@@ -40,7 +40,7 @@ $attribute = [
         }, 'filter' => false, 'visible' => true],
     ['attribute' => 'regularization_reason', 'filter' => false, 'visible' => false],
     ['attribute' => 'status', 'value' => function ($model) {
-            return Yii::$app->general->getStaticDropdownVal('approval_status', $model, 'status');
+            return Yii::$app->general->getStaticDropdownVal('attendances_regularization_status', $model, 'status');
         }, 
         // 'filter' => Yii::$app->dropdown->dropdownfilterStatic('approval_status', $searchModel, 'status')
         'filter' => false

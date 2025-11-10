@@ -57,6 +57,17 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->model->app_type = 1;
         $saveModel = [];
+        $allowedEiplCodes = [
+            'BANAS',
+            'EMILKPRO',
+            'GYAN',
+//            'VRS_GLT',
+//            'VRS_MLP',
+//            'VRS_SBD',
+//            'VRS_NEWASA',
+            'AMULAMCS'
+        ];
+
         if (Yii::$app->request->post()) {
             if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
                 $postData = Yii::$app->request->post();
@@ -97,30 +108,26 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     $this->model->file_path = !empty($this->model->filename) ? $file_path . $this->model->filename : '';
                 }
                 if ($notification_type == 4 || $notification_type == 8) {
-                    $this->model->filename = $files;
-                    $filesArray = explode('.', $files);
-                    $filename = $filesArray[0];
-                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
-                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
-                    if (Yii::$app->general->checkDirectory($new_directory)) {
-                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
-                    }
-                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
-                    $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
-                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
-                    $crnt_dir = getcwd();
-                    chdir($utility_path);
-                    exec($command);
-                    chdir($crnt_dir);
-                    if ($notification_type == 4) {
-                        $from_date = "";
-                        $to_date = "";
-                        if (isset($this->model->payment_cycle_code) && $this->model->payment_cycle_code != '') {
-                            $paymentCycle = TblPaymentCycle::find()->where(['payment_cycle_code' => $this->model->payment_cycle_code])->one();
-
-                            $from_date = $paymentCycle->from_date;
-                            $to_date = $paymentCycle->to_date;
+                    $eipl_code = Yii::$app->session->get('eiplCode');
+                    if (in_array($eipl_code, $allowedEiplCodes)) {
+                        $this->model->filename = $files;
+                        $filesArray = explode('.', $files);
+                        $filename = $filesArray[0];
+                        $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                        $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                        if (Yii::$app->general->checkDirectory($new_directory)) {
+                            rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
                         }
+                        $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                        $command = 'java -jar pdf-splitter-1.0.jar' . ' ' . $eipl_code . ' ' . $new_directory . $this->model->filename;
+                        $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                        $crnt_dir = getcwd();
+                        chdir($utility_path);
+                        exec($command);
+                        chdir($crnt_dir);
+                    } else {
+                        Yii::$app->response->format = Response::FORMAT_JSON;
+                        return Json::encode(['status' => 'success', 'msg' => 'Pdf split utility not available for this client (' . $eipl_code . ').']);
                     }
                 }
                 if ($notification_type == 5) {
@@ -186,10 +193,23 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         }
                     }
                 }
+                if ($notification_type != 1 || $notification_type != 3) {
+                    $from_date = "";
+                    $to_date = "";
+                    if (isset($this->model->payment_cycle_code) && $this->model->payment_cycle_code != '') {
+                        $paymentCycle = TblPaymentCycle::find()->where(['payment_cycle_code' => $this->model->payment_cycle_code])->one();
 
+                        $from_date = $paymentCycle->from_date;
+                        $to_date = $paymentCycle->to_date;
+                    }
+                }
                 if ($notification_type == 1 || $notification_type == 2 || $notification_type == 3) {
                     $this->model->receiver_type = 'APP_NOTIFICATION';
                     $this->model->dcs_code = !empty($this->model->dcs_code) ? $this->model->dcs_code[0] : '';
+                    if (!empty($this->model->payment_cycle_code) && $notification_type == 2) {
+                        $this->model->from_date = $from_date;
+                        $this->model->to_date = $to_date;
+                    }
                     $saveModel[] = $this->model;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
                 } else {
@@ -204,23 +224,25 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->login_type = $this->model->login_type;
                         $model->department = $this->model->department;
                         if ($model->notification_type == 4) {
-                            $model->payment_cycle_code = $this->model->payment_cycle_code;
-                            $model->from_date = $from_date;
-                            $model->to_date = $to_date;
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['ref_code']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['ref_code']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         if ($model->notification_type == 5 || $model->notification_type == 7) {
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         if ($model->notification_type == 6) {
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
                         }
                         if ($model->notification_type == 8) {
-                            $model->filename = !empty($model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
+                            $model->filename = !empty($this->model->filename) ? ((int) $dcs_data['dcs_code_ex']) . '.pdf' : '';
                             $model->file_path = !empty($model->filename) ? $file_path . $model->filename : '';
+                        }
+                        $model->payment_cycle_code = !empty($this->model->payment_cycle_code) ? $this->model->payment_cycle_code : '';
+                        if (!empty($model->payment_cycle_code)) {
+                            $model->from_date = $from_date;
+                            $model->to_date = $to_date;
                         }
                         $model->campaign_name = $this->model->campaign_name;
                         $model->title = $this->model->title;

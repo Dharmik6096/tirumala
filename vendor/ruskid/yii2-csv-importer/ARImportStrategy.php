@@ -264,14 +264,14 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 }
 
                 if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
-                    if(!empty($model->auto_key_config)){
+                    if (!empty($model->auto_key_config)) {
                         $model->save();
                     } else {
-                     //   $modelList[] = $model;
+                        //   $modelList[] = $model;
                         $master[] = $model->save();
                     }
                     foreach ($modelList as $modelRow) {
-                        if(!empty($model->auto_key_config)){
+                        if (!empty($model->auto_key_config)) {
                             $m_name = $modelRow::className();
                             $m_name = explode("\\", $m_name);
                             $m_name = $m_name[count($m_name) - 1];
@@ -296,18 +296,21 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                         $trans->rollback();
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
-                            $message .= $value[0] . '<br/>';
+                            $val = is_array($value) ? $value[0] : $value;
+                            $message .= $val . '<br/>';
                         }
                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                     }
                 } else {
                     $message = '';
                     foreach ($model->getErrors() as $errorkey => $value) {
-                        $message .= $value[0] . '<br>';
+                        $val = is_array($value) ? $value[0] : $value;
+                        $message .= $val . '<br/>';
                     }
                     foreach ($errors as $array) {
                         foreach ($array as $errorkey => $value) {
-                            $message .= $value[0] . '<br>';
+                            $val = is_array($value) ? $value[0] : $value;
+                            $message .= $val . '<br/>';
                         }
                     }
                     return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message/* ,'error'=>$errors */];

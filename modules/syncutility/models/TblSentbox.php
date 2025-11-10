@@ -125,7 +125,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return TRUE;
     }
 
-    private function isAddressBook($table_name) {
+    public function isAddressBook($table_name) {
         $model = new TblAddressbook();
         $data = $model->find()->select(['destinations', 'to_child', 'to_parent'])->where(
                         [
