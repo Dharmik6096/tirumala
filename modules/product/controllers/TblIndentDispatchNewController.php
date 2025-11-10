@@ -175,7 +175,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $productStock[$fstockModel->product_stock_code] = $fstockModel->stock;
 
                                     $batch = $fstockModel->sap_batch_no;
-                                    $saveModel[] = $fstockModel;
 
                                     $fstockTxnModel = new TblProductStockTransaction();
                                     $fstockTxnModel->attributes = $fstockModel->attributes;
@@ -238,14 +237,14 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $totalQty = $totalQty['qty'];
 
                             $stockModel = new TblProductStock();
-                            if($type == 'BULKVEN'){
+                            if ($type == 'BULKVEN') {
                                 $stockModel->setCodes('BMC', $bmc);
                                 $checkStockFor = 'BMC';
                             } else {
                                 $stockModel->setCodes('DCS', $dcs);
                                 $checkStockFor = 'DCS';
                             }
-                            
+
                             // $stockModel->setCodes('DCS', $dcs);
 
                             $stockModel->product_code = $product;
@@ -255,7 +254,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $key = $stockModel->mcc_plant_code . '_' . $dcs . '_' . $stockModel->product_code . '_' . $batch;
                             $oldQty = 0;
 
-                            if($type != 'BULKVEN'){
+                            if ($type != 'BULKVEN') {
                                 if (!empty($existtoStock)) {
                                     if (empty($setOldVal[$key])) {
                                         $setOldVal[$key] = $existtoStock->stock;
@@ -279,12 +278,12 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $saveModel[] = $stockModel;
                             }
                             $reference_code = $dispatch->indent_dispatch_code;
-                            if($type == 'BULKVEN'){
+                            if ($type == 'BULKVEN') {
                                 $reference_code = Yii::$app->general->getUuid();
                                 $saleModel = new TblProductSale();
                                 $saleModel->scenario = 'saleProductOnDispatch';
                                 $sale_rate = $existData->rate;
-                                if($batchNoWiseInventory && $batchNoWiseProductRate){
+                                if ($batchNoWiseInventory && $batchNoWiseProductRate) {
                                     $sale_rate = $existtoStock->rate;
                                 }
                                 $sale_amount = $disp_qty * $sale_rate;
@@ -328,7 +327,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $saveModel[] = $saleModel;
                                 $saveModel[] = $detailSaleModel;
                                 $saveModel[] = $installmentModel;
-
                             }
                             $stockTxnModel = new TblProductStockTransaction();
                             $stockTxnModel->attributes = $stockModel->attributes;
@@ -343,7 +341,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $stockTxnModel->reference_code = $reference_code;
                             $stockTxnModel->x_col2 = 'Indent Dispatch';
                             $saveModel[] = $stockTxnModel;
-                            
+
                             $receiptTo = new TblProductReceipt();
                             $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
                             $receiptTo->grn_no = '1234';
@@ -371,6 +369,9 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $saveModel[] = $receiptTxnTo;
                             $j++;
                         }
+                        if (empty($warehouse)) {
+                            $saveModel[] = $fstockModel;
+                        }
                         $saveModel[] = $dispatch;
                         if (!empty($existData)) {
                             $historyModel = new TblIndentMasterHistory();
@@ -388,9 +389,28 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                         }
                         $i++;
                     }
-                    $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
-                    if ($transaction == 'customRedirect') {
-                        return $this->redirect(['index-other']);
+                    $allModelsValid = true;
+                    $errorMessages = [];
+                    foreach ($saveModel as $modelToValidate) {
+                        if (!$modelToValidate->validate()) {
+                            $allModelsValid = false;
+                            $errors = $modelToValidate->getErrors();
+                            foreach ($errors as $attribute => $messages) {
+                                foreach ($messages as $message) {
+                                    $errorMessages[] = $message;
+                                }
+                            }
+                        }
+                    }
+                    if ($allModelsValid) {
+                        $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
+                        if ($transaction == 'customRedirect') {
+                            return $this->redirect(['index-other']);
+                        }
+                    } else {
+                        $fullErrorMessage = implode("<br>", $errorMessages);
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $fullErrorMessage]);
+                        return $this->redirect(['create-other']);
                     }
                 }
             }
