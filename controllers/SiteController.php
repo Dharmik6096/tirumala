@@ -3013,6 +3013,10 @@ class SiteController extends \app\controllers\ChildController {
         if (!empty($postData['Dashboard']['shift'])) {
             $fromShift = $postData['Dashboard']['shift'];
             $toShift = $postData['Dashboard']['shift'];
+            if($fromShift == 3){
+                $fromShift = 1;
+                $toShift = 2;
+            }
         } elseif (!empty($postData['Dashboard']['mag_from_shift'])) {
             $fromShift = $postData['Dashboard']['mag_from_shift'];
             $toShift = $postData['Dashboard']['mag_to_shift'];
