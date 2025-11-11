@@ -484,6 +484,11 @@ class TblRouteMapping extends \app\models\ChildModel {
         array_push($modelSave, $contactDetails);
     }
 
+    public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, $unlink_files, $attachments, $masterdoc, $errors) {
+
+        //
+    }
+
     public function graceTimeValidate($attribute, $params) {
         if (!empty($this->morning_grace_time) && !empty($this->evening_grace_time)) {
             if ($this->evening_grace_time < $this->morning_grace_time) {
