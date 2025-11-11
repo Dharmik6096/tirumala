@@ -807,6 +807,12 @@ class SiteController extends \app\controllers\ChildController {
                 $post['from_shift'] = 1;
                 $post['to_shift'] = 2;
             }
+            $post['mav_from_shift'] =  $post['from_shift'];
+            $post['mav_to_shift'] = $post['to_shift'];
+        }
+        if (!empty($post['date']) && (empty($post['from_date']) || empty($post['to_date']))) {
+            $post['from_date'] = $post['date'];
+            $post['to_date'] = $post['date'];
         }
         $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
