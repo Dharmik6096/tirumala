@@ -454,6 +454,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
             $totalAvailableStock = TblProductStock::find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'product_code' => $this->product_code])->andWhere(['AND', ['is', 'dcs_code', NULL]])->andWhere(['>', 'stock', 0])->sum('stock');
             if ($totalAvailableStock < $this->quantity) {
                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $totalAvailableStock));
+                return false;
             }
         }
     }
