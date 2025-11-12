@@ -29,7 +29,7 @@ use app\modules\usermanagement\models\User;
  * @property string $x_col5
  */
 class TblAssetVerificationData extends \app\models\ChildModel {
-
+    public $user_code;
     /**
      * @inheritdoc
      */
@@ -53,7 +53,7 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             [['asset_group_code', 'asset_code'], 'string', 'max' => 12],
             [['serial_number', 'manufacturer_serial_number'], 'string', 'max' => 50],
             [['is_verified'], 'default', 'value' => 0, 'on' => 'importCsv'],    
-//            [['asset_code'], 'unique', 'targetAttribute' => ['asset_code', 'serial_number'], 'message' => 'The combination of asset Code and Serial Number has already been taken.'],
+            [['asset_code'], 'unique', 'targetAttribute' => ['asset_code', 'serial_number'], 'message' => 'The combination of asset Code and Serial Number has already been taken.'],
             [['asset_verification_code'], 'unique'],
             
             [['date_of_cap'], 'convertDateDot', 'on' => ['importCsv']],
@@ -84,7 +84,7 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             'user_code' => Yii::t('app', 'Employee ID'),
             'date_of_cap' => Yii::t('app', 'Date Of Cap'),
             'remarks' => Yii::t('app', 'Remarks'),
-            'scan_status' => Yii::t('app', 'SCAN STATUS'),
+            'scan_status' => Yii::t('app', 'Scan Status'),
             'physical_verification_status' => Yii::t('app', 'Physical Verification Status'),
         ];
     }
@@ -110,20 +110,20 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             $assetCode = $this->assetCode;
             $this->asset_group_code = $assetCode->asset_group_code;
             $this->union_code = $assetCode->union_code;
-
-            $assetTransactionData = TblAssetTransaction::find()->select(['to_type','to_dest'])->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code])->orderBy(['created_at' => SORT_DESC])->one();
             if (!empty($this->user_code)) {
                 $this->customer_type = 'USER';
                 $this->customer_code = $this->user_code;
-            } elseif (!empty($assetTransactionData)) {
-                $this->customer_type = $assetTransactionData->to_type;
-                $referenceCode = TblStoreLocation::find()->select(['reference_code'])->where(['store_location_code' => $assetTransactionData->to_dest, 'store_location_type' => $assetTransactionData->to_type, 'is_active' => '1'])->scalar();
-                $this->customer_type = $this->storeLocType->slt_name;
-                $this->customer_code = $referenceCode;
-            } else{
-                $this->addError($attribute, Yii::t('app/validation', 'Enter a valid serial number for asset.'));
+            } else {
+                $assetTransactionData = TblAssetTransaction::find()->select(['to_type','to_dest'])->where(['serial_number' => $this->serial_number, 'asset_code' => $this->asset_code])->orderBy(['created_at' => SORT_DESC])->one();
+                if (!empty($assetTransactionData)) {
+                    $this->customer_type = $assetTransactionData->to_type;
+                    $referenceCode = TblStoreLocation::find()->select(['reference_code'])->where(['store_location_code' => $assetTransactionData->to_dest, 'store_location_type' => $assetTransactionData->to_type, 'is_active' => '1'])->scalar();
+                    $this->customer_type = $this->storeLocType->slt_name;
+                    $this->customer_code = $referenceCode;
+                } else {
+                    $this->addError($attribute, Yii::t('app/validation', 'Enter a valid serial number for asset.'));
+                }
             }
-
             $asset_verification_code_mandatory = Yii::$app->general->getUnionConfiguration($this->union_code, 'asset_verification_code_mandatory', 'PORTAL');
             $pattern_of_verification_code = Yii::$app->general->getUnionConfiguration($this->union_code, 'pattern_of_verification_code', 'PORTAL');
             if($asset_verification_code_mandatory == 1 && !empty($pattern_of_verification_code)){
@@ -153,22 +153,13 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             $primaryUser = User::find()->where(['or', ['employee_id' => $this->user_code], ['user_code' => $this->user_code]])->andWhere(['is_active' => 1])->one();
             if ($primaryUser) {
                 $this->user_code = $primaryUser->user_code;
+                $exists = $this->find()->where(['asset_code' => $this->asset_code, 'serial_number' => $this->serial_number])->andWhere(['customer_code' => $this->user_code, 'customer_type' => 'USER'])->one();
+                if (!empty($exists)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'The combination of asset Code, Serial Number and User Code has already been taken.'));
+                    return false;
+                }
             } else {
                 $this->addError('user_code', Yii::t('app/validation', 'Invalid User Code.'));
-                return false;
-            }
-        }
-        $exists = $this->find()->where(['asset_code' => $this->asset_code, 'serial_number' => $this->serial_number]);
-        if (!empty($this->user_code)) {
-            $exists = $exists->andWhere(['user_code' => $this->user_code])->one();
-            if (!empty($exists)) {
-                $this->addError($attribute, Yii::t('app/validation', 'The combination of asset Code, Serial Number and User Code has already been taken.'));
-                return false;
-            }
-        } else {
-            $exists = $exists->one();
-            if (!empty($exists)) {
-                $this->addError($attribute, Yii::t('app/validation', 'The combination of asset Code and Serial Number has already been taken.'));
                 return false;
             }
         }
@@ -190,7 +181,7 @@ class TblAssetVerificationData extends \app\models\ChildModel {
     }
 
     public function getUserCode() {
-        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+        return $this->hasOne(User::className(), ['user_code' => 'customer_code']);
     }
 
 }

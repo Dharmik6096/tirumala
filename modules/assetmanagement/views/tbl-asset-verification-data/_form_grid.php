@@ -28,20 +28,19 @@ $attribute = [
         'value' => function($model) {
             return (!empty($model->verification_date)) ? Yii::$app->controls->view_date($model->verification_date) : 'N/A';
         }, 'filter' => false],
-    ['attribute' => 'user_code', 'filter' => false],
-    ['attribute' => 'user_code', 'label' =>  Yii::t('app', 'Employee Name'), 'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+    ['attribute' => 'user_name', 'label' =>  Yii::t('app', 'Employee Name'), 'value' => function ($model) {
+            return $model->customer_type == 'USER' ? Yii::$app->general->getforeignkey($model->userCode, 'name') : '';
         }, 'filter' => false
     ],
     ['attribute' => 'date_of_cap', 'value' => function($model) {
         return (!empty($model->date_of_cap)) ? Yii::$app->controls->view_date($model->date_of_cap) : 'N/A';
     }, 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
-    ['attribute' => 'scan_status', 'label' => 'SCAN STATUS', 'value' => function($model) {
-        return $model->scan_status == 1 ? 'Asset Physically Scan' : 'Asset Physically NOT Scan';
+    ['attribute' => 'scan_status', 'value' => function($model) {
+        return $model->scan_status == 1 ? Yii::t('app', 'Asset Physically Scan') : Yii::t('app', 'Asset Physically NOT Scan');
     }, 'filter' => false],
-    ['attribute' => 'physical_verification_status', 'label' => 'Physical Verification Status', 'value' => function($model) {
-        return $model->physical_verification_status == 1 ? 'physically Available' : 'physically NOT Available';
+    ['attribute' => 'physical_verification_status', 'value' => function($model) {
+        return $model->physical_verification_status == 1 ? Yii::t('app', 'Physically Available') : Yii::t('app', 'Physically Not Available');
     }, 'filter' => false],
 ];
 
