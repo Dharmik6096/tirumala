@@ -543,7 +543,12 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateUnique($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfigResult($this->union_code, 'collection_approval');
+        if ($this->scenario == 'ho_sync_create') {
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
+        }
+        $flag = Yii::$app->general->getUnionConfigResult($this->union_code, $configKey);
 // $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
 
         Yii::$app->general->validateRateRange($this);
@@ -554,7 +559,12 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateUpdate($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfigResult($this->union_code, 'collection_approval');
+        if ($this->scenario == 'ho_sync_update') {
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
+        }
+        $flag = Yii::$app->general->getUnionConfigResult($this->union_code, $configKey);
 // $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
 
         $ApprovalModel = new TblCollectionDataAlias();
@@ -626,7 +636,12 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
         if (empty($modelData->getErrors())) {
-            $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+            if ($modelData->scenario == 'ho_sync_create' || $modelData->scenario == 'ho_sync_update') {
+                $configKey = 'collection_approval_mobile_app';
+            } else {
+                $configKey = 'collection_approval';
+            }
+            $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, $configKey, 'PORTAL');
 //            $flag = Yii::$app->general->getUnionConfigResult($modelData->union_code, 'collection_approval');
             if (strtolower($modelData->customer_type) == 'dcs') {
                 $modelData->dcs_code = !empty($modelData->dcs_code) ? $modelData->dcs_code : $modelData->customer_code;
@@ -834,7 +849,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             $model->originating_org_type = 'MOBILE';
             $model->originating_org_code = $model->union_code;
             if (!empty($existingData)) {
-                $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+                $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval_mobile_app', 'PORTAL');
                 $conversion_const = Yii::$app->general->getUnionConfiguration($model->union_code, 'ltr_to_kg_constant', 'BMC');
                 $model->converted_qty = $model->qty_mode == 1 ? $model->qty / $conversion_const : $model->qty * $conversion_const;
                 $model->own_bmc_code = $model->bmc_code;
@@ -897,7 +912,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $login_data = Yii::$app->eiplapp->identity;
                 $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
                 if ($existingData) {
-                    $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+                    $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval_mobile_app', 'PORTAL');
                     if (in_array($collectionApprovalConfig, [1, 2])) {
                         $ApprovalModel = new TblCollectionDataAlias();
                         $ApprovalModel->attributes = $existingData->attributes;
@@ -1013,12 +1028,15 @@ class TblBmcCollection extends \app\models\ChildModel {
             $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
             $model->originating_org_type = 'MOBILE';
             $model->originating_org_code = $model->union_code;
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
         }
         $model->qty_mode = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_qty_mode', 'BMC');
         $conversion_const = Yii::$app->general->getUnionConfiguration($model->union_code, 'ltr_to_kg_constant', 'BMC');
         $model->converted_qty_mode = $model->qty_mode == 1 ? 0 : 1;
         $model->converted_qty = $model->qty_mode == 1 ? $model->qty / $conversion_const : $model->qty * $conversion_const;
-        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, $configKey, 'PORTAL');
         if (in_array($collectionApprovalConfig, [1, 2])) {
             $approvalModel = new TblCollectionDataAlias();
             $approvalModel->attributes = $model->attributes;
@@ -1223,7 +1241,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function validateDelete($attribute) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval_mobile_app', 'PORTAL');
         $ApprovalModel = new TblCollectionDataAlias();
         $existTableData = $ApprovalModel->find()->where(['customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'bmc_code' => $this->bmc_code, 'route_code' => $this->route_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_bmc_collection', 'milk_quality_type_code' => $this->milk_quality_type_code, 'action_perform' => 'DELETE'])->one();
 
