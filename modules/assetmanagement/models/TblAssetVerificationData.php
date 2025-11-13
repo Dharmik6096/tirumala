@@ -153,11 +153,6 @@ class TblAssetVerificationData extends \app\models\ChildModel {
             $primaryUser = User::find()->where(['or', ['employee_id' => $this->user_code], ['user_code' => $this->user_code]])->andWhere(['is_active' => 1])->one();
             if ($primaryUser) {
                 $this->user_code = $primaryUser->user_code;
-                $exists = $this->find()->where(['asset_code' => $this->asset_code, 'serial_number' => $this->serial_number])->andWhere(['customer_code' => $this->user_code, 'customer_type' => 'USER'])->one();
-                if (!empty($exists)) {
-                    $this->addError($attribute, Yii::t('app/validation', 'The combination of asset Code, Serial Number and User Code has already been taken.'));
-                    return false;
-                }
             } else {
                 $this->addError('user_code', Yii::t('app/validation', 'Invalid User Code.'));
                 return false;
