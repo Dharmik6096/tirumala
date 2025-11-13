@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblSocietyCodesHistory;
 use app\modules\organisation\models\TblDcsHistory;
 use app\modules\organisation\models\TblCustomerMasterHistory;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_route_mapping_sources".
@@ -255,9 +256,18 @@ class TblRouteMappingSources extends \app\models\ChildModel {
         }
     }
 
-    public function setChildTable(&$model, &$modelSave) {
+    public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, $unlink_files, $attachments, $masterdoc, $errors) {
         $modelRouteSource = TblRouteMapping::find()->where(['route_code' => $model->route_code])->one();
         if (strtolower($this->from_type) == 'society') {
+            $oldRoutes = TblRouteMappingSources::find()->where(['from_dest' => $model->from_dest, 'from_type' => 'society'])->all();
+            if (!empty($oldRoutes)) {
+                foreach ($oldRoutes as $oldRoute) {
+                    $sourcesHistory = new TblRouteMappingSourcesHistory();
+                    Yii::$app->operation->history($oldRoute, $sourcesHistory, DELETE);
+                    array_push($modelSave, $sourcesHistory);
+                    array_push($deleteModel, $oldRoute);
+                }
+            }
             $societyCodes = TblSocietyCodes::find()->where(['dcs_code' => $model->from_dest])->one();
             if (!empty($societyCodes)) {
                 $historyModel = new TblSocietyCodesHistory();
