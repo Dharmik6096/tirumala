@@ -106,16 +106,25 @@ class TblUserTrackingMovement extends ChildModel {
 
         $query2 = User::find()
                 ->alias('u')
-                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("'route_supervisor' AS login_type"), 'u.name AS user_name', new \yii\db\Expression("'2' AS order_by")])
+                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', new \yii\db\Expression("'2' AS order_by")])
                 ->distinct()
                 ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
                 ->innerJoin('tbl_user_organization_mapping tuom', "tuom.user_id = u.id AND tuom.organization_type = 'DCS'")
                 ->innerJoin('tbl_dcs d', 'd.dcs_code = tuom.organization_code')
                 ->where(['d.mcc_plant_code' => $code]);
+        
+        $query3 = User::find()
+                ->alias('u')
+                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', new \yii\db\Expression("'2' AS order_by")])
+                ->distinct()
+                ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
+                ->innerJoin('tbl_user_organization_mapping tuom', "tuom.user_id = u.id AND tuom.organization_type = 'BMC'")
+                ->innerJoin('tbl_bmc b', 'b.bmc_code = tuom.organization_code')
+                ->where(['b.mcc_plant_code' => $code]);
 
         $unionSql = (new \yii\db\Query())
                 ->select('*')
-                ->from(['unioned' => $query1->union($query2)])
+                ->from(['unioned' => $query1->union($query2)->union($query3)])
                 ->orderBy(['order_by' => SORT_ASC]);
 
         $userData = $unionSql->all();
