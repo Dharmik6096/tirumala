@@ -6393,3 +6393,26 @@ select:focus > option:checked {
 .w50{
     min-width: 50px;
 }
+.individual-location{
+    width: 99%;
+    border: 1px solid #ccc;
+    padding: 13px;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.2;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 7px 0px;
+}
+.individual-location .individual-location-inner p{
+    margin: 10px;
+}
+.set_overflow_for_map {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: none;
+}
+.w79pr {
+    width: 79%;
+}
