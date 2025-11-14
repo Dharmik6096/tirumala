@@ -10,7 +10,7 @@ use yii\web\View;
 $disable = '';
 if ($allUser) {
     $model->tracking_datetime = date('Y-m-d');
-    $disable = 'disabled';
+    $disable = 'disabled no_pointer_disabled';
 }
 ?>
 
@@ -49,10 +49,13 @@ if ($allUser) {
 if ($allUser) {
     $script = "
     $('#tblusertrackingmovementsearch-user_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-        $('#tblusertrackingmovementsearch-user_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+        $('#tblusertrackingmovementsearch-user_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));
         if('" . $model->user_code . "' == '0') {
-            $('#tblusertrackingmovementsearch-user_code').val(0);      
+            $('#tblusertrackingmovementsearch-user_code').val(0);
         }
+    });
+    $('#tblusertrackingmovementsearch-tracking_datetime').prop('readonly', true).on('keydown paste', function(e) {
+        e.preventDefault();
     });
 ";
     $this->registerJs($script, View::POS_READY, 'dep-drop-user-tracking');
