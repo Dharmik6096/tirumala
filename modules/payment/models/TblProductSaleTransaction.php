@@ -10,7 +10,6 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductStockHistory;
-use app\modules\product\models\TblProductStockTransactionHistory;
 
 /**
  * This is the model class for table "tbl_product_sale_details".
@@ -51,18 +50,18 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync', 'androidsyncsplit', 'saleProductOnDispatch']],
-                [['product_code'], 'validProduct', 'on' => ['saleProductOnDispatch']],
-                [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct', 'saleProductOnDispatch']],
+            [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync', 'androidsyncsplit', 'saleProductOnDispatch']],
+            [['product_code'], 'validProduct', 'on' => ['saleProductOnDispatch']],
+            [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct', 'saleProductOnDispatch']],
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
             [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync', 'androidsyncsplit']],
-                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
-                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks', 'mcc_plant_code', 'bmc_code'], 'safe'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
+            [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
+            [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks', 'mcc_plant_code', 'bmc_code'], 'safe'],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
             [['quantity'], 'validateQty', 'on' => ['saleProduct']],
-                [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
-                [['sap_batch_no'], 'required', 'when' => function ($model) {
+            [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
+            [['sap_batch_no'], 'required', 'when' => function ($model) {
                     $product = $model->productCode;
                     $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfigResult($product->union_code, 'batch_no_wise_inventory', $this) : '';
                     // $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfiguration($product->union_code, 'batch_no_wise_inventory', 'PORTAL') : '';
@@ -70,11 +69,10 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                     return ($batchNoWiseInventory == 1 && $product_type == 2);
                 },
                 'on' => ['saleProduct', 'SaleImport', 'saleProductOnDispatch']],
-                [['data_lock'], 'default', 'value' => 0],
-                [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
+            [['data_lock'], 'default', 'value' => 0],
+            [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
             //   [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
             [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
-                [['quantity'], 'validateDispatchQty', 'on' => ['saleProductOnDispatch']],
         ];
     }
 
@@ -445,17 +443,6 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         }
         $this->addError($attribute, Yii::t('app/validation', 'Product Record Not Found'));
         return false;
-    }
-
-    public function validateDispatchQty($attribute, $param) {
-        $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
-        $productType = Yii::$app->general->getforeignkey($this->productCode, 'x_col3');
-        if ($config == 1 && $productType != 1) {
-            $totalAvailableStock = TblProductStock::find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'product_code' => $this->product_code])->andWhere(['AND', ['is', 'dcs_code', NULL]])->andWhere(['>', 'stock', 0])->sum('stock');
-            if ($totalAvailableStock < $this->quantity) {
-                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $totalAvailableStock));
-            }
-        }
     }
 
 }
