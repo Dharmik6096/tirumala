@@ -312,4 +312,8 @@ class TblProductStock extends \app\models\ChildModel {
         return $query->orderBy(['created_at' => SORT_DESC])->one();
     }
 
+    public function getTotalAvailableStock() {
+        return TblProductStock::find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'product_code' => $this->product_code])->andWhere(['AND', ['is', 'dcs_code', NULL]])->andWhere(['>', 'stock', 0])->sum('stock');
+    }
+
 }
