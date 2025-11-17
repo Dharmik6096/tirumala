@@ -812,6 +812,12 @@ class SiteController extends Controller {
                 $post['from_shift'] = 1;
                 $post['to_shift'] = 2;
             }
+            $post['mav_from_shift'] =  $post['from_shift'];
+            $post['mav_to_shift'] = $post['to_shift'];
+        }
+        if (!empty($post['date']) && (empty($post['from_date']) || empty($post['to_date']))) {
+            $post['from_date'] = $post['date'];
+            $post['to_date'] = $post['date'];
         }
         $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
@@ -3012,6 +3018,10 @@ class SiteController extends Controller {
         if (!empty($postData['Dashboard']['shift'])) {
             $fromShift = $postData['Dashboard']['shift'];
             $toShift = $postData['Dashboard']['shift'];
+            if($fromShift == 3){
+                $fromShift = 1;
+                $toShift = 2;
+            }
         } elseif (!empty($postData['Dashboard']['mag_from_shift'])) {
             $fromShift = $postData['Dashboard']['mag_from_shift'];
             $toShift = $postData['Dashboard']['mag_to_shift'];

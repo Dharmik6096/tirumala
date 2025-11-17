@@ -102,6 +102,8 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                     $productStockCode = [];
                     $existingProducts = [];
                     $productStock = [];
+                    $existfromTotalStock = [];
+                    $originalTotalStock = [];
                     foreach ($codes as $code) {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $bmc = $existData->bmc_code;
@@ -143,6 +145,9 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $productUniqueKey = $dispatch->union_code . '#' . $product . '#' . $dispatch->mcc_plant_code;
                             if (!in_array($productUniqueKey, $existingProducts)) {
                                 $existfromStock = $fstockModel->getAvailableStock('BMC', $batch);
+                                $totalStockData = $fstockModel->getTotalAvailableStock();
+                                $existfromTotalStock[$productUniqueKey] = $totalStockData;
+                                $originalTotalStock[$productUniqueKey] = $totalStockData;
                                 $existingProducts[] = $productUniqueKey;
                             } else {
                                 $existfromStock = $fstockModel->getAvailableStock('BMC', $batch, false, $productStockCode);
@@ -238,14 +243,14 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $totalQty = $totalQty['qty'];
 
                             $stockModel = new TblProductStock();
-                            if($type == 'BULKVEN'){
+                            if ($type == 'BULKVEN') {
                                 $stockModel->setCodes('BMC', $bmc);
                                 $checkStockFor = 'BMC';
                             } else {
                                 $stockModel->setCodes('DCS', $dcs);
                                 $checkStockFor = 'DCS';
                             }
-                            
+
                             // $stockModel->setCodes('DCS', $dcs);
 
                             $stockModel->product_code = $product;
@@ -255,7 +260,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $key = $stockModel->mcc_plant_code . '_' . $dcs . '_' . $stockModel->product_code . '_' . $batch;
                             $oldQty = 0;
 
-                            if($type != 'BULKVEN'){
+                            if ($type != 'BULKVEN') {
                                 if (!empty($existtoStock)) {
                                     if (empty($setOldVal[$key])) {
                                         $setOldVal[$key] = $existtoStock->stock;
@@ -277,14 +282,17 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $k++;
                                 }
                                 $saveModel[] = $stockModel;
+                                if (array_key_exists($productUniqueKey, $existfromTotalStock)) {
+                                    $existfromTotalStock[$productUniqueKey] -= $disp_qty;
+                                }
                             }
                             $reference_code = $dispatch->indent_dispatch_code;
-                            if($type == 'BULKVEN'){
+                            if ($type == 'BULKVEN') {
                                 $reference_code = Yii::$app->general->getUuid();
                                 $saleModel = new TblProductSale();
                                 $saleModel->scenario = 'saleProductOnDispatch';
                                 $sale_rate = $existData->rate;
-                                if($batchNoWiseInventory && $batchNoWiseProductRate){
+                                if ($batchNoWiseInventory && $batchNoWiseProductRate) {
                                     $sale_rate = $existtoStock->rate;
                                 }
                                 $sale_amount = $disp_qty * $sale_rate;
@@ -314,7 +322,17 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $detailSaleModel->product_code = $product;
                                 $detailSaleModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailSaleModel, $detailSaleModel->product_sale_code);
                                 unset($detailSaleModel->created_at, $detailSaleModel->created_by, $detailSaleModel->updated_at, $detailSaleModel->updated_by, $detailSaleModel->originating_org_code, $detailSaleModel->originating_org_type, $detailSaleModel->originating_type);
-
+                                $productSaleUniqueKey = $saleModel->union_code . '#' . $product . '#' . $saleModel->mcc_plant_code;
+                                if (array_key_exists($productSaleUniqueKey, $existfromTotalStock)) {
+                                    $config = isset(Yii::$app->session->get('unionConfig')[$saleModel->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$saleModel->union_code]['stock_check_on_sale'] : '';
+                                    $productData = $fstockModel->productCode;
+                                    $newQty = $existfromTotalStock[$productSaleUniqueKey] - $totalQty;
+                                    if ($newQty < 0 && $config == 1 && $productData->x_col3 != 1) {
+                                        Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => "Dispatch Quantity for '$productData->product_name' must be less than Total Stock ($originalTotalStock[$productSaleUniqueKey])."]);
+                                        return $this->redirect(Url::previous());
+                                    }
+                                    $existfromTotalStock[$productSaleUniqueKey] = $newQty;
+                                }
                                 $installmentModel = new TblSaleInstallments();
                                 $installmentModel->attributes = $saleModel->attributes;
                                 $installmentModel->main_amount = $saleModel->amount_due;
@@ -328,7 +346,6 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                 $saveModel[] = $saleModel;
                                 $saveModel[] = $detailSaleModel;
                                 $saveModel[] = $installmentModel;
-
                             }
                             $stockTxnModel = new TblProductStockTransaction();
                             $stockTxnModel->attributes = $stockModel->attributes;
@@ -343,7 +360,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $stockTxnModel->reference_code = $reference_code;
                             $stockTxnModel->x_col2 = 'Indent Dispatch';
                             $saveModel[] = $stockTxnModel;
-                            
+
                             $receiptTo = new TblProductReceipt();
                             $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
                             $receiptTo->grn_no = '1234';
@@ -371,6 +388,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $saveModel[] = $receiptTxnTo;
                             $j++;
                         }
+
                         $saveModel[] = $dispatch;
                         if (!empty($existData)) {
                             $historyModel = new TblIndentMasterHistory();
@@ -463,3 +481,5 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
     }
 
 }
+
+?>

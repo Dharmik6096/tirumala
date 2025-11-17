@@ -269,12 +269,14 @@ class DcsImportStrategy extends ARImportStrategy {
                             }
                         }
                         if ($model->isAttributeChanged('route_code', FALSE)) {
-                            $oldRoute = TblRouteMappingSources::find()->where(['from_dest' => $model->dcs_code, 'from_type' => 'society', 'to_dest' => $model->bmc_code, 'to_type' => 'bmc'])->one();
-                            if (!empty($oldRoute)) {
-                                $sourcessHistory = new TblRouteMappingSourcesHistory();
-                                Yii::$app->operation->history($oldRoute, $sourcessHistory, DELETE);
-                                array_push($modelList, $sourcessHistory);
-                                array_push($deleteModel, $oldRoute);
+                            $oldRoutes = TblRouteMappingSources::find()->where(['from_dest' => $model->dcs_code, 'from_type' => 'society'])->all();
+                            if (!empty($oldRoutes)) {
+                                foreach ($oldRoutes as $oldRoute) {
+                                    $sourcesHistory = new TblRouteMappingSourcesHistory();
+                                    Yii::$app->operation->history($oldRoute, $sourcesHistory, DELETE);
+                                    array_push($modelList, $sourcesHistory);
+                                    array_push($deleteModel, $oldRoute);
+                                }
                             }
                             $sourceMapping = new TblRouteMappingSources();
                             $sourceMapping->from_dest = $model->dcs_code;

@@ -583,7 +583,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('reset_password', ['model' => $model]);
     }
 
-    public function actionOrganizationMap($id) {
+    public function actionOrganizationMap($id, $hideControlsBtn = FALSE) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->user_id = $id;
@@ -695,7 +695,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             Yii::$app->display->message(true, 'user', 'edit');
             return $this->redirect(['index']);
         }
-        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
+        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray, 'hideControlsBtn' => $hideControlsBtn]);
     }
 
     private function addUserOrganizationMapping($data, $type, $userId, $active) {

@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_store_location".
@@ -89,6 +90,10 @@ class TblStoreLocation extends \app\models\ChildModel {
 
     public function getMccPlantCode() {
         return $this->hasMany(TblMccPlant::className(), ['mcc_plant_code' => 'reference_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasMany(TblDcsBmc::className(), ['bmc_code' => 'reference_code']);
     }
 
     public function getDcsCode() {
