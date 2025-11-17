@@ -5,9 +5,7 @@ namespace app\modules\tms\controllers;
 use Yii;
 use app\modules\tms\models\TblUserTrackingMovement;
 use app\modules\tms\models\TblUserTrackingMovementSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use app\controllers\ChildController;
 
@@ -36,9 +34,11 @@ class TblUserTrackingMovementController extends ChildController {
         $searchModel = new TblUserTrackingMovementSearch();
         $searchModel->scenario = 'indexOther';
         $output = $searchModel->searchUser(Yii::$app->request->queryParams, 'latLong');
+        $userDetailData = $searchModel->getUserDetail(Yii::$app->request->queryParams, $output);
         return $this->render('index_other', [
                     'searchModel' => $searchModel,
                     'onlineData' => $output,
+                    'userDetailData' => $userDetailData,
         ]);
     }
 
