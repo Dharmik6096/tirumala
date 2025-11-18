@@ -37,10 +37,7 @@ class ChildModel extends \yii\db\ActiveRecord {
 
             if ($this->hasAttribute('description'))
                 \Yii::$app->general->validateDiscriptiveField($this, 'description');
-//            $user = null;
-//            if (!Yii::$app->request->isConsoleRequest) {
                 $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-//            }
             if ($insert) {
                 if ($this->hasAttribute('created_by') && $this->created_by == NULL)
                     $this->created_by = $user;

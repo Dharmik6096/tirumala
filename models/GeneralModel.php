@@ -511,7 +511,7 @@ class GeneralModel {
             }
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo "An error occurreda: " . Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+                echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
@@ -520,7 +520,7 @@ class GeneralModel {
         } catch (UserException $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo "An error occurredds: " . $e->getMessage() . "\n";
+                echo $e->getMessage() . "\n";
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
@@ -534,7 +534,7 @@ class GeneralModel {
             $transaction->rollback();
             $message = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
             if (Yii::$app->request->isConsoleRequest) {
-                echo "An error occurreddg: " . $message . "\n";
+                echo $message . "\n";
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $message]);
@@ -575,7 +575,7 @@ class GeneralModel {
             }
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo "An error occurredt: " . Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+                echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
@@ -584,7 +584,7 @@ class GeneralModel {
         } catch (UserException $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo "An error occurredq: " . $e->getMessage() . "\n";
+                echo $e->getMessage() . "\n";
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
@@ -593,7 +593,7 @@ class GeneralModel {
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo "An error occurredu: " . htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8') . "\n";
+                echo htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8') . "\n";
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
