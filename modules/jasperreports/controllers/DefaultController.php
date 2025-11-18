@@ -513,27 +513,27 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ShiftWiseBill';
         return $this->actionIndex();
     }
-    
+
     public function actionCompleteTrip() {
         $this->report = 'CompleteTrip';
         return $this->actionIndex();
     }
-    
+
     public function actionCcTruckSlip() {
         $this->report = 'CcTruckSlip';
         return $this->actionIndex();
     }
-    
+
     public function actionDmrReport() {
         $this->report = 'DmrReport';
         return $this->actionIndex();
     }
-    
+
     public function actionCcSubStandardMrg() {
         $this->report = 'CcSubStandardMrg';
         return $this->actionIndex();
     }
-    
+
     public function actionDmrCheckList() {
         $this->report = 'DmrCheckList';
         return $this->actionIndex();
@@ -543,27 +543,27 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'DmrWeightedAverage';
         return $this->actionIndex();
     }
-    
+
     public function actionMccBonusReport() {
         $this->report = 'MccBonusReport';
         return $this->actionIndex();
     }
-    
+
     public function actionMccMaintanceReport() {
         $this->report = 'MccMaintanceReport';
         return $this->actionIndex();
     }
-    
+
     public function actionMccVlcRecieptRouteWise() {
         $this->report = 'MccVlcRecieptRouteWise';
         return $this->actionIndex();
     }
-    
+
     public function actionBmcMilkPaymentVoucher() {
         $this->report = 'BmcMilkPaymentVoucher';
         return $this->actionIndex();
     }
-    
+
     public function actionDayWiseSummary() {
         $this->report = 'DayWiseSummary';
         if (Yii::$app->request->post()) {
@@ -571,6 +571,11 @@ class DefaultController extends \app\controllers\ChildController {
                 $this->report = 'RouteWiseSummary';
             }
         }
+        return $this->actionIndex();
+    }
+
+    public function actionVlccTransactionDataReportRegionAll() {
+        $this->report = 'VlccTransactionDataReportRegionAll';
         return $this->actionIndex();
     }
 
@@ -1355,7 +1360,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Route Wise Summary',
                 'report_type' => [Yii::t('app', 'Day Wise Summary'), Yii::t('app', 'Route Wise Summary')],
             ],
-            
+            'VlccTransactionDataReportRegionAll' => [
+                'param' => 'p_union_code,state_code,region_code,area_code,p_bmc_code:area_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'milkcollection/VLCCTransactionDataFTPRegionAll',
+                'scenario' => 'VlccTransactionDataReportRegionAll',
+                'title' => 'VLCC Transaction Data Report 1',
+                'multiArray' => ['state_code', 'region_code', 'area_code', 'p_bmc_code', 'p_dcs_code'],
+            ],
         ];
         return $label[$l];
     }

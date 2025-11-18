@@ -39,74 +39,76 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code', 'p_mpp_survey_id', 'p_VCG_M_Id', 'p_type', 'p_trip_code', 'p_vehicle_code'], 'safe'],
-            [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_route_code', 'p_billing_for', 'route_code'], 'default', 'value' => '0'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionSummary'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedMilkCollection'],
-            [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedDcsMilkCollection'],
-            [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'p_type', 'report_type'], 'required', 'on' => 'ConsolidatedUnionMilkCollection'],
-            [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'CollectionDispatchDifferenceReport'],
-            [['union_code', 'p_route_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'UnionCollectionDispatchDifferenceReport'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'CollectionVsDispatchGraph'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
-            [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code', 'p_staff_member_code', 'p_month', 'p_mcc_code', 'p_bmc_code', 'p_dcsc_code', 'p_billing_for', 'p_route_code', 'route_code', 'p_from_date', 'p_to_date', 'p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'safe'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
-            [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
-            [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
-            [['p_report_name', 'p_lr_no', 'p_vehicle_no'], 'safe'],
-            [['p_no_of_pouring_day'], 'integer'],
-            [['p_pouring_qty'], 'double'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_ltr_kg'], 'required', 'on' => 'ActualBmcCollection'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_milk_class', 'p_ltr_kg'], 'required', 'on' => 'RmrdMilkCollection'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcSummaryReport'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeDateWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeVillageWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationDateWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationVillageWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationPercentageWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReport'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportDateWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportVillageWise'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcCollection'],
-            [['p_to_date'], function ($attribute, $params) {
+                [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code', 'p_mpp_survey_id', 'p_VCG_M_Id', 'p_type', 'p_trip_code', 'p_vehicle_code'], 'safe'],
+                [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_route_code', 'p_billing_for', 'route_code'], 'default', 'value' => '0'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionSummary'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedMilkCollection'],
+                [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedDcsMilkCollection'],
+                [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'p_type', 'report_type'], 'required', 'on' => 'ConsolidatedUnionMilkCollection'],
+                [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'CollectionDispatchDifferenceReport'],
+                [['union_code', 'p_route_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'UnionCollectionDispatchDifferenceReport'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'CollectionVsDispatchGraph'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
+                [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code', 'p_staff_member_code', 'p_month', 'p_mcc_code', 'p_bmc_code', 'p_dcsc_code', 'p_billing_for', 'p_route_code', 'route_code', 'p_from_date', 'p_to_date', 'p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'safe'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
+                [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
+                [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
+                [['p_report_name', 'p_lr_no', 'p_vehicle_no'], 'safe'],
+                [['p_no_of_pouring_day'], 'integer'],
+                [['p_pouring_qty'], 'double'],
+                [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_ltr_kg'], 'required', 'on' => 'ActualBmcCollection'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_milk_class', 'p_ltr_kg'], 'required', 'on' => 'RmrdMilkCollection'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcSummaryReport'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeDateWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeVillageWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationDateWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationVillageWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationPercentageWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReport'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportDateWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportVillageWise'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcCollection'],
+                [['p_to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
                 }, 'skipOnEmpty' => false],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['BMCPayment', 'MilkReceiptForMember', 'ProductSaleInvoiceForMember', 'PrimaryTransporterMonthlyBill']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBillGLT', 'VendorMilkBillSummaryGLT', 'VspPaymentVrs', 'VspPaymentOnlineVrs', 'VSPPaymentNawasa', 'VSPPaymentOnlineNawasa']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk', 'VendorMilkBillJgf', 'VendorMilkBillAnig', 'VendorMilkBillShivPrasad', 'PaymentSummary']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill', 'MemberMilkBillShivPrasad']],
-            [['union_code'], 'required', 'on' => ['StaffSalary']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill', 'BankAdvice', 'MpgBillStatement']],
-            [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration', 'MccChillingBill', 'ProductSaleInvoice', 'DmrWeightedAverage', 'MccBonusReport', 'MccMaintanceReport']],
-            [['from_shift', 'to_shift'], 'required', 'on' => ['DmrWeightedAverage', 'MccBonusReport', 'MccMaintanceReport']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract', 'BmcMilkPaymentVoucher']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs', 'VendorBillElanad', 'MemberPaymentNawasa']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport', 'MccVlcRecieptRouteWise', 'DayWiseSummary']],
-            [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
-            [['p_union_code', 'state_code', 'region_code', 'area_code', 'p_bmc_code'], 'required', 'on' => ['VlccTransactionDataReportRegion']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['MilkReceiptForBMC', 'ProductSaleInvoiceForCustomer', 'BmcCollectionSummary', 'MCCChillingBillInvoice']],
-            [['p_union_code', 'p_plant_code', 'p_mcc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ProductSaleSummary']],
-            [['p_union_code', 'p_plant_code'], 'required', 'on' => ['VendorMilkBillSbd']],
-            [['p_provisional_member_code'], 'required', 'on' => ['ProvisionalMemberRegister']],
-            [['p_mpp_survey_id'], 'required', 'on' => ['MppSurvey']],
-            [['p_VCG_M_Id'], 'required', 'on' => ['VcgMeeting']],
-            [['p_lang_code'], 'required', 'on' => ['ProvisionalMemberRegister', 'MppSurvey', 'VcgMeeting']],
-            [['p_from_date', 'p_to_date', 'p_lang_code'], 'required', 'on' => ['RptMemberRegisterAll']],
-            [['p_date', 'p_lr_no', 'p_vehicle_no'], 'required', 'on' => ['MilkChillBillCenterWise', 'MilkChillingBillLrNoWise']],
-            [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ShiftWiseBill']],
-            [['p_from_date', 'p_to_date'], 'required', 'on' => ['CompleteTrip']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CcTruckSlip', 'DmrReport', 'CcSubStandardMrg', 'DmrCheckList']],
-            [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'double'],
-            [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'validatePair', 'on' => ['CcSubStandardMrg']],
-            [['report_type'], 'required', 'on' => ['DayWiseSummary']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['BMCPayment', 'MilkReceiptForMember', 'ProductSaleInvoiceForMember', 'PrimaryTransporterMonthlyBill']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBillGLT', 'VendorMilkBillSummaryGLT', 'VspPaymentVrs', 'VspPaymentOnlineVrs', 'VSPPaymentNawasa', 'VSPPaymentOnlineNawasa']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk', 'VendorMilkBillJgf', 'VendorMilkBillAnig', 'VendorMilkBillShivPrasad', 'PaymentSummary']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill', 'MemberMilkBillShivPrasad']],
+                [['union_code'], 'required', 'on' => ['StaffSalary']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill', 'BankAdvice', 'MpgBillStatement']],
+                [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration', 'MccChillingBill', 'ProductSaleInvoice', 'DmrWeightedAverage', 'MccBonusReport', 'MccMaintanceReport']],
+                [['from_shift', 'to_shift'], 'required', 'on' => ['DmrWeightedAverage', 'MccBonusReport', 'MccMaintanceReport']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract', 'BmcMilkPaymentVoucher']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd', 'MemberPaymentVrs', 'VendorBillElanad', 'MemberPaymentNawasa']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport', 'MccVlcRecieptRouteWise', 'DayWiseSummary']],
+                [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
+                [['p_union_code', 'state_code', 'region_code', 'area_code', 'p_bmc_code'], 'required', 'on' => ['VlccTransactionDataReportRegion']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['MilkReceiptForBMC', 'ProductSaleInvoiceForCustomer', 'BmcCollectionSummary', 'MCCChillingBillInvoice']],
+                [['p_union_code', 'p_plant_code', 'p_mcc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ProductSaleSummary']],
+                [['p_union_code', 'p_plant_code'], 'required', 'on' => ['VendorMilkBillSbd']],
+                [['p_provisional_member_code'], 'required', 'on' => ['ProvisionalMemberRegister']],
+                [['p_mpp_survey_id'], 'required', 'on' => ['MppSurvey']],
+                [['p_VCG_M_Id'], 'required', 'on' => ['VcgMeeting']],
+                [['p_lang_code'], 'required', 'on' => ['ProvisionalMemberRegister', 'MppSurvey', 'VcgMeeting']],
+                [['p_from_date', 'p_to_date', 'p_lang_code'], 'required', 'on' => ['RptMemberRegisterAll']],
+                [['p_date', 'p_lr_no', 'p_vehicle_no'], 'required', 'on' => ['MilkChillBillCenterWise', 'MilkChillingBillLrNoWise']],
+                [['union_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['PartyPaymentBill']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['ShiftWiseBill']],
+                [['p_from_date', 'p_to_date'], 'required', 'on' => ['CompleteTrip']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CcTruckSlip', 'DmrReport', 'CcSubStandardMrg', 'DmrCheckList']],
+                [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'double'],
+                [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'validatePair', 'on' => ['CcSubStandardMrg']],
+                [['report_type'], 'required', 'on' => ['DayWiseSummary']],
+                [['p_union_code'], 'required', 'on' => ['VlccTransactionDataReportRegionAll']],
+                [['p_to_date'], 'validateToDate', 'on' => ['VlccTransactionDataReportRegionAll']],
         ];
     }
 
@@ -210,6 +212,27 @@ class ReportsModel extends Model {
         }
         if (!empty($this->p_snf_from) && !empty($this->p_snf_to) && $this->p_snf_from >= $this->p_snf_to) {
             $this->addError('p_snf_to', 'To SNF must be greater than From SNF.');
+        }
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->p_from_date) && !empty($this->p_to_date)) {
+            $fDate = date('Y-m-d', strtotime($this->p_from_date));
+            $tDate = date('Y-m-d', strtotime($this->p_to_date));
+            if ($tDate < $fDate) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > 15) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Day Difference can not be greater than 15.'));
+                    return false;
+                }
+            }
         }
     }
 
