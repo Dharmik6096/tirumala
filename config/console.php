@@ -13,10 +13,9 @@ $config = [
     'timeZone' => 'Asia/Calcutta',
     'controllerNamespace' => 'app\commands',
     'aliases' => [
-        '@common' =>'@app/common',
+        '@common' => '@app/common',
     ],
     'components' => [
-//        'inboxParseService' => ['class' => 'common\services\InboxParseService'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'default' => ['class' => 'app\components\DefaultValue'],
         'encrypter' => [
@@ -43,23 +42,7 @@ $config = [
         'path' => ['class' => 'app\components\Path'],
         'operation' => ['class' => 'app\components\Operation'],
         'label' => ['class' => 'app\components\GeneralLabels'],
-//        'user' => [
-//            'class' => 'webvimark\modules\UserManagement\components\UserConfig',
-//            'identityClass' => 'app\models\User',
-//        ],
-//        'container' => [
-//            'class' => 'yii\di\Container',
-//            'definitions' => [],
-//            'singletons' => [
-//                common\services\InboxParseService::class => common\services\InboxParseService::class,
-//            ],
-//        ],
     ],
-//    'container' => [
-//        'singletons' => [
-//            common\services\InboxParseService::class => common\services\InboxParseService::class,
-//        ],
-//    ],
     'modules' => [
         'user-management' => [
             'class' => 'app\modules\usermanagement\usermanagement',
@@ -74,7 +57,7 @@ $config = [
           ],
          */
 ];
-//Yii::setAlias('@common', dirname(__DIR__) . '/common');
+
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'gii';
