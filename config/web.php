@@ -38,6 +38,7 @@ $config = [
         'pdf' => ['class' => 'app\components\PDF'],
         'DayHelper' => ['class' => 'app\components\DayHelper'],
         'disable' => ['class' => 'app\components\DisableField'],
+        'attributeComponent' => ['class' => 'app\components\AttributeComponent'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,

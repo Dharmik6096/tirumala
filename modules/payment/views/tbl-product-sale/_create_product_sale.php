@@ -15,6 +15,7 @@ $cashSale = isset($cashSale) ? $cashSale : '';
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_product_rate', 'PORTAL');
 $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRate == 1) ? 'TRUE' : 'FALSE';
+$attributes = Yii::$app->attributeComponent->getAttributes(Yii::$app->session->get('eiplCode'), $model);
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -64,10 +65,10 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                     ?>
                     <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE);   ?>
                 </div>
-                <div class="col-sm-2 no_pointer">
+                <div class="col-sm-2 <?= $attributes['class'] ?>">
                     <?php
                     $model->invoice_date = !empty($model->invoice_date) ? $model->invoice_date : date('d-m-Y');
-                    echo Yii::$app->controls->date($model, $form, 'invoice_date', '', true, date('d-m-Y'));
+                    echo Yii::$app->controls->date($model, $form, 'invoice_date', '', true, $attributes['min_date']);
                     ?>
                 </div>
                 <div class="clearfix"></div>
@@ -280,7 +281,7 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
 $script = "
     $('.party').hide();
     var batchNoWiseRate = $('#batch_no_wise_rate').val();
-    $('#tblproductsale-invoice_date').prop('readonly', true);
+    $('#tblproductsale-invoice_date').prop('readonly', " . ($attributes['readonly'] ? 'true' : 'false') . ");
     $(document).on('change','#tblproductsale-invoice_date',function(){
         if(batchNoWiseRate == 'FALSE') {
             setRate();
