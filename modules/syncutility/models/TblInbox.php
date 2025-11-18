@@ -91,18 +91,20 @@ class TblInbox extends \yii\db\ActiveRecord {
           ->all(); */
         $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
         $query = $this->find()
-                ->joinWith(['syncPriority'])
+//                ->joinWith(['syncPriority'])
                 //   ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
                 ->where(['or', ['tbl_inbox.data_post_status' => NULL], ['tbl_inbox.data_post_status' => ''], ['tbl_inbox.data_post_status' => 0]])
                 ->andWhere(['NOT IN', 'tbl_inbox.table_name', ['tbl_config_txn_result']])
-                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
-                ->limit(300);
+                ->andWhere(['IN', 'tbl_inbox.uuid', ['058471e8-7236-4ec9-8865-c6cf467aae59']])
+//                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                ->limit(2);
         return $query->all();
 
         $pendingDataQuery = $this->find()
-                ->joinWith(['syncPriority'])
-                ->where(['and', ['IS NOT', 'tbl_inbox.error_log', NULL], ['<', 'tbl_inbox.error_timestamp', $datetime]])
-                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+//                ->joinWith(['syncPriority'])
+                ->where(['and', ['IS NOT', 'tbl_inbox.error_log', NULL]])
+//                ->where(['and', ['IS NOT', 'tbl_inbox.error_log', NULL], ['<', 'tbl_inbox.error_timestamp', $datetime]])
+//                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
                 ->limit(20);
 
         return $unionQuery = (new ActiveQuery(TblInbox::className()))->from([
