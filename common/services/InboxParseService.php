@@ -28,7 +28,7 @@ class InboxParseService {
             $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
-            
+
             $i = 1;
             if (!empty($modelData)) {
                 $version_ignore_tables = ['tbl_product_sale', 'tbl_product_sale_transaction'];
@@ -239,11 +239,6 @@ class InboxParseService {
                             }
                         }
                     } catch (\Throwable $ex) {
- Yii::error($ex->getMessage(), 'amcsparseinbox/parse-inbox-data');
-                        Yii::error($ex->getTraceAsString(), 'amcsparseinbox/parse-inbox-data');
-                        echo 'Error occurred: ' . $ex->getMessage() . "\n";
-                        echo $ex->getTraceAsString() . "\n";
-                        die;
                         $errorCount++;
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
