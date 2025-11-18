@@ -606,7 +606,11 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
     $this->registerJs($script, View::POS_END, 'shift');
     ?>
     <?php
+    $is_dcs_array = (!is_array($model->p_dcs_code) && isset($model->p_dcs_code) && $model->p_dcs_code == '0') ? 1 : 0;
+    $is_bmc_array = (!is_array($model->p_bmc_code) && isset($model->p_bmc_code) && $model->p_bmc_code == '0') ? 1 : 0;
     $script = "
+        var is_dcs_array = " . $is_dcs_array . ";
+        var is_bmc_array = " . $is_bmc_array . ";
         if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
         $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_member_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
@@ -624,7 +628,7 @@ $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, valu
 if('" . $report . "'=='ConsolidatedDcsMilkCollectionDate' || '" . $report . "'=='ConsolidatedDcsMilkCollectionDateShift' || '" . $report . "'=='ConsolidatedDcsMilkCollectionDateWithout' || '" . $report . "'=='ConsolidatedDcsMilkCollectionDateShiftWithout' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDate' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDateShift' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDateWithout' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDateShiftWithout' || '" . $report . "'=='DcsCollectionDispatchDifferenceReport' || '" . $report . "'=='DcsCollectionDispatchDifferenceReportWithMilkType'){
 $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
     $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-    if((is_array(" . json_encode($model->p_dcs_code) . ") && in_array('0', " . json_encode($model->p_dcs_code) . ")) || (!is_array(" . json_encode($model->p_dcs_code) . ") && " . json_encode($model->p_dcs_code) . "=='0')){
+    if(is_dcs_array){
         $('#reportsmodel-p_dcs_code').val(0);      
     }
     if($('#reportsmodel-union_code').val()=='0'){ 
@@ -701,7 +705,7 @@ if('" . $report . "'=='InchargeRemuneration'){
 
     $('#reportsmodel-p_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_bmc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if((is_array(" . json_encode($model->p_bmc_code) . ") && in_array('0', " . json_encode($model->p_bmc_code) . ")) || (!is_array(" . json_encode($model->p_bmc_code) . ") && " . json_encode($model->p_bmc_code) . "=='0')){
+        if(is_bmc_array){
             $('#reportsmodel-p_bmc_code').val(0);        
         }
         if($('#reportsmodel-p_mcc_code').val() == '0'){
@@ -735,7 +739,7 @@ if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkC
 
     $('#reportsmodel-p_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_bmc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if((is_array(" . json_encode($model->p_bmc_code) . ") && in_array('0', " . json_encode($model->p_bmc_code) . ")) || (!is_array(" . json_encode($model->p_bmc_code) . ") && " . json_encode($model->p_bmc_code) . "=='0')){
+        if(is_bmc_array){
             $('#reportsmodel-p_bmc_code').val(0);        
         }
         if($('#reportsmodel-p_mcc_code').val() == '0'){
@@ -747,7 +751,7 @@ if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkC
 if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection' || '" . $report . "'=='GprsDataReconciliation' || '" . $report . "'=='ActualBmcCollection'){
     $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if((is_array(" . json_encode($model->p_dcs_code) . ") && in_array('0', " . json_encode($model->p_dcs_code) . ")) || (!is_array(" . json_encode($model->p_dcs_code) . ") && " . json_encode($model->p_dcs_code) . "=='0')){
+        if(is_dcs_array){
             $('#reportsmodel-p_dcs_code').val(0);        
         }
         if($('#reportsmodel-p_bmc_code').val()=='0'){

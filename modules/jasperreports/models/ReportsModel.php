@@ -53,7 +53,7 @@ class ReportsModel extends Model {
                 [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
                 [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
                 [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
-                [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code', 'p_staff_member_code', 'p_month', 'p_mcc_code', 'p_bmc_code', 'p_dcsc_code', 'p_billing_for', 'p_route_code', 'route_code', 'p_from_date', 'p_to_date', 'p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'safe'],
+                [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code', 'p_staff_member_code', 'p_month', 'p_mcc_code', 'p_bmc_code', 'p_dcsc_code', 'p_billing_for', 'p_route_code', 'route_code', 'p_from_date', 'p_to_date', 'p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to', 'state_code', 'region_code', 'area_code'], 'safe'],
                 [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
                 [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
                 [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
@@ -76,7 +76,7 @@ class ReportsModel extends Model {
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcCollection'],
                 [['p_to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['VlccTransactionDataReportRegionAll']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['BMCPayment', 'MilkReceiptForMember', 'ProductSaleInvoiceForMember', 'PrimaryTransporterMonthlyBill']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBillGLT', 'VendorMilkBillSummaryGLT', 'VspPaymentVrs', 'VspPaymentOnlineVrs', 'VSPPaymentNawasa', 'VSPPaymentOnlineNawasa']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk', 'VendorMilkBillJgf', 'VendorMilkBillAnig', 'VendorMilkBillShivPrasad', 'PaymentSummary']],
@@ -108,7 +108,9 @@ class ReportsModel extends Model {
                 [['p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'], 'validatePair', 'on' => ['CcSubStandardMrg']],
                 [['report_type'], 'required', 'on' => ['DayWiseSummary']],
                 [['p_union_code'], 'required', 'on' => ['VlccTransactionDataReportRegionAll']],
-                [['p_to_date'], 'validateToDate', 'on' => ['VlccTransactionDataReportRegionAll']],
+                [['p_to_date'], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date', 15, '>', 'Day Difference can not be greater than 15.');
+                }, 'skipOnEmpty' => false, 'on' => ['VlccTransactionDataReportRegionAll']],
         ];
     }
 
@@ -212,27 +214,6 @@ class ReportsModel extends Model {
         }
         if (!empty($this->p_snf_from) && !empty($this->p_snf_to) && $this->p_snf_from >= $this->p_snf_to) {
             $this->addError('p_snf_to', 'To SNF must be greater than From SNF.');
-        }
-    }
-
-    public function validateToDate($attribute, $params) {
-        if (!empty($this->p_from_date) && !empty($this->p_to_date)) {
-            $fDate = date('Y-m-d', strtotime($this->p_from_date));
-            $tDate = date('Y-m-d', strtotime($this->p_to_date));
-            if ($tDate < $fDate) {
-                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
-                return false;
-            } else {
-                $fDate = date_create($fDate);
-                $tDate = date_create($tDate);
-                $diff = date_diff($fDate, $tDate);
-                $DayCount = $diff->format("%a");
-                $DayCount = $DayCount + 1;
-                if ($DayCount > 15) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Day Difference can not be greater than 15.'));
-                    return false;
-                }
-            }
         }
     }
 

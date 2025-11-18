@@ -1366,6 +1366,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VlccTransactionDataReportRegionAll',
                 'title' => 'VLCC Transaction Data Report 1',
                 'multiArray' => ['state_code', 'region_code', 'area_code', 'p_bmc_code', 'p_dcs_code'],
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
