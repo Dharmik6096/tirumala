@@ -15,7 +15,7 @@ class DisableField extends Component {
         $disabledFieldsHtml = '';
         foreach ($clientDisabledFields as $attr) {
             $className = 'field-' . strtolower($modelClass) . '-' . $attr;
-            $disabledFieldsHtml .= "$('.$className').addClass('disabled');";
+            $disabledFieldsHtml .= "$('.$className').addClass('disabled no_pointer');";
         }
         Yii::$app->view->registerJs("
             $(document).ready(function() {
@@ -26,11 +26,18 @@ class DisableField extends Component {
 
     public static function processDisabledFieldsArray() {
         return [
-            'EIPLCOMMON' => [],
+            'EIPLCOMMON' => [
+                'TblProductSale' => [
+                    'invoice_date'
+                ],
+            ],
             'DODLA' => [
                 'TblBmcMilkDispatchTxn' => [
-                    'water' ,'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff',
+                    'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff',
                 ],
+            ],
+            'BANAS' => [
+                'TblProductSale' => [],
             ],
         ];
     }
