@@ -150,6 +150,14 @@ $this->title = Yii::$app->label->title('view', ' Member Animal Tag Details');
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget
