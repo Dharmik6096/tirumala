@@ -50,7 +50,7 @@ class TblMemberAnimalTagDetailsHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['member_animal_tag_id', 'dcs_code', 'member_code', 'mobile_no', 'email', 'tag_no', 'animal_type_id', 'gender_id', 'breed_id', 'year', 'month', 'no_of_calving', 'last_date_of_calving', 'pregnancy_status', 'pregnancy_month', 'pregnancy_month_on_date', 'milking_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by'], 'safe'],
+            [['member_animal_tag_id', 'dcs_code', 'member_code', 'mobile_no', 'email', 'tag_no', 'animal_type_id', 'gender_id', 'breed_id', 'year', 'month', 'no_of_calving', 'last_date_of_calving', 'pregnancy_status', 'pregnancy_month', 'pregnancy_month_on_date', 'milking_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by', 'remarks'], 'safe'],
         ];
     }
 
