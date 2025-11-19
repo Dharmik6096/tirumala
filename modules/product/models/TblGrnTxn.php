@@ -43,7 +43,7 @@ class TblGrnTxn extends \app\models\ChildModel {
     public function rules() {
         return [
             [['product_code', 'unit_code', 'rate', 'received_qty', 'basic_amount', 'gross_amount'], 'required'],
-            [['grn_txn_code', 'sap_batch_no', 'dispatch_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks', 'is_stock_posted'], 'safe'],
+            [['grn_txn_code', 'sap_batch_no', 'dispatch_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks', 'is_stock_posted', 'plant_dispatch_txn_code'], 'safe'],
             [['unit_code', 'originating_type'], 'integer'],
             [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount', 'missing_qty'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
