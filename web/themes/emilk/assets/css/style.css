@@ -6222,3 +6222,7 @@ div#dashboardFarmerPopup {
 .w79pr {
     width: 79%;
 }
+.banas_img img {
+    width: 100% !important;
+    max-height: 360px !important;
+}
