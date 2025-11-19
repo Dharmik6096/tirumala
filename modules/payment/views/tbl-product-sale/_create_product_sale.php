@@ -15,7 +15,6 @@ $cashSale = isset($cashSale) ? $cashSale : '';
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_product_rate', 'PORTAL');
 $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRate == 1) ? 'TRUE' : 'FALSE';
-//$attributes = Yii::$app->disable->getDisableFields($model);
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
