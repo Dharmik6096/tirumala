@@ -76,7 +76,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                             </div>
                                         <?php } else { ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society')); ?>
+                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society'), $multiple); ?>
                                             </div>
                                             <?php
                                         }
