@@ -6,6 +6,7 @@ use Yii;
 use app\modules\globalmaster\models\TblTransferType;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\organisation\models\TblCustomerMaster;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_master_transfer".
@@ -234,6 +235,20 @@ class TblMasterTransfer extends \app\models\ChildModel {
 
     public function getRouteCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code', 'customer_type' => 'customer_type']);
+    }
+
+    public function getDCSList($bmc_code, $RLS = 'TRUE') {
+        $query = TblDcs::find()->alias('d')->select(['d.dcs_code','d.dcs_name','d.ref_code'])
+            ->innerJoin('tbl_master_transfer as mt', 'mt.old_dcs_code = d.dcs_code')
+            ->where(['d.bmc_code' => $bmc_code, 'd.is_active' => 1]);
+            if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+                $query->andWhere(['d.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+            }
+        $dcsList = $query->asArray()->all();
+        $data = ArrayHelper::map($dcsList, 'dcs_code', function ($value) {
+            return $value['dcs_name'] . ' - ' . $value['ref_code'];
+        });
+        return $data;
     }
 
 }
