@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\controllers\ChildController;
+use yii\helpers\Json;
 
 /**
  * TblRegionController implements the CRUD actions for TblRegion model.
@@ -17,6 +18,7 @@ use app\controllers\ChildController;
 class TblRegionController extends ChildController {
 
     public $contactDetails;
+    public $freeAccessActions = ['region-list'];
 
     /**
      * Lists all TblRegion models.
@@ -42,7 +44,7 @@ class TblRegionController extends ChildController {
         $csearchModel->module_name = 'region';
         $csearchModel->module_code = $id;
         $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
-        
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
@@ -153,6 +155,22 @@ class TblRegionController extends ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionRegionList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $regionModel = new TblRegion();
+                $data = $regionModel->getStateRegionList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

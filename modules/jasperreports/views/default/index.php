@@ -15,6 +15,7 @@ $model->to_shift = empty($model->to_shift) ? 2 : $model->to_shift;
 $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $model->p_collection_date;
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
+$multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
 ?>
 <div class="panel panel-default panel-main">
 
@@ -46,16 +47,16 @@ $defaultToggle = true;
                         <div class="row margin_0">
 
                             <div class="modal-body">
-                                <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  
-                                ?>
+                                <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  ?>
                                 <div class="col-sm-3">
                                     <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
-                                </div>
+                                </div>  
                                 <?php
                                 $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                 foreach ($param as $key => $value) {
                                     $value_array = explode(':', $value);
                                     $value = $value_array[0];
+                                    $multiple = in_array($value, $multiArray) ? true : false;
                                     if (in_array($value, array('dcs_code', 'p_dcs_code', 'pm_dcs_code'))) {
                                         ?>
                                         <?php
@@ -75,7 +76,7 @@ $defaultToggle = true;
                                             </div>
                                         <?php } else { ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society')); ?>
+                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society'), $multiple); ?>
                                             </div>
                                             <?php
                                         }
@@ -107,13 +108,13 @@ $defaultToggle = true;
                                         </div>
                                         <?php
                                     }
-                                    if (in_array($value, array('p_sub_district_code'))) { 
+                                    if (in_array($value, array('p_sub_district_code'))) {
                                         ?>
-                                            <div class="col-sm-3">
-                                                <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'reportsmodel-p_district_code', 'form-group col-sm-3 padding-right-5 padding-left-0', 'Sub District', 'p_sub_district_code'); ?>
-                                            </div>    
-                                            <?php
-                                        }
+                                        <div class="col-sm-3">
+                                            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'reportsmodel-p_district_code', 'form-group col-sm-3 padding-right-5 padding-left-0', 'Sub District', 'p_sub_district_code'); ?>
+                                        </div>    
+                                        <?php
+                                    }
 
                                     if (in_array($value, array('p_block_name'))) {
                                         ?>
@@ -248,7 +249,7 @@ $defaultToggle = true;
                                         } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'p_bmc_code', Yii::t('app', 'BMC')); ?>
+                                                <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'p_bmc_code', Yii::t('app', 'BMC'), $multiple); ?>
                                             </div>
                                             <?php
                                         } else {
@@ -262,21 +263,21 @@ $defaultToggle = true;
                                     if (in_array($value, array('state_code'))) {
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, '', 'State Name'); ?>
+                                            <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, '', 'State Name', false, '', false, true, $multiple); ?>
                                         </div>
                                         <?php
                                     }
                                     if (in_array($value, array('region_code'))) {
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
+                                            <?= Yii::$app->dropdown->state_region($model, $form, 'reportsmodel-state_code', 'region_code', Yii::t('app', 'Region Name'), $multiple); ?>
                                         </div>
                                         <?php
                                     }
                                     if (in_array($value, array('area_code'))) {
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'reportsmodel-region_code', 'form-group col-sm-12', 'Area Name', 'area_code'); ?>
+                                            <?= Yii::$app->dropdown->region_area($model, $form, 'reportsmodel-region_code', 'area_code', Yii::t('app', 'Area Name'), $multiple); ?>
                                         </div>
                                         <?php
                                     }
@@ -445,7 +446,7 @@ $defaultToggle = true;
                                     <?php
                                     if (isset($data['tcpdf']) && $data['tcpdf']) {
                                         $client_code = \Yii::$app->session->get('eiplCode');
-                                        $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] :'pdf';
+                                        $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] : 'pdf';
                                         $iconClass = ' far fa-file-pdf ';
                                         if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
                                             $titleTcpdf = 'Milktype Wise Bill';
@@ -607,9 +608,14 @@ $script = "
 $this->registerJs($script, View::POS_END, 'shift');
 ?>
 <?php
+$is_not_dcs_array = (!is_array($model->p_dcs_code) && $model->p_dcs_code == '0') ? 1 : 0;
+$is_not_bmc_array = (!is_array($model->p_bmc_code) && $model->p_bmc_code == '0') ? 1 : 0;
+
 $script = "
+        var is_not_dcs_array = " . $is_not_dcs_array . ";
+        var is_not_bmc_array = " . $is_not_bmc_array . ";
         if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
-        $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        $('#reportsmodel-p_member_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_member_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
             if('" . $model->p_member_code . "'=='0'){
         $('#reportsmodel-p_member_code').val(0);      
@@ -617,15 +623,15 @@ $script = "
 });
 }
 if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
-$('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+$('#reportsmodel-p_dcs_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
     //$('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
 });
 }
 
 if('" . $report . "'=='ConsolidatedDcsMilkCollectionDate' || '" . $report . "'=='ConsolidatedDcsMilkCollectionDateShift' || '" . $report . "'=='ConsolidatedDcsMilkCollectionDateWithout' || '" . $report . "'=='ConsolidatedDcsMilkCollectionDateShiftWithout' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDate' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDateShift' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDateWithout' || '" . $report . "'=='ConsolidatedUnionMilkCollectionDateShiftWithout' || '" . $report . "'=='DcsCollectionDispatchDifferenceReport' || '" . $report . "'=='DcsCollectionDispatchDifferenceReportWithMilkType'){
-$('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+$('#reportsmodel-p_dcs_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
     $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if('" . $model->p_dcs_code . "'=='0'){
+    if(is_not_dcs_array){
         $('#reportsmodel-p_dcs_code').val(0);      
     }
     if($('#reportsmodel-union_code').val()=='0'){ 
@@ -639,7 +645,7 @@ $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, valu
          $('#reportsmodel-p_dcs_code').val(0);
     }
 });
-$('#reportsmodel-p_route_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+$('#reportsmodel-p_route_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
     $('#reportsmodel-p_route_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_route_code . "'=='0'){
         $('#reportsmodel-p_route_code').val(0);      
@@ -657,7 +663,7 @@ if('" . $report . "'=='DcsCollectionDispatchDifferenceReport' || '" . $report . 
 }
 if('" . $report . "'=='UnionCollectionDispatchDifferenceReport' || '" . $report . "'=='UnionCollectionDispatchDifferenceReportWithOutMilkType' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection' || '" . $report . "'=='GprsDataReconciliation' || '" . $report . "'=='ActualBmcCollection'){ 
     
-    $('#reportsmodel-p_route_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_route_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
     $('#reportsmodel-p_route_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_route_code . "'=='0'){
         $('#reportsmodel-p_route_code').val(0);      
@@ -677,7 +683,7 @@ if('" . $report . "'=='UnionCollectionDispatchDifferenceReport' || '" . $report 
 }
 
 if('" . $report . "'=='BlockWiseCollection'){ 
-    $('#reportsmodel-p_block_name').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_block_name').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_block_name option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
             if('" . $model->p_block_name . "'=='0'){
             $('#reportsmodel-p_block_name').val(0);      
@@ -689,7 +695,7 @@ if('" . $report . "'=='BlockWiseCollection'){
     
 }
 if('" . $report . "'=='InchargeRemuneration'){
-     $('#reportsmodel-p_mcc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+     $('#reportsmodel-p_mcc_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_mcc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_mcc_code . "'=='0'){
             $('#reportsmodel-p_mcc_code').val(0);      
@@ -700,10 +706,10 @@ if('" . $report . "'=='InchargeRemuneration'){
         }
     });
 
-    $('#reportsmodel-p_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_bmc_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_bmc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if('" . $model->p_bmc_code . "'=='0'){
-            $('#reportsmodel-p_bmc_code').val(0);      
+        if(is_not_bmc_array){
+            $('#reportsmodel-p_bmc_code').val(0);        
         }
         if($('#reportsmodel-p_mcc_code').val() == '0'){
             $('#reportsmodel-p_bmc_code').removeAttr('disabled', 'false');
@@ -711,8 +717,8 @@ if('" . $report . "'=='InchargeRemuneration'){
         }
     });
 }
-if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'&& '" . $report . "'!='MemberBillAbstract'&& '" . $report . "'!='VendorMilkBillVarddan'&& '" . $report . "'!='VendorBillMmd' && '" . $report . "'!='FarmerIncentive'&& '" . $report . "'!='VendorMilkBillSnmilk'&&'" . $report . "'!='VendorMilkBillJgf'&& '" . $report . "'!='VlccTransactionDataReport'&& '" . $report . "'!='VendorMilkBillAnig'&& '" . $report . "'!='VendorMilkBillShivPrasad'&& '" . $report . "'!='MemberMilkBillShivPrasad'){
-    $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'&& '" . $report . "'!='MemberBillAbstract'&& '" . $report . "'!='VendorMilkBillVarddan'&& '" . $report . "'!='VendorBillMmd' && '" . $report . "'!='FarmerIncentive'&& '" . $report . "'!='VendorMilkBillSnmilk'&&'" . $report . "'!='VendorMilkBillJgf'&& '" . $report . "'!='VlccTransactionDataReport'&& '" . $report . "'!='VendorMilkBillAnig'&& '" . $report . "'!='VendorMilkBillShivPrasad'&& '" . $report . "'!='MemberMilkBillShivPrasad'&& '" . $report . "'!='VlccTransactionDataReportRegionAll'){
+    $('#reportsmodel-p_plant_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){
             $('#reportsmodel-p_plant_code   ').val(0);      
@@ -723,10 +729,10 @@ if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkC
         }
     });
 
-    $('#reportsmodel-p_mcc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_mcc_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_mcc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_mcc_code . "'=='0'){
-            $('#reportsmodel-p_mcc_code').val(0);      
+            $('#reportsmodel-p_mcc_code').val(0);        
         }
         if($('#reportsmodel-p_plant_code').val() == '0'){
             $('#reportsmodel-p_mcc_code').removeAttr('disabled', 'false');
@@ -734,10 +740,10 @@ if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkC
         }
     });
 
-    $('#reportsmodel-p_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_bmc_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_bmc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if('" . $model->p_bmc_code . "'=='0'){
-            $('#reportsmodel-p_bmc_code').val(0);      
+        if(is_not_bmc_array){
+            $('#reportsmodel-p_bmc_code').val(0);        
         }
         if($('#reportsmodel-p_mcc_code').val() == '0'){
             $('#reportsmodel-p_bmc_code').removeAttr('disabled', 'false');
@@ -746,10 +752,10 @@ if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkC
     });
 }
 if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection' || '" . $report . "'=='GprsDataReconciliation' || '" . $report . "'=='ActualBmcCollection'){
-    $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_dcs_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if('" . $model->p_dcs_code . "'=='0'){
-            $('#reportsmodel-p_dcs_code').val(0);      
+        if(is_not_dcs_array){
+            $('#reportsmodel-p_dcs_code').val(0);        
         }
         if($('#reportsmodel-p_bmc_code').val()=='0'){
             $('#reportsmodel-p_dcs_code').removeAttr('disabled', 'false');
@@ -759,7 +765,7 @@ if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='Co
 }
 
 if('" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='SocietyDetails'){
-    $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_member_code').on('depdrop:afterChange', function(event, id, value, jqXHR, textStatus) {
         if($('#reportsmodel-p_dcs_code').val()=='0'){ 
             $('#reportsmodel-p_member_code').prop('disabled',false);
             $('#reportsmodel-p_member_code').val(0);

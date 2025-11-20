@@ -23,7 +23,7 @@ use yii\helpers\Json;
  */
 class TblAreaController extends ChildController {
 
-    public $contactDetails, $freeAccessActions = ['area-bmc-list'];
+    public $contactDetails, $freeAccessActions = ['area-bmc-list', 'area-list'];
 
     /**
      * Lists all TblArea models.
@@ -49,7 +49,7 @@ class TblAreaController extends ChildController {
         $csearchModel->module_name = 'area';
         $csearchModel->module_code = $id;
         $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
-        
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
@@ -172,7 +172,7 @@ class TblAreaController extends ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $exist_data = ArrayHelper::map($dataProvider->getModels(), 'bmc_code', 'bmc_code');
         $area_data = array_diff_key($area_data, $exist_data);
-        
+
         if (Yii::$app->request->post() && isset(Yii::$app->request->post()['TblAreaBmcMapping'])) {
             $bmc_code = Yii::$app->request->post()['TblAreaBmcMapping']['bmc_code'];
             $mcc_codes = [];
@@ -197,7 +197,7 @@ class TblAreaController extends ChildController {
             }
         }
         return $this->render('_bmc_mapping', [
-                    'model' => $model, 
+                    'model' => $model,
                     'area_data' => $area_data,
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
@@ -213,7 +213,7 @@ class TblAreaController extends ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-    
+
     public function actionAreaBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
@@ -226,6 +226,22 @@ class TblAreaController extends ChildController {
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
                 return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionAreaList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $areaModel = new TblArea();
+                $data = $areaModel->getRegionAreaList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);

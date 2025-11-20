@@ -2181,6 +2181,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'FarmerMilkBillConsolidatedSummary';
         return $this->actionIndex();
     }
+    
+    public function actionMisFeedReport() {
+        $this->report = 'MisFeedReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4768,6 +4773,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'FarmerMilkBillConsolidatedSummary',
                 'title' => '119 - Farmer Wise Milk Bill Register With Summary',
                 'to_decrypt' => ['adhar_no', 'bank_account_no', 'ifsc', 'mobile_no'],
+            ],
+            'MisFeedReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_feed_report',
+                'scenario' => 'MisFeedReport',
+                'title' => 'Member product sale Taken/Not Taken',
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];
