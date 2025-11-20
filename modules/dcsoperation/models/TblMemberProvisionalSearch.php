@@ -144,6 +144,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional_share_details.ref_no', $this->recipt_ref_no])
                 ->andFilterWhere(['like', 'tbl_member_provisional_share_details.mode_of_payment', $this->payment_type]);
+        $query->andWhere(['IS NOT', 'tbl_member_provisional.provisional_status', NULL]);
         $query->orderBy(['tbl_member_provisional.created_at' => SORT_DESC]);
         return $dataProvider;
     }
