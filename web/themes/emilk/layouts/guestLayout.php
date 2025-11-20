@@ -53,6 +53,8 @@ GuestAssets::register($this);
             $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
         } else if ($eiplCode == 'ANIK') {
             $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
+        } else if ($eiplCode == 'BANAS') {
+            $logo = $this->theme->getUrl('/assets/images/banas_logo.png');
         }
         ?>
 
