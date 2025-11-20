@@ -63,6 +63,7 @@ $attribute = [
         'value' => function ($model) {
             return isset($model->milking_status) ? Yii::$app->dropdown->getRecords('milking_status')['data'][$model->milking_status] : '';
         },],
+    ['attribute' => 'remarks'],
 ];
 
 $grid_option = [

@@ -54,7 +54,7 @@ class TblMemberAnimalTagDetails extends ChildModel
     public function rules()
     {
         return [
-            [['dcs_code','member_code','mobile_no','email','tag_no','animal_type_id','gender_id','breed_id','year','month','no_of_calving','last_date_of_calving','pregnancy_status','pregnancy_month','pregnancy_month_on_date','milking_status','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type'], 'safe'],
+            [['dcs_code','member_code','mobile_no','email','tag_no','animal_type_id','gender_id','breed_id','year','month','no_of_calving','last_date_of_calving','pregnancy_status','pregnancy_month','pregnancy_month_on_date','milking_status','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type', 'remarks'], 'safe'],
             [['dcs_code', 'member_code', 'tag_no', 'animal_type','gender','breed', 'year', 'month', 'no_of_calving', 'last_date_of_calving', 'pregnancy_status', 'milking_status'], 'required', 'on' => 'importCsv'],
             ['tag_no', 'match', 'pattern' => '/^[0-9]{12}$/', 'message' => 'Tag no must be integer and exactly 12 digits'],
             [['animal_type','gender','breed'], 'number', 'integerOnly' => true, 'on' => 'importCsv'],
