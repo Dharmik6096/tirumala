@@ -185,6 +185,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                     return $('#reportsmodel-store_location_type_all').val() != 0;
                 }", 'on' => ['AssetDetailSummary']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['AadeshLatter']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'product_code', 'from_date', 'to_date'], 'required', 'on' => ['MisFeedReport']],
         ];
     }
 

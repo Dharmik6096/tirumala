@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\geo\models;
+
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use Yii;
@@ -40,11 +41,11 @@ class TblArea extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['address', 'area_name', 'state_code'], 'required'],
-            [['area_name', 'local_name', 'address', 'local_address', 'description', 'created_by', 'updated_by', 'union_code'], 'string'],
-            [['is_active'], 'integer'],
-            [['region_code', 'state_code', 'address', 'area_name', 'created_at', 'updated_at'], 'safe'],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                [['address', 'area_name', 'state_code'], 'required'],
+                [['area_name', 'local_name', 'address', 'local_address', 'description', 'created_by', 'updated_by', 'union_code'], 'string'],
+                [['is_active'], 'integer'],
+                [['region_code', 'state_code', 'address', 'area_name', 'created_at', 'updated_at'], 'safe'],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
         ];
     }
 
@@ -122,4 +123,13 @@ class TblArea extends \app\models\ChildModel {
         }
         return $query->orderby('bmc_name asc')->all();
     }
+
+    public function getRegionAreaList($regionCode) {
+        $query = $this->find()->select(['tbl_area.area_name', 'tbl_area.area_code'])
+                ->leftJoin('tbl_region', 'tbl_area.region_code = tbl_region.region_code')
+                ->where(['tbl_region.region_code' => $regionCode]);
+        $data = $query->all();
+        return ArrayHelper::map($data, 'area_code', 'area_name');
+    }
+
 }
