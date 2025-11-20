@@ -707,7 +707,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                         $attr_arr['label'] = Yii::t('app', $str);
                         $attr_arr['format'] = $format;
                         $attr_arr['filter'] = true;
-
+                        
                         $datatabel = [];
                         $datatabel['data'] = $att;
                         $datatabel['title'] = Yii::t('app', $str);

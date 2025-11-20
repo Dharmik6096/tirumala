@@ -1170,6 +1170,24 @@ class DropDown extends Component {
         }
     }
 
+    public function state_region($model, $form, $depends, $name = 'region_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-region/region-list', Yii::t('app', 'Select Region Name'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-region/region-list', Yii::t('app', 'Select Region Name'), $multiple, $model->$name, $readonly);
+        }
+    }
+
+    public function region_area($model, $form, $depends, $name = 'area_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-list', Yii::t('app', 'Select Area Name'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-list', Yii::t('app', 'Select Area Name'), $multiple, $model->$name, $readonly);
+        }
+    }
+
     public function getRecords($l) {
         $records = [
             'with_and_without_milktype' => [

@@ -1,9 +1,11 @@
 <?php
 
 namespace app\modules\geo\models;
+
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_region".
@@ -39,11 +41,11 @@ class TblRegion extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['address', 'region_name', 'state_code'], 'required'],
-            [['region_name', 'local_name', 'address', 'local_address', 'description', 'created_by', 'updated_by', 'union_code'], 'string'],
-            [['is_active'], 'integer'],
-            [['address', 'region_name', 'state_code', 'created_at', 'updated_at'], 'safe'],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                [['address', 'region_name', 'state_code'], 'required'],
+                [['region_name', 'local_name', 'address', 'local_address', 'description', 'created_by', 'updated_by', 'union_code'], 'string'],
+                [['is_active'], 'integer'],
+                [['address', 'region_name', 'state_code', 'created_at', 'updated_at'], 'safe'],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
         ];
     }
 
@@ -76,6 +78,14 @@ class TblRegion extends \app\models\ChildModel {
 
     public function getStateCode() {
         return $this->hasOne(TblStates::className(), ['state_code' => 'state_code']);
+    }
+
+    public function getStateRegionList($stateCode) {
+        $query = $this->find()->select(['tbl_region.region_name', 'tbl_region.region_code'])
+                ->leftJoin('tbl_states', 'tbl_region.state_code = tbl_states.state_code')
+                ->where(['tbl_states.state_code' => $stateCode]);
+        $data = $query->all();
+        return ArrayHelper::map($data, 'region_code', 'region_name');
     }
 
 }
