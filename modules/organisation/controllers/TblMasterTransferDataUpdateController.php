@@ -41,10 +41,10 @@ class TblMasterTransferDataUpdateController extends ChildController {
             $sp_params['from_date'] = $this->model->from_date;
             $sp_params['to_date'] = $this->model->to_date;
             unset($sp_params['from_shift'], $sp_params['to_shift']);
-            // $output = \Yii::$app->general->getSpData('portal_master_transfer_data_update', $sp_params);
-            // foreach ($output as $res) {
-            //     $this->model->status = $res['retuns_value'];
-            // }
+            $output = \Yii::$app->general->getSpData('portal_master_transfer_data_update', $sp_params);
+            foreach ($output as $res) {
+                $this->model->status = $res['retuns_value'];
+            }
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Master Transfer Data Update', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
