@@ -1,7 +1,6 @@
 <?php
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\product\models\TblProduct */
