@@ -10,7 +10,12 @@ use yii\helpers\Url;
 $attribute = [
         ['attribute' => 'complain_escalation_txn_code', 'filter' => false],
         ['attribute' => 'task_activity_code', 'filter' => false],
-        ['attribute' => 'user_type', 'filter' => false],
+        ['attribute' => 'user_type', 'value' => function ($model) {
+            return !empty($model->user_type) ? Yii::$app->dropdown->getRecords('login_type')['data'][$model->user_type] : '';
+        }, 'filter' => FALSE],
+        ['attribute' => 'department', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+        }, 'filter' => FALSE],
         ['attribute' => 'escalation_time', 'filter' => false],
         ['attribute' => 'level', 'filter' => false],
         ['attribute' => 'user_code', 'filter' => false],

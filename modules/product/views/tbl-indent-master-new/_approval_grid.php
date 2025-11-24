@@ -82,7 +82,7 @@ $this->title = Yii::t('app', 'Indent Approval');
                 },
             ],
             ['attribute' => 'user_name', 'label' => Yii::t('app', 'User Name'), 'filter' => FALSE],
-            ['attribute' => 'login_type', 'label' => Yii::t('app', 'Login Type'), 'filter' => FALSE],
+            ['attribute' => 'department', 'label' => Yii::t('app', 'Department'), 'filter' => FALSE],
         ];
 
         $grid_option = [

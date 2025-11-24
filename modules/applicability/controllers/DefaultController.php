@@ -117,6 +117,7 @@ class DefaultController extends Controller {
         $field_name = Yii::$app->request->post('field');
         $field_code = Yii::$app->request->post('fcode');
         $login_type = Yii::$app->request->post('login_type');
+        $department = !empty(Yii::$app->request->post('department')) ? Yii::$app->request->post('department') : '';
         $model = new $model_name();
         $wef_date = !empty(Yii::$app->request->post('wef_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('wef_date'))) : '';
         $isCheck = Yii::$app->request->post('checkdate');
@@ -139,11 +140,11 @@ class DefaultController extends Controller {
                 $condition = '((\'' . $from_date . '\' between from_date  and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))';
             }
             if ($model->hasAttribute('is_active')) {
-                $condition = !empty($condition) ? $condition.' AND is_active = 1' : 'is_active = 1';
+                $condition = !empty($condition) ? $condition . ' AND is_active = 1' : 'is_active = 1';
             }
         }
         $modelQuery = $model->find()->select(['applicable_code'])->where(['applicable_for' => $filter]);
-        if($check_applicability_with_field_name){
+        if ($check_applicability_with_field_name) {
             $modelQuery->andWhere([$field_name => $field_code]);
         }
         $modelQuery->andWhere($where)->andWhere($condition);
@@ -178,7 +179,7 @@ class DefaultController extends Controller {
             case in_array($filter, ['USER']):
                 $userModel = new User();
                 if (isset($is_bulk_notification) && ($is_bulk_notification == TRUE)) {
-                    $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes);
+                    $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes, $department);
                 } else {
                     $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
                 }

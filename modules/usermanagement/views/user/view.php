@@ -74,7 +74,7 @@ $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($
                         ],
                         [
                             'attribute' => 'login_type',
-                            'value' => isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '') : '',
+                            'value' => isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('dcs_union_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('dcs_union_login_type')['data'][$model->login_type] : '') : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ]
                     ],

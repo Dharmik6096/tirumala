@@ -354,6 +354,7 @@ echo GhostMenu::widget([
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff<b class="caret"></b></a>',
             'visible' => TRUE,
             'items' => [
+                    ['label' => Yii::t('app', 'Department'), 'url' => ['/general/tbl-department/index'], 'active' => ($cntrl == 'tbl-department')],
                     ['label' => Yii::t('app', 'Designation'), 'url' => ['/globalmaster/tbl-designation/index'], 'active' => ($cntrl == 'tbl-designation')],
                     ['label' => Yii::t('app', 'Staff Leave Master'), 'url' => ['/staffmanagement/tbl-staff-leave-master/index'], 'active' => ($cntrl == 'tbl-staff-leave-master')],
                     ['label' => Yii::t('app', 'Staff Salary Heads'), 'url' => ['/globalmaster/tbl-salary-heads/index'], 'active' => ($cntrl == 'tbl-salary-heads')],
@@ -1136,8 +1137,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'User Attendance'), 'url' => ['/tms/tbl-user-attendance/index'], 'active' => ($cntrl == 'tbl_user_attendance')],
                             ['label' => Yii::t('app', 'User Attendance Regularization'), 'url' => ['/tms/tbl-user-attendance-regularization/index'], 'active' => ($cntrl == 'tbl-user-attendance-regularization')],
                             ['label' => Yii::t('app', 'Task'), 'url' => ['/tms/tbl-task/index'], 'active' => ($cntrl == 'tbl-task')],
-                            ['label' => Yii::t('app', 'Current Location of All Users'), 'url' => ['/tms/tbl-user-tracking-movement/index'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
-                            ['label' => Yii::t('app', 'Individual Location of a User'), 'url' => ['/tms/tbl-user-tracking-movement/index-other'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
+                            ['label' => Yii::t('app', 'Current Location of All Users'), 'url' => ['/tms/tbl-user-tracking-movement/index'], 'active' => ($cntrl == 'tbl-user-tracking-movement' && $action == 'index')],
+                            ['label' => Yii::t('app', 'Individual Location of a User'), 'url' => ['/tms/tbl-user-tracking-movement/index-other'], 'active' => ($cntrl == 'tbl-user-tracking-movement' && $action == 'index-other')],
                     ]
                 ],
                     [
@@ -1212,7 +1213,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Member Classification'), 'url' => ['/dcsoperation/tbl-member-classification/index'], 'active' => ($cntrl == 'tbl-member-classification')],
                             ['label' => Yii::t('app', 'Capacity'), 'url' => ['/globalmaster/tbl-capacity/index'], 'active' => ($cntrl == 'tbl-capacity')],
                             ['label' => Yii::t('app', 'Vehicle Type'), 'url' => ['/globalmaster/tbl-vehicle-type/index'], 'active' => ($cntrl == 'tbl-vehicle-type')],
-                            ['label' => Yii::t('app', 'Department'), 'url' => ['/general/tbl-department/index'], 'active' => ($cntrl == 'tbl-department')],
                             ['label' => Yii::t('app', 'Backend Data'), 'url' => ['/general/default/backend-data'], 'active' => ($cntrl == 'backend-data')],
                     ]
                 ],
@@ -1351,6 +1351,23 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Veterinary<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Breed Master'), 'url' => ['/veterinary/tbl-breed-master/index']],
+                            ['label' => Yii::t('app', 'Symptom Master'), 'url' => ['/veterinary/tbl-symptom-master/index']],
+                            ['label' => Yii::t('app', 'Disease Master'), 'url' => ['/veterinary/tbl-disease-master/index']],
+                            ['label' => Yii::t('app', 'Medicine Master'), 'url' => ['/veterinary/tbl-medicine-master/index']],
+                            ['label' => Yii::t('app', 'Member Animal Type'), 'url' => ['/dcsoperation/tbl-member-animal-type/index']],
+                            ['label' => Yii::t('app', 'Case Type Fees'), 'url' => ['/veterinary/tbl-case-type-fees/index']],
+                            ['label' => Yii::t('app', 'Member Animal Tag Details'), 'url' => ['/veterinary/tbl-member-animal-tag-details/index']],
+                            ['label' => Yii::t('app', 'Animal Treatment Request'), 'url' => ['/veterinary/tbl-animal-treatment-request/index']],
+                            // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
+                            // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
+                            ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
+                    ],
+                ],
             ],
         ],
             [

@@ -76,6 +76,7 @@ class Applicability extends \yii\base\Module {
     public $isApproval = false;
     public $periodic_applicability = FALSE;
     public $login_type = '';
+    public $department = '';
     public $is_bulk_notification = false;
     public $with_wef_date = true;
     public $update_applicability = FALSE;

@@ -301,7 +301,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -523,7 +523,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('user_login_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('Login Type'), false, $value, TRUE, TRUE) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('Login Type'), false, $value, TRUE, TRUE) ?>
                                             </div>
                                             <?php
                                         }

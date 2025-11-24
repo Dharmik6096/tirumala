@@ -63,7 +63,7 @@ $form = ActiveForm::begin([
 
     <?php endif; ?>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE) ?> 
+        <?= Yii::$app->dropdown->dropdownStatic('dcs_union_login_type', $model, $form, '', 'Login Type', false, 'login_type'); ?>
     </div>
     <div class="col-sm-2 mt18 user_type_show">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_app_login'); ?>

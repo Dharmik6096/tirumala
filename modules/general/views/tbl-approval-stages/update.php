@@ -15,7 +15,7 @@ $this->title = Yii::$app->label->title('create', 'Approval Stages Master');
     <div class="panel-body">
         <div id="maincontent">
             <?=
-            $this->render('_form', ['model' => $model, 'txModel' => $txModel, 'type' => 'create',])
+            $this->render('_form', ['model' => $model, 'txModel' => $txModel, 'type' => 'edit',])
             ?>
         </div>
 

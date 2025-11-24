@@ -38,7 +38,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('receiver_type', $model, $form, '', $model->getAttributeLabel('receiver_type'), false, 'receiver_type', false); ?>  
     </div>
     <div class="col-sm-2 login_type">
-        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>  
+        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, '', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>  
+    </div>
+    <div class="col-sm-2 reset_field department">
+        <?= Yii::$app->dropdown->dropdown('department', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('department'), false, 'department'); ?>
     </div>
     <div class="col-sm-2 union_dd">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
@@ -230,11 +233,15 @@ function resetDateShiftFields() {
 }
     
 $(document).ready(function () {
-    $('.import-area, .payment_cycle_dd').hide();
+    $('.import-area, .payment_cycle_dd, .login_type, .department').hide();
     resetDateShiftFields();
     
     $(document).on('change', '#tblbulknotification-notification_type', function() {
         hideShowFields();
+    });
+    
+    $(document).on('change', '#tblbulknotification-login_type', function() {
+        hideShowDepartment();
     });
     
       function hideShowFields(){
@@ -242,23 +249,37 @@ $(document).ready(function () {
         if(type == '1'){
             $('.receiver_type, .app_type, .login_type').show();
             $('.import-area, .payment_cycle_dd').hide();
-            $('#tblbulknotification-login_type').val('farmer').trigger('change').trigger('select2:select');
+            $('#tblbulknotification-login_type').val('MEMBER').trigger('change').trigger('select2:select');
             resetDateShiftFields();
         }else if(type == '2' || type == '4' || type == '5' || type == '6'|| type == '7' || type == '8'){
             $('.receiver_type, .import-area, .payment_cycle_dd').show();
-            $('.app_type, .login_type').hide();
+            $('.app_type, .login_type, .department').hide();
             $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
             resetDateShiftFields();
             if (type == '4' || type == '8') {
-                $('#tblbulknotification-login_type').val('vsp').trigger('change').trigger('select2:select');
+                $('#tblbulknotification-login_type').val('DCS').trigger('change').trigger('select2:select');
+                $('#tblbulknotification-department').val('').trigger('change').trigger('select2:select');
             }
         }else if(type == '3'){
             $('.import-area, .f_date, .t_date, .f_shift, .t_shift, .auto_scrol_s').show();
-            $('.app_type, .login_type, .receiver_type, .payment_cycle_dd').hide();
+            $('.app_type, .login_type, .receiver_type, .payment_cycle_dd, .department').hide();
             $('#tblbulknotification-login_type').val('').trigger('change').trigger('select2:select');
         }
+         hideShowDepartment();
     }
 });
+
+      function hideShowDepartment() {
+        var notificationType = $('#tblbulknotification-notification_type').val();
+        var loginType = $('#tblbulknotification-login_type').val();
+
+        if (notificationType == '1' && loginType != 'MEMBER' && loginType != 'ALL') {
+            $('.department').show();
+        } else {
+            $('#tblbulknotification-department').val('');
+            $('.department').hide();
+        }
+    }
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
