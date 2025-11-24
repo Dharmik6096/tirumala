@@ -388,6 +388,15 @@ class DropDown extends Component {
         }
     }
 
+    public function transfer_bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-master-transfer/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, $autoClose);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-master-transfer/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
+        }
+    }
+
     public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);
