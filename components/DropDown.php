@@ -1375,10 +1375,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Not Require'), 1 => Yii::t('app', 'Require'), 2 => Yii::t('app', 'Auto')],
             ],
+            'route_login_type' => [
+                'name' => 'login_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['UNION' => Yii::t('app', 'UNION'), 'PLANT' => Yii::t('app', 'PLANT'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS'), 'ROUTE' => Yii::t('app', 'ROUTE')],
+            ],
+            'dcs_union_login_type' => [
+                'name' => 'login_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['UNION' => Yii::t('app', 'UNION'), 'PLANT' => Yii::t('app', 'PLANT'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
             'login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
+                'data' => ['ALL' => Yii::t('app', 'ALL'), 'MEMBER' => Yii::t('app', 'MEMBER'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
+                'remove_key' => ['ALL']
             ],
             'is_quality_auto' => [
                 'name' => 'is_quality_auto',
@@ -1846,12 +1857,6 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['CONSOLIDATED' => Yii::t('app', 'Consolidated'), 'INDIVIDUAL' => Yii::t('app', 'Individual')],
             ],
-            'user_login_type' => [
-                'name' => 'login_type',
-                'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'SAHAYAK'), 'az_manager' => Yii::t('app', 'Area Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
-                'remove_key' => ['all']
-            ],
             'receiver_type' => [
                 'name' => 'receiver_type',
                 'prompt' => Yii::t('app', 'Select'),
@@ -1906,12 +1911,6 @@ class DropDown extends Component {
                 'name' => 'reason',
                 'prompt' => Yii::t('app', 'Select Reason'),
                 'data' => ['consumed' => Yii::t('app', 'Consumed'), 'screaped' => Yii::t('app', 'Screaped'), 'lost' => Yii::t('app', 'Lost')],
-            ],
-            'login_type_ho_flutter' => [
-                'name' => 'login_type',
-                'prompt' => Yii::t('app', 'Select'),
-                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'zonal_manager' => Yii::t('app', 'Zonal Manager'), 'customer' => Yii::t('app', 'Customer')],
-                'remove_key' => ['all']
             ],
             'asset_detail_status' => [
                 'name' => 'current_status',
@@ -2136,11 +2135,6 @@ class DropDown extends Component {
                 'data' => [1 => Yii::t('app', 'Qty'), 2 => Yii::t('app', 'Amount')
                 ],
             ],
-            'login_type_report' => [
-                'name' => 'login_type',
-                'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'All'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
-            ],
             'erp_process_name' => [
                 'name' => 'process_name',
                 'prompt' => Yii::t('app', 'Select'),
@@ -2317,10 +2311,30 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Shift Lock'), 1 => Yii::t('app', 'Manual Collection')],
             ],
+            'app_type' => [
+                'name' => 'app_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'HO'), 2 => Yii::t('app', 'Flutter'), 3 => Yii::t('app', 'Manual Collection'), 4 => Yii::t('app', 'Driver App')],
+            ],
             'source_of_milk' => [
                 'name' => 'source_of_milk',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => 'Sample Milk', '1' => 'Flush Milk', '2' => 'Other'],
+            ],
+            'milking_status' => [
+                'name' => 'milking_status',
+                'prompt' => Yii::t('app', 'Select Milking Status'),
+                'data' => [0 => Yii::t('app', 'Dry'), 1 => Yii::t('app', 'In Milk')],
+            ],
+            'pregnancy_status' => [
+                'name' => 'pregnancy_status',
+                'prompt' => Yii::t('app', 'Select Pregnancy Status'),
+                'data' => [0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')],
+            ],
+            'diagnosis_milking_status' => [
+                'name' => 'milking_status',
+                'prompt' => Yii::t('app', 'Select Milking Status'),
+                'data' => [0 => Yii::t('app', 'None'), 1 => Yii::t('app', 'Milking'), 2 => Yii::t('app', 'Pregenent')],
             ],
             'type_of_dcs' => [
                 'name' => 'type_of_dcs',
@@ -2492,6 +2506,8 @@ class DropDown extends Component {
             'bmc_chiller_info' => ['name' => 'chiller_info_code', 'fields' => 'chiller_info_code,owner_name,sap_vendor_code', 'prompt' => Yii::t('app', 'Select BMC Chiller Info'), 'model' => 'TblBmcChillerInfo', 'depend' => 'bmc_code'],
             'vehicle_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'vehicle_code'],
             'animal_type_additional' => ['name' => 'animal_type_additional_code', 'fields' => 'animal_type_additional_code,additional_animal_type_name,', 'prompt' => Yii::t('app', 'Select Additional Animal Type'), 'model' => 'TblAnimalTypeAdditional'],
+            'caseType' => ['name' => 'case_type_id', 'fields' => 'case_type_id,case_type_name,', 'prompt' => Yii::t('app', 'Select Case Type'), 'model' => 'TblCaseType', 'depend' => 'union_code'],
+            'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
@@ -2775,6 +2791,11 @@ class DropDown extends Component {
     public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-plant-dispatch/plant-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function medicineBatch($model, $form, $depends, $name, $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/veterinary/tbl-medicine-stock/medicine-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
 
 }

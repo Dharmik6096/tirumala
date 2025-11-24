@@ -20,6 +20,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
         $this->model = new TblEiplAppWidgetMapping();
         $this->model->load(Yii::$app->request->queryParams);
         $searchModel = new TblEiplAppWidgetSearch();
+        $searchModel->app_type = $this->model->app_type;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProviderOther = $searchModel->search(Yii::$app->request->queryParams, 2);
         $selectedArray = [];
@@ -48,6 +49,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                 foreach ($toRevoke as $revoke_widget) {
                     $model = new TblEiplAppWidgetMapping();
                     $model->widget_id = (string) $revoke_widget;
+                    $model->app_type = $this->model->app_type;
                     $model->login_type = $this->model->login_type;
                     $model->department = $this->model->department;
                     $model->union_code = $this->model->union_code;
@@ -65,6 +67,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                 foreach ($toAssign as $Assign_widget) {
                     $model = new TblEiplAppWidgetMapping();
                     $model->widget_id = $Assign_widget;
+                    $model->app_type = $this->model->app_type;
                     $model->login_type = $this->model->login_type;
                     $model->department = $this->model->department;
                     $model->union_code = $this->model->union_code;

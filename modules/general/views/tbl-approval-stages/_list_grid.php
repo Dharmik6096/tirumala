@@ -23,8 +23,11 @@ use kartik\grid\GridView;
             ['attribute' => 'login_type',
             'filter' => FALSE,
             'value' => function ($model) {
-                return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('login_type_ho_flutter')['data'][$model->login_type] : '';
+                return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('route_login_type')['data'][$model->login_type] : '';
             },],
+            ['attribute' => 'department', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+            }, 'filter' => false],
             ['attribute' => 'user_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->userCode, 'name');
             }, 'filter' => false],

@@ -38,7 +38,7 @@ class TblComplainEscalationTxnHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['complain_escalation_txn_code', 'user_type', 'complain_escalation_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type'], 'safe'],
+                [['complain_escalation_txn_code', 'user_type', 'complain_escalation_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'department'], 'safe'],
         ];
     }
 
