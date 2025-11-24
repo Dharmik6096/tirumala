@@ -240,7 +240,7 @@ class TblMasterTransfer extends \app\models\ChildModel {
     public function getDCSList($bmc_code, $RLS = 'TRUE') {
         $query = TblDcs::find()->alias('d')->select(['d.dcs_code','d.dcs_name','d.ref_code'])
             ->innerJoin('tbl_master_transfer as mt', 'mt.old_dcs_code = d.dcs_code')
-            ->where(['d.bmc_code' => $bmc_code, 'd.is_active' => 1]);
+            ->where(['d.bmc_code' => $bmc_code, 'd.is_active' => 1, 'mt.master_type' => 'DCS']);
             if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
                 $query->andWhere(['d.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
             }

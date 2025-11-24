@@ -97,9 +97,9 @@ class TblMasterTransferDataUpdate extends ChildModel
                 $this->addError('from_date', Yii::t('app/validation', 'From Shift can not be greater than to To Shift when dates are the same.'));
                 return false;
             }
-            $wefDate = TblMasterTransfer::find()->select(['wef_date'])->where(['old_dcs_code' => $this->dcs_code])->andWhere(['<=', 'wef_date', date('Y-m-d')])->orderBy(['wef_date' => SORT_DESC,'master_transfer_code' => SORT_DESC])->limit(1)->scalar();
-            if (!empty($wefDate) && date('Y-m-d', strtotime($this->from_date)) > date('Y-m-d',  strtotime($wefDate))) {
-                $this->addError('from_date', Yii::t('app/validation', 'From Date cannot be greater than Wef Date.'));
+            $wefDate = TblMasterTransfer::find()->select(['wef_date'])->where(['old_dcs_code' => $this->dcs_code, 'master_type' => 'DCS'])->andWhere(['<=', 'wef_date', date('Y-m-d')])->orderBy(['wef_date' => SORT_DESC,'master_transfer_code' => SORT_DESC])->limit(1)->scalar();
+            if (!empty($wefDate) && date('Y-m-d', strtotime($this->from_date)) < date('Y-m-d',  strtotime($wefDate))) {
+                $this->addError('from_date', Yii::t('app/validation', 'From Date cannot be less than Transfer Date '.date('d-m-Y',strtotime($wefDate)).'.'));
                 return false;
             }
         }
