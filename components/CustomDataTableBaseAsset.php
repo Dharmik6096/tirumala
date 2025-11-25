@@ -8,7 +8,11 @@ class CustomDataTableBaseAsset extends DataTableBaseAsset {
 
     public function init() {
         parent::init();
-        $this->js[] = '\..\..\..\themes\pcdf\assets\js\jquery.dataTables' . (YII_ENV_DEV ? '' : '.min') . '.js';
+        $jsFileName = 'js/jquery.dataTables' . (YII_ENV_DEV ? '' : '.min') . '.js';
+        $customJsPath = \Yii::getAlias('@web') . '/themes/pcdf/assets/' . $jsFileName;
+        if (($key = array_search($jsFileName, $this->js)) !== false) {
+            $this->js[$key] = $customJsPath;
+        }
     }
 
 }
