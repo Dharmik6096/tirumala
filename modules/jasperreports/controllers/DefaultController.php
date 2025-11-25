@@ -578,6 +578,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VlccTransactionDataReportRegionAll';
         return $this->actionIndex();
     }
+    
+    public function actionUserAttendanceReport() {
+        $this->report = 'UserAttendanceReport';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1366,6 +1371,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VlccTransactionDataReportRegionAll',
                 'title' => 'VLCC Transaction Data Report 1',
                 'multiArray' => ['state_code', 'region_code', 'area_code', 'p_bmc_code', 'p_dcs_code'],
+                'bkg_export' => TRUE,
+            ],
+            'UserAttendanceReport' => [
+                'param' => 'p_union_code,p_login_type,p_from_date:string,p_to_date:string',
+                'path' => 'staff/Attendance',
+                'scenario' => 'UserAttendanceReport',
+                'title' => 'User Attendance Report PDF',
                 'bkg_export' => TRUE,
             ],
         ];
