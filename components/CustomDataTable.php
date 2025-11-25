@@ -1,4 +1,5 @@
 <?php
+
 namespace app\components;
 
 use nullref\datatable\DataTable;
@@ -6,10 +7,14 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
 
-class CustomDataTable extends DataTable
-{
-    public function run()
-    {
+class CustomDataTable extends DataTable {
+
+    public function init() {
+        parent::init();
+        CustomDataTableAsset::register($this->getView());
+    }
+
+    public function run() {
         $id = isset($this->id) ? $this->id : $this->getId();
         echo Html::beginTag('table', ArrayHelper::merge(['id' => $id], $this->tableOptions));
         echo Html::endTag('table');
@@ -56,5 +61,7 @@ class CustomDataTable extends DataTable
             $this->getView()->registerJs($globalVariable . 'jQuery("#' . $id . '").DataTable(' . Json::encode($this->getParams()) . ');');
         }
     }
+
 }
+
 ?>
