@@ -15,6 +15,7 @@ use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\collection\controllers\TblMccShiftLockController;
 use app\modules\tankermovement\models\TblRawFgMaterialReceipt;
 use yii\db\Expression;
+use app\modules\syncutility\models\TblForceSyncRequest;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -441,6 +442,38 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
             }
         }
         $this->response['error']['message'] = [$msg];
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionSyncRequest() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+            $model = new TblForceSyncRequest();
+            $model->dcs_code = $data['organization_code'];
+            $modelData = $model->find()->where(['ISNULL(is_download, 0)' => 0])
+                            ->andWhere(['dcs_code' => $data['organization_code']])->asArray()->all();
+            if (!empty($modelData)) {
+                $res_data = $modelData;
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionSyncRequestAcknowledgement() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+                $res_data['message'] = 'Acknowledgement Updated.';
+                $reqCodes = explode(',', $content['force_sync_request_code']);
+                $model = new TblForceSyncRequest();
+                $model->updateAll(['is_download' => 1, 'updated_at' => date('Y-m-d H:i:s')], ['force_sync_request_code' => $reqCodes]);
+            }
+        }
         $this->response['data'] = $res_data;
         return $this->response;
     }
