@@ -35,7 +35,7 @@ if (Yii::$app->session->hasFlash('success')) {
         <div class="modal-content">
             <div class="modal-header">
                 <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
-                <h4 class="modal-title"><?= Yii::t('app', 'EVEREST Application') ?></h4>
+                <h4 class="modal-title"><?= Yii::t('app', 'ITC Application') ?></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -94,14 +94,14 @@ if (Yii::$app->session->hasFlash('success')) {
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="login-content text-center banas_img">
-                                        <h3>Welcome to EIPL Milk Procurement Portal</h3>
+                                        <h3>Welcome to ITC Milk Procurement Portal</h3>
                                         <hr>
                                         <?php $image_path = Yii::$app->request->baseUrl . '/themes/emilk/assets/itc/images/'; ?>
                                         <div class="col-sm-12">
                                             <?= Html::img($image_path . 'Gomukh.png', ['class' => 'img-responsive']); ?>
                                         </div>
                                         <h3>About Us</h3>
-                                        <p class="text-justify">Everest brings to the industry, the most precise and advanced technology to simplify dairy and food testing process. All our products facilitate better functionality, which ultimately leads to better products reaching the consumers. This is only possible by making our products and services technologically innovative and accurate. Our vow to serve the purest evokes in us, the zeal to deliver the best, through precision, whatever we do. Our endeavor is to be the personification of the concept of "Precision Behind Purity"</p>
+                                        <p class="text-justify">ITC brings to the industry, the most precise and advanced technology to simplify dairy and food testing process. All our products facilitate better functionality, which ultimately leads to better products reaching the consumers. This is only possible by making our products and services technologically innovative and accurate. Our vow to serve the purest evokes in us, the zeal to deliver the best, through precision, whatever we do. Our endeavor is to be the personification of the concept of "Precision Behind Purity"</p>
                                         <a href="javascript:void(0)" class="btn-login  btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</a>
                                         <div class="ml500 col-xs-12">
                                             <?php echo Html::a('Forgot Password ?', ['/usermanagement/auth/forget-password'], ['title' => 'Click to reset your password']); ?>
