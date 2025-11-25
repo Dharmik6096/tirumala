@@ -113,7 +113,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-        $query->joinWith(['customerType']);
+        $query->join('LEFT JOIN', 'tbl_customer_type', 'tbl_customer_type.customer_type = tbl_bill_head_detail.customer_type AND tbl_customer_type.union_code = tbl_bill_head_detail.union_code');
         $query->join('LEFT JOIN', 'tbl_bill_head_installment', 'tbl_bill_head_installment.bill_head_detail_code = tbl_bill_head_detail.bill_head_detail_code');
 
         if (!$this->validate()) {
@@ -166,7 +166,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 //        $query->joinWith(['installmentCode']);
         $query->join('LEFT JOIN', 'tbl_bill_head_installment', 'tbl_bill_head_installment.bill_head_detail_code = tbl_bill_head_detail.bill_head_detail_code')
-              ->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bill_head_detail.dcs_code');
+                ->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bill_head_detail.dcs_code');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

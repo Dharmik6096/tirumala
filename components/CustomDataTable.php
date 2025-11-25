@@ -8,7 +8,6 @@
 
 namespace app\components;
 
-use nullref\datatable\assets\DataTableAsset;
 use yii\base\Model;
 use yii\base\Widget;
 use yii\data\ActiveDataProvider;
@@ -19,6 +18,7 @@ use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
 use nullref\datatable\DataTableColumn;
+use nullref\datatable\LinkColumn;
 
 class CustomDataTable extends Widget
 {
@@ -68,7 +68,7 @@ class CustomDataTable extends Widget
         if ($this->data === null) {
             $this->data = is_null($this->_dataProvider) ? [] : $this->_dataProvider->getModels();
         }
-        DataTableAsset::register($this->getView());
+        CustomDataTableAsset::register($this->getView());
         $this->initColumns();
         $this->initData();
     }
