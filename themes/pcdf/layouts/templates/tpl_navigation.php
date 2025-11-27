@@ -58,6 +58,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Master Hierarchy'), 'url' => ['/organisation/tbl-master-hierarchy/index'], 'active' => ($cntrl == 'tbl-master-hierarchy')],
                     ['label' => Yii::t('app', 'Master Organization Latlong'), 'url' => ['/organisation/tbl-organization-latlong/index'], 'active' => ($cntrl == 'tbl-organization-latlong')],
                     ['label' => Yii::t('app', 'Transfer Request'), 'url' => ['/organisation/tbl-master-transfer/index'], 'active' => ($cntrl == 'tbl-master-transfer')],
+                    ['label' => Yii::t('app', 'Transfer Data Update'), 'url' => ['/organisation/tbl-master-transfer-data-update/index'], 'active' => ($cntrl == 'tbl-master-transfer-data-update')],
                     ['label' => Yii::t('app', 'Bulk Notification'), 'url' => ['/sms/tbl-bulk-notification/index'], 'active' => ($cntrl == 'tbl-bulk-notification')],
                     ['label' => Yii::t('app', 'Bank Verification'), 'url' => ['/organisation/tbl-dcs/master-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'master-verification')],
                     ['label' => Yii::t('app', 'Contact Verification'), 'url' => ['/organisation/tbl-dcs/contact-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'contact-verification')],
@@ -1082,6 +1083,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
                             ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
                             ['label' => Yii::t('app', 'User Attendance Details'), 'url' => ['/misreports/reports/user-attendance-details']],
+                            ['label' => Yii::t('app', 'User Attendance Report PDF'), 'url' => ['/jasperreports/default/user-attendance-report']],
                     ]
                 ],
             ],

@@ -411,6 +411,15 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                                 </div>  
                                                 <?php
                                             }
+                                            if (in_array($value, array('p_login_type'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?php
+                                                    echo Yii::$app->dropdown->dropdownStatic('login_type_report', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, $value, false);
+                                                    ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
