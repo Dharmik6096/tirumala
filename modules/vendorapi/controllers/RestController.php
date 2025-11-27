@@ -88,7 +88,7 @@ class RestController extends ActiveController {
         $svc = $this->svc;
         $master_array = Vendorapi::setParam($svc);
         if (!empty($master_array) && isset($data[$master_array['json_key']])) {
-            $save_data = $data[$master_array['json_key']][$svc];
+            $save_data = $data[$master_array['json_key']][$master_array['content_json_key']];
             $array = [];
             $array[] = $save_data;
             $convert_array = isset($save_data[0]) ? $save_data : $array;

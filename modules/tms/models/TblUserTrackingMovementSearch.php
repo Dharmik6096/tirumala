@@ -167,7 +167,7 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
                 ];
             }
         }
-        return array_slice($dataArray, 0, 25);
+        return $dataArray;
     }
 
     public function getUserDetail($params, $output) {

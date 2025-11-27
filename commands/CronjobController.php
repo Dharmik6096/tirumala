@@ -142,7 +142,7 @@ class CronjobController extends \yii\console\Controller {
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title;
+        $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . str_replace('/', '_', $this->model->report_title);
         $fileName = $labelT . '.' . $header['extension'];
 
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
@@ -157,7 +157,7 @@ class CronjobController extends \yii\console\Controller {
     }
 
     public function SaveJasperPdf() {
-        $fileName = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . $this->model->report_title . '.pdf';
+        $fileName = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . str_replace('/', '_', $this->model->report_title) . '.pdf';
         file_put_contents($this->report_path . $fileName, $this->output);
         $this->model->file_name = $fileName;
         $this->model->file_path = $this->report_folder . $fileName;

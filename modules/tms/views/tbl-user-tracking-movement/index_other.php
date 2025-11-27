@@ -12,8 +12,8 @@ $totalVisitedDcs = 0;
 if (!empty($onlineData)) {
     foreach ($onlineData as $data) {
         $datetime = $data['tracking_datetime'];
-        $date = date('Y-m-d', strtotime($datetime));
-        $time = date('H:i', strtotime($datetime));
+        $date = date('d-m-Y', strtotime($datetime));
+        $time = date('h:i A', strtotime($datetime));
         if (!empty($data['lat']) && !empty($data['long'])) {
             $totalVisitedDcs++;
             $info = '<div class="map_info_content">';
@@ -50,10 +50,9 @@ if (empty($latLongArray)) {
 
 $latLongArray = json_encode($latLongArray);
 $mapIcon = $this->theme->getUrl('/assets/images/marker-icon.png');
-if(!empty($newLatLongArray)){
+if (!empty($newLatLongArray)) {
     foreach ($newLatLongArray as &$location) {
-        $info = $location['info'];
-        if (strpos($info, 'MCC') !== false) {
+        if (strpos($location['info'], 'MCC') !== false) {
             $location['icon'] = $this->theme->getUrl('/assets/images/yellow_dot.png');
         } else {
             $location['icon'] = $this->theme->getUrl('/assets/images/dot.png');
@@ -171,36 +170,76 @@ $script = <<<JS
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer({
         map: map,
+        suppressMarkers: true,
     });
 
+    var totalDistance = 0;
+    for (var i = 0; i < locations.length - 1; i++) {
+        totalDistance += calculateDistance(locations[i].lat, locations[i].long, locations[i+1].lat, locations[i+1].long);
+    }
+    var totalDistanceKm = (totalDistance / 1000).toFixed(2);
+    document.getElementById('distance-traveled').innerHTML = '<strong>Total Distance : </strong>' + totalDistanceKm + ' km';
+
     if (locations.length > 1) {
-        var waypoints = locations.slice(1, -1).map(function(location) {
-            return {
-                location: new google.maps.LatLng(location.lat, location.long),
-                stopover: true,
-            };
+        var maxWaypoints = 25;
+        var chunks = [];
+        for (var i = 0; i < locations.length - 1; i += maxWaypoints) {
+            var end = Math.min(i + maxWaypoints + 1, locations.length);
+            chunks.push(locations.slice(i, end));
+        }
+
+        chunks.forEach(function(chunk, chunkIndex) {
+            if (chunk.length > 1) {
+                var waypoints = chunk.slice(1, -1).map(function(location) {
+                    return {
+                        location: new google.maps.LatLng(location.lat, location.long),
+                        stopover: true,
+                    };
+                });
+
+                var request = {
+                    origin: new google.maps.LatLng(chunk[0].lat, chunk[0].long),
+                    destination: new google.maps.LatLng(chunk[chunk.length - 1].lat, chunk[chunk.length - 1].long),
+                    waypoints: waypoints,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                };
+
+                directionsService.route(request, function(result, status) {
+                    if (status === google.maps.DirectionsStatus.OK) {
+                        if (chunkIndex === 0) {
+                            directionsRenderer.setDirections(result);
+                        } else {
+                            var path = result.routes[0].overview_path;
+                            var polyline = new google.maps.Polyline({
+                                path: path,
+                                geodesic: true,
+                                strokeColor: '#4285F4',
+                                strokeOpacity: 1.0,
+                                strokeWeight: 2,
+                            });
+                            polyline.setMap(map);
+                        }
+                    } else {
+                        console.error('Directions request failed for chunk ' + chunkIndex + ' due to ' + status);
+                    }
+                });
+            }
         });
 
-        var request = {
-            origin: new google.maps.LatLng(locations[0].lat, locations[0].long),
-            destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1].long), // End point
-            waypoints: waypoints,
-            travelMode: google.maps.TravelMode.DRIVING,
-        };
+        function getLabel(index) {
+            return (index + 1).toString();
+        }
 
-        directionsService.route(request, function(result, status) {
-            if (status === google.maps.DirectionsStatus.OK) {
-                directionsRenderer.setDirections(result);
-                var totalDistance = 0;
-                var legs = result.routes[0].legs;
-                for (var i = 0; i < legs.length; i++) {
-                    totalDistance += legs[i].distance.value;
-                }
-                var totalDistanceKm = (totalDistance / 1000).toFixed(2);;
-                document.getElementById('distance-traveled').innerHTML = '<strong>Total Distance : </strong>' + totalDistanceKm + ' km';
-            } else {
-                console.error('Directions request failed due to ' + status);
-            }
+        locations.forEach(function(location, index) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(location.lat, location.long),
+                map: map,
+                label: { text: getLabel(index), fontWeight: 'bold' }
+            });
+            marker.addListener('click', function() {
+                infoWindow.setContent(location.info);
+                infoWindow.open(map, marker);
+            });
         });
         newLocations.forEach(function(location) {
             var marker = new google.maps.Marker({
