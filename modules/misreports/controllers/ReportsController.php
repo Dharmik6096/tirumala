@@ -2176,7 +2176,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'FarmerMilkBillConsolidatedSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMisFeedReport() {
         $this->report = 'MisFeedReport';
         return $this->actionIndex();
@@ -4391,7 +4391,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
             ],
             'RateRecalculationWefDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,customer_type,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
                 'scenario' => 'RateRecalculationWefDateWise',
                 'title' => 'Rate Recalculation(Custom)',
