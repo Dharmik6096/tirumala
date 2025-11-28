@@ -291,6 +291,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php
 $from_date = !empty($model->from_date) ? $model->from_date : '';
 $to_date = !empty($model->to_date) ? $model->to_date : '';
+$is_member_rate = !empty($model->is_member_rate) ? $model->is_member_rate : '';
 $script = "
     $('.kv-panel-before').hide();
     var periodic_applicability = '{$periodic_applicability}';
@@ -299,6 +300,7 @@ $script = "
     var to_date = '{$to_date}';
     var is_bulk_notification = '{$is_bulk_notification}';
     var load_data_on_apply_to_checkbox = '{$load_data_on_apply_to_checkbox}';
+    var is_member_rate = '{$is_member_rate}';
     function checkBoxFilter(val){
         var id = $(val).attr('id');
         var value = $(val).val();
@@ -498,7 +500,7 @@ $script = "
         $.ajax({
             type: 'post',
             url: '{$furl}',
-            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability,'is_bulk_notification':is_bulk_notification,'check_applicability_with_field_name':check_applicability_with_field_name},
+            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute),'from_date':from_date,'to_date':to_date,'periodic_applicability':periodic_applicability,'is_bulk_notification':is_bulk_notification,'check_applicability_with_field_name':check_applicability_with_field_name,'is_member_rate':is_member_rate},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if (obj1.status == 'success')
