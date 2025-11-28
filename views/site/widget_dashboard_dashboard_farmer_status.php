@@ -5,7 +5,7 @@ use yii\helpers\Url;
 $eiplCode = strtolower(\Yii::$app->session['eiplCode']);
 $imageIconPathClient = $this->theme->getUrl('/assets/' . $eiplCode . '/images/dashboard/');
 $imageIconPathEipl = $this->theme->getUrl('/assets/images/dashboard/');
-$imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? $imageIconPathClient : $imageIconPathEipl;
+$imageIconPath = is_dir(\Yii::getAlias('@webroot') . ('/themes/emilk/assets/' . $eiplCode . '/images/dashboard/')) ? $imageIconPathClient : $imageIconPathEipl;
 
 ?>
 

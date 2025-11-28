@@ -55,6 +55,8 @@ GuestAssets::register($this);
             $logo = $this->theme->getUrl('/assets/images/nav_logo.png');
         } else if ($eiplCode == 'BANAS') {
             $logo = $this->theme->getUrl('/assets/images/banas_logo.png');
+        } else if ($eiplCode == 'ITC') {
+            $logo = $this->theme->getUrl('/assets/itc/images/Logo_GOMUKH.png');
         }
         ?>
 
