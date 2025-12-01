@@ -39,6 +39,12 @@ class DisableField extends Component {
             'BANAS' => [
                 'TblProductSale' => [],
             ],
+            'CARGILL' => [
+                'TblProductSale' => [],
+            ],
+            'KOTMALE' => [
+                'TblProductSale' => [],
+            ],
         ];
     }
 
