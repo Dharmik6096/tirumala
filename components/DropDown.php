@@ -897,6 +897,9 @@ class DropDown extends Component {
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
         $field_value = !empty($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        if (is_array($field_value)) {
+            $field_value = implode('~', $field_value);
+        }
         $control_name = ($name == '') ? $data['name'] : $name;
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
         $placeholder = $data['prompt'];
@@ -904,7 +907,7 @@ class DropDown extends Component {
         $allParam = [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray];
 
         if ($multiselect2Dropdown) {
-            $this->select2Dropdown($model, $form, $depends, $name, $label, $url, $placeholder, $multiselect, $allParam, $readonly, '', $searchable, true);
+            $this->select2Dropdown($model, $form, $depends, $name, $label, $url, $placeholder, $multiselect, $allParam, $readonly, '', $searchable, true, $async);
             return;
         }
         if ($multiselect) {
@@ -1170,30 +1173,12 @@ class DropDown extends Component {
         ])->label(Yii::t('app', $islable));
     }
 
-    public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
+    public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false, $async = true) {
         $this->setClass($form, $name);
         if ($multiple) {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly);
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly, '', true, true, $async);
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $model->$name, $readonly);
-        }
-    }
-
-    public function state_region($model, $form, $depends, $name = 'region_code', $islable = false, $multiple = false, $readonly = false) {
-        $this->setClass($form, $name);
-        if ($multiple) {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-region/region-list', Yii::t('app', 'Select Region Name'), $multiple, '', $readonly);
-        } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-region/region-list', Yii::t('app', 'Select Region Name'), $multiple, $model->$name, $readonly);
-        }
-    }
-
-    public function region_area($model, $form, $depends, $name = 'area_code', $islable = false, $multiple = false, $readonly = false) {
-        $this->setClass($form, $name);
-        if ($multiple) {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-list', Yii::t('app', 'Select Area Name'), $multiple, '', $readonly);
-        } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-list', Yii::t('app', 'Select Area Name'), $multiple, $model->$name, $readonly);
         }
     }
 
@@ -2733,10 +2718,14 @@ class DropDown extends Component {
                         if (selected_val_json) {
                             var array_val = [];
                             $.each(selected_val_json, function(index, value) {
-                                $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
-                                array_val.push(value);
+                                if(value != ''){
+                                    $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
+                                    array_val.push(value);
+                                }
                             });
-                            dropdown.val(array_val).trigger('change');
+                            if(array_val.length > 0){
+                                dropdown.val(array_val).trigger('change');
+                            }
                         }
                         if (multiple) {
                             dropdown.find('option[value=\"all\"][value=\'\']').remove();

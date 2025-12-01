@@ -250,7 +250,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                             } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'p_bmc_code', Yii::t('app', 'BMC'), $multiple); ?>
+                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'p_bmc_code', Yii::t('app', 'BMC'), $multiple, false, false); ?>
                                                 </div>
                                                 <?php
                                             } else {
@@ -271,14 +271,14 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                         if (in_array($value, array('region_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->state_region($model, $form, 'reportsmodel-state_code', 'region_code', Yii::t('app', 'Region Name'), $multiple); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code', false, 0, [], $multiple, '', false, true, $multiple, false); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('area_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->region_area($model, $form, 'reportsmodel-region_code', 'area_code', Yii::t('app', 'Area Name'), $multiple); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'reportsmodel-region_code', 'form-group col-sm-12', 'Area Name', 'area_code', false, 0, [], $multiple, '', false, true, $multiple, false); ?>
                                             </div>
                                             <?php
                                         }

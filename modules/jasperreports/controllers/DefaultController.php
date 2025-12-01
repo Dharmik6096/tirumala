@@ -578,7 +578,7 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VlccTransactionDataReportRegionAll';
         return $this->actionIndex();
     }
-    
+
     public function actionUserAttendanceReport() {
         $this->report = 'UserAttendanceReport';
         return $this->actionIndex();
@@ -623,7 +623,7 @@ class DefaultController extends \app\controllers\ChildController {
                     $controls[$value] = (int) $pay_cycle[1];
                     $controls['p_dcs_payment_date'] = $pay_cycle[0];
                 } else {
-                    $controls[$value] = $model->{$value};
+                    $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
                 }
                 if (isset($value_array[1]) && $value_array[1] == 'month') {
                     $model->{$value} = !empty($month) ? date('m-Y', strtotime($month)) : NULL;
