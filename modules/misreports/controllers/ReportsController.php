@@ -2176,7 +2176,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'FarmerMilkBillConsolidatedSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMisFeedReport() {
         $this->report = 'MisFeedReport';
         return $this->actionIndex();
@@ -2319,28 +2319,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //202
             'BmcCollDateShiftWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date And Shift Wise Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollDateWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_wise_soceity_collection_date_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date Wise Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_collection_consolidated',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Consolidated',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcConsolidatedWithBank' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_collection_consolidated_with_bank',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Consolidated',
@@ -4391,7 +4391,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
             ],
             'RateRecalculationWefDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,customer_type,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
                 'scenario' => 'RateRecalculationWefDateWise',
                 'title' => 'Rate Recalculation(Custom)',
