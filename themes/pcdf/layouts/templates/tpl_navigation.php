@@ -58,6 +58,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Master Hierarchy'), 'url' => ['/organisation/tbl-master-hierarchy/index'], 'active' => ($cntrl == 'tbl-master-hierarchy')],
                     ['label' => Yii::t('app', 'Master Organization Latlong'), 'url' => ['/organisation/tbl-organization-latlong/index'], 'active' => ($cntrl == 'tbl-organization-latlong')],
                     ['label' => Yii::t('app', 'Transfer Request'), 'url' => ['/organisation/tbl-master-transfer/index'], 'active' => ($cntrl == 'tbl-master-transfer')],
+                    ['label' => Yii::t('app', 'Transfer Data Update'), 'url' => ['/organisation/tbl-master-transfer-data-update/index'], 'active' => ($cntrl == 'tbl-master-transfer-data-update')],
                     ['label' => Yii::t('app', 'Bulk Notification'), 'url' => ['/sms/tbl-bulk-notification/index'], 'active' => ($cntrl == 'tbl-bulk-notification')],
                     ['label' => Yii::t('app', 'Bank Verification'), 'url' => ['/organisation/tbl-dcs/master-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'master-verification')],
                     ['label' => Yii::t('app', 'Contact Verification'), 'url' => ['/organisation/tbl-dcs/contact-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'contact-verification')],
@@ -1137,8 +1138,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'User Attendance'), 'url' => ['/tms/tbl-user-attendance/index'], 'active' => ($cntrl == 'tbl_user_attendance')],
                             ['label' => Yii::t('app', 'User Attendance Regularization'), 'url' => ['/tms/tbl-user-attendance-regularization/index'], 'active' => ($cntrl == 'tbl-user-attendance-regularization')],
                             ['label' => Yii::t('app', 'Task'), 'url' => ['/tms/tbl-task/index'], 'active' => ($cntrl == 'tbl-task')],
-                            ['label' => Yii::t('app', 'Current Location of All Users'), 'url' => ['/tms/tbl-user-tracking-movement/index'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
-                            ['label' => Yii::t('app', 'Individual Location of a User'), 'url' => ['/tms/tbl-user-tracking-movement/index-other'], 'active' => ($cntrl == 'tbl-user-tracking-movement')],
+                            ['label' => Yii::t('app', 'Current Location of All Users'), 'url' => ['/tms/tbl-user-tracking-movement/index'], 'active' => ($cntrl == 'tbl-user-tracking-movement' && $action == 'index')],
+                            ['label' => Yii::t('app', 'Individual Location of a User'), 'url' => ['/tms/tbl-user-tracking-movement/index-other'], 'active' => ($cntrl == 'tbl-user-tracking-movement' && $action == 'index-other')],
                     ]
                 ],
                     [

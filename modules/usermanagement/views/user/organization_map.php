@@ -83,13 +83,15 @@ $this->title = Yii::t('app', $title);
                     <?php endforeach; ?>
                     <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
                     <div class="clearfix"></div>
-                    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                        <div class="form-group">
-                            <?= Yii::$app->controls->save($button, $model); ?>
-                            <?= Yii::$app->controls->reset(); ?>
-                            <?= Yii::$app->controls->cancel($model); ?>
+                    <?php if (!$hideControlsBtn) { ?>
+                        <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                            <div class="form-group">
+                                <?= Yii::$app->controls->save($button, $model); ?>
+                                <?= Yii::$app->controls->reset(); ?>
+                                <?= Yii::$app->controls->cancel($model); ?>
+                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
