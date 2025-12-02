@@ -507,7 +507,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                     }
                 }
                 ?>
-                <div class="btn-group btn btn-default jasper_report_modal_toggle"><i class="fa fa-search"></i></div>
+                <div class="btn-group btn btn-default jasper_report_modal_toggle plus-button"><i class="fa fa-search"></i></div>
             </div>
 
             <?php if ($result != '') { ?>
