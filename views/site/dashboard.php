@@ -13,7 +13,7 @@ $client_code = !empty($client_code) ? $client_code : '';
 $client_code = strtolower($client_code);
 $imageIconPathClient = $this->theme->getUrl('/assets/' . $client_code . '/images/dashboard/');
 $imageIconPathEipl = $this->theme->getUrl('/assets/images/dashboard/');
-$imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? $imageIconPathClient : $imageIconPathEipl;
+$imageIconPath = is_dir(\Yii::getAlias('@webroot') . ('/themes/emilk/assets/' . $client_code . '/images/dashboard/')) ? $imageIconPathClient : $imageIconPathEipl;
 
 $chart_url = Url::to(['load-chart']);
 $table_url = Url::to(['load-table']);
