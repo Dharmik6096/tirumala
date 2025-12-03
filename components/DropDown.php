@@ -898,7 +898,7 @@ class DropDown extends Component {
         $checkValid = in_array('checkValid', $data);
         $field_value = !empty($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         if (is_array($field_value)) {
-            $field_value = implode('~', $field_value);
+            $field_value = implode('*', $field_value);
         }
         $control_name = ($name == '') ? $data['name'] : $name;
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
@@ -2715,7 +2715,7 @@ class DropDown extends Component {
                     var multiple = " . json_encode($multiple) . ";
 
                     dropdown.on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                        if (selected_val_json) {
+                        if (selected_val_json) {                            
                             var array_val = [];
                             $.each(selected_val_json, function(index, value) {
                                 if(value != ''){
@@ -2723,10 +2723,8 @@ class DropDown extends Component {
                                     array_val.push(value);
                                 }
                             });
-                            if(array_val.length > 0){
                                 dropdown.val(array_val).trigger('change');
                             }
-                        }
                         if (multiple) {
                             dropdown.find('option[value=\"all\"][value=\'\']').remove();
                             if (dropdown.find('option').length > 0) {

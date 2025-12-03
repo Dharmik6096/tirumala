@@ -454,7 +454,7 @@ class SiteController extends Controller {
             }
             $selectedValues = [];
             if (!empty($data[2])) {
-                foreach (explode('~', $data[2]) as $values) {
+                foreach (explode('*', $data[2]) as $values) {
                     $selectedValues[] = $values;
                 }
             }

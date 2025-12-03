@@ -55,6 +55,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                         $value_array = explode(':', $value);
                                         $value = $value_array[0];
                                         $multiple = in_array($value, $multiArray) ? true : false;
+                                        $multiple_class = in_array($value, $multiArray) ? 'is_matched' : '';
                                         if (in_array($value, array('dcs_code', 'p_dcs_code', 'pm_dcs_code'))) {
                                             ?>
                                             <?php
@@ -75,7 +76,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                                 <?php
                                             } else {
                                                 ?>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-3 <?= $multiple_class ?>">
                                                     <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society'), $multiple); ?>         
                                                 </div>
                                                 <?php
@@ -249,7 +250,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                                 <?php
                                             } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
                                                 ?>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-3  <?= $multiple_class ?>">
                                                     <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'p_bmc_code', Yii::t('app', 'BMC'), $multiple, false, false); ?>
                                                 </div>
                                                 <?php
@@ -270,14 +271,14 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                         }
                                         if (in_array($value, array('region_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3  <?= $multiple_class ?>">
                                                 <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code', false, 0, [], $multiple, '', false, true, $multiple, false); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('area_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3  <?= $multiple_class ?>">
                                                 <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'reportsmodel-region_code', 'form-group col-sm-12', 'Area Name', 'area_code', false, 0, [], $multiple, '', false, true, $multiple, false); ?>
                                             </div>
                                             <?php
@@ -620,6 +621,19 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
     $script = "
         var is_not_dcs_array = " . $is_not_dcs_array . ";
         var is_not_bmc_array = " . $is_not_bmc_array . ";
+            
+        $('.is_matched').each(function() {
+            var dropdown = $(this).find('select');
+            if (dropdown.length) {
+                dropdown.find('option[value=\"\"][selected]').remove();
+                dropdown.find('option[value=\"0\"][selected]').filter(function() {
+                    return $(this).text() === \"0\";
+                }).remove();
+                dropdown.trigger('change.select2');
+            }
+        });
+        
+
         if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
         $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_member_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
