@@ -6418,3 +6418,13 @@ select:focus > option:checked {
 .w79pr {
     width: 79%;
 }
+.black-color {
+    color: #000;
+}
+.map-icon-image {
+    width: 20px;
+    height: 20px;
+}
+.float-right{
+    float: right;
+}
