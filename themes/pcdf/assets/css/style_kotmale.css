@@ -5121,7 +5121,7 @@ tr.highlightRow {
     text-align: center;
 }
 .mobile_dash_block_header {
-    color: #00A3DE !important;
+    color: #fff !important;
     text-align: center !important;
     font-weight: 600;
     font-size: 14px;
@@ -5701,4 +5701,25 @@ div#dashboardFarmerPopup {
 }
 .custom-radio-class {
     margin-top: -3px !important;
+}
+.no_pointer_disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.no_pointer_disabled .select2-selection {
+    background-color: #eee;
+}
+
+.button_info {      
+    float: right;
+    font-size: 15px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.plant-widget-header {
+    padding-top: 4px;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 1px solid #fff;
 }
