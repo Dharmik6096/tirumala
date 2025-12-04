@@ -146,6 +146,11 @@ class DefaultController extends Controller {
         $modelQuery = $model->find()->select(['applicable_code'])->where(['applicable_for' => $filter]);
         if ($check_applicability_with_field_name) {
             $modelQuery->andWhere([$field_name => $field_code]);
+        } else {
+            if ($model->hasAttribute('is_member_rate')) {
+                $is_member_rate = isset(Yii::$app->request->post()['is_member_rate']) ? Yii::$app->request->post()['is_member_rate'] : '';
+                $condition = !empty($condition) ? $condition . ' AND is_member_rate = ' . (int) $is_member_rate : 'is_member_rate = ' . (int) $is_member_rate;
+            }
         }
         $modelQuery->andWhere($where)->andWhere($condition);
         $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
