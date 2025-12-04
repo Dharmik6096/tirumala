@@ -99,8 +99,8 @@ $this->title = Yii::t('app', 'Indent Dispatch');
             'actions' => [
                 'disable' => function ($url, $model) {
                     $class = ($model->is_close == 0 ) ? '' : 'disabled';
-                    $options = ['data-name' => $model->dcs_code, 'data-val' => $model->indent_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Close', 'class' => 'close-indent ' . $class];
-                    return Html::a('<i class="fa fa-close"></i>', ['/product/tbl-indent-dispatch-new/close-indent', 'id' => $model->indent_code], $options);
+                    $options = ['data-name' => $model->dcs_code, 'data-val' => $model->indent_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Close', 'class' => 'close-indent ' . $class];                    
+                    return Html::a('<i class="fa fa-times"></i>', ['/product/tbl-indent-dispatch-new/close-indent', 'id' => $model->indent_code], $options);
                 },
             ]
         ];
