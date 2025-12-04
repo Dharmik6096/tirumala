@@ -55,6 +55,8 @@ if (empty($latLongArray)) {
 
 $latLongArray = json_encode($latLongArray);
 $mapIcon = $this->theme->getUrl('/assets/images/marker-icon.png');
+$greenMarkerUrl = $this->theme->getUrl('/assets/images/green-marker.png');
+$yellowMarkerUrl = $this->theme->getUrl('/assets/images/yellow-marker.png');
 if (!empty($newLatLongArray)) {
     foreach ($newLatLongArray as &$location) {
         if (strtoupper($location['type']) == 'MCC') {
@@ -92,8 +94,8 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
                     <p class="ml15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/red_dot.png') ?>" > Red Dot: <?= Yii::t('app', 'BMC') ?> locations</p>
                     <p class="ml15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/dot.png') ?>" > Blue Dot: <?= Yii::t('app', 'DCS') ?> locations</p>
                     <p class="ml15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/green_dot.png') ?>" > Green Dot: <?= Yii::t('app', 'Other') ?> locations</p>
-                    <p class="ml15 black-color"><img src="https://maps.google.com/mapfiles/ms/icons/green.png" class="map-icon-image"> Green Marker: Start location</p>
-                    <p class="ml15 black-color"><img src="https://maps.google.com/mapfiles/ms/icons/yellow.png" class="map-icon-image"> Yellow Marker: End location</p>
+                    <p class="ml15 black-color"><img src="<?= $greenMarkerUrl ?>" class="map-icon-image"> Green Marker: Start location</p>
+                    <p class="ml15 black-color"><img src="<?= $yellowMarkerUrl ?>" class="map-icon-image"> Yellow Marker: End location</p>
                 </div>
             </div>
             <div class="<?= !empty($searchModel->user_code) ? 'col-sm-9' : 'col-sm-12'; ?> mx_h_400">
@@ -255,13 +257,13 @@ $script = <<<JS
             var icon = null;
             if (index === 0) {
                 icon = {
-                    url: 'https://maps.google.com/mapfiles/ms/icons/green.png',
+                    url: '$greenMarkerUrl',
                     scaledSize: new google.maps.Size(70, 70),
                     labelOrigin: new google.maps.Point(32.5, 22)
                 };
             } else if (index === locations.length - 1) {
                 icon = {
-                    url: 'https://maps.google.com/mapfiles/ms/icons/yellow.png',
+                    url: '$yellowMarkerUrl',
                     scaledSize: new google.maps.Size(70, 70),
                     labelOrigin: new google.maps.Point(32.5, 22)
                 };
