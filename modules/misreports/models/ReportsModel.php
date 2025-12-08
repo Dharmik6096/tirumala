@@ -49,7 +49,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberPaymentDrafted']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
-                [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail', 'MemberData', 'MilkColllectionHistory', 'MemberHistory', 'DcsHistory', 'CpliabilityReport', 'TallyReport', 'AssetDetailsReport']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail', 'MemberData', 'MilkColllectionHistory', 'MemberHistory', 'DcsHistory', 'CpliabilityReport', 'TallyReport', 'AssetDetailsReport', 'VspOutstandingDetail']],
                 [['report_collection_type', 'date_payment_cycle'], 'required', 'on' => ['TallyReport']],
                 [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
                 [['p_organization_type', 'rate_type', 'union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['RateAcknowledgement']],
