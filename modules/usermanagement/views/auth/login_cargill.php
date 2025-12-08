@@ -24,7 +24,7 @@ if (Yii::$app->session->hasFlash('success')) {
 <div class="navbar fixed-top menu-wrap">
     <div class="container-fluid">
         <a class="navbar-brand" href="javascript:void(0)">
-            <img src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive" />
+            <img src="<?= $this->theme->getUrl('/assets/cargill/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive" />
         </a>
     </div>
 </div>
