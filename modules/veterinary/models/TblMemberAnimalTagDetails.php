@@ -70,10 +70,10 @@ class TblMemberAnimalTagDetails extends ChildModel
             [['milking_status'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'milking_status');
                 }, 'on' => 'importCsv'],
-            [['dcs_code'], 'setImport', 'on' => 'importCsv'],
             [['animal_type_id'], 'validateMemberAnimalType'],
             [['gender_id'], 'validateGender'],
             [['breed_id'], 'validateBreed'],
+            [['dcs_code'], 'setImport', 'on' => 'importCsv'],
             // [['year','month'], 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', '{attribute} must be integer.')],
             [['pregnancy_month', 'pregnancy_month_on_date'], 'required', 'when' => function ($model) {
                 return $model->pregnancy_status == '1';
@@ -119,13 +119,13 @@ class TblMemberAnimalTagDetails extends ChildModel
         $dcs = new TblDcs();
         $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
         if (empty($this->dcs_code)) {
-            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid.'));
             return false;
         }
 
         $member = $this->validateMember($this->dcs_code, $this->member_code);
         if (empty($member)) {
-            $this->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' is invalid'));
+            $this->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' is invalid.'));
             return false;
         } else {
             $this->member_code = $member->member_code;
