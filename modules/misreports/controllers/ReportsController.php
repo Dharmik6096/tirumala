@@ -2187,6 +2187,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVspOutstandingDetail() {
+        $this->report = 'VspOutstandingDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4780,6 +4785,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MisFeedReport',
                 'title' => 'Member product sale Taken/Not Taken',
                 'bkg_export' => TRUE
+            ],
+            'VspOutstandingDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_vsp_outstanding_detail',
+                'scenario' => 'VspOutstandingDetail',
+                'title' => '923 - Vsp Outstanding',
             ],
         ];
         return $label[$l];
