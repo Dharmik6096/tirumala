@@ -58,8 +58,8 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         $modelSave = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $update = FALSE;
-            if (!empty(Yii::$app->request->post()['TblContactDetails']['detail_code'])) {
-                $this->model = $this->findModel(Yii::$app->request->post()['TblContactDetails']['detail_code']);
+            if (!empty(Yii::$app->request->post()['TblContactDetails']['detail_code']) && !empty($existingModel = TblContactDetails::findOne(Yii::$app->request->post()['TblContactDetails']['detail_code']))) {
+                $this->model = $existingModel;
                 $historyModel = new TblContactDetailsHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
