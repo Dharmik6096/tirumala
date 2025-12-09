@@ -3883,7 +3883,8 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 .searchFilterArea.dashboardWidgetHeader {
     color: #222 !important;
     background: transparent !important;
-    float: right;
+    float: inline-start;
+    margin-left: 15%;
 }
 
 .searchFilterValue {
