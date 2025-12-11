@@ -1239,6 +1239,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
                                     ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
                                     ['label' => Yii::t('app', 'Milk Quality Param Range Config'), 'url' => ['/configuration/tbl-milk-quality-param-range/index'], 'active' => ($cntrl == 'tbl-milk-quality-param-range')],
+                                    ['label' => Yii::t('app', 'Fs Data'), 'url' => ['/configuration/tbl-fs-data/index'], 'active' => ($cntrl == 'tbl-fs-data')],
                             ]
                         ],
                             [
