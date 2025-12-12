@@ -2187,6 +2187,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberPaymentRecovery() {
+        $this->report = 'MemberPaymentRecovery';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -4779,6 +4784,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vsp_outstanding_detail',
                 'scenario' => 'VspOutstandingDetail',
                 'title' => '923 - Vsp Outstanding',
+            ],
+            'MemberPaymentRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_recovery_pending_import',
+                'scenario' => 'MemberPaymentRecovery',
+                'title' => 'Member Payment Recovery',
             ],
         ];
         return $label[$l];

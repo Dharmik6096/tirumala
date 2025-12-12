@@ -270,7 +270,7 @@ class SchedulerController extends ChildController {
         }
     }
 
-    private function process_files_data($row) {
+    public function process_files_data($row) {
         try {
             $flag = '';
             if ($row->file_type == 'bmc_collection') {
@@ -342,7 +342,11 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'sample_milk_collection') {
                 $flag = 'sample-milk-collection';
                 $sp_name = 'DB_JOB_PORTAL_Sample_Milk_Collection';
+            } else if ($row->file_type == 'member_payment_recovery') {
+                $flag = 'member-payment-recovery-bulk';
+                $sp_name = 'DB_JOB_PORTAL_Member_Payment_Recovery';
             }
+
             if (!empty($flag)) {
                 $error_lines = [];
                 $success = 0;
@@ -389,6 +393,9 @@ class SchedulerController extends ChildController {
                         $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
                     } else {
                         $model = new TblBulkDataImport();
+                        if (!empty($config['bkg_scenario'])) {
+                            $model->scenario = $config['bkg_scenario'];
+                        }
                         $model->attributes = $data;
                         $model->uuid = $uuid;
                         $model->union_code = $row->union_code;
@@ -502,7 +509,7 @@ class SchedulerController extends ChildController {
             $row->response_msg = 'Unable to read file.';
             $row->response_datetime = date('Y-m-d H:i:s');
             $row->save(FALSE);
-            var_dump($ex->getMessage());
+//            var_dump($ex->getMessage());
         }
     }
 
@@ -672,7 +679,7 @@ class SchedulerController extends ChildController {
                     } else {
                         $sentboxGenerated = true;
                     }
-                    if($sentboxGenerated){
+                    if ($sentboxGenerated) {
                         $row->data_post_status = $success;
                         $row->response_datetime = date('Y-m-d H:i:s');
                         $row->resp_desc = 'Sentbox Generated';

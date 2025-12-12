@@ -37,7 +37,7 @@ use Yii;
  */
 class TblBulkDataImport extends \yii\db\ActiveRecord {
 
-    public $calibration_value_fat, $calibration_value_snf, $clr;
+    public $calibration_value_fat, $calibration_value_snf, $clr, $payment_cycle_from_date, $recovery_amount;
 
     /**
      * @inheritdoc
@@ -52,7 +52,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['customer_type'], 'default', 'value' => 'DCS'],
-                [['shift_code', 'sample_no', 'date_time_of_collection'], 'required', 'except' => ['sample_milk_collection']],
+                [['shift_code', 'sample_no', 'date_time_of_collection'], 'required', 'except' => ['sample_milk_collection', 'member_payment_recovery']],
                 [['bmc_code'], 'required', 'except' => ['milk_collection_dpu_data', 'milk_collection_other_data']],
                 [['qlty_auto', 'qty_auto'], 'default', 'value' => 0],
                 [['fat', 'snf'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'milk_collection_dpu_data', 'milk_collection_other_data', 'sample_milk_collection']],
@@ -66,8 +66,8 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 [['customer_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_weight_collection']],
                 [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic', 'doc_no', 'qlty_auto', 'qty_auto', 'calibration_value_fat', 'calibration_value_snf', 'source_of_milk'], 'safe'],
                 [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
-                [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime', 'clr', 'qlty_time', 'qty_time'], 'safe'],
-                [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no', 'clr'], 'number'],
+                [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime', 'clr', 'qlty_time', 'qty_time', 'payment_cycle_from_date', 'recovery_amount'], 'safe'],
+                [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no', 'clr', 'recovery_amount'], 'number'],
                 ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'bmc_quality_test', 'bmc_weight_collection', 'milk_collection_qty', 'sample_milk_collection']],
                 ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'milk_collection_qty', 'sample_milk_collection']],
                 [['milk_type_code', 'shift_code'], function ($attribute) {
@@ -100,6 +100,9 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 }, 'on' => ['sample_milk_collection']],
                 [['dcs_code', 'shift_code', 'date_time_of_collection'], 'required', 'on' => ['sample_milk_collection']],
                 ['source_of_milk', 'in', 'range' => ['0', 'Sample Milk', '1', 'Flush Milk', '2', 'Other'], 'on' => ['sample_milk_collection']],
+                [['bmc_code', 'dcs_code', 'member_code', 'payment_cycle_from_date', 'recovery_amount'], 'required', 'on' => 'member_payment_recovery'],
+                [['payment_cycle_from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['member_payment_recovery']],
+                [['member_code'], 'setRecoveryData', 'on' => 'member_payment_recovery'],
         ];
     }
 
@@ -158,6 +161,11 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
         $this->own_bmc_code = $this->bmc_code;
         $this->qlty_auto = (strtoupper($this->qlty_auto) == 'AUTOMATIC') ? 1 : 0;
         $this->qty_auto = (strtoupper($this->qty_auto) == 'AUTOMATIC') ? 1 : 0;
+    }
+
+    public function setRecoveryData() {
+        $this->amount = $this->recovery_amount;
+        $this->date_time_of_collection = !empty($this->payment_cycle_from_date) ? date('Y-m-d', strtotime($this->payment_cycle_from_date)) : NULL;
     }
 
 }

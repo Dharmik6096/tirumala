@@ -78,7 +78,7 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'DCS Code') ?></th>
                                 <th><?= Yii::t('app', 'Code Ex.') ?></th>
                                 <th><?= Yii::t('app', 'DCS') ?></th>
-                                <th><?= Yii::t('app', 'Member Code') ?></th>
+                                <th class="sticky-column btn-danger"><?= Yii::t('app', 'Member Code') ?></th>
                                 <th><?= Yii::t('app', 'Member') ?></th>
                                 <?php
                                 if($is_bank_integrated){ ?>
@@ -137,7 +137,7 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['ref_code'] ?></td>
                                     <td><?= $m['dcs_code_ex'] ?></td>
                                     <td><?= $m['dcs_name'] ?></td>
-                                    <td><?= substr($m['member_code'], -4) ?></td>
+                                    <td class="sticky-column"><?= substr($m['member_code'], -4) ?></td>
                                     <td><?= $m['member_name'] ?></td>
                                     <?php
                                     if($is_bank_integrated){ ?>
@@ -157,18 +157,18 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <?php
                                     if($member_payment_hold_type){ ?>
                                         <td class="no_padding_input hide_help_block">
-                                            <?php 
-                                                $holdTypeData = Yii::$app->dropdown->getRecords('hold_type')['data'];
-                                                echo $form->field($model, 'hold_type', ['options' => ['class' => 'hold-type']])->dropDownList(
+                                            <?php
+                                            $holdTypeData = Yii::$app->dropdown->getRecords('hold_type')['data'];
+                                            echo $form->field($model, 'hold_type', ['options' => ['class' => 'hold-type']])->dropDownList(
                                                     $holdTypeData,
                                                     [
-                                                        'prompt' => Yii::t('app', 'Select'),
-                                                        'class' => 'hold_type form-control',
-                                                        'id' => 'tblmemberpaymentalias-hold_type-' . $index,
-                                                        'name' => 'TblMemberPaymentAlias[hold_type][' . $index . ']',
-                                                        'options' => [$m['hold_type'] => ['Selected' => true]]
+                                                'prompt' => Yii::t('app', 'Select'),
+                                                'class' => 'hold_type form-control',
+                                                'id' => 'tblmemberpaymentalias-hold_type-' . $index,
+                                                'name' => 'TblMemberPaymentAlias[hold_type][' . $index . ']',
+                                                'options' => [$m['hold_type'] => ['Selected' => true]]
                                                     ]
-                                                )->label(false); 
+                                            )->label(false);
                                             ?>
                                         </td>
                                     <?php
