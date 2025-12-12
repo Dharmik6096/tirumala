@@ -201,6 +201,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         } else {
             $model->is_approved = 1;
             $model->approval_status = 'Approve';
+            $model->approved_at = date('Y-m-d H:i:s');
             $childModel[] = $model;
             //$this->model->approved_at = date('Y-m-d H:i:s');
             //$this->model->approved_by = Yii::$app->session['UserCode'];
