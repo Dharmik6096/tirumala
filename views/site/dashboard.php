@@ -173,8 +173,6 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 $enableDashboardPopup = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'enable_dashboard_popup');
 $shift = Yii::$app->general->getShiftName($model->shift);
 $user_type = Yii::$app->session->get('UserType');
-$from_date = !empty($model->from_date) ? $model->from_date : 111;
-$to_date = !empty($model->to_date) ? $model->to_date : Yii::$app->controls->view_date(date('Y-m-d'));
 ?>
 
 <div class="panel-group row panel-fixed dashboard_search_filter" id="filter">
@@ -469,7 +467,7 @@ $to_date = !empty($model->to_date) ? $model->to_date : Yii::$app->controls->view
         if (!empty($selected_widgets)) {
             foreach ($selected_widgets as $key => $value) {
                 if (in_array($value, $all_widgets)) {
-                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'union' => $unionCode, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'bmc_code' => $bmcCode, 'dcs_code' => $dcsCode, 'member_code' => $memberCode, 'from_date' => $from_date, 'to_date' => $to_date]);
+                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'union' => $unionCode, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'bmc_code' => $bmcCode, 'dcs_code' => $dcsCode, 'member_code' => $memberCode]);
                 }
             }
         }
