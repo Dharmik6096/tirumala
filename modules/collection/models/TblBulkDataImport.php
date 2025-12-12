@@ -52,7 +52,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['customer_type'], 'default', 'value' => 'DCS'],
-                [['shift_code', 'sample_no', 'date_time_of_collection'], 'required', 'except' => ['sample_milk_collection', 'member_payment_recovery']],
+                [['shift_code', 'sample_no', 'date_time_of_collection'], 'required', 'except' => ['sample_milk_collection', 'member_payment_shortage_recovery']],
                 [['bmc_code'], 'required', 'except' => ['milk_collection_dpu_data', 'milk_collection_other_data']],
                 [['qlty_auto', 'qty_auto'], 'default', 'value' => 0],
                 [['fat', 'snf'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'milk_collection_dpu_data', 'milk_collection_other_data', 'sample_milk_collection']],
@@ -100,9 +100,9 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 }, 'on' => ['sample_milk_collection']],
                 [['dcs_code', 'shift_code', 'date_time_of_collection'], 'required', 'on' => ['sample_milk_collection']],
                 ['source_of_milk', 'in', 'range' => ['0', 'Sample Milk', '1', 'Flush Milk', '2', 'Other'], 'on' => ['sample_milk_collection']],
-                [['bmc_code', 'dcs_code', 'member_code', 'payment_cycle_from_date', 'recovery_amount'], 'required', 'on' => 'member_payment_recovery'],
-                [['payment_cycle_from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['member_payment_recovery']],
-                [['member_code'], 'setRecoveryData', 'on' => 'member_payment_recovery'],
+                [['bmc_code', 'dcs_code', 'member_code', 'payment_cycle_from_date', 'recovery_amount'], 'required', 'on' => 'member_payment_shortage_recovery'],
+                [['payment_cycle_from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['member_payment_shortage_recovery']],
+                [['member_code'], 'setRecoveryData', 'on' => 'member_payment_shortage_recovery'],
         ];
     }
 

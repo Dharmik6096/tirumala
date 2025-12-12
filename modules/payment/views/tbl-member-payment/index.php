@@ -12,8 +12,8 @@ $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-mon
 $url = ['/payment/tbl-member-payment/member-payment-import'];
 $this->params['menu'][] = Yii::$app->controls->import('member-billing-bulk', $this, Yii::t('app', 'Member Billing Import Data'), [], '', $url);
 if ($milk_short_recovery_member == '1') {
-    $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-upload"></i> ' . Yii::t('app', 'Export Farmer Recovery'), ['/misreports/reports/member-payment-recovery'], true, '', '', '_blank');
-    $this->params['menu'][] = Yii::$app->controls->import('member-payment-recovery-bulk', $this, Yii::t('app', 'Import Farmer Recovery'));
+    $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-upload"></i> ' . Yii::t('app', 'Export Farmer Shortage Recovery'), ['/misreports/reports/member-payment-shortage-recovery'], true, '', '', '_blank');
+    $this->params['menu'][] = Yii::$app->controls->import('member-payment-shortage-recovery-bulk', $this, Yii::t('app', 'Import Farmer Shortage Recovery'));
 }
 ?>
 

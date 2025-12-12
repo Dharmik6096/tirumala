@@ -50,7 +50,7 @@ class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
                     $file_path = $path . $this->file_name;
                     if (copy($this->file_path, $file_path)) {
                         $process_status = 0;
-                        if (in_array($model->scenario, ['member_payment_recovery'])) {
+                        if (in_array($model->scenario, ['member_payment_shortage_recovery'])) {
                             $process_status = 2;
                         }
                         $model = new TblImportFileLog();
