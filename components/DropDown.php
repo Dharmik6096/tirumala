@@ -1004,7 +1004,7 @@ class DropDown extends Component {
             $records = [0 => 'All'] + $records;
         }
         $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
-        $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]];
+        $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => 'selection_clear']];
         !empty($form_id) ? ($select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id) : '';
 
         if (isset($searchable) && $searchable) {
