@@ -25,8 +25,18 @@ use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblPlant;
+use app\modules\configuration\models\TblFsData;
+use app\modules\configuration\models\TblFsDataHistory;
 
 class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\AndroidDpuController {
+
+    protected function verbs() {
+        return [
+            '*' => ['POST'],
+            'fatscan-offset' => ['GET'],
+            'fatscan-data' => ['GET'],
+        ];
+    }
 
     public function actionRegister() {
         $res_data = [];
@@ -704,6 +714,139 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
         }
         $this->response['data'] = $res_data;
         return $this->response;
+    }
+
+    public function actionFatscanOffset() {
+        $data = $this->post_data;
+        $res_data = [];
+        if (!empty($data['station_id'])) {
+            $dcsModel = new TblDcs();
+            $dcsModel->dcs_code = $data['station_id'];
+            $dcsData = $dcsModel->getData(TRUE);
+            if (!empty($dcsData)) {
+                $unionCode = $dcsData[0]->union_code;
+                $dcsCode = $dcsData[0]->dcs_code;
+                $fsDataModel = TblFsData::find()->where(['union_code' => $unionCode, 'dcs_code' => $dcsCode])->one();
+                $modelSave = [];
+                if (!empty($fsDataModel)) {
+                    $update = true;
+                    $historyModel = new TblFsDataHistory();
+                    Yii::$app->operation->history($fsDataModel, $historyModel, 'UPDATE');
+                    $modelSave[] = $historyModel;
+                    $fsDataModel = $this->fillFsDataModel($fsDataModel, $data);
+                    $modelSave[] = $fsDataModel;
+                } else {
+                    $update = false;
+                    $fsDataModel = new TblFsData();
+                    $fsDataModel->union_code = $unionCode;
+                    $fsDataModel->dcs_code = $dcsCode;
+                    $fsDataModel = $this->fillFsDataModel($fsDataModel, $data, true);
+                    $modelSave[] = $fsDataModel;
+                }
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['fs Data', ($update) ? 'edit' : 'create']);
+                if ($transaction !== 'customRedirect') {
+                    $res_data['message'] = 'Failed to save data';
+                } else {
+                    $res_data['message'] = $update ? 'Data updated successfully' : 'Data saved successfully';
+                }
+            } else {
+                $res_data['message'] = 'Invalid Station ID';
+            }
+        } else {
+            $res_data['message'] = 'Station ID is required';
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionFatscanData() {
+        $data = $this->post_data;
+        $res_data = [];
+        if (!empty($data['station_id'])) {
+            $dcsModel = new TblDcs();
+            $dcsModel->dcs_code = $data['station_id'];
+            $dcsData = $dcsModel->getData(TRUE);
+            if (!empty($dcsData)) {
+                $unionCode = $dcsData[0]->union_code;
+                $dcsCode = $dcsData[0]->dcs_code;
+                $fsDataModel = TblFsData::find()->where(['union_code' => $unionCode, 'dcs_code' => $dcsCode])->one();
+                $modelSave = [];
+                if (!empty($fsDataModel)) {
+                    $update = true;
+                    $historyModel = new TblFsDataHistory();
+                    Yii::$app->operation->history($fsDataModel, $historyModel, UPDATE);
+                    $modelSave[] = $historyModel;
+                    $fsDataModel = $this->fillFsDataModel($fsDataModel, $data);
+                    $modelSave[] = $fsDataModel;
+                } else {
+                    $update = false;
+                    $fsDataModel = new TblFsData();
+                    $fsDataModel->union_code = $unionCode;
+                    $fsDataModel->dcs_code = $dcsCode;
+                    $fsDataModel = $this->fillFsDataModel($fsDataModel, $data, true);
+                    $modelSave[] = $fsDataModel;
+                }
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['fs Data', ($update) ? 'edit' : 'create']);
+                if ($transaction !== 'customRedirect') {
+                    $res_data['message'] = 'Failed to save data';
+                } else {
+                    $res_data['message'] = $update ? 'Data updated successfully' : 'Data saved successfully';
+                }
+            } else {
+                $res_data['message'] = 'Invalid Station ID';
+            }
+        } else {
+            $res_data['message'] = 'Station ID is required';
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    private function fillFsDataModel($fsDataModel, $data, $isNew = false) {
+        $fsDataModel->dsrn = $data['dsrn'] ?? null;
+        $fsDataModel->dtyp = $data['dtyp'] ?? null;
+        $fsDataModel->dlock = $data['dlock'] ?? null;
+        $fsDataModel->dscch = !empty($data['dscch']) ? str_pad(substr($data['dscch'], 0, 3), 3, ' ') : null;
+        $fsDataModel->dsbch = !empty($data['dsbch']) ? str_pad(substr($data['dsbch'], 0, 3), 3, ' ') : null;
+        $fsDataModel->dsmch = !empty($data['dsmch']) ? str_pad(substr($data['dsmch'], 0, 3), 3, ' ') : null;
+        $fsDataModel->dsfd = $data['dsfd'] ?? null;
+        $fsDataModel->dssd = $data['dssd'] ?? null;
+        $fsDataModel->dssdm = $data['dssdm'] ?? null;
+        $fsDataModel->dscc = $data['dscc'] ?? null;
+        $fsDataModel->dsai = $data['dsai'] ?? null;
+        $fsDataModel->dsas = $data['dsas'] ?? null;
+        $fsDataModel->dsmf = $data['dsmf'] ?? null;
+        $fsDataModel->dsms = $data['dsms'] ?? null;
+        $fsDataModel->dsht = $data['dsht'] ?? null;
+        $fsDataModel->dsct = $data['dsct'] ?? null;
+        $fsDataModel->docfo = $data['docfo'] ?? null;
+        $fsDataModel->docso = $data['docso'] ?? null;
+        $fsDataModel->docwo = $data['docwo'] ?? null;
+        $fsDataModel->docdo = $data['docdo'] ?? null;
+        $fsDataModel->docpo = $data['docpo'] ?? null;
+        $fsDataModel->doclo = $data['doclo'] ?? null;
+        $fsDataModel->dobfo = $data['dobfo'] ?? null;
+        $fsDataModel->dobso = $data['dobso'] ?? null;
+        $fsDataModel->dobwo = $data['dobwo'] ?? null;
+        $fsDataModel->dobdo = $data['dobdo'] ?? null;
+        $fsDataModel->dobpo = $data['dobpo'] ?? null;
+        $fsDataModel->doblo = $data['doblo'] ?? null;
+        $fsDataModel->domfo = $data['domfo'] ?? null;
+        $fsDataModel->domso = $data['domso'] ?? null;
+        $fsDataModel->domwo = $data['domwo'] ?? null;
+        $fsDataModel->domdo = $data['domdo'] ?? null;
+        $fsDataModel->dompo = $data['dompo'] ?? null;
+        $fsDataModel->domlo = $data['domlo'] ?? null;
+        $fsDataModel->dpp1 = $data['dpp1'] ?? null;
+        $fsDataModel->dpp2 = $data['dpp2'] ?? null;
+        $fsDataModel->dpp3 = $data['dpp3'] ?? null;
+        if ($isNew) {
+            $fsDataModel->x_col1 = Yii::$app->general->getUuid();
+        } else {
+            $fsDataModel->download_datetime = null;
+            $fsDataModel->processed_datetime = null;
+        }
+        return $fsDataModel;
     }
 
 }
