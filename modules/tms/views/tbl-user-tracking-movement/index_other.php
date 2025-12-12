@@ -68,9 +68,7 @@ if (!empty($newLatLongArray)) {
         } else {
             $location['icon'] = $this->theme->getUrl('/assets/images/green_dot.png');
         }
-
     }
-
 }
 $newLatLongArray = json_encode($newLatLongArray);
 $googleMapKey = Yii::$app->params['google_map_api_key'];
@@ -101,8 +99,10 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
             <div class="<?= !empty($searchModel->user_code) ? 'col-sm-9' : 'col-sm-12'; ?> mx_h_400">
                 <div id="map"></div>
             </div>
-            <?php if (!empty($searchModel->user_code)) { 
-                $allowLocationRadius = Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'allow_location_radius', 'PORTAL') ?: 50; ?>
+            <?php
+            if (!empty($searchModel->user_code)) {
+                $allowLocationRadius = Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'allow_location_radius', 'PORTAL') ?: 50;
+                ?>
                 <div class="col-sm-3 set_overflow_for_map">
                     <div class="individual-location">
                         <div class="individual-location-inner">
