@@ -892,7 +892,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true, $listView = false) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -907,7 +907,7 @@ class DropDown extends Component {
         $allParam = [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray];
 
         if ($multiselect2Dropdown) {
-            $this->select2Dropdown($model, $form, $depends, $name, $label, $url, $placeholder, $multiselect, $allParam, $readonly, '', $searchable, true, $async);
+            $this->select2Dropdown($model, $form, $depends, $name, $label, $url, $placeholder, $multiselect, $allParam, $readonly, '', $searchable, true, $async, $listView);
             return;
         }
         if ($multiselect) {
@@ -956,7 +956,7 @@ class DropDown extends Component {
                 ])->label($label);
     }
 
-    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true, $multiple = false) {
+    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true, $multiple = false, $listView = false) {
         $data = $this->getLabels($flag);
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $this->withoutLocal($data, $model);
@@ -967,12 +967,18 @@ class DropDown extends Component {
         if ($addAll) {
             $records = [0 => 'All'] + $records;
         }
+        $htmlOptions = ['prompt' => $data['prompt'], 'disabled' => $disable];
+        if ($listView) {
+            unset($htmlOptions['prompt']);
+            $htmlOptions['multiple'] = true;
+            $htmlOptions['style'] = 'height: 150px;';
+        }
         if (isset($searchable) && $searchable) {
             return $form->field($model, $control_name)->widget(Select2::classname(), [
                         'data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]]
                     )->label($label);
         }
-        return $form->field($model, $control_name)->dropDownList($records, ['prompt' => $data['prompt'], 'disabled' => $disable])->label($label);
+        return $form->field($model, $control_name)->dropDownList($records, $htmlOptions)->label($label);
     }
 
     public function withoutLocal($labelData, $old_model) {
@@ -1173,10 +1179,10 @@ class DropDown extends Component {
         ])->label(Yii::t('app', $islable));
     }
 
-    public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false, $async = true) {
+    public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false, $async = true, $searchable = false, $listView = false) {
         $this->setClass($form, $name);
         if ($multiple) {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly, '', true, true, $async);
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly, '', $searchable, true, $async, $listView);
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $model->$name, $readonly);
         }
@@ -2648,7 +2654,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true, $async = true, $listView = false) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
 
@@ -2657,6 +2663,10 @@ class DropDown extends Component {
         $options['class'] = 'form-control ' . $class;
         if (!empty($id)) {
             $options['id'] = $id;
+        }
+        if ($listView) {
+            $options['multiple'] = true;
+            $options['style'] = 'height: 150px;';
         }
         if ($multiple)
             $placeholder = FALSE;
@@ -2705,6 +2715,7 @@ class DropDown extends Component {
         $selected = Json::encode($data);
         if (!empty($selected)) {
             $id_dropdown = strtolower((new ReflectionClass($model))->getShortName()) . '-' . strtolower($name);
+            $depends_js = json_encode($depends);
             $script = "$(document).ready(function() {
                     var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                     var fieldName = '" . strtolower($name) . "';
@@ -2713,6 +2724,7 @@ class DropDown extends Component {
                     var array_val = [];
                     var dropdown = $('#' + modelname + '-' + fieldName);
                     var multiple = " . json_encode($multiple) . ";
+                    var listView = " . (!empty($listView) ? 'true' : 'false') . ";
 
                     dropdown.on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                         if (selected_val_json) {                            
@@ -2727,7 +2739,7 @@ class DropDown extends Component {
                             }
                         if (multiple) {
                             dropdown.find('option[value=\"all\"][value=\'\']').remove();
-                            if (dropdown.find('option').length > 0) {
+                            if (dropdown.find('option').length > 0 && !listView) {
                                 var selectOption = new Option('Select all', 'all', false, false);
                                 dropdown.prepend(selectOption);
                             }
@@ -2746,6 +2758,17 @@ class DropDown extends Component {
                             if (e.params && e.params.data && e.params.data.id !== 'all') {
                             $(this).find('option[value=\"all\"]').prop('selected', false).trigger('select2:select');
                             }
+                        });
+                    }
+                    if (listView) {
+                        $.each(" . $depends_js . ", function(i, parentId) {
+                            $('#' + parentId).on('change', function() {
+                                var val = $(this).val();
+                                if (!val || val.length === 0) {
+                                    dropdown.val(null).trigger('change');
+                                    dropdown.find('option').remove();
+                                }
+                            });
                         });
                     }
                 });";

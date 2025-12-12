@@ -3530,5 +3530,60 @@ class SiteController extends Controller {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
     }
+    
+    public function getFeedBlockStatus($sp_param) {
+        $sp_name = 'sp_product_dashboard_block';
+        $feed_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        return [$feed_status];
+    }
+    
+    public function actionFeedSummaryDashboard() {
+        $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
+        $monthYear = !empty($_POST['Dashboard']['date']) ? $_POST['Dashboard']['date'] : date('m-Y');
+        $dateTime = \DateTime::createFromFormat('d-m-Y', $monthYear);
+        $fromDate = $dateTime->format('Y-m-01');
+        $toDate = $dateTime->format('Y-m-t');
+        $blocks_data = $this->getFeedBlockStatus([$union, 0, 0, 0, 0, $fromDate, $toDate]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $blocks_data[0][0], 'fromDate' => $fromDate, 'toDate' => $toDate];
+    }
+    
+    public function actionOpeningBalance() {
+        $model = new Dashboard();
+        $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
+        $stateCodes = !empty($_POST['Dashboard']['state_code']) ? $_POST['Dashboard']['state_code'] : 0;
+        $regionCodes = !empty($_POST['Dashboard']['region_code']) ? $_POST['Dashboard']['region_code'] : 0;
+        $areaCode = !empty($_POST['Dashboard']['area_code']) ? $_POST['Dashboard']['area_code'] : 0;
+        $bmcCodes = !empty($_POST['Dashboard']['area_bmc_code']) ? $_POST['Dashboard']['area_bmc_code'] : 0;
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $monthYear = !empty($_POST['Dashboard']['month_year']) ? $_POST['Dashboard']['month_year'] : date('m-Y');
+            $dateTime = \DateTime::createFromFormat('m-Y', $monthYear);
+            $fromDate = $dateTime->format('Y-m-01');
+            $toDate = $dateTime->format('Y-m-t');
+            $sp_param = [];
+            $sp = 'sp_product_dashboard_block_list';
+            $sp_name = 'sp_product_dashboard_block';
+            $sp_param[] = $union;
+            $sp_param[] = !empty($stateCodes) ? implode(',', $stateCodes) : 0;
+            $sp_param[] = !empty($regionCodes) ? implode(',', $regionCodes) : 0;
+            $sp_param[] = !empty($areaCode) ? implode(',', $areaCode) : 0;
+            $sp_param[] = !empty($bmcCodes) ? implode(',', $bmcCodes) : 0;
+            $sp_param[] = $fromDate;
+            $sp_param[] = $toDate;
+            $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $output = \Yii::$app->general->getSpData($sp, $sp_param);
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['status' => 'success', 'res' => $results[0], 'output' => $output];
+        } else {
+            $sp = 'sp_product_dashboard_block_list';
+            $date = date('d-m-Y', strtotime($_GET['date']));
+            $dateTime = \DateTime::createFromFormat('d-m-Y', $date);
+            $fromDate = $dateTime->format('Y-m-01');
+            $toDate = $dateTime->format('Y-m-t');
+            $output = \Yii::$app->general->getSpData($sp, [$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
+            $blocks_data = $this->getFeedBlockStatus([$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
+            return $this->render('_dashboard_grid_opening_balance', ['blocks_data' => $blocks_data, 'model' => $model, 'output' => $output]);
+        }
+    }
 
 }
