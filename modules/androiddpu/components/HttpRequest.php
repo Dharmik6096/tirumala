@@ -20,16 +20,18 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'realtime-services/dpu-product-stock', 'esp-app/register', 'esp-app/verification', 'android-dpu/send-otp', 'android-dpu/change-password','app-activation/register', 'app-activation/verification'];
+    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'realtime-services/dpu-product-stock', 'esp-app/register', 'esp-app/verification', 'android-dpu/send-otp', 'android-dpu/change-password','app-activation/register', 'app-activation/verification', 'android-dpu/fatscan-offset', 'android-dpu/fatscan-data'];
     public $request;
     public $allow_call = FALSE;
     public $action_url;
     public $sync_key;
 
     public function ParseRequest() {
-
         $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
         $post_data = Json::decode(Yii::$app->request->getRawBody());
+        if (Yii::$app->request->isGet) {
+            $post_data = Yii::$app->request->get();
+        }
         if (empty($post_data)) {
             $post_data = !empty(Yii::$app->request->post()['requestData']) ? Json::decode(Yii::$app->request->post()['requestData']) : [];
         }
