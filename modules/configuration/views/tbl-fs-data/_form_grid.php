@@ -69,7 +69,7 @@ $attribute = [
         }],
 ];
 $grid_option = [
-    'id' => 'fs-data-list',
+    'id' => 'fat-scan-data-list',
     'attributes' => $attribute,
     'active_column' => false,
 ];
