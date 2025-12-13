@@ -5,9 +5,7 @@ namespace app\modules\complaint\controllers;
 use Yii;
 use app\modules\complaint\models\TblComplain;
 use app\modules\complaint\models\TblComplainSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\complaint\models\TblComplainProblem;
 use yii\helpers\Json;
 use app\modules\complaint\models\TblComplainActivity;
@@ -21,7 +19,6 @@ use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\document\models\TblAttachment;
 use app\modules\usermanagement\models\User;
-use yii\helpers\FileHelper;
 use app\modules\document\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
 use app\modules\complaint\models\TblComplainActivitySearch;
@@ -67,7 +64,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $complain_attachment = new TblAttachment();
         $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $complain_attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_complain']),
+            'query' => $complain_attachment->find()->where(['module_code' => (string) $id, 'module_name' => 'tbl_complain']),
         ]);
         $complain_escalation_txn = new TblComplainEscalationTxnDetail();
         $escalationTxnDataProvider = new ActiveDataProvider([
@@ -220,7 +217,7 @@ class TblComplainController extends \app\controllers\ChildController {
                             $complain_attachment = new TblAttachment();
                             $complain_attachment->load(Yii::$app->request->post());
                             $complain_attachment->module_name = 'tbl_complain';
-                           
+
                             $complain_attachment->module_code = $this->model->complain_code;
                             $ext = (explode(".", $atta));
                             $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['complaint_dir_path'] . $atta;
@@ -247,7 +244,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $complain_attachment = new TblAttachment();
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $complain_attachment->find()->where(['module_code' => (string)$this->model->complain_code]),
+            'query' => $complain_attachment->find()->where(['module_code' => (string) $this->model->complain_code]),
         ]);
 
         return $this->render($this->viewFile, [

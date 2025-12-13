@@ -5,13 +5,13 @@ namespace app\modules\collection\controllers;
 use Yii;
 use app\modules\collection\models\TblAllowManualCollectionRange;
 use app\modules\collection\models\TblAllowManualCollectionRangeSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\collection\models\TblAllowManualCollectionRangeHistory;
 use app\modules\document\models\TblAttachment;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\complaint\models\TblComplainSearch;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -44,7 +44,7 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $attachment = new TblAttachment();
         $dataProviderOther = new ActiveDataProvider([
-            'query' => $attachment->find()->where(['module_code' => (string)$id, 'module_name' => 'tbl_allow_manual_collection_range']),
+            'query' => $attachment->find()->where(['module_code' => (string) $id, 'module_name' => 'tbl_allow_manual_collection_range']),
         ]);
         return $this->render('view', [
                     'model' => $this->model,
@@ -223,6 +223,21 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
             $saveModel[] = $approvalModel;
             $approvalModel->ApprovalList($approvalModel, $saveModel, $status);
         }
+    }
+
+    public function actionViewComplainInfo($id) {
+        $manualCollectionModel = $this->findModel($id);
+        $complainSearchModel = new TblComplainSearch();
+        $complainSearchModel->dcs_code = $manualCollectionModel->dcs_code;
+        $complainSearchModel->from_date = date('Y-m-d', strtotime('-2 months'));
+        $complainSearchModel->to_date = date('Y-m-d');
+        $dataProvider = $complainSearchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andWhere(['in', 'tbl_complain.complain_code', TblAllowManualCollectionRange::find()->select('complain_code')->where(['dcs_code' => $manualCollectionModel->dcs_code, 'table_name'=>'tbl_milk_collection', 'application_type'=>'DCS'])]);
+        return $this->render('view_complain_info', [
+                    'model' => $manualCollectionModel,
+                    'dataProvider' => $dataProvider,
+                    'complainSearchModel' => $complainSearchModel,
+        ]);
     }
 
 }

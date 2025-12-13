@@ -4,8 +4,9 @@ use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-?>
-<?php
+use app\modules\usermanagement\components\GhostHtml;
+use yii\helpers\Url;
+
 $form = ActiveForm::begin([
             'id' => 'approve-manual-collection',
         ]);
@@ -70,6 +71,14 @@ $form = ActiveForm::begin([
         'attributes' => $attribute,
         'active_column' => false,
         'showPageSummary' => false,
+        'actions' => [
+            'view-complain' => function ($url, $model) {
+                if ($model->table_name == 'tbl_milk_collection') {
+                    $url = Url::to(['tbl-allow-manual-collection-range/view-complain-info', 'id' => $model->allow_manual_collection_code]);
+                    return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+                }
+            },
+        ]
     ];
 
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);

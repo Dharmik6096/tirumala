@@ -1,0 +1,147 @@
+<?php
+
+use yii\helpers\Html;
+use kartik\detail\DetailView;
+
+$this->title = Yii::$app->label->title('view', 'Manual Collection Request');
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="panel panel-default panel-grid panel-main hide-grid-settings">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model, 'index', null, true); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="form-grid">
+            <div class="table-responsive">
+                <?php
+                $attributes = [
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'union_code',
+                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'dcs_code',
+                                'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'from_date',
+                                'value' => Yii::$app->controls->view_date($model->from_date),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'from_shift',
+                                'value' => Yii::$app->general->getforeignkey($model->fromShift, 'shift'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'to_date',
+                                'value' => Yii::$app->controls->view_date($model->to_date),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'to_shift',
+                                'value' => Yii::$app->general->getforeignkey($model->toShift, 'shift'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'entry_type',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'application_type',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_weight_manual',
+                                'value' => isset($model->is_weight_manual) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'is_quality_manual',
+                                'value' => isset($model->is_quality_manual) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'x_col1',
+                                'label' => Yii::t('app', 'Total Complain Count'),
+                                'value' => $dataProvider->getTotalCount(),
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
+                ];
+
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [// your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Complain List</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('_complaint_activity', [
+                    'model' => $model,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $complainSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
