@@ -231,8 +231,7 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         $complainSearchModel->dcs_code = $manualCollectionModel->dcs_code;
         $complainSearchModel->from_date = date('Y-m-d', strtotime('-2 months'));
         $complainSearchModel->to_date = date('Y-m-d');
-        $dataProvider = $complainSearchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->andWhere(['in', 'tbl_complain.complain_code', TblAllowManualCollectionRange::find()->select('complain_code')->where(['dcs_code' => $manualCollectionModel->dcs_code, 'table_name'=>'tbl_milk_collection', 'application_type'=>'DCS'])]);
+        $dataProvider = $complainSearchModel->search(Yii::$app->request->queryParams, true);
         return $this->render('view_complain_info', [
                     'model' => $manualCollectionModel,
                     'dataProvider' => $dataProvider,
