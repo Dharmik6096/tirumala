@@ -161,6 +161,7 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
             foreach ($results as $result) {
                 list($latitude, $longitude) = explode(',', $result['lat_long']);
                 $dataArray[] = [
+                    'module_name' => $result['module_name'],
                     'tracking_datetime' => $result['tracking_datetime'],
                     'lat' => $latitude,
                     'long' => $longitude,
@@ -203,6 +204,7 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
                     list($latitude, $longitude) = explode(',', $result['lat_long']);
                     $dataArray[] = [
                         'info' => $info,
+                        'type' => $result['customer_type'],
                         'lat' => $latitude,
                         'long' => $longitude,
                     ];

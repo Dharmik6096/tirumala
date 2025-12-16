@@ -9,6 +9,7 @@ $infoArray = [];
 $userDetail = $userDetailData['userDetail'];
 $newLatLongArray = $userDetailData['organizationLatlongData'];
 $totalVisitedDcs = 0;
+$allowLocationRadius = 50;
 if (!empty($onlineData)) {
     foreach ($onlineData as $data) {
         $datetime = $data['tracking_datetime'];
@@ -17,6 +18,7 @@ if (!empty($onlineData)) {
         if (!empty($data['lat']) && !empty($data['long'])) {
             $totalVisitedDcs++;
             $info = '<div class="map_info_content">';
+            $info .= '<p class="map_marker_content"><span class="marker_header">' . Yii::t('app', 'Module Name') . ':</span> ' . (!empty($data['module_name']) ? $data['module_name'] : 'Not available') . '</p>';
             $info .= '<p class="map_marker_content"><span class="marker_header">' . Yii::t('app', 'Date') . ':</span> ' . $date . '</p>';
             $info .= '<p class="map_marker_content"><span class="marker_header">' . Yii::t('app', 'Time') . ':</span> ' . $time . '</p>';
             $info .= '</div>';
@@ -50,14 +52,22 @@ if (empty($latLongArray)) {
 
 $latLongArray = json_encode($latLongArray);
 $mapIcon = $this->theme->getUrl('/assets/images/marker-icon.png');
+$greenMarkerUrl = $this->theme->getUrl('/assets/images/green-marker.png');
+$yellowMarkerUrl = $this->theme->getUrl('/assets/images/yellow-marker.png');
 if (!empty($newLatLongArray)) {
     foreach ($newLatLongArray as &$location) {
-        if (strpos($location['info'], 'MCC') !== false) {
+        if (strtoupper($location['type']) == 'MCC') {
             $location['icon'] = $this->theme->getUrl('/assets/images/yellow_dot.png');
-        } else {
+        } else if (strtoupper($location['type']) == 'DCS') {
             $location['icon'] = $this->theme->getUrl('/assets/images/dot.png');
+        } else if (strtoupper($location['type']) == 'BMC') {
+            $location['icon'] = $this->theme->getUrl('/assets/images/red_dot.png');
+        } else {
+            $location['icon'] = $this->theme->getUrl('/assets/images/green_dot.png');
         }
+
     }
+
 }
 $newLatLongArray = json_encode($newLatLongArray);
 $googleMapKey = Yii::$app->params['google_map_api_key'];
@@ -75,12 +85,21 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
         <div class="clearfix"></div>
         <div class="row">
             <div class="panel-heading">
-                <?= Yii::t('app', 'Location of Selected User'); ?>
+                <?= Yii::t('app', 'Location of Selected User'); ?> 
+                <div class="d-flex float-right searchFilterHeader">  
+                    <p class="mr15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/yellow_dot.png') ?>" > Yellow Dot: <?= Yii::t('app', 'MCC') ?> locations</p>
+                    <p class="mr15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/red_dot.png') ?>" > Red Dot: <?= Yii::t('app', 'BMC') ?> locations</p>
+                    <p class="mr15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/dot.png') ?>" > Blue Dot: <?= Yii::t('app', 'DCS') ?> locations</p>
+                    <p class="mr15 black-color"><img src="<?= $this->theme->getUrl('/assets/images/green_dot.png') ?>" > Green Dot: <?= Yii::t('app', 'Other') ?> locations</p>
+                    <p class="mr15 black-color"><img src="<?= $greenMarkerUrl ?>" class="map-icon-image"> Green Marker: Start location</p>
+                    <p class="mr15 black-color"><img src="<?= $yellowMarkerUrl ?>" class="map-icon-image"> Yellow Marker: End location</p>
+                </div>
             </div>
             <div class="<?= !empty($searchModel->user_code) ? 'col-sm-9 w79pr' : 'col-sm-12'; ?> mx_h_400">
                 <div id="map"></div>
             </div>
-            <?php if (!empty($searchModel->user_code)) { ?>
+            <?php if (!empty($searchModel->user_code)) {
+                $allowLocationRadius = Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'allow_location_radius', 'PORTAL') ?: 50; ?>
                 <div class="set_overflow_for_map">
                     <div class="individual-location">
                         <div class="individual-location-inner">
@@ -99,13 +118,14 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
                             <p><strong>Day Activity Start Time : </strong> <?= $startTime ? date('h:i A', strtotime($startTime)) : 'Not available' ?></p>
                             <p><strong>Day Activity End Time : </strong> <?= $endTime ? date('h:i A', strtotime($endTime)) : 'Not available' ?></p>
                             <p id="distance-traveled"><strong>Total Distance : </strong> Not available</p>
-                            <p id="total-unique-visit"><strong>Total Unique <?= Yii::t('app', 'DCS') ?> Visit : </strong> Not available</p>
-                            <p><strong>Total Visited <?= Yii::t('app', 'DCS') ?> : </strong> <?= $totalVisitedDcs ?></p>
+                            <p><strong>  Radius Range : </strong> <?= $allowLocationRadius ?> m</p>
+                            <p id="total-unique-visit"><strong>Total Mapped Visited Location : </strong> Not available</p>
+                            <p><strong> Total Getting Location : </strong> <?= $totalVisitedDcs ?></p>
                         </div>
                     </div>
                     <div class="individual-location">
                         <div class="individual-location-inner">
-                            <p><strong>Total Performance Of Date : </strong><?= $userDetail['tracking_datetime'] ?></p>
+                            <p><strong>Performance Date : </strong><?= $userDetail['tracking_datetime'] ?></p>
                             <p><strong>Total Tasks : </strong><?= $userDetail['total_tasks'] ?></p>
                             <p><strong>Total Indents : </strong><?= $userDetail['total_indents'] ?></p>
                             <p><strong>Total Enrollment <?= Yii::t('app', 'Member') ?>'s : </strong><?= $userDetail['total_enrollment_members'] ?></p>
@@ -128,7 +148,7 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
 $script = <<<JS
     var locations = $latLongArray;
     var newLocations = $newLatLongArray;
-    var thresholdDistance = 50;
+    var thresholdDistance = $allowLocationRadius;
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
         var R = 6371e3;
@@ -231,10 +251,25 @@ $script = <<<JS
         }
 
         locations.forEach(function(location, index) {
+            var icon = null;
+            if (index === 0) {
+                icon = {
+                    url: '$greenMarkerUrl',
+                    scaledSize: new google.maps.Size(70, 70),
+                    labelOrigin: new google.maps.Point(32.5, 22)
+                };
+            } else if (index === locations.length - 1) {
+                icon = {
+                    url: '$yellowMarkerUrl',
+                    scaledSize: new google.maps.Size(70, 70),
+                    labelOrigin: new google.maps.Point(32.5, 22)
+                };
+            }
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(location.lat, location.long),
                 map: map,
-                label: { text: getLabel(index), fontWeight: 'bold' }
+                label: { text: getLabel(index), fontWeight: 'bold' },
+                icon: icon
             });
             marker.addListener('click', function() {
                 infoWindow.setContent(location.info);

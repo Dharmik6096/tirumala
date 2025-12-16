@@ -961,6 +961,7 @@ echo GhostMenu::widget([
                             ['label' => '920-' . Yii::t('app', 'Approve Farmer Data PDF '), 'url' => ['/jasperreports/default/rpt-member-register-all']],
                             ['label' => '921-' . Yii::t('app', 'TS Recovery Report'), 'url' => ['/misreports/reports/vsp-transit-recovery']],
                             ['label' => '922-' . Yii::t('app', 'Asset Detail Summary'), 'url' => ['/misreports/reports/asset-detail-summary']],
+                            ['label' => '923-' . Yii::t('app', 'VSP outstanding'), 'url' => ['/misreports/reports/vsp-outstanding-detail']],
                     ]
                 ],
                     [
@@ -1239,6 +1240,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
                                     ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
                                     ['label' => Yii::t('app', 'Milk Quality Param Range Config'), 'url' => ['/configuration/tbl-milk-quality-param-range/index'], 'active' => ($cntrl == 'tbl-milk-quality-param-range')],
+                                    ['label' => Yii::t('app', 'FAT Scan Data'), 'url' => ['/configuration/tbl-fs-data/index'], 'active' => ($cntrl == 'tbl-fs-data')],
                             ]
                         ],
                             [
