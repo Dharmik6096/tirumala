@@ -59,7 +59,7 @@ class TblTask extends \app\models\ChildModel {
                 [['is_cancel', 'is_notified', 'resp_status'], 'default', 'value' => 0],
                 [['task_performed_for', 'task_type_code', 'plant_code', 'title', 'description', 'user_code', 'start_date', 'repeat_interval'], 'required', 'on' => ['addTask']],
                 [['task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type', 'reference_type', 'reference_code'], 'safe'],
-                [['task_datetime', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['task_datetime', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at', 'user_code'], 'safe'],
                 [['task_performed_for'], 'string', 'max' => 10],
                 [['title'], 'string', 'max' => 100],
                 [['description'], 'string', 'max' => 255],
