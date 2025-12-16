@@ -5,6 +5,7 @@ namespace app\modules\configuration\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\configuration\models\TblFsData;
+use Yii;
 
 /**
  * TblFsDataSearch represents the model behind the search form about `app\modules\configuration\models\TblFsData`.
@@ -47,6 +48,7 @@ class TblFsDataSearch extends TblFsData {
 
         $this->load($params);
         $query->joinWith(['dcsCode']);
+        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
