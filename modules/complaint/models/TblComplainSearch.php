@@ -38,7 +38,7 @@ class TblComplainSearch extends TblComplain {
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $complainInfo = false) {
+    public function search($params) {
         $query = TblComplain::find();
 
         // add conditions that should always apply here
@@ -48,10 +48,6 @@ class TblComplainSearch extends TblComplain {
         ]);
 
         $this->load($params);
-        if($complainInfo){
-            $query->innerJoin('tbl_allow_manual_collection_range amcr', 'tbl_complain.complain_codes = amcr.complain_code');
-            $query->andWhere(['amcr.dcs_code' => $this->dcs_code, 'amcr.table_name'=>'tbl_milk_collection', 'amcr.application_type'=>'DCS']);
-        }
         Yii::$app->general->filterByOrg($query, $this, 'tbl_complain', 'tbl_complain', 'tbl_complain', 'tbl_complain');
 
         if (!empty($this->complain_datetime)) {

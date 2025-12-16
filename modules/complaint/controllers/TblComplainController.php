@@ -23,9 +23,13 @@ use app\modules\document\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
 use app\modules\complaint\models\TblComplainActivitySearch;
 use app\modules\assetmanagement\models\TblAssetBom;
+use app\modules\collection\models\TblAllowManualCollectionRange;
+use app\modules\collection\models\TblAllowManualCollectionRangeHistory;
 use app\modules\complaint\models\TblComplainSpare;
 use yii\widgets\ActiveForm;
 use app\modules\complaint\models\TblComplainEscalationTxnDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -102,10 +106,15 @@ class TblComplainController extends \app\controllers\ChildController {
             $this->setModel($this->model);
             if ($this->model->validate()) {
                 $saveModel = [];
+                if (!empty($this->model->from_date) && !empty($this->model->from_shift)) {
+                    $this->model->from_date = Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->from_shift);
+                }
                 $saveModel[] = $this->model;
+                $i = 0;
                 $this->setComplaintActivityModel($complaint_activity_model, 'CREATED');
                 $saveModel[] = $complaint_activity_model;
-                $auto_key_config['TblComplainActivity'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                $i++;
+                $auto_key_config[$i] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
                 $attachmentString = Yii::$app->request->post()['attachment'];
                 if (!empty($attachmentString)) {
                     $attachments = explode(',', $attachmentString);
@@ -121,11 +130,22 @@ class TblComplainController extends \app\controllers\ChildController {
                             $complain_attachment->attachment_type = $ext[1];
                             $complain_attachment->remarks = $this->model->remarks;
                             $saveModel[] = $complain_attachment;
-                            $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                            $i++;
+                            $auto_key_config[$i] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
                         }
                     }
                 }
-                $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'create'], $auto_key_config);
+                if ($this->model->location_type == 3 && $this->model->complain_for == 'asset_complain' && !empty($this->model->collection_request_type) && !empty($this->model->from_date) && !empty($this->model->from_shift) && Tblassetmaster::find()->select('asset_type_code')->where(['asset_code' => $this->model->asset_code, 'is_active' => 1])->scalar() == '1') {
+                    $allowManualCollectionRangeModel = new TblAllowManualCollectionRange();
+                    $allowManualCollectionRangeModel->scenario = 'create';
+                    $this->setAllowManualCollectionRangeModel($allowManualCollectionRangeModel);
+                    $allowManualCollectionRangeModel->setManualCollectionData($saveModel, $auto_key_config, $i, true);
+                    if (!$allowManualCollectionRangeModel->validate()) {
+                        Yii::$app->response->format = Response::FORMAT_JSON;
+                        return Json::encode(ActiveForm::validate($allowManualCollectionRangeModel));
+                    }
+                }
+                $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Complain', 'create'], $auto_key_config);
                 if ($transaction !== FALSE) {
                     $user_code = '';
                     $LastInsertedId = $this->model->complain_code;
@@ -156,14 +176,6 @@ class TblComplainController extends \app\controllers\ChildController {
                                         $txnDetail->save();
                                     }
                                 }
-//                                $notificationSent = true;
-//                                $this->setNotification($notificationSent, $this->model->complain_code);
-//                                if (!$notificationSent) {
-//                                    Yii::$app->getSession()->setFlash('success', [
-//                                        'type' => 'success',
-//                                        'message' => Yii::t('app', 'Complain successfully created and notification is not generated.'),
-//                                    ]);
-//                                }
                             }
                         }
                     }
@@ -285,6 +297,22 @@ class TblComplainController extends \app\controllers\ChildController {
             $saveModel[] = $attachmentHistoryModel;
         }
 
+        $manualCollectionModel = TblAllowManualCollectionRange::find()->where(['complain_code' => Yii::$app->request->post('id')])->one();
+        if (!empty($manualCollectionModel)) {
+            $manualCollectionHistoryModel = new TblAllowManualCollectionRangeHistory();
+            Yii::$app->operation->history($manualCollectionModel, $manualCollectionHistoryModel, DELETE);
+            $deleteModel[] = $manualCollectionModel;
+            $saveModel[] = $manualCollectionHistoryModel;
+            $processApprovalModel = TblProcessApproval::find()->where(['process_code' => (string) $manualCollectionModel->allow_manual_collection_code, 'process_name' => 'tbl_allow_manual_collection_range'])->all();
+            if (!empty($processApprovalModel)) {
+                foreach ($processApprovalModel as $key => $id) {
+                    $detailHistory = new TblProcessApprovalHistory();
+                    Yii::$app->operation->history($id, $detailHistory, DELETE);
+                    $deleteModel[] = $processApprovalModel[$key];
+                    $saveModel[] = $detailHistory;
+                }
+            }
+        }
         $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Complain', 'delete']);
         if ($transaction == 'customRedirect') {
             return $this->redirect(['index']);
@@ -373,10 +401,8 @@ class TblComplainController extends \app\controllers\ChildController {
         $historyModel = new TblComplainHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->scenario = 'assign_complain';
-//        $notificationSent = true;
         $complianUser = $this->model->user_code;
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
-//            $this->setNotification($notificationSent, $this->model->complain_code);
             $complaint_activity_model = new TblComplainActivity();
             $this->setModel($this->model);
             $activityModel = TblComplainActivity::find()->where(['complain_code' => $this->model->complain_code, 'activity_type' => 'ASSIGN'])->orderBy('complain_activity_code', 'desc')->one();
@@ -413,12 +439,6 @@ class TblComplainController extends \app\controllers\ChildController {
 
             $transaction = $this->generalModel->saveTransactionWithSp($master, $spCall, ['Complain Assign', 'create']);
             if ($transaction == 'customRedirect') {
-//                if (!$notificationSent) {
-//                    Yii::$app->getSession()->setFlash('success', [
-//                        'type' => 'success',
-//                        'message' => Yii::t('app', 'Complain successfully assigned and notification is not generated.'),
-//                    ]);
-//                }
                 return $this->redirect(['index']);
             }
         }
@@ -512,11 +532,6 @@ class TblComplainController extends \app\controllers\ChildController {
                 $historyModel = new TblComplainHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $saveModel[] = $historyModel;
-
-//                $existData = TblComplainActivity::findOne($this->model->complain_code);
-//                $activityHistoryModel = new TblComplainActivityHistory();
-//                Yii::$app->operation->history($existData, $activityHistoryModel, 'UPDATE');
-//                $saveModel[] = $activityHistoryModel;
 
                 $this->model->complain_status = 'RESOLVED';
                 $this->model->complain_status_datetime = date('Y-m-d H:i:s');
@@ -656,7 +671,6 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public function actionAttachmentDelete() {
         $attachment = Yii::$app->request->post('id');
-        $deleteModel = [];
         $savedelModel = [];
         if (!empty($attachment)) {
             $attachmentModel = TblAttachment::find()->where(['attachment_code' => $attachment])->one();
@@ -705,6 +719,22 @@ class TblComplainController extends \app\controllers\ChildController {
             }
         }
         return Json::encode($data);
+    }
+
+    private function setAllowManualCollectionRangeModel($allowManualCollectionRangeModel) {
+        $allowManualCollectionRangeModel->union_code = $this->model->union_code;
+        $allowManualCollectionRangeModel->plant_code = $this->model->plant_code;
+        $allowManualCollectionRangeModel->mcc_plant_code = $this->model->plant_code;
+        $allowManualCollectionRangeModel->bmc_code = $this->model->bmc_code;
+        $allowManualCollectionRangeModel->dcs_code = $this->model->dcs_code;
+        $allowManualCollectionRangeModel->from_date = $allowManualCollectionRangeModel->to_date = Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->from_shift);
+        $allowManualCollectionRangeModel->from_shift = $allowManualCollectionRangeModel->to_shift = $this->model->from_shift;
+        $allowManualCollectionRangeModel->is_weight_manual = $allowManualCollectionRangeModel->is_quality_manual = 1;
+        $allowManualCollectionRangeModel->remark = $this->model->remarks;
+        $allowManualCollectionRangeModel->is_approved = 0;
+        $allowManualCollectionRangeModel->entry_type = $this->model->collection_request_type;
+        $allowManualCollectionRangeModel->table_name = 'tbl_milk_collection';
+        $allowManualCollectionRangeModel->application_type = 'MOBILE';
     }
 
 }

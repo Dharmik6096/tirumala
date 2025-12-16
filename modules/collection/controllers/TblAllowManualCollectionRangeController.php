@@ -76,26 +76,8 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
             $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->to_shift);
             if ($this->model->validate()) {
                 $auto_key_config = [];
-                $config_key = 'manual_collection_request_approval_' . $this->model->entry_type;
-                $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($this->model->union_code, $config_key, 'PORTAL');
-                if (in_array($manualCollectionConfig, [1, 2])) {
-                    if ($manualCollectionConfig == 2) {
-                        $i = 0;
-                        $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setProcessWiseApprovalData($this->model, $this->model->union_code, 'tbl_allow_manual_collection_range', $master_model, $auto_key_config, $i, true, 'allow_manual_collection_code', '', $error);
-                    } else {
-                        $this->model->approval_status = 'Pending';
-                        $master_model[] = $this->model;
-                    }
-                    $message = 'Data For Approval';
-                    $type = 'create';
-                } else {
-                    $this->model->is_approved = 1;
-                    $this->model->approval_status = 'Approve';
-//                    $this->model->approved_at = date('Y-m-d H:i:s');
-//                    $this->model->approved_by = Yii::$app->session['UserCode'];
-                    $master_model[] = $this->model;
-                }
+                $i = 0;
+                $this->model->setManualCollectionData($master_model, $auto_key_config, $i, false, $message, $type, $error);
                 if ($error == '') {
                     if (!empty($auto_key_config)) {
                         $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($master_model, [$message, $type], $auto_key_config);
@@ -227,15 +209,18 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
 
     public function actionViewComplainInfo($id) {
         $manualCollectionModel = $this->findModel($id);
-        $complainSearchModel = new TblComplainSearch();
-        $complainSearchModel->dcs_code = $manualCollectionModel->dcs_code;
-        $complainSearchModel->from_date = date('Y-m-d', strtotime('-2 months'));
-        $complainSearchModel->to_date = date('Y-m-d');
-        $dataProvider = $complainSearchModel->search(Yii::$app->request->queryParams, true);
+        $manualCollectionSearchModel = new TblAllowManualCollectionRangeSearch();
+        $manualCollectionSearchModel->dcs_code = $manualCollectionModel->dcs_code;
+        $manualCollectionSearchModel->from_date = date('Y-m-d H:i:s', strtotime('-2 months'));
+        $manualCollectionSearchModel->to_date = date('Y-m-d H:i:s');
+        $dataProvider = $manualCollectionSearchModel->search(Yii::$app->request->queryParams, false, false, true);
+        $countQuery = clone $dataProvider->query;
+        $totalComplainCount = $countQuery->andWhere(['IS NOT', 'tbl_allow_manual_collection_range.complain_code', null])->count();
         return $this->render('view_complain_info', [
                     'model' => $manualCollectionModel,
                     'dataProvider' => $dataProvider,
-                    'complainSearchModel' => $complainSearchModel,
+                    'manualCollectionSearchModel' => $manualCollectionSearchModel,
+                    'totalComplainCount' => $totalComplainCount,
         ]);
     }
 

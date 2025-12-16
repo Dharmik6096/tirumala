@@ -2,6 +2,7 @@
 
 namespace app\modules\collection\models;
 
+use app\modules\complaint\models\TblComplain;
 use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
@@ -53,7 +54,7 @@ use app\modules\general\models\TblProcessApprovalHistory;
  */
 class TblAllowManualCollectionRange extends \app\models\ChildModel {
 
-    public $from_date_real, $to_date_real, $operation, $process_approval_code, $from_date_back, $to_date_back, $approve_remarks;
+    public $from_date_real, $to_date_real, $operation, $process_approval_code, $from_date_back, $to_date_back, $approve_remarks, $totalRequestCount, $totalComplainCount;
 
     /**
      * @inheritdoc
@@ -67,7 +68,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks', 'action_perform', 'complain_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_date', 'to_date', 'approved_at', 'created_at', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'updated_at', 'from_date_real', 'to_date_real', ' process_approval_code', 'operation', 'from_date_back', 'to_date_back', 'approve_remarks', 'action_perform', 'complain_code', 'totalRequestCount', 'totalComplainCount'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'entry_type', 'from_shift', 'to_shift', 'from_date', 'to_date', 'table_name'], 'required', 'on' => ['create', 'hosync']],
             [['from_date'], 'checkUnique', 'skipOnError' => true, 'on' => ['create', 'hosync']],
             [['dcs_code'], 'required', 'when' => function ($model) {
@@ -306,6 +307,38 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
             }
         }
         return true;
+    }
+
+    public function setManualCollectionData(&$master_model, &$auto_key_config, &$i, $ManualCollectionComplain = false, &$message = '', &$type = '', $error = '') {
+        $config_key = 'manual_collection_request_approval_' . $this->entry_type;
+        $manualCollectionConfig = Yii::$app->general->getUnionConfiguration($this->union_code, $config_key, 'PORTAL');
+        if (in_array($manualCollectionConfig, [1, 2])) {
+            if ($manualCollectionConfig == 2) {
+                $modelStages = new TblApprovalStagesDetail();
+                $modelStages->setProcessWiseApprovalData($this, $this->union_code, 'tbl_allow_manual_collection_range', $master_model, $auto_key_config, $i, true, 'allow_manual_collection_code', '', $ManualCollectionComplain);
+            } else {
+                $i++;
+                $this->approval_status = 'Pending';
+                $master_model[] = $this;
+                if ($ManualCollectionComplain) {
+                    $auto_key_config[$i] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                }
+            }
+            $message = 'Data For Approval';
+            $type = 'create';
+        } else {
+            $i++;
+            $this->is_approved = 1;
+            $this->approval_status = 'Approve';
+            $master_model[] = $this;
+            if ($ManualCollectionComplain) {
+                $auto_key_config[$i] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+            }
+        }
+    }
+
+    public function getComplainCode() {
+        return $this->hasOne(TblComplain::className(), ['complain_code' => 'complain_code']);
     }
 
 }

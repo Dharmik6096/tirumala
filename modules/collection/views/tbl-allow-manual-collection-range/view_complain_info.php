@@ -47,64 +47,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'columns' => [
                             [
-                                'attribute' => 'from_date',
-                                'value' => Yii::$app->controls->view_date($model->from_date),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
-                                'attribute' => 'from_shift',
-                                'value' => Yii::$app->general->getforeignkey($model->fromShift, 'shift'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'to_date',
-                                'value' => Yii::$app->controls->view_date($model->to_date),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
-                                'attribute' => 'to_shift',
-                                'value' => Yii::$app->general->getforeignkey($model->toShift, 'shift'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'entry_type',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
-                                'attribute' => 'application_type',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'is_weight_manual',
-                                'value' => isset($model->is_weight_manual) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                            [
-                                'attribute' => 'is_quality_manual',
-                                'value' => isset($model->is_quality_manual) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual] : '',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'x_col1',
-                                'label' => Yii::t('app', 'Total Complain Count'),
+                                'attribute' => 'totalRequestCount',
+                                'label' => Yii::t('app', 'Total Request Count'),
                                 'value' => $dataProvider->getTotalCount(),
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'totalComplainCount',
+                                'label' => Yii::t('app', 'Total Complain Count'),
+                                'value' => $totalComplainCount,
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
@@ -130,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading mt_0">Complain List</h4>
+                <h4 class="theme-box-heading mt_0"><?= Yii::t('app', 'Last 2 month Request Details') ?></h4>
             </div>
             <div class="clearfix"></div>
             <div class="form-grid">
@@ -138,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 $this->render('_complaint_activity', [
                     'model' => $model,
                     'dataProvider' => $dataProvider,
-                    'searchModel' => $complainSearchModel,
+                    'searchModel' => $manualCollectionSearchModel,
                 ])
                 ?>
             </div>
