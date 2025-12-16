@@ -12,8 +12,8 @@ use yii\helpers\Html;
 
 $title = Yii::$app->label->title($type, 'Permission');
 $button = Yii::$app->label->button($type);
-
 $this->title = Yii::t('app', $title);
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -30,7 +30,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'description')->textInput(['maxlength' => 255, 'autofocus' => $model->isNewRecord ? true : false]) ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'name')->textInput(['maxlength' => 64]) ?>
+        <?= $form->field($model, 'name')->textInput(['maxlength' => 64, 'readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-2">
         <?=
