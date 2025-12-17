@@ -8,7 +8,7 @@ use yii\helpers\Url;
 <div class="clearfix"></div>
 <div class="col-sm-12">
 
-    <?php $baseUrl = Url::to(['site/opening-balance', 'union' => $union, 'date' => $date]); ?>
+    <?php $baseUrl = Url::to(['site/feed-summary-dashboard-details', 'union' => $union, 'date' => $date]); ?>
     <a href="<?= $baseUrl ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion col-sm-2">
             <div class="div_mobile_dash_block_content">

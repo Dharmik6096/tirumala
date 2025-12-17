@@ -2786,6 +2786,10 @@ class DropDown extends Component {
                                 }
                             });
                         });
+                        $(document).on(\"click\", \"button[type='reset']\", function() {
+                            dropdown.val(null).trigger(\"change\");
+                            dropdown.find('option').remove();
+                        });
                     }
                 });";
             Yii::$app->view->registerJs($script, View::POS_END, $id_dropdown);

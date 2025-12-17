@@ -3543,18 +3543,19 @@ class SiteController extends Controller {
         $dateTime = \DateTime::createFromFormat('d-m-Y', $monthYear);
         $fromDate = $dateTime->format('Y-m-01');
         $toDate = $dateTime->format('Y-m-t');
-        $blocks_data = $this->getFeedBlockStatus([$union, 0, 0, 0, 0, $fromDate, $toDate]);
+        $bmcCodes = !empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0;
+        $blocks_data = $this->getFeedBlockStatus([$union, 0, 0, 0, $bmcCodes, $fromDate, $toDate]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $blocks_data[0][0], 'fromDate' => $fromDate, 'toDate' => $toDate];
     }
     
-    public function actionOpeningBalance() {
+    public function actionFeedSummaryDashboardDetails() {
         $model = new Dashboard();
         $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
         $stateCodes = !empty($_POST['Dashboard']['state_code']) ? $_POST['Dashboard']['state_code'] : 0;
         $regionCodes = !empty($_POST['Dashboard']['region_code']) ? $_POST['Dashboard']['region_code'] : 0;
         $areaCode = !empty($_POST['Dashboard']['area_code']) ? $_POST['Dashboard']['area_code'] : 0;
-        $bmcCodes = !empty($_POST['Dashboard']['area_bmc_code']) ? $_POST['Dashboard']['area_bmc_code'] : 0;
+        $bmcCodes = (!empty($_POST['Dashboard']['area_bmc_code']) && $_POST['Dashboard']['area_bmc_code'] != 0) ? $_POST['Dashboard']['area_bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0);
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
             $monthYear = !empty($_POST['Dashboard']['month_year']) ? $_POST['Dashboard']['month_year'] : date('m-Y');
             $dateTime = \DateTime::createFromFormat('m-Y', $monthYear);
@@ -3582,7 +3583,7 @@ class SiteController extends Controller {
             $toDate = $dateTime->format('Y-m-t');
             $output = \Yii::$app->general->getSpData($sp, [$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
             $blocks_data = $this->getFeedBlockStatus([$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
-            return $this->render('_dashboard_grid_opening_balance', ['blocks_data' => $blocks_data, 'model' => $model, 'output' => $output]);
+            return $this->render('_dashboard_grid_feed_summary_detail', ['blocks_data' => $blocks_data, 'model' => $model, 'output' => $output]);
         }
     }
 

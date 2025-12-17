@@ -3,7 +3,7 @@
 use app\components\ActiveForm;
 use yii\helpers\Url;
 
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Opening Balance'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Feed Summary Dashboard'));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -25,7 +25,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Opening Balance'))
                     <div class="modal-body inline_block">
                         <?php
                         $form = ActiveForm::begin([
-                                    'action' => Url::to(['opening-balance']),
+                                    'action' => Url::to(['feed-summary-dashboard-details']),
                                     'id' => 'opening_form'
                         ]);
                         ?>
@@ -42,13 +42,14 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Opening Balance'))
                             <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'dashboard-region_code', 'form-group col-sm-12', 'Area Name', 'area_code', false, 0, [], TRUE, '', false, FALSE, TRUE, false, TRUE); ?>
                         </div>
                         <div class="col-sm-4">
-                            <?= Yii::$app->dropdown->area_bmc($model, $form, 'dashboard-area_code', 'area_bmc_code', Yii::t('app', 'Bmc'), TRUE, FALSE, FALSE, FALSE, TRUE); ?>
+                            <?= Yii::$app->dropdown->area_bmc($model, $form, 'dashboard-area_code', 'area_bmc_code', Yii::t('app', 'BMC'), TRUE, FALSE, FALSE, FALSE, TRUE); ?>
                         </div>
                         <div class="col-sm-4">
                             <?= Yii::$app->controls->date($model, $form, 'month_year', '', true, false, false, TRUE, false, '', TRUE); ?>
                         </div>
                         <div class="col-sm-2 dashboard_modal_footer pt5">
-                            <?= Yii::$app->controls->custombutton('Apply', 'opening-balance', false, 'openingBalance btn-login'); ?>
+                            <?= Yii::$app->controls->custombutton('Apply', 'feed-summary-dashboard-details', false, 'openingBalance btn-login'); ?>
+                            <?= Yii::$app->controls->reset(); ?>
                         </div>
                         <?php ActiveForm::end(); ?>
                     </div>
@@ -61,7 +62,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Opening Balance'))
                 <h4 class="dash_block_value block_value" id="opening_balance"><?= $blocks_data[0][0]['opening_balance'] ?></h4>
             </div>
             <div class="div_grid_dash_mobile_block dashboardWidgetDetailPortion">
-                <p class="dash_block_header"><?= Yii::t('app', 'received') ?></p>
+                <p class="dash_block_header"><?= Yii::t('app', 'Received') ?></p>
                 <h4 class="dash_block_value block_value" id="received"><?= $blocks_data[0][0]['received'] ?></h4>
             </div>
             <div class="div_grid_dash_mobile_block dashboardWidgetDetailPortion">
@@ -77,7 +78,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Opening Balance'))
                 <h4 class="dash_block_value block_value" id="sale_return"><?= $blocks_data[0][0]['sale_return'] ?></h4>
             </div>
             <div class="div_grid_dash_mobile_block dashboardWidgetDetailPortion">
-                <p class="dash_block_header"><?= Yii::t('app', 'Opening Balance') ?></p>
+                <p class="dash_block_header"><?= Yii::t('app', 'Balance Qty') ?></p>
                 <h4 class="dash_block_value block_value" id="balance_qty"><?= $blocks_data[0][0]['balance_qty'] ?></h4>
             </div>
         </div>
