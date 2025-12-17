@@ -8,16 +8,16 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Feed Summary Dashb
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= $this->title; ?>
-        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="fa fa-file-excel-o"></i></button> 
+        <button onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')" type="button" class="headerIcon btn btn-danger apply-shortcut btn-block right_30" ><i class="fa fa-file-excel"></i></button> 
         <button id="addButtonsss" class="btn btn-primary plus-button headerIcon"><i class="fa fa-search"></i></button>
     </div>
     <div class="panel-body overflow_visible">
         <div class="modal fade" id="feedSummaryModel" tabindex="-1" role="dialog" aria-labelledby="feedSummaryModelLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="feedSummaryModelLabel"><?= Yii::t('app', 'Feed Summary Dashboard'); ?></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
