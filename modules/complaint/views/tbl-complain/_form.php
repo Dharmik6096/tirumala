@@ -312,14 +312,6 @@ $script = "
                         $('.field-tblcomplain-asset_code').parent('div').hide();
                         $('.field-tblcomplain-serial_number').parent('div').hide();
                         $('#tblcomplain-asset_code').val('').trigger('change');
-                        $('#tblcomplain-collection_request_type, #tblcomplain-from_shift').val('').trigger('change');
-                        $('#tblcomplain-from_date').val('');
-                        $('.field-tblcomplain-collection_request_type, .field-tblcomplain-from_date, .field-tblcomplain-from_shift').parent('div').hide();
-                        $('.add-border').removeClass('field-border');
-                    }
-                    if(obj1.msg.complain_for == 'asset_complain'){
-                        $('.field-tblcomplain-collection_request_type, .field-tblcomplain-from_date, .field-tblcomplain-from_shift').parent('div').show();
-                        $('.add-border').addClass('field-border');
                     }
                 }
             },
@@ -330,21 +322,33 @@ $script = "
         var asset_code = $(this).val();
         var location_type = $('#tblcomplain-location_type').val();
         var code = '';
+        var dcs = false;
         if(location_type == 2){
             code = $('#tblcomplain-bmc_code').val();
         } else if (location_type == 1) {
             code = $('#tblcomplain-plant_code').val();
         } else {
+            dcs = true;
             code = $('#tblcomplain-dcs_code').val();
         }
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-sr-number']) . "',
-            data: {asset_code : asset_code, code: code},
+            data: {asset_code : asset_code, code: code, dcs: dcs},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if(obj1.status == 'success') {
                     $('#tblcomplain-serial_number').val(obj1.msg);
+                    if(obj1.assetTypeCode){
+                        $('.field-tblcomplain-collection_request_type, .field-tblcomplain-from_date, .field-tblcomplain-from_shift').parent('div').show();
+                        $('.add-border').addClass('field-border');
+                    }
+                    else {
+                        $('#tblcomplain-collection_request_type, #tblcomplain-from_shift').val('').trigger('change');
+                        $('#tblcomplain-from_date').val('');
+                        $('.field-tblcomplain-collection_request_type, .field-tblcomplain-from_date, .field-tblcomplain-from_shift').parent('div').hide();
+                        $('.add-border').removeClass('field-border');
+                    }
                 }
             },
         });

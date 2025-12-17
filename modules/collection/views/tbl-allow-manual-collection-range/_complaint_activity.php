@@ -35,7 +35,7 @@ $attribute = [
     ['label' => Yii::t('app', 'Complain Status'), 'format' => 'raw', 'value' => function ($model) {
         $complain_status = Yii::$app->general->getforeignkey($model->complainCode, 'complain_status');
         $status = isset(Yii::$app->dropdown->getRecords('complain_status')['data'][$complain_status]) ? Yii::$app->dropdown->getRecords('complain_status')['data'][$complain_status] : '';
-        return Html::a($status, ['/complaint/tbl-complain/view', 'id' => $model->complain_code]);
+        return Html::a($status, ['/complaint/tbl-complain/view', 'id' => $model->complain_code], ['target' => '_blank']);
     }, 'visible' => true, 'filter' => false],
     ['attribute' => 'remark', 'filter' => false],
 ];

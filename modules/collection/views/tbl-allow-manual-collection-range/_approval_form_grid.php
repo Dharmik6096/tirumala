@@ -75,7 +75,7 @@ $form = ActiveForm::begin([
             'view-complain' => function ($url, $model) {
                 if ($model->table_name == 'tbl_milk_collection') {
                     $url = Url::to(['tbl-allow-manual-collection-range/view-complain-info', 'id' => $model->allow_manual_collection_code]);
-                    return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+                    return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank',]);
                 }
             },
         ]

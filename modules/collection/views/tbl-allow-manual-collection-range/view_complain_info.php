@@ -8,7 +8,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="panel panel-default panel-grid panel-main hide-grid-settings">
     <div class="panel-heading">
-        <?= Yii::$app->controls->cancel($model, 'index', null, true); ?>
         <?= Html::encode($this->title) ?>
     </div>
     <div class="panel-body">
@@ -33,8 +32,40 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'columns' => [
                             [
+                                'attribute' => 'plant_code',
+                                'label' => Yii::t('app', 'Plant') . ' Ref Code',
+                                'value' => Yii::$app->general->getforeignkey($model->plantCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_plant_code',
+                                'label' => Yii::t('app', 'MCC') . ' Ref Code',
+                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'bmc_code',
+                                'label' => Yii::t('app', 'BMC') . ' Ref Code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
@@ -47,16 +78,28 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'columns' => [
                             [
+                                'attribute' => 'dcs_code',
+                                'label' => Yii::t('app', 'DCS') . ' Ref Code',
+                                'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'totalRequestCount',
                                 'label' => Yii::t('app', 'Total Request Count'),
                                 'value' => $dataProvider->getTotalCount(),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+
+
                             [
                                 'attribute' => 'totalComplainCount',
                                 'label' => Yii::t('app', 'Total Complain Count'),
                                 'value' => $totalComplainCount,
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -71,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [// your ajax delete parameters
+                    'deleteOptions' => [ // your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],

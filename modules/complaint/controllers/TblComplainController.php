@@ -385,12 +385,14 @@ class TblComplainController extends \app\controllers\ChildController {
     public function actionGetSrNumber() {
         $asset_code = Yii::$app->request->post()['asset_code'];
         $sno = [];
+        $assetTypeCode = false;
         if ($asset_code) {
             $assetsr = explode('##', $asset_code);
             $to_code = Yii::$app->request->post()['code'];
             $sno = TblAssetMaster::getSrNo($to_code, $assetsr[0], $assetsr[1]);
+            $assetTypeCode = Yii::$app->request->post()['dcs'] ? Tblassetmaster::find()->where(['asset_code' => $assetsr[0], 'asset_type_code' => 1, 'is_active' => 1])->exists() : false;
         }
-        $record = ['status' => 'success', 'msg' => $sno];
+        $record = ['status' => 'success', 'msg' => $sno, 'assetTypeCode' => $assetTypeCode];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
