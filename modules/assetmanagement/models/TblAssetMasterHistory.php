@@ -36,7 +36,7 @@ class TblAssetMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['asset_code', 'asset_group_code', 'asset_name', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'local_name'], 'safe'],
+            [['asset_code', 'asset_group_code', 'asset_name', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'local_name', 'asset_type_code'], 'safe'],
             [['is_serial_number', 'is_active', 'cmpl_product_code'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['ref_code', 'is_spare'], 'safe'],

@@ -6426,3 +6426,8 @@ select:focus > option:checked {
 .float-right{
     float: right;
 }
+.field-border {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 22px;
+}

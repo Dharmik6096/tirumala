@@ -1,10 +1,6 @@
 <?php
 
-use yii\helpers\Html;
 use app\components\ActiveForm;
-use yii\web\View;
-use kartik\depdrop\DepDrop;
-use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $class = $type == 'create' ? '' : 'no_pointer';
@@ -55,6 +51,9 @@ $form = ActiveForm::begin([
             // echo $form->field($model, 'is_spare', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
         }
         ?>
+    </div>
+    <div class="col-sm-2"> 
+        <?= Yii::$app->dropdown->dropdown('asset_type', $model, $form, '', true, FALSE, 'asset_type_code'); ?>
     </div>
 </div>
 <div class="row">
