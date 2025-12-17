@@ -6,6 +6,9 @@ $attributes = [
         return !empty($model->userCode) ? Yii::$app->general->getforeignkey($model->userCode, 'name') : '';
     },'label' => Yii::t('app', 'User'), 'filter' => false],
     ['attribute' => 'login_type','filter' => false],
+    ['attribute' => 'department', 'value' => function($model){
+        return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+    }, 'filter' => false],
     ['attribute' => 'user_code', 'value' => function($model){
         return !empty($model->updatedBy) ? Yii::$app->general->getforeignkey($model->updatedBy, 'name') : '';
     },'label' => Yii::t('app', 'Status By'), 'filter' => false],

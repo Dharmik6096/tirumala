@@ -166,8 +166,13 @@ $this->title = Yii::$app->label->title('view', 'Bulk Notification');
                     [
                     'columns' => [
                             [
+                            'attribute' => 'department',
+                            'value' => Yii::$app->general->getforeignkey($model->departmentId, 'department'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
                             'attribute' => 'message',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

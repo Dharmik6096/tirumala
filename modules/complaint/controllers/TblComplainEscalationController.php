@@ -64,12 +64,14 @@ class TblComplainEscalationController extends \app\controllers\ChildController {
 
             $txnData = Yii::$app->request->post()['TblComplainEscalationTxn'];
             unset($txnData['user_type']);
+            unset($txnData['department']);
             unset($txnData['escalation_time']);
             unset($txnData['level']);
             $saveModel[] = $this->model;
             foreach ($txnData as $key => $value) {
                 $txnModel = new TblComplainEscalationTxn();
                 $txnModel->user_type = $value['user_type'];
+                $txnModel->department = $value['department'];
                 $txnModel->escalation_time = $value['escalation_time'];
                 $txnModel->level = $value['level'];
                 $saveModel[] = $txnModel;

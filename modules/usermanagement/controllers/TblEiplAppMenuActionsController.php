@@ -18,9 +18,10 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
     public function actionAppMenuMapping() {
         $this->model = new TblEiplAppMenuActions();
         $menuArray = [];
-        $menuArray = $this->model->getActionDetail();
         $mappingModel = new TblEiplAppMenuActionsMapping();
         $mappingModel->load(Yii::$app->request->queryParams);
+        $this->model->app_type = $mappingModel->app_type;
+        $menuArray = $this->model->getActionDetail();
         $selectedArray = [];
 //        $mappingModel->department = $mappingModel->login_type == 'MEMBER' ? 'MEMBER' : $mappingModel->department;
         $selectedArray = $mappingModel->getExistMapingMenu();
@@ -28,9 +29,14 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $postArray = [];
             $postArray = Yii::$app->request->post('child_routes');
+            $appType = Yii::$app->request->post('app_type');
             $loginType = Yii::$app->request->post('login_type');
             $unionCode = Yii::$app->request->post('union_code');
             $department = !empty(Yii::$app->request->post('department')) ? Yii::$app->request->post('department') : NULL;
+            if($appType == 4){
+                $loginType = 'DRIVER';
+                $department = NULL;
+            }
             $master = [];
             $auto_inc = 1;
             $newAssignments = [];
@@ -48,6 +54,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
                 foreach ($toRevoke as $revoke_widget) {
                     $model = new TblEiplAppMenuActionsMapping();
                     $model->action_code = (string) $revoke_widget;
+                    $model->app_type = $appType;
                     $model->login_type = $loginType;
                     $model->department = $department;
                     $model->union_code = $unionCode;
@@ -65,6 +72,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
                 foreach ($toAssign as $Assign_widget) {
                     $model = new TblEiplAppMenuActionsMapping();
                     $model->action_code = $Assign_widget;
+                    $model->app_type = $appType;
                     $model->login_type = $loginType;
                     $model->department = $department;
                     $model->union_code = $unionCode;

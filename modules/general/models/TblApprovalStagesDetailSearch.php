@@ -18,7 +18,7 @@ class TblApprovalStagesDetailSearch extends TblApprovalStagesDetail {
     public function rules() {
         return [
             [['approval_stages_detail_code', 'approval_stages_code', 'level', 'originating_type'], 'integer'],
-            [['level_priority', 'approval_mode', 'approval_type', 'login_type', 'user_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['level_priority', 'approval_mode', 'approval_type', 'login_type', 'user_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'department'], 'safe'],
         ];
     }
 

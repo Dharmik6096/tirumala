@@ -38,10 +38,10 @@ class TblBannerApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['login_type', 'banner_code', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'applicable_for', 'applicable_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'safe'],
-                [['login_type', 'applicable_code'], 'required'],
+                [['department', 'applicable_code'], 'required'],
                 [['applicable_code'], 'validateBanner', 'skipOnEmpty' => false,],
-                [['login_type'], 'validateLoginTypeCount', 'when' => function($model) {
-                    return (!empty($model->login_type) && !is_array($model->login_type));
+                [['department'], 'validateDepartmentCount', 'when' => function($model) {
+                    return (!empty($model->department) && !is_array($model->department));
                 }],
         ];
     }
@@ -65,6 +65,7 @@ class TblBannerApplicability extends \app\models\ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 
@@ -86,13 +87,13 @@ class TblBannerApplicability extends \app\models\ChildModel {
 
     public function validateData() {
         $data = $this->find()
-                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'banner_code' => $this->banner_code, 'login_type' => $this->login_type])
+                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'banner_code' => $this->banner_code, 'department' => $this->department])
                 ->all();
 
         $message = [];
         if (!empty($data)) {
             for ($i = 0; $i < count($data); $i++) {
-                $mesageVal = $data[$i] ['login_type'];
+                $mesageVal = $data[$i] ['department'];
                 $message[$mesageVal] = $mesageVal;
             }
             if (count($message) > 0) {
@@ -105,25 +106,50 @@ class TblBannerApplicability extends \app\models\ChildModel {
         }
     }
 
-    public function validateLoginTypeCount($attribute, $params) {
+    // public function validateLoginTypeCount($attribute, $params) {
+    //     $this->from_date = isset($this->bannerCode) ? $this->bannerCode->from_date : NULL;
+    //     $this->to_date = isset($this->bannerCode) ? $this->bannerCode->to_date : NULL;
+
+    //     $loginTypeCount = $this->checkLogintype($this->login_type, $this->from_date, $this->to_date, $this->applicable_code);
+
+    //     if ($loginTypeCount >= 5) {
+    //         $this->addError($attribute, 'More than 5 ' . $this->login_type . ' login type not allowed.');
+    //         return false;
+    //     }
+    // }
+
+    // public function checkLogintype($login_type, $from_date, $to_date, $applicable_code) {
+
+    //     return $this->find()
+    //                     ->select(['tbl_banner_applicability.*', 'tbl_banner.*'])
+    //                     ->innerJoin('tbl_banner', 'tbl_banner.banner_code = tbl_banner_applicability.banner_code')
+    //                     ->where([
+    //                         'tbl_banner_applicability.login_type' => $login_type,
+    //                         'tbl_banner_applicability.applicable_code' => $applicable_code,
+    //                     ])
+    //                     ->andWhere('(\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\')')
+    //                     ->count();
+    // }
+
+    public function validateDepartmentCount($attribute, $params) {
         $this->from_date = isset($this->bannerCode) ? $this->bannerCode->from_date : NULL;
         $this->to_date = isset($this->bannerCode) ? $this->bannerCode->to_date : NULL;
 
-        $loginTypeCount = $this->checkLogintype($this->login_type, $this->from_date, $this->to_date, $this->applicable_code);
+        $departmentCount = $this->checkDepartment($this->department, $this->from_date, $this->to_date, $this->applicable_code);
 
-        if ($loginTypeCount >= 5) {
-            $this->addError($attribute, 'More than 5 ' . $this->login_type . ' login type not allowed.');
+        if ($departmentCount >= 5) {
+            $this->addError($attribute, 'More than 5 ' . $this->department . ' department not allowed.');
             return false;
         }
     }
 
-    public function checkLogintype($login_type, $from_date, $to_date, $applicable_code) {
+    public function checkDepartment($department, $from_date, $to_date, $applicable_code) {
 
         return $this->find()
                         ->select(['tbl_banner_applicability.*', 'tbl_banner.*'])
                         ->innerJoin('tbl_banner', 'tbl_banner.banner_code = tbl_banner_applicability.banner_code')
                         ->where([
-                            'tbl_banner_applicability.login_type' => $login_type,
+                            'tbl_banner_applicability.department' => $department,
                             'tbl_banner_applicability.applicable_code' => $applicable_code,
                         ])
                         ->andWhere('(\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\')')
@@ -137,6 +163,10 @@ class TblBannerApplicability extends \app\models\ChildModel {
             $this->plant_code = $bmc_detail->plant_code;
             $this->mcc_plant_code = $bmc_detail->mcc_plant_code;
         }
+    }
+
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

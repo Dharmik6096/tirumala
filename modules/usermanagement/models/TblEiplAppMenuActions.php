@@ -35,7 +35,7 @@ class TblEiplAppMenuActions extends \yii\db\ActiveRecord {
         return [
             [['action_name', 'service_url', 'description', 'created_by', 'updated_by'], 'string'],
             [['is_active', 'sequence_no', 'parent_code'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'app_type'], 'safe'],
         ];
     }
 
@@ -55,6 +55,7 @@ class TblEiplAppMenuActions extends \yii\db\ActiveRecord {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'app_type' => Yii::t('app', 'App Type'),
         ];
     }
 
@@ -62,6 +63,7 @@ class TblEiplAppMenuActions extends \yii\db\ActiveRecord {
         $allMenu = $this->find()
                 ->select(['action_code', 'action_name', 'parent_code', 'description'])
                 ->where(['is_active' => 1])
+                ->andFilterWhere(['app_type' => $this->app_type])
                 ->orderBy(['sequence_no' => SORT_ASC, 'description' => SORT_ASC])
                 ->asArray()
                 ->all();

@@ -523,13 +523,13 @@ class TblUserOrganizationMapping extends ChildModel {
         if (!empty($this->user_id)) {
             $login_type = Yii::$app->general->getforeignkey($this->userMaster, 'login_type');
             if (!empty($login_type)) {
-                if ($login_type == 'vsp') {
-                    if ((empty($this->dcs)) || count($this->dcs) != 1) {
-                        $msg = empty($this->dcs) ? Yii::t('app', 'DCS') . ' cannot be blank.' : 'Allow to Map single ' . Yii::t('app', 'DCS');
+                if ($login_type == 'vsp' || $login_type == 'DCS') {
+                    if (empty($this->dcs)) {
+                        $msg = Yii::t('app', 'DCS') . ' cannot be blank.';
                         $this->addError('dcs', Yii::t('app/validation', $msg));
                         return false;
                     }
-                } else if ($login_type == 'mcc_incharge') {
+                } else if ($login_type == 'MCC') {
                     if ((empty($this->mcc))) {
                         $msg = Yii::t('app', 'MCC') . ' cannot be blank.';
                         $this->addError('mcc', Yii::t('app/validation', $msg));
@@ -557,6 +557,30 @@ class TblUserOrganizationMapping extends ChildModel {
                     } else if ((empty($this->dcs))) {
                         $msg = Yii::t('app', 'DCS') . ' cannot be blank.';
                         $this->addError('dcs', Yii::t('app/validation', $msg));
+                        return false;
+                    }
+                } else if ($login_type == 'UNION') {
+                    if ((empty($this->union))) {
+                        $msg = Yii::t('app', 'UNION') . ' cannot be blank.';
+                        $this->addError('union', Yii::t('app/validation', $msg));
+                        return false;
+                    }
+                } else if ($login_type == 'PLANT') {
+                    if ((empty($this->plant))) {
+                        $msg = Yii::t('app', 'PLANT') . ' cannot be blank.';
+                        $this->addError('plant', Yii::t('app/validation', $msg));
+                        return false;
+                    }
+                } else if ($login_type == 'BMC') {
+                    if ((empty($this->bmc))) {
+                        $msg = Yii::t('app', 'BMC') . ' cannot be blank.';
+                        $this->addError('bmc', Yii::t('app/validation', $msg));
+                        return false;
+                    }
+                } else if ($login_type == 'ROUTE') {
+                    if ((empty($this->route))) {
+                        $msg = Yii::t('app', 'ROUTE') . ' cannot be blank.';
+                        $this->addError('route', Yii::t('app/validation', $msg));
                         return false;
                     }
                 }

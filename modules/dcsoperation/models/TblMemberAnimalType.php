@@ -37,7 +37,10 @@ class TblMemberAnimalType extends ChildModel {
      */
     public function rules() {
         return [
-                [['animal_type_code', 'animal_type_name', 'animal_type_code', 'is_active', 'is_milch', 'animal_type_name', 'union_code', 'local_name', 'short_name', 'created_by', 'originating_org_code', 'originating_org_type', 'updated_by', 'originating_type', 'created_at', 'updated_at',], 'safe'],
+            [['animal_type_name', 'is_active', 'is_milch', 'animal_type_name', 'union_code', 'local_name', 'short_name', 'created_by', 'originating_org_code', 'originating_org_type', 'updated_by', 'originating_type', 'created_at', 'updated_at',], 'safe'],
+            [['animal_type_name'], 'required'],
+            [['animal_type_name'], 'unique'],
+            [['is_active'], 'default', 'value' => 1],
         ];
     }
 

@@ -18,7 +18,7 @@ class TblEiplAppWidgetMappingSearch extends TblEiplAppWidgetMapping {
     public function rules() {
         return [
             [['mapping_id', 'widget_id'], 'integer'],
-            [['login_type', 'department', 'created_at', 'created_by', 'updated_at', 'updated_by', 'widget_name'], 'safe'],
+            [['login_type', 'department', 'created_at', 'created_by', 'updated_at', 'updated_by', 'widget_name', 'app_type'], 'safe'],
         ];
     }
 

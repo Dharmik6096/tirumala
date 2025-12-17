@@ -18,6 +18,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblBannerHistory;
 use app\modules\document\models\TblAttachmentHistory;
 use app\modules\general\models\TblBannerApplicabilityHistory;
+use app\modules\general\models\TblDepartment;
 use app\modules\usermanagement\models\TblEiplAppMenuActionsMapping;
 
 /**
@@ -312,12 +313,12 @@ class TblBannerController extends \app\controllers\ChildController {
         $appModel->customer_type_wise_entry = true;
         $appModel->assignMultiData = true;
         $appModel->setModelFields = true;
-        $appModel->assignMultiDataKey = 'login_type';
+        $appModel->assignMultiDataKey = 'department';
         $appModel->assignDataKey = 'applicable_code';
-        $userLoginType = Yii::$app->dropdown->getRecords('user_login_type')['data'];
-        unset($userLoginType['all']);
+        $departmentModel = new TblDepartment();
+        $userLoginType = $departmentModel->getActiveDepartments();
         $appModel->customer_type_list = $userLoginType;
-        $appModel->customer_type_field_name = 'login_type';
+        $appModel->customer_type_field_name = 'department';
 
         $appModel->assignStaticData = [
             'applicable_for' => 'BMC',
@@ -331,9 +332,9 @@ class TblBannerController extends \app\controllers\ChildController {
             'bmc_code' => ['view' => ['grid'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
                 }],
-            'login_type' => ['view' => ['grid'],
+            'department' => ['view' => ['grid'],
                 'value' => function ($model) {
-                    return !empty($model->login_type) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '';
+                    return Yii::$app->general->getforeignkey($model->departmentId, 'department');
                 }],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
@@ -342,5 +343,4 @@ class TblBannerController extends \app\controllers\ChildController {
 
         return $appModel->customerTypeWiseApplicability();
     }
-
 }

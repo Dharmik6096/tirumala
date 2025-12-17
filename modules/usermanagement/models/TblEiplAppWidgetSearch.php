@@ -56,7 +56,7 @@ class TblEiplAppWidgetSearch extends TblEiplAppWidget {
         }
 
         // grid filtering conditions
-      
+        $query->andFilterWhere(['app_type' => $this->app_type]);
 
         return $dataProvider;
     }
