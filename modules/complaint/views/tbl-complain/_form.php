@@ -4,11 +4,8 @@ use yii\helpers\Html;
 use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-//use zainiafzan\widget\Dropzone;
 use kato\DropZone;
-use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
-use app\modules\usermanagement\components\GhostHtml;
 
 $path = Yii::$app->params['complaint_dir_path'];
 $button_type = '';
@@ -16,12 +13,15 @@ $urls = '';
 if ($type == 'create') {
     $button_type = 'create';
     $urls = ['create'];
+    $readonly = false;
 } else if ($type == 'edit') {
     $button_type = 'update';
     $urls = ['update', 'id' => $model->complain_code];
+    $readonly = true;
 } else {
     $button_type = 'resolve';
     $urls = ['resolve-complain', 'id' => $model->complain_code];
+    $readonly = true;
 }
 
 $size = '';
@@ -90,7 +90,17 @@ $form = ActiveForm::begin([
         <div class = "col-sm-3">
             <?= $form->field($model, 'remarks')->textarea() ?>
         </div>
-
+        <div class="col-sm-6 add-border">
+            <div class="col-sm-4 default_hide">
+                <?= Yii::$app->dropdown->dropdownStatic('entry_type_collection', $model, $form, 'form-group', $model->getAttributeLabel('collection_request_type'), $readonly, 'collection_request_type', false); ?>
+            </div>
+            <div class="col-sm-4 default_hide">
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('d-m-Y'), FALSE, $readonly); ?>
+            </div>
+            <div class="col-sm-4 default_hide">
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift', true, $readonly, 'from_shift'); ?>
+            </div>
+        </div>
         <div class="col-sm-2 mt10 disp_none">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'affects_data'); ?>
         </div>
@@ -176,7 +186,6 @@ $form = ActiveForm::begin([
                             } else {
                                 $('#attachment').val(new_attachment+','+data.msg);
                             }                            
-//                            $('#upload-btn').attr('disabled',false);
                             this.options.maxFiles--;
                         }
                         else
@@ -252,12 +261,10 @@ if ($type == 'resolve') {
                                                 $(".error-summary li").remove();
                                                 $.each(obj1, function(key, val) {
                                                     $(".error-summary ul").append("<li>"+val+"</li>");
-                                                    if(key != "tblmilkcollection-date_time_of_collection"){
-                                                    var parent_div = $("#"+key).parent("div");
+                                                    var parent_div = $(".field-"+key).parent("div");
                                                     parent_div.find(".help-block").remove();
-                                                    $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
+                                                    $("#"+key).closest(".form-group").append("<div class=\"help-block\">"+val+"</div>");
                                                     $("#"+key).closest(".form-group").addClass("has-error");   
-                                               }
                                                 });
                                                 $(".error-summary").show();
                                                 }
@@ -315,21 +322,33 @@ $script = "
         var asset_code = $(this).val();
         var location_type = $('#tblcomplain-location_type').val();
         var code = '';
+        var dcs = false;
         if(location_type == 2){
             code = $('#tblcomplain-bmc_code').val();
         } else if (location_type == 1) {
             code = $('#tblcomplain-plant_code').val();
         } else {
+            dcs = true;
             code = $('#tblcomplain-dcs_code').val();
         }
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-sr-number']) . "',
-            data: {asset_code : asset_code, code: code},
+            data: {asset_code : asset_code, code: code, dcs: dcs},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if(obj1.status == 'success') {
                     $('#tblcomplain-serial_number').val(obj1.msg);
+                    if(obj1.assetTypeCode){
+                        $('.field-tblcomplain-collection_request_type, .field-tblcomplain-from_date, .field-tblcomplain-from_shift').parent('div').show();
+                        $('.add-border').addClass('field-border');
+                    }
+                    else {
+                        $('#tblcomplain-collection_request_type, #tblcomplain-from_shift').val('').trigger('change');
+                        $('#tblcomplain-from_date').val('');
+                        $('.field-tblcomplain-collection_request_type, .field-tblcomplain-from_date, .field-tblcomplain-from_shift').parent('div').hide();
+                        $('.add-border').removeClass('field-border');
+                    }
                 }
             },
         });
@@ -407,17 +426,7 @@ $script = "
                 success: function(data) {
                     var obj1 = $.parseJSON(data);
                     $('#tblcomplain-contact_person').val(obj1.contact_person);
-//                     if(obj1.contact_person != '') {
-//                           $('.contact_dis').addClass('disabled');                   
-//                        }else{
-//                           $('.contact_dis').removeClass('disabled'); 
-//                        }
                     $('#tblcomplain-mobile_no').val(obj1.mobile_no);
-//                     if(obj1.mobile_no != '') {
-//                           $('.mobile_dis').addClass('disabled');                   
-//                        }else{
-//                           $('.mobile_dis').removeClass('disabled'); 
-//                        }
                     if(old_module_code == module_code) {
                         if($('#tblcomplain-contact_person').attr('data-val') != '') {
                             $('#tblcomplain-contact_person').val($('#tblcomplain-contact_person').attr('data-val'));

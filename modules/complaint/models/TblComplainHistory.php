@@ -63,7 +63,7 @@ class TblComplainHistory extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['user_code', 'mobile_no', 'location_details', 'remarks', 'resolved_remarks', 'complain_for', 'serial_number', 'contact_person', 'lat_long', 'new_serial_no', 'bmc_code', 'dcs_code', 'asset_code', 'complain_code', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'complain_type_code', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'history_created_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type'], 'safe'],
+            [['user_code', 'mobile_no', 'location_details', 'remarks', 'resolved_remarks', 'complain_for', 'serial_number', 'contact_person', 'lat_long', 'new_serial_no', 'bmc_code', 'dcs_code', 'asset_code', 'complain_code', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'complain_type_code', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'history_created_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'collection_request_type', 'from_date', 'from_shift'], 'safe'],
         ];
     }
 

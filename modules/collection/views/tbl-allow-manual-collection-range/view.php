@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use kartik\detail\DetailView;
-use yii\widgets\ActiveForm;
 
 $this->title = Yii::$app->label->title('view', 'Manual Collection Request');
 $approval_detail = $model->collectionApproval;
@@ -142,7 +141,7 @@ $approval_detail = $model->collectionApproval;
                     [
                     'columns' => [
                                 ['attribute' => 'action_perform',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                     ],
                 ],

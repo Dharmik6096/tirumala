@@ -652,6 +652,7 @@ $(document).ready(function() {
                     'plant_wise_tanker_milk_detail',
                     'intransit_tanker_status_detail',
                     'plant_tanker_capacity_wise_tanker_status',
+                    'feed_summary_dashboard',
                     'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
@@ -1393,6 +1394,37 @@ $(document).ready(function() {
                             }
                         });
                     }
+                    else if(['feed_summary_dashboard'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_product_dashboard_block';
+                    var union= '" . $unionCode . "';                        
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/feed-summary-dashboard']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                
+                                $('#opening_balance').text(obj1.res.opening_balance);
+                                $('#received').text(obj1.res.received);
+                                $('#inventory_transfer').text(obj1.res.inventory_transfer);
+                                $('#sale').text(obj1.res.sale);
+                                $('#sale_return').text(obj1.res.sale_return);
+                                $('#balance_qty').text(obj1.res.balance_qty);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
             }, timeOut);
             timeOut = timeOut + 3000;
 //            console.log(timeOut);
