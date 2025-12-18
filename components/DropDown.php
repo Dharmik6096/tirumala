@@ -2501,6 +2501,7 @@ class DropDown extends Component {
             'bmc_chiller_info' => ['name' => 'chiller_info_code', 'fields' => 'chiller_info_code,owner_name,sap_vendor_code', 'prompt' => Yii::t('app', 'Select BMC Chiller Info'), 'model' => 'TblBmcChillerInfo', 'depend' => 'bmc_code'],
             'vehicle_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'vehicle_code'],
             'animal_type_additional' => ['name' => 'animal_type_additional_code', 'fields' => 'animal_type_additional_code,additional_animal_type_name,', 'prompt' => Yii::t('app', 'Select Additional Animal Type'), 'model' => 'TblAnimalTypeAdditional'],
+            'asset_type' => ['name' => 'asset_type_code', 'fields' => 'asset_type_code,asset_type_name,', 'prompt' => Yii::t('app', 'Select Asset Type'), 'model' => 'TblAssetType'],
         ];
         return $label[$l];
     }

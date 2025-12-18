@@ -43,13 +43,16 @@ class TblAssetMaster extends \app\models\ChildModel {
                 [['cmpl_product_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'cmpl_product_code');
                 }, 'on' => 'importCsv'],
+                [['asset_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'asset_type');
+                }, 'on' => 'importCsv'],
                 [['asset_group_code', 'asset_name'], 'required'],
                 [['is_serial_number', 'is_spare'], 'required', 'on' => 'importCsv'],
                 [['asset_group_code', 'asset_name', 'created_by', 'updated_by', 'local_name'], 'string'],
                 [['is_serial_number', 'is_spare'], 'integer'],
                 [['is_serial_number', 'is_spare'], 'boolean', 'on' => 'importCsv'],
                 [['is_active'], 'default', 'value' => 1],
-                [['created_at', 'updated_at', 'cmpl_product_code', 'ref_code', 'is_spare'], 'safe'],
+                [['created_at', 'updated_at', 'cmpl_product_code', 'ref_code', 'is_spare', 'asset_type_code'], 'safe'],
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
@@ -82,6 +85,7 @@ class TblAssetMaster extends \app\models\ChildModel {
             'cmpl_product_code' => Yii::t('app', 'Asset Type'),
             'ref_code' => Yii::t('app', 'Reference Code'),
             'is_spare' => Yii::t('app', 'Is Spare'),
+            'asset_type_code' => Yii::t('app', 'Asset Type'),
         ];
     }
 
@@ -192,6 +196,10 @@ class TblAssetMaster extends \app\models\ChildModel {
 //    }
     public function getAssetBom() {
         return $this->hasMany(TblAssetBom::className(), ['asset_code' => 'asset_code']);
+    }
+
+    public function getAssetTypeCode() {
+        return $this->hasOne(TblAssetType::className(), ['asset_type_code' => 'asset_type_code']);
     }
 
 }
