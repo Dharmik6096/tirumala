@@ -38,7 +38,7 @@ class TblEiplAppWidgetMappingHistory extends \yii\db\ActiveRecord
         return [
             [['mapping_id', 'widget_id', 'union_code'], 'safe'],
             [['login_type', 'department', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'app_type'], 'safe'],
         ];
     }
 
@@ -60,6 +60,7 @@ class TblEiplAppWidgetMappingHistory extends \yii\db\ActiveRecord
             'history_created_at' => Yii::t('app', 'History Created At'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'app_type' => Yii::t('app', 'App Type'),
         ];
     }
 }

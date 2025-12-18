@@ -1,0 +1,83 @@
+<?php
+
+namespace app\modules\veterinary\models;
+
+use app\models\ChildModel;
+use Yii;
+
+/**
+ * This is the model class for table "tbl_medicine_stock_transaction".
+ *
+ * @property integer $medicine_stock_transaction_id
+ * @property integer $medicine_id
+ * @property string $union_code
+ * @property string $module_name
+ * @property string $module_code
+ * @property string $batch_no
+ * @property string $tran_datetime
+ * @property string $old_value
+ * @property string $new_value
+ * @property string $final_value
+ * @property string $expire_date
+ * @property string $entry_type
+ * @property string $transfer_ref_code
+ * @property string $transfer_ref_name
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property string $originating_org_code
+ * @property string $originating_org_type
+ * @property integer $originating_type
+ */
+class TblMedicineStockTransaction extends ChildModel {
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName() {
+        return 'tbl_medicine_stock_transaction';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['medicine_id'], 'required'],
+            [['medicine_id', 'originating_type'], 'integer'],
+            [['medicine_id', 'union_code', 'module_name', 'module_code', 'batch_no', 'tran_datetime', 'old_value', 'new_value', 'final_value', 'expire_date', 'entry_type', 'transfer_ref_code', 'transfer_ref_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['old_value', 'new_value', 'final_value'], 'number']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'medicine_stock_transaction_id' => Yii::t('app', 'Medicine Stock Transaction ID'),
+            'medicine_id' => Yii::t('app', 'Medicine ID'),
+            'union_code' => Yii::t('app', 'Union'),
+            'module_name' => Yii::t('app', 'Module Name'),
+            'module_code' => Yii::t('app', 'Module Code'),
+            'batch_no' => Yii::t('app', 'Batch No'),
+            'tran_datetime' => Yii::t('app', 'Transaction Datetime'),
+            'old_value' => Yii::t('app', 'Old Value'),
+            'new_value' => Yii::t('app', 'New Value'),
+            'final_value' => Yii::t('app', 'Final Value'),
+            'expire_date' => Yii::t('app', 'Expire Date'),
+            'entry_type' => Yii::t('app', 'Entry Type'),
+            'transfer_ref_code' => Yii::t('app', 'Transfer Ref Code'),
+            'transfer_ref_name' => Yii::t('app', 'Transfer Ref Name'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+        ];
+    }
+
+}

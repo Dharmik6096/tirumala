@@ -32,9 +32,9 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
      */
     public function rules() {
         return [
-            [['tracking_id', 'originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'user_code', 'tracking_datetime'], 'required', 'on' => 'indexOther'],
-            [['tracking_datetime', 'lat_long', 'module_name', 'module_code', 'user_code', 'mobile_no', 'login_type', 'device_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code'], 'safe'],
+                [['tracking_id', 'originating_type'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'user_code'], 'required', 'on' => 'indexOther'],
+                [['tracking_datetime', 'lat_long', 'module_name', 'module_code', 'user_code', 'mobile_no', 'login_type', 'device_id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code', 'department'], 'safe'],
         ];
     }
 
@@ -87,7 +87,7 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
                 }
             }
             return $dataArray;
-        } 
+        }
 
         return new ArrayDataProvider([
             'allModels' => $output,
@@ -180,26 +180,26 @@ class TblUserTrackingMovementSearch extends TblUserTrackingMovement {
             $designation = !empty($userData->designation_code) && ($model = TblDesignation::findOne($userData->designation_code)) !== null ? $model->designation_name : 'Not Available';
             $formattedTrackingDate = Yii::$app->formatter->asDate($this->tracking_datetime, DATE_FORMAT);
             $dataArray = [];
-            if(!empty($output)){
+            if (!empty($output)) {
                 $organizationLatlongData = TblOrganizationLatlong::find()->alias('A')
-                    ->leftJoin('tbl_organization_latlong_applicability B', 'A.customer_type = B.applicable_for AND A.customer_code = B.applicable_code')
-                    ->andWhere(['B.user_code' => $this->user_code, 'A.is_active' => 1])
-                    ->andWhere(['IS NOT', 'A.lat_long', NULL])
-                    ->andWhere(['!=', 'A.lat_long', ','])
-                    ->select(['A.*', 'dcs.dcs_name', 'dcs.ref_code as dcs_ref_code', 'mcc.name', 'mcc.ref_code as mcc_ref_code', 'bmc.bmc_name', 'bmc.ref_code as bmc_ref_code'])
-                    ->leftJoin('tbl_dcs dcs', 'dcs.dcs_code = A.customer_code')
-                    ->leftJoin('tbl_mcc_plant mcc', 'mcc.mcc_plant_code = A.customer_code')
-                    ->leftJoin('tbl_bmc bmc', 'bmc.bmc_code = A.customer_code')
-                    ->asArray()
-                    ->all();
+                        ->leftJoin('tbl_organization_latlong_applicability B', 'A.customer_type = B.applicable_for AND A.customer_code = B.applicable_code')
+                        ->andWhere(['B.user_code' => $this->user_code, 'A.is_active' => 1])
+                        ->andWhere(['IS NOT', 'A.lat_long', NULL])
+                        ->andWhere(['!=', 'A.lat_long', ','])
+                        ->select(['A.*', 'dcs.dcs_name', 'dcs.ref_code as dcs_ref_code', 'mcc.name', 'mcc.ref_code as mcc_ref_code', 'bmc.bmc_name', 'bmc.ref_code as bmc_ref_code'])
+                        ->leftJoin('tbl_dcs dcs', 'dcs.dcs_code = A.customer_code')
+                        ->leftJoin('tbl_mcc_plant mcc', 'mcc.mcc_plant_code = A.customer_code')
+                        ->leftJoin('tbl_bmc bmc', 'bmc.bmc_code = A.customer_code')
+                        ->asArray()
+                        ->all();
 
                 foreach ($organizationLatlongData as $result) {
                     $info = '<div class="map_info_content">';
                     $info .= '<p class="map_marker_content"><span class="marker_header">' . Yii::t('app', 'Type') . ' :</span> ' . Yii::t('app', $result['customer_type']) . '</p>';
                     $info .= '<p class="map_marker_content"><span class="marker_header">' . Yii::t('app', 'Name') . ' :</span> ' .
-                        ($result['customer_type'] == 'MCC' ? $result['name'] . ' - ' . $result['mcc_ref_code'] :
-                        ($result['customer_type'] == 'BMC' ? $result['bmc_name'] . ' - ' . $result['bmc_ref_code'] :
-                        ($result['customer_type'] == 'DCS' ? $result['dcs_name']. ' - ' . $result['dcs_ref_code'] : $result['customer_code']))) . '</p>'; // OFFICE, HOME, OTHER
+                            ($result['customer_type'] == 'MCC' ? $result['name'] . ' - ' . $result['mcc_ref_code'] :
+                            ($result['customer_type'] == 'BMC' ? $result['bmc_name'] . ' - ' . $result['bmc_ref_code'] :
+                            ($result['customer_type'] == 'DCS' ? $result['dcs_name'] . ' - ' . $result['dcs_ref_code'] : $result['customer_code']))) . '</p>'; // OFFICE, HOME, OTHER
                     $info .= '</div>';
                     list($latitude, $longitude) = explode(',', $result['lat_long']);
                     $dataArray[] = [
