@@ -45,7 +45,6 @@ class AuthItemGroup extends \yii\db\ActiveRecord
 			[['code'], 'string', 'max' => 64],
 			[['code', 'name'], 'trim'],
 			[['name'], 'string', 'max' => 255],
-                        ['code', 'match', 'pattern' => '/^(?![0-9]+$)/', 'message' => 'The Code cannot consist only of numbers. Please include letters.'],
 		];
 	}
 
