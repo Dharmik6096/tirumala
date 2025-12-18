@@ -2191,6 +2191,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspOutstandingDetail';
         return $this->actionIndex();
     }
+    
+    public function actionVehicleStatusReport() {
+        $this->report = 'VehicleStatusReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4791,6 +4796,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vsp_outstanding_detail',
                 'scenario' => 'VspOutstandingDetail',
                 'title' => '923 - Vsp Outstanding',
+            ],
+            'VehicleStatusReport' => [
+                'param' => 'vehicle_code',
+                'sp_name' => 'sp_portal_dashboard_vehicle_wise_tanker_activity_report',
+                'title' => 'Vehicle Status Report',
             ],
         ];
         return $label[$l];
