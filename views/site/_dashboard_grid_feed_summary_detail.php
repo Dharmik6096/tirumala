@@ -199,6 +199,9 @@ $(document).on('click', '.openingBalance', function(e) {
         }
     });
 });
+$(document).on("click", "button[type='reset']", function() {
+    $("#dashboard-state_code").val('').trigger("change");
+});
 JS;
 
 $this->registerJs($script, \yii\web\View::POS_READY, 'opening_balance_a');
