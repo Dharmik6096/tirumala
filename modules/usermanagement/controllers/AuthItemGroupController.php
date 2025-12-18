@@ -9,4 +9,5 @@ use Yii;
  */
 class AuthItemGroupController extends \webvimark\modules\UserManagement\controllers\AuthItemGroupController {
     
+    public $modelClass = 'app\modules\usermanagement\models\rbacDB\AuthItemGroup';
 }
