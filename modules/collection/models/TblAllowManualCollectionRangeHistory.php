@@ -60,7 +60,7 @@ class TblAllowManualCollectionRangeHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_date', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'to_date', 'approved_at', 'created_at', 'updated_at', 'history_created_at', 'allow_manual_collection_code', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'approved_by', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'action_perform'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'entry_type', 'approval_status', 'from_date', 'from_shift', 'to_shift', 'table_name', 'application_type', 'complain_type', 'to_date', 'approved_at', 'created_at', 'updated_at', 'history_created_at', 'allow_manual_collection_code', 'is_weight_manual', 'is_quality_manual', 'is_approved', 'complain_status', 'originating_type', 'remark', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'approved_by', 'created_by', 'updated_by', 'history_created_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'action_perform', 'complain_code'], 'safe'],
         ];
     }
 
