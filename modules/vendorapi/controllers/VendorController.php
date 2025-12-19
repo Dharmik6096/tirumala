@@ -80,7 +80,7 @@ class VendorController extends RestController {
                 $response[] = $res;
                 $master_model[] = $model;
             }
-            $path = Yii::$app->params['vendorApiErrorLogPath'];
+            $path = Yii::getAlias('@webroot') . "/" . Yii::$app->params['vendorApiErrorLogPath'];
             if (in_array(FALSE, $valid)) {
                 $dir = $this->checkDirectory($path);
                 if ($dir) {

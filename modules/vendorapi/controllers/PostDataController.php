@@ -114,7 +114,7 @@ class PostDataController extends \yii\web\Controller {
                 foreach ($header_array as $key => $value) {
                     $api->header_info[] = $key . ': ' . $value;
                 }
-                $api->certificate_url = Yii::getAlias('@webroot') . '/web/certificate/NIF_certificate/cacert.pem';
+                $api->certificate_url = Yii::getAlias('@webroot') . '/certificate/NIF_certificate/cacert.pem';
                 $response = $api->POSTDATA();
 //                $response = '{"MCC_Milk_Collection_Response":{"MCC_Milk_Collection":[{"uuid":"239d4c6c-d0e7-4ffb-aed5-0484006cdd36","status":"SUCCESS","desc":"GR Successful"},{"uuid":"166470cb-9211-41bb-832a-d10cb8dcd391","status":"ERROR","desc":"GR Successful"}]}}';
                 // echo '<pre/>';print_r($response);die;
