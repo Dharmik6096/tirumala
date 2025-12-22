@@ -43,13 +43,13 @@ var initDepdropMs;
 
     function resetChildDropdown(id) {
         var self = $('#' + id);
-        if (self.data('select2')) {
-            self.val(null).trigger('select2:select');
-            self.trigger('select2:unselect');
-            self.trigger('select2:close');
-            self.find('option').remove();
-            self.prop('disabled', true);
-        }
+            if (self.data('select2')) {
+                self.val(null).trigger('select2:select');
+                self.trigger('select2:unselect');
+                self.trigger('select2:close');
+                self.find('option').remove();
+                self.prop('disabled', true);
+            }
     }
 
     function isEmpty(value) {
