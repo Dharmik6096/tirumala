@@ -6464,3 +6464,7 @@ select:focus > option:checked {
 .recovery_padding .action-cell{
     padding-top: 7px !important;
 }
+
+.left85 {
+    left: 85px;
+}

@@ -28,7 +28,7 @@ $shortage_amount = 0;
 if ($milk_short_recovery_member == '1') {
     $shortage_amount_other = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
     $shortage_amount_mpg = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryMpgMember, 'recovery_amount');
-    $shortage_amount = number_format(((float)$shortage_amount_other + (float)$shortage_amount_mpg), 2, '.','');
+    $shortage_amount = number_format(((float) $shortage_amount_other + (float) $shortage_amount_mpg), 2, '.', '');
     $shortage_info = 'Shortage Amount :: ' . $shortage_amount;
     $shortage_pending_info .= '<span id="total-shortage-amount" class="ml-50">Pending Shortage Amount :: ' . $shortage_amount . '</span>';
     echo Html::hiddenInput('pending_shortage_amount', $shortage_amount, ['class' => 'pending_shortage_amount', 'id' => 'pending_shortage_amount']);
@@ -79,13 +79,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'Code Ex.') ?></th>
                                 <th><?= Yii::t('app', 'DCS') ?></th>
                                 <th class="sticky-column btn-danger"><?= Yii::t('app', 'Member Code') ?></th>
-                                <th class="sticky-column btn-danger"><?= Yii::t('app', 'Member') ?></th>
-                                <?php
-                                if($is_bank_integrated){ ?>
+                                <th class="sticky-column btn-danger left85"><?= Yii::t('app', 'Member') ?></th>
+                                <?php if ($is_bank_integrated) { ?>
                                     <th><?= Yii::t('app', 'IFSC') ?></th>
                                     <th><?= Yii::t('app', 'Bank Account No') ?></th>
-                                <?php
-                                } ?>
+                                <?php }
+                                ?>
                                 <th><?= Yii::t('app', 'KgFAT') ?></th>
                                 <th><?= Yii::t('app', 'KgSNF') ?></th>
                                 <th><?= Yii::t('app', 'Total Qty') ?></th>
@@ -138,13 +137,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['dcs_code_ex'] ?></td>
                                     <td><?= $m['dcs_name'] ?></td>
                                     <td class="sticky-column"><?= substr($m['member_code'], -4) ?></td>
-                                    <td class="sticky-column"><?= $m['member_name'] ?></td>
-                                    <?php
-                                    if($is_bank_integrated){ ?>
+                                    <td class="sticky-column left85"><?= $m['member_name'] ?></td>
+                                    <?php if ($is_bank_integrated) { ?>
                                         <td><?= $m['ifsc'] ?></td>
                                         <td><?= $m['bank_account_no'] ?></td>
-                                    <?php
-                                    } ?>
+                                    <?php }
+                                    ?>
                                     <td><?= $m['kg_fat'] ?></td>
                                     <td><?= $m['kg_snf'] ?></td>
                                     <td><?= $m['qty'] ?></td>
@@ -154,14 +152,12 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['previous_hold'] ?></td>
                                     <td><?= $m['previous_due'] ?></td>
                                     <td class='final-amount'><?= $m['net_payable'] ?></td>
-                                    <?php
-                                    if($member_payment_hold_type){ ?>
+                                    <?php if ($member_payment_hold_type) { ?>
                                         <td class="no_padding_input hide_help_block">
                                             <?php
                                             $holdTypeData = Yii::$app->dropdown->getRecords('hold_type')['data'];
                                             echo $form->field($model, 'hold_type', ['options' => ['class' => 'hold-type']])->dropDownList(
-                                                    $holdTypeData,
-                                                    [
+                                                    $holdTypeData, [
                                                 'prompt' => Yii::t('app', 'Select'),
                                                 'class' => 'hold_type form-control',
                                                 'id' => 'tblmemberpaymentalias-hold_type-' . $index,
@@ -171,8 +167,8 @@ $tot_amt = array_sum(array_map(function ($array) {
                                             )->label(false);
                                             ?>
                                         </td>
-                                    <?php
-                                    } ?>
+                                    <?php }
+                                    ?>
                                     <td class="no_padding_input hide_help_block">
                                         <?php
                                         echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $m['member_payment_alias_code']]);
@@ -243,12 +239,11 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
-                                    <?php
-                                    if($is_bank_integrated){ ?>
+                                    <?php if ($is_bank_integrated) { ?>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
-                                    <?php
-                                    } ?>
+                                    <?php }
+                                    ?>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
