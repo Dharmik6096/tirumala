@@ -102,4 +102,8 @@ class TblBanner extends \app\models\ChildModel {
         return $this->hasOne(TblBannerApplicability::className(), ['banner_code' => 'banner_code']);
     }
 
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department' => 'department']);
+    }
+
 }

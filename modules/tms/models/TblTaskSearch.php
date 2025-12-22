@@ -12,7 +12,7 @@ use app\modules\tms\models\TblTask;
  */
 class TblTaskSearch extends TblTask {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $bmc_name, $user_name;
 
     /**
      * @inheritdoc
@@ -21,7 +21,7 @@ class TblTaskSearch extends TblTask {
         return [
                 [['task_code', 'task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type'], 'integer'],
                 [['task_performed_for', 'title', 'description', 'status', 'user_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['from_date', 'to_date'], 'safe']
+                [['from_date', 'to_date', 'bmc_name', 'task_datetime', 'user_name'], 'safe']
         ];
     }
 
@@ -49,7 +49,7 @@ class TblTaskSearch extends TblTask {
 
         $this->load($params);
 
-        $query->joinWith(['userCode', 'taskTypeCode', 'formTypeCode']);
+        $query->joinWith(['userCode', 'taskTypeCode', 'formTypeCode', 'bmcCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_task', 'tbl_task', 'tbl_task');
 
         $from_date = (!empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d')) . ' 00:00:00';
@@ -57,6 +57,10 @@ class TblTaskSearch extends TblTask {
 
         $query->andFilterWhere(['>=', 'tbl_task.task_datetime', $from_date]);
         $query->andFilterWhere(['<=', 'tbl_task.task_datetime', $to_date]);
+        
+        if (!empty($this->task_datetime)) {
+            $query->andFilterWhere(['like', 'CAST(tbl_task.task_datetime AS DATE)', date('Y-m-d', strtotime($this->task_datetime))]);
+        }
 
         $query->andFilterWhere([
             'is_cancel' => $this->is_cancel,
@@ -69,8 +73,10 @@ class TblTaskSearch extends TblTask {
                 ->andFilterWhere(['like', 'tbl_task.status', $this->status])
                 ->andFilterWhere(['like', 'tbl_task_type.task_type_code', $this->task_type_code])
                 ->andFilterWhere(['like', 'tbl_form_type.form_type_code', $this->form_type_code])
-                ->andFilterWhere(['like', '[user].user_code', $this->user_code])
-                ->andFilterWhere(['like', 'tbl_task.task_code', $this->task_code]);
+                ->andFilterWhere(['like', '[user].name', $this->user_name])
+                ->andFilterWhere(['like', 'tbl_task.task_code', $this->task_code])
+                ->andFilterWhere(['like', 'tbl_task.bmc_code', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
 
         $query->orderBy(['tbl_task.task_datetime' => SORT_DESC, '[user].name' => SORT_ASC]);
         return $dataProvider;

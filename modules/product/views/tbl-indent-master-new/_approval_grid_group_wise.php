@@ -63,6 +63,7 @@ $this->title = Yii::t('app', 'Indent Approval');
             ['attribute' => 'rate', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
             ['attribute' => 'user_name', 'label' => Yii::t('app', 'User Name'), 'filter' => FALSE],
             ['attribute' => 'login_type', 'label' => Yii::t('app', 'Login Type'), 'filter' => FALSE],
+            ['attribute' => 'department', 'label' => Yii::t('app', 'Department'), 'filter' => FALSE],
             [
                 'attribute' => 'credit_amount', 
                 'label' => Yii::t('app', 'Credit Amount'), 

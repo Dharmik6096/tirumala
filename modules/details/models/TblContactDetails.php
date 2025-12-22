@@ -224,12 +224,12 @@ class TblContactDetails extends \app\models\ChildModel {
     }
 
     public function contactDetailList($moduleCode) {
-        $detailCode = TblAssetDetail::find()->select('detail_code')->joinWith(['storeLocCode'])->where(['reference_code' => $moduleCode])->scalar();
+        $detailCode = TblAssetDetail::find()->select('detail_code')->joinWith(['storeLocCode'])->where(['reference_code' => $moduleCode])->column();
         $data = $this->find()
-                ->where(['module_code' => $moduleCode, 'module_name' => 'society'])
+                ->where(['module_code' => $moduleCode, 'module_name' => 'society', 'is_active' => 1])
                 ->andWhere(['not in', 'detail_code', $detailCode])
                 ->all();
-        return ArrayHelper::map($data, 'detail_code', 'contact_person');
+        return ArrayHelper::map($data, 'detail_code', 'firstname');
     }
 
     public function convertDate() {

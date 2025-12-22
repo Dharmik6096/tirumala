@@ -31,7 +31,7 @@ $attribute = [
         'visible' => true,
         'value' => function ($model) {
             $login_type = Yii::$app->general->getforeignkey($model->userCode, 'login_type');
-            return isset($login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$login_type] : '') : '';
+            return isset($login_type) ? (!empty(Yii::$app->dropdown->getRecords('login_type')['data'][$login_type]) ? Yii::$app->dropdown->getRecords('login_type')['data'][$login_type] : '') : '';
         }],
     ['attribute' => 'user_code',
     'label' => Yii::t('app', 'Department'),
