@@ -4795,6 +4795,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_payment_shortage_recovery_pending_import',
                 'scenario' => 'MemberPaymentShortageRecovery',
                 'title' => 'Member Payment Shortage Recovery',
+                'report_type' => [Yii::t('app', 'Pending')],
             ],
             'VehicleStatusReport' => [
                 'param' => 'vehicle_code',
