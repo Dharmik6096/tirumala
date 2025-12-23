@@ -6161,3 +6161,7 @@ div#dashboardFarmerPopup {
     width: 100% !important;
     max-height: 360px !important;
 }
+
+.left85 {
+    left: 85px;
+}
