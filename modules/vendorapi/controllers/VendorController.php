@@ -80,7 +80,7 @@ class VendorController extends RestController {
                 $response[] = $res;
                 $master_model[] = $model;
             }
-            $path = Yii::$app->params['vendorApiErrorLogPath'];
+            $path = Yii::getAlias('@webroot') . "/" . Yii::$app->params['vendorApiErrorLogPath'];
             if (in_array(FALSE, $valid)) {
                 $dir = $this->checkDirectory($path);
                 if ($dir) {
@@ -100,13 +100,9 @@ class VendorController extends RestController {
     }
 
     protected function createCpLogFile($path, $text, $cp_code) {
-        if (!empty($cp_code)) {
-            $path = $path . '\\' . $cp_code;
-        }
         $dir = $this->checkDirectory($path);
         if ($dir) {
-            $timestamp = date('d-m-Y-H-i-s');
-            $fileName = $path . "\\" . $timestamp . '.txt';
+            $fileName = $path . "/" . date('YmdHis') . '_' . $cp_code . '.txt';
             $logfile = fopen($fileName, "w") or die("Unable to open file!");
             fwrite($logfile, $text);
             fclose($logfile);
@@ -117,13 +113,13 @@ class VendorController extends RestController {
     protected function checkDirectory($path) {
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
-                if (mkdir($path, '0755', true) == false) {
+                if (mkdir($path, 0777, true) == false) {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
             }
         } else { //no file exists with this name
-            if (mkdir($path, '0755', true) == false) {
+            if (mkdir($path, 0777, true) == false) {
                 die('Failed to create folders...' . $path);
                 return false;
             }
