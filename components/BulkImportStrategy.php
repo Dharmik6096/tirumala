@@ -41,7 +41,8 @@ class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
                 }
                 $count++;
             }
-            if (count($data) == 1) {
+
+            if (!empty($this->details['bkg_scenario']) && count($data) == 1) {
                 return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'Import file with data.'];
             } else if ($count == count($data) - 1) {
                 $path = Yii::$app->basePath . '/web/bulkdata/' . $this->scenario . '/';
@@ -50,7 +51,7 @@ class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
                     $file_path = $path . $this->file_name;
                     if (copy($this->file_path, $file_path)) {
                         $process_status = 0;
-                        if (in_array($model->scenario, ['member_payment_shortage_recovery'])) {
+                        if (in_array($this->scenario, ['member_payment_shortage_recovery'])) {
                             $process_status = 2;
                         }
                         $model = new TblImportFileLog();

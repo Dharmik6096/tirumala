@@ -343,7 +343,7 @@ class SchedulerController extends ChildController {
                 $flag = 'sample-milk-collection';
                 $sp_name = 'DB_JOB_PORTAL_Sample_Milk_Collection';
             } else if ($row->file_type == 'member_payment_shortage_recovery') {
-                $flag = 'member-payment-recovery-bulk';
+                $flag = 'member-payment-shortage-recovery-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Member_Payment_Shortage_Recovery';
             }
 
