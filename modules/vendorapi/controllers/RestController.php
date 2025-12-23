@@ -112,6 +112,7 @@ class RestController extends ActiveController {
         $error[$this->response_main_array_key][$this->response_inner_array_key] = $error_response;
 
         echo json_encode($error);
+        die;
     }
 
 }
