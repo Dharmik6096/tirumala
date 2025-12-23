@@ -6165,3 +6165,17 @@ div#dashboardFarmerPopup {
 .left85 {
     left: 85px;
 }
+.recovery_padding .action-cell{
+    padding-top: 7px !important;
+}
+.backgrnd-danger {
+    --bs-table-bg: #f2dede !important;
+    --bs-table-hover-bg: #e8bbbb !important;
+}
+.z-index-1{
+    z-index: 1 !important;
+}
+.sticky-header {
+    z-index: 999 !important;
+}
+

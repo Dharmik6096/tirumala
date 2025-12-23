@@ -144,30 +144,31 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
                         $rowclass = '';
                         if ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && $total_shortage_amount != $member_recovered_amount) {
-                            $rowclass = 'danger';
+                            $rowclass = 'backgrnd-danger';
                         }
                     }
                     return ['class' => $rowclass];
                 };
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>
-                <div class="col-md-12" >
-                    <?php if (!empty($dataProvider->getModels())) { ?>
-                        <?php foreach ($dataProvider->getModels() as $data) { ?>
-                            <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
-                        <?php } ?>
-                        <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary btn-login', 'id' => 'adjust']); ?>
-                        <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
-                        <?php // Yii::$app->controls->save('Next', $model); ?>
-                    <?php } ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'create-payment', '', 'btn-login'); ?>        
-                </div>
-                <?php ActiveForm::end(); ?>
-
-
             </div>
+            <div class="panel-footer">
+                <?php if (!empty($dataProvider->getModels())) { ?>
+                    <?php foreach ($dataProvider->getModels() as $data) { ?>
+                        <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
+                    <?php } ?>
+                    <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary btn-login', 'id' => 'adjust']); ?>
+                    <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
+                    <?php // Yii::$app->controls->save('Next', $model); ?>
+                <?php } ?>
+                <?= Yii::$app->controls->custombutton('Cancel', 'create-payment', '', 'btn-login'); ?>        
+            </div>
+            <?php ActiveForm::end(); ?>
+
+
         </div>
     </div>
+</div>
 </div>
 <div id='bill_head_view'></div>
 <?php

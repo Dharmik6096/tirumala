@@ -78,8 +78,8 @@ $tot_amt = array_sum(array_map(function ($array) {
                                 <th><?= Yii::t('app', 'DCS Code') ?></th>
                                 <th><?= Yii::t('app', 'Code Ex.') ?></th>
                                 <th><?= Yii::t('app', 'DCS') ?></th>
-                                <th class="sticky-column btn-danger"><?= Yii::t('app', 'Member Code') ?></th>
-                                <th class="sticky-column btn-danger left85"><?= Yii::t('app', 'Member') ?></th>
+                                <th class="sticky-column sticky-header btn-danger"><?= Yii::t('app', 'Member Code') ?></th>
+                                <th class="sticky-column sticky-header btn-danger left85"><?= Yii::t('app', 'Member') ?></th>
                                 <?php if ($is_bank_integrated) { ?>
                                     <th><?= Yii::t('app', 'IFSC') ?></th>
                                     <th><?= Yii::t('app', 'Bank Account No') ?></th>
@@ -136,8 +136,8 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <td><?= $m['ref_code'] ?></td>
                                     <td><?= $m['dcs_code_ex'] ?></td>
                                     <td><?= $m['dcs_name'] ?></td>
-                                    <td class="sticky-column"><?= substr($m['member_code'], -4) ?></td>
-                                    <td class="sticky-column left85"><?= $m['member_name'] ?></td>
+                                    <td class="sticky-column z-index-1"><?= substr($m['member_code'], -4) ?></td>
+                                    <td class="sticky-column left85 z-index-1"><?= $m['member_name'] ?></td>
                                     <?php if ($is_bank_integrated) { ?>
                                         <td><?= $m['ifsc'] ?></td>
                                         <td><?= $m['bank_account_no'] ?></td>

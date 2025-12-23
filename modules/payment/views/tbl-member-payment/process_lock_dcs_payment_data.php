@@ -163,14 +163,14 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                     }
                     $rowclass = '';
                     if (in_array($model->dcs_code, $negativeDcsCode) || ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && $total_shortage_amount != $member_recovered_amount)) {
-                        $rowclass = 'danger';
+                        $rowclass = 'backgrnd-danger';
                     }
 
                     return ['class' => $rowclass];
                 };
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>
-                <div class="col-md-12" >
+                <div class="col-md-12 mt-2" >
                     <?php if (!empty($dataProvider->getModels())) { ?>
                         <?php foreach ($dataProvider->getModels() as $data) { ?>
                             <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
