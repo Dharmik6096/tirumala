@@ -161,11 +161,12 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                         $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
                         $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
                     }
+                    $rowclass = '';
                     if (in_array($model->dcs_code, $negativeDcsCode) || ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && $total_shortage_amount != $member_recovered_amount)) {
-                        return ['class' => 'danger'];
+                        $rowclass = 'danger';
                     }
 
-                    return '';
+                    return ['class' => $rowclass];
                 };
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>
