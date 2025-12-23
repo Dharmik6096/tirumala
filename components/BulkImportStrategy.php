@@ -9,6 +9,7 @@ use yii\base\UserException;
 use yii\widgets\ActiveForm;
 use yii\base\Model;
 use app\modules\import\models\TblImportFileLog;
+use app\modules\bkgprocess\controllers\SchedulerController;
 
 class BulkImportStrategy extends ARImportStrategy {
 
@@ -35,28 +36,41 @@ class BulkImportStrategy extends ARImportStrategy {
                 if (!$model->validate()) {
                     $message = '';
                     foreach ($model->getErrors() as $errorkey => $value) {
-                        $message.=$value[0] . '<br/>';
+                        $message .= $value[0] . '<br/>';
                     }
                     return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                 }
                 $count++;
             }
-            if ($count == count($data) || $count == count($data) - 1) {
+            if (!empty($this->details['bkg_scenario']) && count($data) == 1) {
+                return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'Import file with data.'];
+            } else if ($count == count($data) || $count == count($data) - 1) {
                 $path = Yii::$app->basePath . '/web/bulkdata/' . $this->scenario . '/';
                 $path = str_replace('\\', '/', $path);
                 if (Yii::$app->general->checkDirectory($path . 'archive/')) {
                     $file_path = $path . $this->file_name;
                     if (copy($this->file_path, $file_path)) {
+                        $process_status = 0;
+                        if (in_array($this->scenario, ['member_payment_shortage_recovery'])) {
+                            $process_status = 2;
+                        }
                         $model = new TblImportFileLog();
                         $model->scenario = $this->scenario;
                         $model->file_type = $this->scenario;
                         $model->file_name = $this->file_name;
                         $model->file_path = $file_path;
                         $model->union_code = $union_code[0];
-                        $model->status = 0;
+                        $model->status = $process_status;
                         if ($model->save()) {
                             unlink($this->file_path);
-                            return ['total' => $count, 'status' => 'success', 'msg' => 'File Imported Successfully.', 'pk' => $count];
+                            $msg = 'File Imported Successfully.';
+                            if ($process_status == 2) {
+                                $model->pick_datetime = $model->cron_pick_datetime = date('Y-m-d H:i:s');
+                                $import = new SchedulerController('', '');
+                                $import->process_files_data($model);
+                                $msg = $model->response_msg;
+                            }
+                            return ['total' => $count, 'status' => 'success', 'msg' => $msg, 'pk' => $count];
                         }
                     }
 

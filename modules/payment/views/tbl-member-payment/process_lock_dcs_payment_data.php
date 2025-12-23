@@ -40,7 +40,7 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
 
 
         <div class="panel-body">    
-            <div class="grid-searchasd large-search hidden-print">
+            <div class="grid-searchasd large-search hidden-print recovery_padding">
                 <?php
                 $form = ActiveForm::begin([
                             'id' => 'member-wise-payment-summary-form',
@@ -78,7 +78,7 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                 <?php
                 $attribute = [
                         ['class' => 'kartik\grid\CheckboxColumn',
-                        'rowSelectedClass' => GridView::TYPE_DANGER,
+                        'rowSelectedClass' => GridView::TYPE_SUCCESS,
                         'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                         'checkboxOptions' => function ($model) {
                             return ['value' => $model['dcs_code']];
@@ -115,6 +115,13 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                             echo Html::hiddenInput('shortage-recovery-amount', $amount, $options);
                             return $total_shortage_amount;
                         }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
+                        ['attribute' => 'recovered_amount',
+                        'label' => Yii::t('app', 'Recovered Amount'),
+                        'value' => function ($model, $key, $index) {
+                            $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
+                            $amount = round((!empty($member_recovered_amount) ? $member_recovered_amount : 0), 2);
+                            return $amount;
+                        }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
                         ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
                         ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
                         ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
@@ -147,12 +154,18 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                     ]
                 ];
 
-                $rowOptions = function ($model) use ($negativeDcsCode) {
-                    $rowcolor = '';
-                    if (in_array($model->dcs_code, $negativeDcsCode)) {
-                        $rowcolor = 'danger';
+                $rowOptions = function ($model) use ($negativeDcsCode, $milk_short_recovery_member) {
+                    if ($milk_short_recovery_member == 1) {
+                        $other_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount'));
+                        $mpg_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount'));
+                        $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
+                        $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
                     }
-                    return ['class' => $rowcolor];
+                    if (in_array($model->dcs_code, $negativeDcsCode) || ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && $total_shortage_amount != $member_recovered_amount)) {
+                        return ['class' => 'danger'];
+                    }
+
+                    return '';
                 };
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>

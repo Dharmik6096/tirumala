@@ -74,39 +74,49 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
                 <?php
                 $attribute = [
-                    ['class' => 'kartik\grid\CheckboxColumn',
+                        ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
                         'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                         'checkboxOptions' => function ($model) {
                             return ['value' => $model['dcs_code']];
                         }],
-                    ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function ($model) {
+                        ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function ($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
                         }],
-                    ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
+                        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
-                    ['attribute' => 'dcs_code', 'value' => function ($model) {
+                        ['attribute' => 'dcs_code', 'value' => function ($model) {
                             return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                         }],
-                    ['attribute' => 'member_count'],
-                    ['attribute' => 'kg_fat'],
-                    ['attribute' => 'kg_snf'],
-                    ['attribute' => 'qty', 'pageSummary' => true],
-                    ['attribute' => 'shortage_amount',
+                        ['attribute' => 'member_count'],
+                        ['attribute' => 'kg_fat'],
+                        ['attribute' => 'kg_snf'],
+                        ['attribute' => 'qty', 'pageSummary' => true],
+                        ['attribute' => 'shortage_amount',
                         'label' => Yii::t('app', 'Shortage Amount'),
                         'value' => function ($model) {
-                            return Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
+                            $other_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount'));
+                            $mpg_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount'));
+                            $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
+                            return $total_shortage_amount;
                         }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
-                    ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
-                    ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
-                    ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
-                    ['attribute' => 'previous_hold', 'pageSummary' => true],
-                    ['attribute' => 'previous_due', 'pageSummary' => true],
-                    ['attribute' => 'net_payable', 'pageSummary' => true,],
-                    ['attribute' => 'hold_amount', 'pageSummary' => true,],
-                    ['attribute' => 'additional_pay', 'pageSummary' => true,],
-                    ['attribute' => 'final_amount', 'pageSummary' => true,],
+                        ['attribute' => 'recovered_amount',
+                        'label' => Yii::t('app', 'Recovered Amount'),
+                        'value' => function ($model) {
+                            $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
+                            $amount = round((!empty($member_recovered_amount) ? $member_recovered_amount : 0), 2);
+                            return $amount;
+                        }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
+                        ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
+                        ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
+                        ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
+                        ['attribute' => 'previous_hold', 'pageSummary' => true],
+                        ['attribute' => 'previous_due', 'pageSummary' => true],
+                        ['attribute' => 'net_payable', 'pageSummary' => true,],
+                        ['attribute' => 'hold_amount', 'pageSummary' => true,],
+                        ['attribute' => 'additional_pay', 'pageSummary' => true,],
+                        ['attribute' => 'final_amount', 'pageSummary' => true,],
                 ];
 
                 $grid_option = [
@@ -126,8 +136,20 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                     ]
                         //'actions' => []
                 ];
+                $rowOptions = function ($model)use ($milk_short_recovery_member) {
+                    if ($milk_short_recovery_member == 1) {
+                        $other_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount'));
+                        $mpg_member_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount'));
+                        $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
+                        $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
 
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
+                        if ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && $total_shortage_amount != $member_recovered_amount) {
+                            return ['class' => 'danger'];
+                        }
+                    }
+                    return '';
+                };
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>
                 <div class="col-md-12" >
                     <?php if (!empty($dataProvider->getModels())) { ?>
