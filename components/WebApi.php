@@ -19,6 +19,7 @@ class WebApi {
     public $header_info = [];
     public $return_actual = FALSE;
     public $is_header_merge = TRUE;
+    public $certificate_url = '';
 
     public function POSTDATA() {
         if ($this->authentication) {
@@ -104,7 +105,9 @@ class WebApi {
         if ($this->return_actual) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         }  // Skip SSL Verification
-        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Everest\Apache2454\conf\sapcerts\cacert.pem');
+        if(!empty($this->certificate_url)){
+            curl_setopt($ch, CURLOPT_CAINFO, $this->certificate_url);
+        }
         $result = curl_exec($ch);
         curl_close($ch);
         $res = json_decode($result);

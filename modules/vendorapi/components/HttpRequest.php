@@ -78,9 +78,9 @@ class HttpRequest extends \yii\base\Component {
         $this->log_id = $log_model->log_id;
         $request = Json::decode(Yii::$app->request->getRawBody());
         $this->request = $request;
-        $this->request['username'] = !empty($header['username']) ? $header['username'] : NULL;
-        $this->request['password'] = !empty($header['password']) ? $header['password'] : NULL;
-        $this->request['svc'] = !empty($header['svc']) ? $header['svc'] : NULL;
+        $this->request['username'] = !empty($header['Username']) ? $header['Username'] : (!empty($header['username']) ? $header['username'] : NULL);
+        $this->request['password'] = !empty($header['Password']) ? $header['Password'] : (!empty($header['password']) ? $header['password'] : NULL);
+        $this->request['svc'] = !empty($header['Svc']) ? $header['Svc'] : (!empty($header['svc']) ? $header['svc'] : NULL);
         $master_array = Vendorapi::setParam($this->request['svc']);
         $this->response_master_key = !empty($master_array) ? $master_array['response_master_key'] : $this->response_master_key;
         $this->response_main_array_key = !empty($master_array) ? $master_array['response_main_array_key'] : $this->response_main_array_key;
