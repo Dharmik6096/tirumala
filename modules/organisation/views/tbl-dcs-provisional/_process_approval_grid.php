@@ -8,6 +8,10 @@ $attribute = [
         }, 'filter' => false
     ],
     ['attribute' => 'login_type', 'filter' => false],
+    ['attribute' => 'department', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+        }, 'filter' => false
+    ],
     ['attribute' => 'updated_by', 'label' => 'Status By', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->updatedBy, 'name');
         }, 'filter' => false

@@ -17,7 +17,7 @@ class TblComplainEscalationTxnSearch extends TblComplainEscalationTxn {
      */
     public function rules() {
         return [
-                [['user_type', 'complain_escalation_txn_code', 'complain_escalation_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['user_type', 'complain_escalation_txn_code', 'complain_escalation_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'department'], 'safe'],
         ];
     }
 

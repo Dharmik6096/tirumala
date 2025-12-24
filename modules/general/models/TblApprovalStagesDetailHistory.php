@@ -44,7 +44,7 @@ class TblApprovalStagesDetailHistory extends \yii\db\ActiveRecord
     {
         return [
             [['approval_stages_detail_code', 'approval_stages_code', 'level', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'department'], 'safe'],
             [['level_priority', 'approval_mode', 'operation_type'], 'string', 'max' => 10],
             [['approval_type', 'login_type', 'user_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
@@ -77,6 +77,7 @@ class TblApprovalStagesDetailHistory extends \yii\db\ActiveRecord
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 }

@@ -42,7 +42,7 @@ class TblProcessApprovalHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['process_approval_code', 'level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
+                [['process_approval_code', 'level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks', 'department'], 'safe'],
                 [['created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'history_created_by', 'operation_type', 'originating_type', 'originating_org_code', 'originating_org_type', 'status_date', 'status_by'], 'safe'],
         ];
     }
@@ -72,6 +72,7 @@ class TblProcessApprovalHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 
