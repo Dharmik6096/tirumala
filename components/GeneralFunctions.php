@@ -2560,22 +2560,24 @@ class GeneralFunctions extends Component {
             $unionData = TblUnions::find()->where(['is_active' => 1])->one();
             $eiplCode = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
         }
-        $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
-        $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
-        $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
-        $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
-        $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
-        $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
-        if (file_exists($check_client_css_file_path)) {
-            if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
-                unset($layout->css[$key]);
-                $layout->css[] = $client_css_file_path;
+        if (!empty($eiplCode)) {
+            $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
+            $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
+            $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
+            $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
+            $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
+            $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
+            if (file_exists($check_client_css_file_path)) {
+                if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
+                    unset($layout->css[$key]);
+                    $layout->css[] = $client_css_file_path;
+                }
             }
-        }
-        if (file_exists($check_client_js_file_path)) {
-            if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
-                unset($layout->js[$key]);
-                $layout->js[] = $client_js_file_path;
+            if (file_exists($check_client_js_file_path)) {
+                if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
+                    unset($layout->js[$key]);
+                    $layout->js[] = $client_js_file_path;
+                }
             }
         }
     }
