@@ -11,6 +11,7 @@ use app\components\ActiveForm;
 $title = Yii::$app->label->title($type, 'permission group');
 $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', $title);
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -25,7 +26,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'autofocus' => $model->isNewRecord ? true : false]) ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'code')->textInput(['maxlength' => 64]) ?>
+        <?= $form->field($model, 'code')->textInput(['maxlength' => 64, 'readonly' => $readonly]) ?>
     </div>
     
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

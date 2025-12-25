@@ -32,6 +32,7 @@ trait AbstractItemTrait {
             [['description', 'name'], 'string', 'max' => 255],
             ['name', 'required'],
             ['name', 'validateUniqueName'],
+            ['name', 'match', 'pattern' => '/^(?![0-9]+$)/', 'message' => 'The Code cannot consist only of numbers. Please include letters.'],
             [['rule_name', 'group_code'], 'string', 'max' => 64],
             [['rule_name', 'description', 'group_code', 'data'], 'default', 'value' => null],
             [['type', 'entry_type'], 'integer'],
