@@ -252,6 +252,11 @@ class TblMemberProvisional extends ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
                 }", 'on' => ['createProvisionalMember']],
+                [['ifsc'], 'required', 'when' => function ($model) {
+                    return !empty($model->bank_account_no);
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#tblmemberprovisional-bank_account_no').val() != '';
+                }", 'except' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
