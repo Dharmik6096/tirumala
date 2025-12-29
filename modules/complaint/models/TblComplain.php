@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\assetmanagement\models\TblAssetMaster;
+use app\modules\collection\models\TblAllowManualCollectionRange;
 use app\modules\details\models\TblContactDetails;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
@@ -72,7 +73,7 @@ class TblComplain extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['user_code', 'mobile_no', 'location_details', 'complain_type_code', 'remarks', 'resolved_remarks', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'bmc_code', 'dcs_code', 'complain_for', 'serial_number', 'new_serial_no', 'asset_code', 'contact_person', 'lat_long', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'activityStatus'], 'safe'],
+                [['user_code', 'mobile_no', 'location_details', 'complain_type_code', 'remarks', 'resolved_remarks', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'bmc_code', 'dcs_code', 'complain_for', 'serial_number', 'new_serial_no', 'asset_code', 'contact_person', 'lat_long', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'activityStatus', 'collection_request_type', 'from_date', 'from_shift'], 'safe'],
                 [['complain_type_code', 'location_type', 'contact_person', 'mobile_no', 'complain_problem_code'], 'required', 'on' => ['portal_create_complaint', 'portal_update_complaint']],
                 [['physical_damage'], 'default', 'value' => 0],
                 [['mobile_no'], function ($attribute, $params) {
@@ -115,6 +116,21 @@ class TblComplain extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
                       return ($('#tblcomplain-complain_for').val() == 'asset_complain');
                 }", 'on' => ['portal_create_complaint', 'portal_resolve_complaint']],
+                [['collection_request_type'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->complain_for == 'asset_complain' && $model->location_type == '3' && (!empty($model->from_date) || !empty($model->from_shift)));
+                }, 'whenClient' => "function (attribute, value) {
+                      return ($('#tblcomplain-complain_for').val() == 'asset_complain' && $('#tblcomplain-location_type').val() == '3' && ($('#tblcomplain-from_date').val() != '' || $('#tblcomplain-from_shift').val() != ''));
+                }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['from_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->complain_for == 'asset_complain' && $model->location_type == '3' && (!empty($model->collection_request_type) || !empty($model->from_shift)));
+                }, 'whenClient' => "function (attribute, value) {
+                      return ($('#tblcomplain-complain_for').val() == 'asset_complain' && $('#tblcomplain-location_type').val() == '3' && ($('#tblcomplain-collection_request_type').val() != '' || $('#tblcomplain-from_shift').val() != ''));
+                }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['from_shift'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->complain_for == 'asset_complain' && $model->location_type == '3' && (!empty($model->collection_request_type) || !empty($model->from_date)));
+                }, 'whenClient' => "function (attribute, value) {
+                      return ($('#tblcomplain-complain_for').val() == 'asset_complain' && $('#tblcomplain-location_type').val() == '3' && ($('#tblcomplain-collection_request_type').val() != '' || $('#tblcomplain-from_date').val() != ''));
+                }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
         ];
     }
 
@@ -204,6 +220,10 @@ class TblComplain extends \app\models\ChildModel {
     }
 
     public function checkEditable() {
+        return $this->complain_status == 'CREATED' && !TblAllowManualCollectionRange::find()->where(['complain_code' => $this->complain_code])->exists();
+    }
+
+    public function canDelete() {
         return $this->complain_status == 'CREATED' ? TRUE : FALSE;
     }
 
