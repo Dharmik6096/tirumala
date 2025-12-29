@@ -48,6 +48,8 @@ class TblDeviceAnalysisLog extends ChildModel
     {
         return [
             [['device','location_name','latlong','slot_no','user_id','input','sample_no','early_prediction_time','total_time','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','x_col1','x_col2','x_col3','x_col4','x_col5'], 'safe'],
+            [['sample_no', 'slot_no', 'early_prediction_time', 'total_time'], 'number'],
+            [['sample_no', 'slot_no', 'early_prediction_time'], 'integer'],
         ];
     }
 
