@@ -83,7 +83,7 @@ class DataExchangeController extends ChildController {
                     ]);
                     $client = new SoapClient(null, [
                         'location' => $value['request_url'],
-                        'uri' => 'urn:sap-com:document:sap:soap:functions:mc-style',
+                        'uri' => 'urn:sap-com:document:sap:rfc:functions',
                         'trace' => 1,
                         'exceptions' => true,
                         'soap_version' => SOAP_1_2,
@@ -212,7 +212,7 @@ class DataExchangeController extends ChildController {
         $doc->formatOutput = true;
         $envelope = $doc->createElementNS(Yii::$app->params['data_exchange_url'], 'soap:Envelope');
         $envelope->setAttribute('xmlns:soap', Yii::$app->params['data_exchange_url']);
-        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:soap:functions:mc-style');
+        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:rfc:functions');
         $doc->appendChild($envelope);
 
         $envelope->appendChild($doc->createElement('soap:Header'));
