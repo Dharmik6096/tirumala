@@ -19,6 +19,7 @@ class Dashboard extends Model {
     public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift, $from_date3, $to_date3, $from_shift, $to_shift, $plant_code, $bmc_code, $mcc_code, $dcs_code, $hidden_from_date, $hidden_to_date, $dpu_status, $dup_search_date, $dpu_shift, $from_date_milk_analysis, $to_date_milk_analysis;
     public $customer_type, $member_code;
     public $mav_from_shift, $mav_to_shift, $mag_from_shift, $mag_to_shift, $ccs_from_shift, $ccs_to_shift, $performance_type;
+    public $state_code, $region_code, $area_code, $month_year, $area_bmc_code, $union;
 
     //public $rememberMe = true;
     //private $_user = false;
