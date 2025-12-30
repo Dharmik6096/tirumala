@@ -18,7 +18,7 @@ class DataExchangeController extends ChildController {
 
     public $freeAccessActions = ['data-exchange'];
     public $errorPath = '';
-    private $toEncrypt = ['Mdob', 'Ndob', 'Adharno', 'Fdob'];
+    private $toEncrypt = ['MDOB', 'NDOB', 'ADHARNO', 'FDOB'];
 
     public function init() {
         parent::init();
