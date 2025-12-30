@@ -64,7 +64,7 @@ use app\modules\syncutility\models\TblInboxParsingCount;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data', 'feed-summary-dashboard', 'feed-summary-dashboard-details'];
 
     public function init() {
         parent::init();
@@ -258,7 +258,7 @@ class SiteController extends Controller {
 // $dpu_data = $this->DPUDataCollection($model);
 
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
-        'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup, 'plantWidgets' => $plantWidgets, 'userPlantWidgets' => $userPlantWidgets, 'userPlantPopup' => $userPlantPopup]);
+                    'userFarmerPopup' => $userFarmerPopup, 'userRmrdPopup' => $userRmrdPopup, 'plantWidgets' => $plantWidgets, 'userPlantWidgets' => $userPlantWidgets, 'userPlantPopup' => $userPlantPopup]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -452,7 +452,12 @@ class SiteController extends Controller {
             if (!empty($refVal[1])) {
                 array_push($select_fields, $refVal[1]);
             }
-
+            $selectedValues = [];
+            if (!empty($data[2])) {
+                foreach (explode('*', $data[2]) as $values) {
+                    $selectedValues[] = $values;
+                }
+            }
             $check_list = [];
             if (!empty($data[7]) && $data[6] == 1) {
                 $check_list = explode('-', $data[7]);
@@ -467,7 +472,7 @@ class SiteController extends Controller {
             }
             if ($data[2] != '') {
                 $unionQuery = $model->find()->select($select_fields)
-                                ->where([$data[3] => $data[2], $data[1] => $_POST['depdrop_parents'][0]])
+                                ->where([$data[3] => $selectedValues, $data[1] => $_POST['depdrop_parents'][0]])
 // ->andWhere($where)
                                 ->createCommand()->rawSql;
                 $tmp_query = $model->find()->select($select_fields)
@@ -812,7 +817,7 @@ class SiteController extends Controller {
                 $post['from_shift'] = 1;
                 $post['to_shift'] = 2;
             }
-            $post['mav_from_shift'] =  $post['from_shift'];
+            $post['mav_from_shift'] = $post['from_shift'];
             $post['mav_to_shift'] = $post['to_shift'];
         }
         if (!empty($post['date']) && (empty($post['from_date']) || empty($post['to_date']))) {
@@ -3018,7 +3023,7 @@ class SiteController extends Controller {
         if (!empty($postData['Dashboard']['shift'])) {
             $fromShift = $postData['Dashboard']['shift'];
             $toShift = $postData['Dashboard']['shift'];
-            if($fromShift == 3){
+            if ($fromShift == 3) {
                 $fromShift = 1;
                 $toShift = 2;
             }
@@ -3407,7 +3412,7 @@ class SiteController extends Controller {
         $sp_name = 'process_weight_quality_merge_data';
         \Yii::$app->general->getSpData($sp_name, [], TRUE);
     }
-    
+
     public function actionPlantIntransitTankerMilkDetail() {
         $output = [];
         $union = 0;
@@ -3430,7 +3435,7 @@ class SiteController extends Controller {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_milk_detail' => $table];
     }
-    
+
     public function actionIntransitTankerStatusDetail() {
         $output = [];
         $union = 0;
@@ -3453,7 +3458,7 @@ class SiteController extends Controller {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $results[0] ?? [], 'intransit_tanker_status_detail' => $table];
     }
-    
+
     public function actionPlantWiseTankerStatus() {
         $output = [];
         $union = 0;
@@ -3472,12 +3477,12 @@ class SiteController extends Controller {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        
+
         $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_status' => $table];
     }
-    
+
     public function actionPlantWiseTankerMilkDetail() {
         $output = [];
         $union = 0;
@@ -3496,12 +3501,12 @@ class SiteController extends Controller {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        
+
         $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_wise_tanker_milk_detail' => $table];
     }
-    
+
     public function actionPlantTankerCapacityWiseTankerStatus() {
         $output = [];
         $union = 0;
@@ -3520,10 +3525,66 @@ class SiteController extends Controller {
         $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
         $sp_param[] = $data_type;
         $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        
+
         $table = $this->renderAjax('_plant_wise_tanker_status', ['results' => $results]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
+    }
+    
+    public function getFeedBlockStatus($sp_param) {
+        $sp_name = 'sp_product_dashboard_block';
+        $feed_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        return [$feed_status];
+    }
+    
+    public function actionFeedSummaryDashboard() {
+        $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
+        $monthYear = !empty($_POST['Dashboard']['date']) ? $_POST['Dashboard']['date'] : date('m-Y');
+        $dateTime = \DateTime::createFromFormat('d-m-Y', $monthYear);
+        $fromDate = $dateTime->format('Y-m-01');
+        $toDate = $dateTime->format('Y-m-t');
+        $bmcCodes = !empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0;
+        $blocks_data = $this->getFeedBlockStatus([$union, 0, 0, 0, $bmcCodes, $fromDate, $toDate]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $blocks_data[0][0], 'fromDate' => $fromDate, 'toDate' => $toDate];
+    }
+    
+    public function actionFeedSummaryDashboardDetails() {
+        $model = new Dashboard();
+        $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
+        $stateCodes = !empty($_POST['Dashboard']['state_code']) ? $_POST['Dashboard']['state_code'] : 0;
+        $regionCodes = !empty($_POST['Dashboard']['region_code']) ? $_POST['Dashboard']['region_code'] : 0;
+        $areaCode = !empty($_POST['Dashboard']['area_code']) ? $_POST['Dashboard']['area_code'] : 0;
+        $bmcCodes = (!empty($_POST['Dashboard']['area_bmc_code']) && $_POST['Dashboard']['area_bmc_code'] != 0) ? $_POST['Dashboard']['area_bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0);
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $monthYear = !empty($_POST['Dashboard']['month_year']) ? $_POST['Dashboard']['month_year'] : date('m-Y');
+            $dateTime = \DateTime::createFromFormat('m-Y', $monthYear);
+            $fromDate = $dateTime->format('Y-m-01');
+            $toDate = $dateTime->format('Y-m-t');
+            $sp_param = [];
+            $sp = 'sp_product_dashboard_block_list';
+            $sp_name = 'sp_product_dashboard_block';
+            $sp_param[] = $union;
+            $sp_param[] = !empty($stateCodes) ? implode(',', $stateCodes) : 0;
+            $sp_param[] = !empty($regionCodes) ? implode(',', $regionCodes) : 0;
+            $sp_param[] = !empty($areaCode) ? implode(',', $areaCode) : 0;
+            $sp_param[] = !empty($bmcCodes) ? implode(',', $bmcCodes) : 0;
+            $sp_param[] = $fromDate;
+            $sp_param[] = $toDate;
+            $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $output = \Yii::$app->general->getSpData($sp, $sp_param);
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['status' => 'success', 'res' => $results[0], 'output' => $output];
+        } else {
+            $sp = 'sp_product_dashboard_block_list';
+            $date = date('d-m-Y', strtotime($_GET['date']));
+            $dateTime = \DateTime::createFromFormat('d-m-Y', $date);
+            $fromDate = $dateTime->format('Y-m-01');
+            $toDate = $dateTime->format('Y-m-t');
+            $output = \Yii::$app->general->getSpData($sp, [$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
+            $blocks_data = $this->getFeedBlockStatus([$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
+            return $this->render('_dashboard_grid_feed_summary_detail', ['blocks_data' => $blocks_data, 'model' => $model, 'output' => $output]);
+        }
     }
 
 }

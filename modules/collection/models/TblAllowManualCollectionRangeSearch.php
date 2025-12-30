@@ -37,7 +37,7 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $pending_approval = false, $date_search = false) {
+    public function search($params, $pending_approval = false, $date_search = false, $complainInfo = false) {
 
         $query = TblAllowManualCollectionRange::find();
 
@@ -49,6 +49,9 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
         ]);
 
         $this->load($params);
+        if($complainInfo){
+            $query->joinWith(['complainCode']);
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -87,8 +90,8 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
         }
         if (isset($from_date) && isset($to_date)) {
-            $query->andFilterWhere(['>=', 'cast(from_date as date)', $from_date]);
-            $query->andFilterWhere(['<=', 'cast(to_date as date)', $to_date]);
+            $query->andFilterWhere(['>=', 'cast(tbl_allow_manual_collection_range.from_date as date)', $from_date]);
+            $query->andFilterWhere(['<=', 'cast(tbl_allow_manual_collection_range.to_date as date)', $to_date]);
         }
         $query->andFilterWhere([
             'tbl_allow_manual_collection_range.is_quality_manual' => $this->is_quality_manual,
@@ -97,7 +100,7 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
             'tbl_allow_manual_collection_range.table_name' => $this->table_name,
         ]);
 
-        $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
+        $query->andFilterWhere(['like', 'tbl_allow_manual_collection_range.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'remark', $this->remark])
                 ->andFilterWhere(['like', 'entry_type', $this->entry_type])
                 ->andFilterWhere(['like', 'application_type', $this->application_type])
