@@ -69,7 +69,7 @@ class DataExchangeController extends ChildController {
                 if (!empty($apiType) && $apiType == 'XML') {
                     $headers = [
                         'Content-Type: application/soap+xml;charset=UTF-8',
-                        'Cookie: sap-usercontext=sap-client=100',
+                        'Cookie: sap-usercontext=' . $updateKey,
                     ];
                     if (!empty($authData['header']) && is_array($authData['header'])) {
                         foreach ($authData['header'] as $key => $val) {
@@ -83,7 +83,7 @@ class DataExchangeController extends ChildController {
                     ]);
                     $client = new SoapClient(null, [
                         'location' => $value['request_url'],
-                        'uri' => 'urn:sap-com:document:sap:soap:functions:mc-style',
+                        'uri' => 'urn:sap-com:document:sap:rfc:functions',
                         'trace' => 1,
                         'exceptions' => true,
                         'soap_version' => SOAP_1_2,
@@ -192,7 +192,7 @@ class DataExchangeController extends ChildController {
             $status = 0;
             foreach ($resParamKeys as $key) {
                 $resParams[] = $itemData[$key] ?? '';
-                if ($key == 'Type' && isset($itemData[$key])) {
+                if ($key == 'TYPE' && isset($itemData[$key])) {
                     $status = ($itemData[$key] == 'S') ? 2 : 3;
                 }
             }
@@ -212,7 +212,7 @@ class DataExchangeController extends ChildController {
         $doc->formatOutput = true;
         $envelope = $doc->createElementNS(Yii::$app->params['data_exchange_url'], 'soap:Envelope');
         $envelope->setAttribute('xmlns:soap', Yii::$app->params['data_exchange_url']);
-        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:soap:functions:mc-style');
+        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:rfc:functions');
         $doc->appendChild($envelope);
 
         $envelope->appendChild($doc->createElement('soap:Header'));
