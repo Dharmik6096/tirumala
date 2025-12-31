@@ -69,7 +69,7 @@ class DataExchangeController extends ChildController {
                 if (!empty($apiType) && $apiType == 'XML') {
                     $headers = [
                         'Content-Type: application/soap+xml;charset=UTF-8',
-                        'Cookie: sap-usercontext=sap-client=100',
+                        'Cookie: sap-usercontext=' . $updateKey,
                     ];
                     if (!empty($authData['header']) && is_array($authData['header'])) {
                         foreach ($authData['header'] as $key => $val) {
@@ -192,7 +192,7 @@ class DataExchangeController extends ChildController {
             $status = 0;
             foreach ($resParamKeys as $key) {
                 $resParams[] = $itemData[$key] ?? '';
-                if ($key == 'Type' && isset($itemData[$key])) {
+                if ($key == 'TYPE' && isset($itemData[$key])) {
                     $status = ($itemData[$key] == 'S') ? 2 : 3;
                 }
             }
