@@ -75,7 +75,7 @@ $grid_option = [
         'deactivate' => function ($url, $model) {
             $urls = 'deactivate';
             $name = $model->scheme_rate_code;
-            $icon_class = 'fa-close';
+            $icon_class = 'fa-times';
             $title = 'Deactivate';
             $name = 'Deactivate';
             $disable = ($model->is_active == 0) ? 'disabled' : '';
