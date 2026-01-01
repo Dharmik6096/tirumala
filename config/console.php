@@ -18,6 +18,7 @@ $config = [
     'components' => [
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'default' => ['class' => 'app\components\DefaultValue'],
+        'customvalidation' => ['class' => 'app\components\CustomValidation'],
         'encrypter' => [
             'class' => '\nickcv\encrypter\components\Encrypter',
             'globalPassword' => '1234567890123456',
@@ -42,6 +43,21 @@ $config = [
         'path' => ['class' => 'app\components\Path'],
         'operation' => ['class' => 'app\components\Operation'],
         'label' => ['class' => 'app\components\GeneralLabels'],
+        'display' => ['class' => 'app\components\Display'],
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    'sourceLanguage' => 'en_US',
+                    'fileMap' => [
+                        'yii' => 'yii.php',
+                        'app' => 'app.php',
+                        'app/validation' => 'validation.php',
+                    ]
+                ],
+            ],
+        ],
     ],
     'modules' => [
         'user-management' => [
