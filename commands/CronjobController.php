@@ -67,7 +67,6 @@ class CronjobController extends \yii\console\Controller {
                 $model->response_msg = $msg;
                 $model->updated_at = $model->response_datetime = date('Y-m-d H:i:s');
                 $model->save();
-//                }
             } catch (\Throwable $ex) {
                 //     var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . ' Error occurred: ' . $ex->getMessage());
                 $msg = substr($ex->getMessage(), 0, 254);
