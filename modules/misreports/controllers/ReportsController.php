@@ -4153,7 +4153,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'MobileAppReport' => [
-                'param' => 'user_login_type,login_user_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'user_login_type,login_user_code,from_date:string:from_shift,to_date:string:to_shift,department',
                 'sp_name' => 'proc_flutter_app_tracking',
                 'scenario' => 'MobileAppReport',
                 'title' => 'Log report of  the Mobile App',
@@ -4286,7 +4286,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Asset Details Report',
             ],
             'UserOrganizationMappingReport' => [
-                'param' => 'login_type:static:login_type',
+                'param' => 'login_type:static:login_type,department',
                 'sp_name' => 'mis_user_organization_mapping_report',
                 'title' => 'User Organization Mapping Report',
             ],
@@ -4303,7 +4303,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Milk Collection Status Detail',
             ],
             'EiplInstalledUsersDetails' => [
-                'param' => 'union_code,state_code,region_code,area_code,user_login_type',
+                'param' => 'union_code,state_code,region_code,area_code,user_login_type,department',
                 'sp_name' => 'mis_eipl_installed_users_details',
                 'scenario' => 'EiplInstalledUsersDetails',
                 'title' => 'Eipl Installed Users Details',
@@ -4705,7 +4705,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'UserAttendanceDetails' => [
-                'param' => 'union_code,login_type:static:login_type,from_date:string,to_date:string',
+                'param' => 'union_code,login_type:static:login_type,department,from_date:string,to_date:string',
                 'sp_name' => 'get_user_attendance_details',
                 'scenario' => 'UserAttendanceDetails',
                 'title' => 'User Attendance Details',

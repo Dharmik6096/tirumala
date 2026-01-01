@@ -65,6 +65,9 @@ class TblPaymentCycleApplicabilitySearch extends TblPaymentCycleApplicability {
             $query->andFilterWhere(['like', 'CAST(to_date AS DATE)', $to_date]);
         }
 
+        if (Yii::$app->session->get('BMC') !== '')
+            $query->andFilterWhere(['applicable_code' => explode(',', Yii::$app->session->get('BMC'))]);
+
         // grid filtering conditions
         $query->andFilterWhere([
             'payment_cycle_code' => $this->payment_cycle_code,

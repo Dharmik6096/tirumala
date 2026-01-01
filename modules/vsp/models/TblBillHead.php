@@ -114,10 +114,14 @@ class TblBillHead extends \app\models\ChildModel {
     }
 
     public function getAllBillHead($society = '', $union = '') {
-        $query = $this->find()->select('tbl_bill_head.bill_head_code,bill_head_name')->where(['is_active' => 1, 'is_default' => 0]);
+        $query = $this->find()->select('tbl_bill_head.bill_head_code,bill_head_name')->where(['tbl_bill_head.is_active' => 1]);
         $query->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
         if (!empty($union)) {
+            $query->joinWith('defaultBillHeadCode');
+            $query->andWhere(['or', ['is_default' => 0], ['default_bill_head_name' => 'Product Sale']]);
             $query->andWhere(['union_code' => $union]);
+        } else {
+            $query->andWhere(['is_default' => 0]);
         }
         if (!empty($society)) {
             $query->innerJoinWith('billHeadCode')->andWhere(['dcs_code' => $society]);
