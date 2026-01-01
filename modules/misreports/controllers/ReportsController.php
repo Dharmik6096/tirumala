@@ -2177,6 +2177,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMisFeedReport() {
+        $this->report = 'MisFeedReport';
+        return $this->actionIndex();
+    }
+
+    public function actionVspOutstandingDetail() {
+        $this->report = 'VspOutstandingDetail';
+        return $this->actionIndex();
+    }
+    
+    public function actionVehicleStatusReport() {
+        $this->report = 'VehicleStatusReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2314,28 +2329,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //202
             'BmcCollDateShiftWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_wise_society_collection_date_shift_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date And Shift Wise Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollDateWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_wise_soceity_collection_date_wise',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Date Wise Summary',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcCollConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_collection_consolidated',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Consolidated',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
             ],
             'BmcConsolidatedWithBank' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_bmc_collection_consolidated_with_bank',
                 'scenario' => 'BmcCollDateShiftWiseSummary',
                 'title' => '202 - BMC Collection Consolidated',
@@ -4254,7 +4269,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Asset Details Report',
             ],
             'UserOrganizationMappingReport' => [
-                'param' => 'login_type_report:static:login_type_report',
+                'param' => 'login_type:static:login_type',
                 'sp_name' => 'mis_user_organization_mapping_report',
                 'title' => 'User Organization Mapping Report',
             ],
@@ -4386,7 +4401,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Union wise Report'), Yii::t('app', 'Plant wise Report'), Yii::t('app', 'DCS wise Report')],
             ],
             'RateRecalculationWefDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_cal_for,customer_type,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_Portal_Process_Recalculation_bkg_wefdate',
                 'scenario' => 'RateRecalculationWefDateWise',
                 'title' => 'Rate Recalculation(Custom)',
@@ -4673,7 +4688,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'UserAttendanceDetails' => [
-                'param' => 'union_code,login_type_report:static:login_type_report,from_date:string,to_date:string',
+                'param' => 'union_code,login_type:static:login_type,from_date:string,to_date:string',
                 'sp_name' => 'get_user_attendance_details',
                 'scenario' => 'UserAttendanceDetails',
                 'title' => 'User Attendance Details',
@@ -4756,6 +4771,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'FarmerMilkBillConsolidatedSummary',
                 'title' => '119 - Farmer Wise Milk Bill Register With Summary',
                 'to_decrypt' => ['adhar_no', 'bank_account_no', 'ifsc', 'mobile_no'],
+            ],
+            'MisFeedReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_feed_report',
+                'scenario' => 'MisFeedReport',
+                'title' => 'Member product sale Taken/Not Taken',
+                'bkg_export' => TRUE
+            ],
+            'VspOutstandingDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_vsp_outstanding_detail',
+                'scenario' => 'VspOutstandingDetail',
+                'title' => '923 - Vsp Outstanding',
+            ],
+            'VehicleStatusReport' => [
+                'param' => 'vehicle_code',
+                'sp_name' => 'sp_portal_dashboard_vehicle_wise_tanker_activity_report',
+                'title' => 'Vehicle Status Report',
             ],
         ];
         return $label[$l];

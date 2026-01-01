@@ -4,6 +4,7 @@ namespace app\modules\complaint\models;
 
 use Yii;
 use yii\db\Expression;
+use app\modules\general\models\TblDepartment;
 
 /**
  * This is the model class for table "tbl_complain_escalation_txn_detail".
@@ -41,7 +42,7 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'user_type', 'status', 'complain_escalation_txn_code', 'device_id', 'complain_code', 'task_activity_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'user_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'process_type', 'cron_status', 'assign_date'], 'safe'],
+                [['union_code', 'user_type', 'status', 'complain_escalation_txn_code', 'device_id', 'complain_code', 'task_activity_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'user_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'process_type', 'cron_status', 'assign_date', 'department'], 'safe'],
         ];
     }
 
@@ -103,6 +104,10 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
 
     public function updateProcessStatus() {
         return $this->updateAll(['cron_status' => $this->cron_status, 'response_datetime' => date('Y-m-d H:i:s')], ['complain_escalation_txn_detail_code' => $this->complain_escalation_txn_detail_code]);
+    }
+
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

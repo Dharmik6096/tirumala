@@ -18,7 +18,7 @@ class TblProcessApprovalSearch extends TblProcessApproval {
     public function rules() {
         return [
                 [['process_approval_code', 'level', 'status', 'originating_type'], 'integer'],
-                [['process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'remarks', 'status_date', 'status_by'], 'safe'],
+                [['process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'remarks', 'status_date', 'status_by', 'department'], 'safe'],
         ];
     }
 

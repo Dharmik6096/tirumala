@@ -728,7 +728,7 @@ class User extends UserIdentity {
         return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
     }
 
-    public function getAppUserLists($login_type, $mcc_code = null) {
+    public function getAppUserLists($login_type, $mcc_code = null, $department = null) {
         $query = $this->find()
                 ->alias('U')
                 ->select(['U.name', 'U.user_code', 'tuom.organization_type', 'tuom.organization_code'])
@@ -736,6 +736,9 @@ class User extends UserIdentity {
                 ->andWhere(['U.allow_app_login' => 1])
                 ->andWhere(['U.login_type' => $login_type])
                 ->andWhere(['tuom.organization_type' => ['UNION', 'PLANT', 'MCC', 'BMC', 'DCS']]);
+        if (!empty($department)) {
+            $query->andWhere(['U.department' => $department]);
+        }
         $model = new TblDcs();
         $value = $model->getOrgDCS($mcc_code, TRUE);
         $unionCodes = ArrayHelper::getColumn($value, 'union_code');

@@ -529,7 +529,18 @@ class GeneralFunctions extends Component {
 
     public function getforeignkey($value, $field) {
         return !empty($value) ? $value->$field : '';
-// return '';
+    }
+
+    public function getforeignkeyWithArray($value, $field) {
+        $returnValue = '';
+        if(!empty($value[0])){
+            foreach($value as $val){
+                $returnValue = !empty($returnValue) ? $returnValue.', '.$val->$field : $val->$field;
+            }
+        } else {
+            $returnValue = !empty($value) ? $value->$field : '';
+        }
+        return $returnValue;
     }
 
     public function valiadteUnique($model, $field, $value, $msg = '') {
@@ -2549,22 +2560,24 @@ class GeneralFunctions extends Component {
             $unionData = TblUnions::find()->where(['is_active' => 1])->one();
             $eiplCode = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
         }
-        $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
-        $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
-        $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
-        $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
-        $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
-        $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
-        if (file_exists($check_client_css_file_path)) {
-            if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
-                unset($layout->css[$key]);
-                $layout->css[] = $client_css_file_path;
+        if (!empty($eiplCode)) {
+            $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
+            $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
+            $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
+            $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
+            $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
+            $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
+            if (file_exists($check_client_css_file_path)) {
+                if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
+                    unset($layout->css[$key]);
+                    $layout->css[] = $client_css_file_path;
+                }
             }
-        }
-        if (file_exists($check_client_js_file_path)) {
-            if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
-                unset($layout->js[$key]);
-                $layout->js[] = $client_js_file_path;
+            if (file_exists($check_client_js_file_path)) {
+                if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
+                    unset($layout->js[$key]);
+                    $layout->js[] = $client_js_file_path;
+                }
             }
         }
     }
@@ -3083,6 +3096,19 @@ class GeneralFunctions extends Component {
         $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format((($clr / 4) + ($fat * $lr1) + $lr2), 2);
 
         return $response;
+    }
+
+    public static function generateDepartmentId($model, $autoIncrement = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $tableName = $model->tableName();
+        $maxValue = (new Query())
+                ->select([("ISNULL(MAX({$primaryKey}), 0) AS max_value")])
+                ->from($tableName)
+                ->where("ISNUMERIC({$primaryKey}) = 1")
+                ->scalar();
+
+        $newId = (int) $maxValue + $autoIncrement;
+        return (string) $newId;
     }
 
 }

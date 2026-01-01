@@ -3456,7 +3456,7 @@ select[multiple] {
 }
 
 #applicable_type-list,
-#login_type-list {
+#login_type-list, #department-list {
     margin-left: 10px;
 }
 
@@ -6371,6 +6371,26 @@ div#dashboardFarmerPopup {
 .fs24 {
     font-size: 24px;
 }
+.sequence-well.sequence-box-well .list-group {
+    margin-bottom: 0px !important;
+}
+.sequence-box-well {
+    padding: 0px;
+    background-color: #fff;
+    height: 419px;
+    overflow: auto;
+}
+.sequence-box-well .list-group-item, .sequence-box-well .list-group-item:last-child, .sequence-box-well .list-group-item:first-child{
+    border-width: 1px !important;
+    padding: 4px;
+    font-size: 11px;
+    margin: 5px;
+    width: 643px;
+    font-weight: 400;
+}
+.border-none{
+    border: none;
+}
 .no_pointer_disabled_with_clr {
     cursor: not-allowed;
     pointer-events: none;
@@ -6385,6 +6405,18 @@ div#dashboardFarmerPopup {
 .three-decimal-validate{
     width: 100%;
 }
+.sequence-form-control{
+    margin: 10px 0px 0px 10px;
+    width: 643px;
+    height: 30px;
+}
+.seq-display-input{
+    display: inline-block;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    width: 20px; text-align: center;
+}
+
 select option:hover {
     background-color: #f0f0f0; /* Choose your desired hover color */
     color: #333; /* Optional: Change text color on hover */
@@ -6394,4 +6426,37 @@ select:focus > option:checked {
 }
 .w50{
     min-width: 50px;
+}
+.individual-location{
+    width: 99%;
+    border: 1px solid #ccc;
+    padding: 13px;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.2;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 7px 0px;
+}
+.individual-location .individual-location-inner p{
+    margin: 10px;
+}
+.set_overflow_for_map {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: none;
+}
+.w79pr {
+    width: 79%;
+}
+.black-color {
+    color: #000;
+}
+.map-icon-image {
+    width: 20px;
+    height: 20px;
+}
+.float-right{
+    float: right;
 }

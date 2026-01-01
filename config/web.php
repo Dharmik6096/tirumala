@@ -258,6 +258,7 @@ $config = [
         'clienterp' => ['class' => 'app\modules\clienterp\Clienterp',],
         'insurance' => ['class' => 'app\modules\insurance\insurance',],
         'exchangeutility' => ['class' => 'app\modules\webservice\exchangeutility\exchangeUtility',],
+        'veterinary' => ['class' => 'app\modules\veterinary\veterinary',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];

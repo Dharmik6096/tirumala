@@ -222,7 +222,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
 
         if ($trip_process == 'milk_entry_qlty') {
             $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
-            $query->andWhere(['vt.trip_status' => ['open', 'tankerfull']]);
+            $query->andWhere(['vt.trip_status' => ['open', 'tankerfull'], 'vt.trip_sub_status' => 'plant_lot_pending']);
             $query->andWhere(['<=', 'vt.transaction_date', date('Y-m-d H:i:s')]);
             if (!empty($plants)) {
                 $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);

@@ -58,8 +58,8 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         $modelSave = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $update = FALSE;
-            if (!empty(Yii::$app->request->post()['TblContactDetails']['detail_code'])) {
-                $this->model = $this->findModel(Yii::$app->request->post()['TblContactDetails']['detail_code']);
+            if (!empty(Yii::$app->request->post()['TblContactDetails']['detail_code']) && !empty($existingModel = TblContactDetails::findOne(Yii::$app->request->post()['TblContactDetails']['detail_code']))) {
+                $this->model = $existingModel;
                 $historyModel = new TblContactDetailsHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
@@ -162,7 +162,7 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         $allow_app_login = !empty($UserRecords) ? $UserRecords->allow_app_login : '';
         if ($allow_app_login == 1) {
             $UserRecords->username = Yii::$app->general->getUserName($UserRecords->username);
-            $UserRecords->login_type = isset($UserRecords->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$UserRecords->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$UserRecords->login_type] : '') : '';
+            $UserRecords->login_type = isset($UserRecords->login_type) ? (!empty(Yii::$app->dropdown->getRecords('login_type')['data'][$UserRecords->login_type]) ? Yii::$app->dropdown->getRecords('login_type')['data'][$UserRecords->login_type] : '') : '';
             Yii::$app->getSession()->setFlash('success', [
                 'type' => 'error',
                 'message' => "Could Not Deactivate {$this->model->mobile_no} <br> Active User Available: {$UserRecords->username} - {$UserRecords->user_code} - {$UserRecords->login_type}",
