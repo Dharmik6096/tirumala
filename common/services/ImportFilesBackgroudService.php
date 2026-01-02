@@ -119,12 +119,6 @@ class ImportFilesBackgroudService {
             $row->success_file_path = $successfilePath;
             $row->save(FALSE);
         } catch (\Throwable $ex) {
-               echo '<pre>';
-            echo "Error: " . $ex->getMessage() . "\n";
-            echo $ex->getFile() . ":" . $ex->getLine() . "\n";
-            echo $ex->getTraceAsString() . "\n";
-            echo '</pre>';
-            die;
             $row->status = 3;
             $row->response_msg = 'Unable to read file.';
             $row->response_datetime = date('Y-m-d H:i:s');
