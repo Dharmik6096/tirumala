@@ -7,6 +7,9 @@ $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-lif
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Stop Remunaration Payment'), ['/payment/tbl-remuneration-summary/create-stop-payment'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Remunaration Payment'), ['/payment/tbl-remuneration-summary/payment-disburse'], true);
 
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Vendor Payment Hold Release'), ['/payment/tbl-vendor-payment-hold-release/create'], true);
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Vendor Payment Hold Release'), ['/payment/tbl-vendor-payment-hold-release/payment-disburse'], true);
+
 $url = ['/payment/tbl-vsp-payment/vendor-payment-import'];
 $this->params['menu'][] = Yii::$app->controls->import('vendor-billing-bulk', $this, Yii::t('app', 'Vendor Billing Import Data'), [], '', $url);
 ?>
