@@ -146,7 +146,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblBillHeadApplicability();
         $appModel->model->wef_date = $appModel->model->from_date = date('Y-m-d');
-        $appModel->model->to_date = date('Y-m-d', strtotime('+ 1 year'));
+        // $appModel->model->to_date = date('Y-m-d', strtotime('+ 1 year'));
         $appModel->periodic_applicability = TRUE;
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'bill_head_code';
