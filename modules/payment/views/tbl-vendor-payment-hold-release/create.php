@@ -36,7 +36,7 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvendorpaymentholdreleasesummary-mcc_plant_code', 'bmc_code', TRUE, $multiple); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvendorpaymentholdreleasesummary-bmc_code', 'customer_type', TRUE, FALSE); ?>
+                <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvendorpaymentholdreleasesummary-bmc_code', 'customer_type', TRUE); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'from_datetime', '', '', false, false); ?>

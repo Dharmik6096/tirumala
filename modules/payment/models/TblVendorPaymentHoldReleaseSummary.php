@@ -83,6 +83,14 @@ class TblVendorPaymentHoldReleaseSummary extends \yii\db\ActiveRecord
             $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
             return false;
         }
+        // if (\Yii::$app->session->get('eiplCode') == 'MMD') {
+        //     $first_day_month = date('Y-m-01', strtotime($this->from_datetime));
+        //     $last_day_month = date('Y-m-t', strtotime($this->from_datetime));
+        //     if ($from_date != $first_day_month || $to_date != $last_day_month) {
+        //         $this->addError($attribute, Yii::t('app/validation', 'From Date and To Date must be Start Date and End Date of month.'));
+        //         return false;
+        //     }
+        // }
         $query = TblVendorPaymentHoldReleaseSummary::find()
                 ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code, 'customer_type' => $this->customer_type]);
         if ($process_alert === TRUE) {
@@ -91,14 +99,14 @@ class TblVendorPaymentHoldReleaseSummary extends \yii\db\ActiveRecord
             $query->andWhere(['not in', 'status', ['generated', 'processed']]);
         }
         $count = $query->andWhere(['or',
-                    ['or',
-                        ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
-                        ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
-                    ],
-                    ['or',
-                        "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
-                        "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
-            ]])->count();
+                ['or',
+                    ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
+                    ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
+                ],
+                ['or',
+                    "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
+                    "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
+                ]])->count();
         if ($process_alert === TRUE) {
             return $count > 0 ? FALSE : TRUE;
         } else {
@@ -107,56 +115,55 @@ class TblVendorPaymentHoldReleaseSummary extends \yii\db\ActiveRecord
                 return FALSE;
             } else {
                 $pending_disburse = $this->find()
-                                ->where(['not in', 'status', ['generated', 'processed']])
-                                ->andWhere(['bmc_code' => $this->bmc_code, 'customer_type' => $this->customer_type])
-                                ->andWhere(['or',
-                                    ['or',
-                                        ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
-                                        ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
-                                    ],
-                                    ['or',
-                                        "'$from_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
-                                        "'$to_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
-                            ]])->one();
+                        ->where(['status' => ['generated', 'processed'], 'bmc_code' => $this->bmc_code, 'customer_type' => $this->customer_type])
+                        ->andWhere(['or',
+                            ['or',
+                                ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
+                                ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
+                            ],
+                            ['or',
+                                "'$from_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
+                                "'$to_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
+                    ]])->one();
                 if (!empty($pending_disburse)) {
                     $from_date = date('d-m-Y', strtotime($pending_disburse->from_datetime));
                     $to_date = date('d-m-Y', strtotime($pending_disburse->to_datetime));
                     $this->addError($attribute, Yii::t('app', "Please first disburse payment of $from_date to $to_date ."));
                     return FALSE;
                 }
-                // $unlock_cnt = TblPaymentCycleApplicability::find()->select(['status'])
-                //         ->where(['union_code' => $this->union_code,
-                //             'applicable_code' => $this->bmc_code,
-                //             'applicable_for' => 'BMC',
-                //             'applicable_type' => 'DCS'])
-                //         ->andWhere(['or',
-                //             ['or',
-                //                 ['between', 'CAST(from_date as date)', $from_date, $to_date],
-                //                 ['between', 'CAST(to_date as date)', $from_date, $to_date]
-                //             ],
-                //             ['or',
-                //                 "'$from_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)",
-                //                 "'$to_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)"
-                //     ]])
-                //         ->andWhere(['or', ['data_lock_member' => 0], ['data_lock_bmc' => 0]])
-                //         ->count();
-                // if ($unlock_cnt > 0) {
-                //     $this->addError($attribute, "Please Lock Data of all payment cycle included.");
-                //     return FALSE;
-                // }
+                $unlock_cnt = TblPaymentCycleApplicability::find()->select(['status'])
+                    ->where(['union_code' => $this->union_code,
+                        'applicable_code' => $this->bmc_code,
+                        'applicable_for' => 'BMC',
+                        'applicable_type' => $this->customer_type])
+                    ->andWhere(['or',
+                        ['or',
+                            ['between', 'CAST(from_date as date)', $from_date, $to_date],
+                            ['between', 'CAST(to_date as date)', $from_date, $to_date]
+                        ],
+                        ['or',
+                            "'$from_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)",
+                            "'$to_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)"
+                    ]])
+                    ->andWhere(['or', ['data_lock_member' => 0], ['data_lock_bmc' => 0]])
+                    ->count();
+                if ($unlock_cnt > 0) {
+                    $this->addError($attribute, "Please Lock Data of all payment cycle included.");
+                    return FALSE;
+                }
             }
         }
     }
 
     public function HoldReleasePaymentCycle($union_code, $bmc_code) {
         $data = $this->find()->select(['from_datetime', 'to_datetime'])
-                        ->where(['union_code' => $union_code, 'bmc_code' => $bmc_code])
-                        ->andWhere(['in', 'status', ['locked']])->asArray()->all();
+                    ->where(['union_code' => $union_code, 'bmc_code' => $bmc_code])
+                    ->andWhere(['in', 'status', ['locked']])->asArray()->all();
 
         return ArrayHelper::map($data, function($data) {
-                    return $data['from_datetime'] . '#' . $data['to_datetime'];
-                }, function($data) {
-                            return date('d-m-Y', strtotime($data['from_datetime'])) . ' To ' . date('d-m-Y', strtotime($data['to_datetime']));
-                        });
+                return $data['from_datetime'] . '#' . $data['to_datetime'];
+            }, function($data) {
+                return date('d-m-Y', strtotime($data['from_datetime'])) . ' To ' . date('d-m-Y', strtotime($data['to_datetime']));
+            });
     }
 }

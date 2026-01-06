@@ -31,7 +31,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         if ($model->load(Yii::$app->request->post())) {
             $result = 'success';
             if ($model->validate()) {
-                $validate = $model->ValidateDate('from_datetime', NULL);
+                $validate = $model->ValidateDate('from_datetime', NULL, TRUE);
                 $queryParam = [];
                 $queryParam[] = 'process-hold-release';
                 $queryParamRegenerate = [];
@@ -72,7 +72,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
     }
 
     public function actionProcessHoldRelease($reGenerate = 0) {
-        $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
+        // $multiple_bmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_multiselect_in_payment', 'PORTAL') == '1' ? TRUE : FALSE;
 
         if (Yii::$app->request->get()) {
             $model = new TblVendorPaymentHoldReleaseSummary();
@@ -112,12 +112,11 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
             return $this->redirect(['payment-adjust', 'TblVendorPaymentHoldRelease' => [
                 'from_datetime'  => $model->from_datetime,
                 'to_datetime'    => $model->to_datetime,
+                'customer_type'  => $model->customer_type,
                 'bmc_code'       => $model->bmc_code,
                 'mcc_plant_code' => $model->mcc_plant_code,
                 'plant_code'     => $model->plant_code,
-                'union_code'     => $model->union_code,
-                'customer_type'  => $model->customer_type,
-                'multiple_bmc'   => $multiple_bmc
+                'union_code'     => $model->union_code
             ]]);
         }
     }
@@ -128,6 +127,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         $model->load(Yii::$app->request->get());
         if (Yii::$app->request->post()) {
             $bmc_array = [];
+            $customer_array = [];
             $postData = Yii::$app->request->post();
             $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';
             $adjust_id = Yii::$app->request->post('TblVendorPaymentHoldRelease')['vendor_payment_hold_release_code'];
@@ -165,12 +165,14 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
                 $model->from_datetime = $data->from_datetime;
                 $model->to_datetime = $data->to_datetime;
                 $bmc_array[$data->bmc_code] = $data->bmc_code;
+                $customer_array[$data->customer_type] = $data->customer_type;
                 $model->union_code = $data->union_code;
                 $model->customer_type = $data->customer_type;
             }
             $PaymentApp = TblVendorPaymentHoldReleaseSummary::find()
                     ->where(['from_datetime' => $model->from_datetime,
                         'to_datetime' => $model->to_datetime,
+                        'customer_type' => $customer_array,
                         'bmc_code' => $bmc_array,
                         'union_code' => $model->union_code])
                     ->all();
@@ -214,12 +216,12 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $data = [];
         $data['union_code'] = $model->union_code;
-        $data['plant_code'] = $model->plant_code;
-        $data['mcc_plant_code'] = $model->mcc_plant_code;
         $data['bmc_code'] = $model->bmc_code;
         $data['customer_type'] = $model->customer_type;
-        $data['from_datetime'] = $model;
-        $data['to_datetime'] = $model;
+        $data['from_datetime'] = $model->from_datetime;
+        $data['from_shift'] = 1;
+        $data['to_datetime'] = $model->to_datetime;
+        $data['to_shift'] = 2;
         $data['user_code'] = $user;
         return Yii::$app->ClientPaymentConfig->processPayment('hold_release_payment', $data);
     }
@@ -239,6 +241,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
     public function actionPaymentDisburse() {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVendorPaymentHoldRelease();
+        $model->scenario = 'disbursepayment';
         $model->load(Yii::$app->request->get());
         $query = $model->find();
         if (!$model->validate()) {
@@ -252,9 +255,10 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
             $query = $query->where([
                 'from_datetime' => $model->from_datetime,
                 'to_datetime' => $model->to_datetime,
+                'customer_type' => $model->customer_type,
                 'bmc_code' => $model->bmc_code,
                 'union_code' => $model->union_code,
-                'status' => ['locked', 'rejected']]);
+                'status' => ['locked']]);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -272,7 +276,6 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         if (Yii::$app->request->post()) {
             $model = new TblVendorPaymentHoldRelease();
             $model->load(Yii::$app->request->post());
-            $model->customer_type = 'DCS';
             if (!empty($model->payment_cycle_code)) {
                 $payment_cycle_code = explode('#', $model->payment_cycle_code);
                 $model->from_datetime = $payment_cycle_code[0];
@@ -284,7 +287,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
                         'customer_type' => $model->customer_type,
                         'bmc_code' => $model->bmc_code,
                         'union_code' => $model->union_code,
-                        'status' => ['locked', 'rejected']])
+                        'status' => ['locked']])
                     ->all();
 
                     $pay_cnt = count($query);
@@ -321,9 +324,8 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         }
         $msg = $this->LockBilling($model);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        $paymentcycle = $model->paymentCycleCode;
-        $from_date = Yii::$app->controls->view_date($paymentcycle->from_date);
-        $to_date = Yii::$app->controls->view_date($paymentcycle->to_date);
+        $from_date = Yii::$app->controls->view_date($model->from_datetime);
+        $to_date = Yii::$app->controls->view_date($model->to_datetime);
         $msg .= '(' . $from_date . ' to ' . $to_date . ') - hold release payment disbursed successfully';
         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
             'message' => \Yii::t('app', '' . $msg)]);
@@ -341,19 +343,23 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         if (is_array($model->customer_type)) {
             $customer_array = $model->customer_type;
         }
+        $payment_cycle_code = explode('#', $model->payment_cycle_code);
+        $model->from_datetime = $payment_cycle_code[0];
+        $model->to_datetime = $payment_cycle_code[1];
         foreach ($bmc_array as $bmc_code) {
             $model->bmc_code = $bmc_code;
             $bmc = $model->bmcCode;
             foreach ($customer_array as $customerType) {
                 $param = [];
-                $param['customer_type'] = $customerType;
+                $param['union_code'] = $model->union_code;
                 $param['bmc_code'] = $bmc_code;
-                $param['applicable_for'] = 'BMC';
-                $param['payment_cycle_code'] = $model->payment_cycle_code;
+                $param['customer_type'] = $customerType;
+                $param['from_datetime'] = $model->from_datetime;
+                $param['from_shift'] = 1;
+                $param['to_datetime'] = $model->to_datetime;
+                $param['to_shift'] = 2;
                 $param['user_code'] = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                // $param['is_without_release'] = $model->payment_release_type;
-                $param['union_bank_payment_code'] = !empty($model->union_bank_payment_code) ? $model->union_bank_payment_code : null;
-                // Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
+                Yii::$app->ClientPaymentConfig->processPayment('hold_release_payment_disburse', $param);
                 $model->customer_type = $customerType;
                 $msg .= $model->customerType->customer_desc . ' - ' . $bmc->ref_code . ' ' . $bmc->bmc_name . "<br>";
             }
@@ -367,9 +373,10 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         $query = $newModel->find()
                 ->where(['tbl_vendor_payment_hold_release.from_datetime' => $model->from_datetime,
                     'tbl_vendor_payment_hold_release.to_datetime' => $model->to_datetime,
+                    'tbl_vendor_payment_hold_release.customer_type' => $model->customer_type,
                     'tbl_vendor_payment_hold_release.bmc_code' => $model->bmc_code,
                     'tbl_vendor_payment_hold_release.union_code' => $model->union_code,
-                    'tbl_vendor_payment_hold_release.status' => ['locked', 'rejected']])
+                    'tbl_vendor_payment_hold_release.status' => ['locked']])
                 ->joinWith(['dcsCode'])
                 ->all();
 
@@ -394,9 +401,9 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Branch');
         $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'IFSC');
         $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Total Amount');
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Adjsut Amount');
+        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Adjust Amount');
         $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
-        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
+        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjust Remarks');
         foreach ($query as $row) {
             $rowCount++;
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);

@@ -89,7 +89,8 @@ class TblVendorPaymentHoldRelease extends ChildModel
     {
         return [
             [['vendor_payment_hold_release_code','union_code','plant_code','mcc_plant_code','bmc_code','route_code','customer_type','customer_code','customer_name','payment_transaction_code','from_datetime','from_shift','to_datetime','to_shift','kg_fat','kg_snf','total_qty','rec_qty','rec_fat_kg','rec_snf_kg','amount','addition','deduction','net_payable','adjust_amount','previous_hold','previous_due','hold_amount','final_pay','adjust_remark','disburse_amount','payment_date','disburse_date','status','utr_no','pan_no','reference_no','process_date','reject_reason','registration_date','remarks','bank_name','bank_code','branch_name','branch_code','ifsc','bank_account_no','is_verified','bank_status','beneficiary_name','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','payment_cycle_code'], 'safe'],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'required'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type'], 'required'],
+            [['payment_cycle_code'], 'required', 'on' => ['disbursepayment']],
         ];
     }
 

@@ -45,7 +45,6 @@ $bmc_info .= (Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Y
         ]);
         ?>
         <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
-        <?php //Html::hiddenInput('types_title', $model->types_title); ?>
         <?= Html::hiddenInput('union_code', $model->union_code); ?>
         <?php
         $attribute = [
