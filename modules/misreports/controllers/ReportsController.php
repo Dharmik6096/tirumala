@@ -2186,9 +2186,14 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspOutstandingDetail';
         return $this->actionIndex();
     }
-    
+
     public function actionVehicleStatusReport() {
         $this->report = 'VehicleStatusReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPaymentShortageRecovery() {
+        $this->report = 'MemberPaymentShortageRecovery';
         return $this->actionIndex();
     }
 
@@ -4138,7 +4143,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'MobileAppReport' => [
-                'param' => 'user_login_type,login_user_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'user_login_type,login_user_code,from_date:string:from_shift,to_date:string:to_shift,department',
                 'sp_name' => 'proc_flutter_app_tracking',
                 'scenario' => 'MobileAppReport',
                 'title' => 'Log report of  the Mobile App',
@@ -4269,7 +4274,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Asset Details Report',
             ],
             'UserOrganizationMappingReport' => [
-                'param' => 'login_type:static:login_type',
+                'param' => 'login_type:static:login_type,department',
                 'sp_name' => 'mis_user_organization_mapping_report',
                 'title' => 'User Organization Mapping Report',
             ],
@@ -4286,7 +4291,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Milk Collection Status Detail',
             ],
             'EiplInstalledUsersDetails' => [
-                'param' => 'union_code,state_code,region_code,area_code,user_login_type',
+                'param' => 'union_code,state_code,region_code,area_code,user_login_type,department',
                 'sp_name' => 'mis_eipl_installed_users_details',
                 'scenario' => 'EiplInstalledUsersDetails',
                 'title' => 'Eipl Installed Users Details',
@@ -4688,7 +4693,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'UserAttendanceDetails' => [
-                'param' => 'union_code,login_type:static:login_type,from_date:string,to_date:string',
+                'param' => 'union_code,login_type:static:login_type,department,from_date:string,to_date:string',
                 'sp_name' => 'get_user_attendance_details',
                 'scenario' => 'UserAttendanceDetails',
                 'title' => 'User Attendance Details',
@@ -4784,6 +4789,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vsp_outstanding_detail',
                 'scenario' => 'VspOutstandingDetail',
                 'title' => '923 - Vsp Outstanding',
+            ],
+            'MemberPaymentShortageRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_shortage_recovery_pending_import',
+                'scenario' => 'MemberPaymentShortageRecovery',
+                'title' => 'Member Payment Shortage Recovery',
+                'report_type' => [Yii::t('app', 'Pending')],
             ],
             'VehicleStatusReport' => [
                 'param' => 'vehicle_code',

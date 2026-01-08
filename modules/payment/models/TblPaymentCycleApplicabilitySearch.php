@@ -39,14 +39,14 @@ class TblPaymentCycleApplicabilitySearch extends TblPaymentCycleApplicability {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblPaymentCycleApplicability::find();
+        $query = TblPaymentCycleApplicability::find()->alias('app');
         $request = Yii::$app->request->queryParams;
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+        $query->innerJoin('tbl_bmc as bmc', 'bmc.bmc_code = app.applicable_code');
         $query->joinWith(['customerType']);
 
         $this->load($params);
@@ -65,6 +65,16 @@ class TblPaymentCycleApplicabilitySearch extends TblPaymentCycleApplicability {
             $query->andFilterWhere(['like', 'CAST(to_date AS DATE)', $to_date]);
         }
 
+        if (Yii::$app->session->get('BMC') !== '') {
+            $query->andFilterWhere(['applicable_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        } else if (Yii::$app->session->get('MCC') !== '') {
+            $query->andFilterWhere(['bmc.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        } else if (Yii::$app->session->get('Plant') !== '') {
+            $query->andFilterWhere(['bmc.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        } else if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['bmc.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+
         // grid filtering conditions
         $query->andFilterWhere([
             'payment_cycle_code' => $this->payment_cycle_code,
@@ -76,9 +86,9 @@ class TblPaymentCycleApplicabilitySearch extends TblPaymentCycleApplicability {
         if (!empty($this->to_date))
             $query->andFilterWhere(['like', 'to_date', date('Y-m-d', strtotime($this->to_date))]);
 
-        $query->andFilterWhere(['like', 'tbl_payment_cycle_applicability.applicable_for', $this->applicable_for])
+        $query->andFilterWhere(['like', 'app.applicable_for', $this->applicable_for])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_type])
-                ->andFilterWhere(['like', 'tbl_payment_cycle_applicability.applicable_code', $this->applicable_code]);
+                ->andFilterWhere(['like', 'app.applicable_code', $this->applicable_code]);
 
         return $dataProvider;
     }

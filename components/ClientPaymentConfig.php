@@ -359,6 +359,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
                     'sp_name' => 'sp_vsp_payment_devmilk',
                 ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_devmilk',
+                ],
             ],
             'CHADDHA' => [
                 'vsp_payment' => [
@@ -406,6 +410,26 @@ class ClientPaymentConfig extends Component {
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
                     'sp_name' => 'sp_vsp_payment_ramsons',
+                ],
+            ],
+            'DAURAU' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_daurau',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_daurau',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_daurau',
+                ],
+            ],
+            'ELANAD' => [
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_elanad',
                 ],
             ],
         ];
