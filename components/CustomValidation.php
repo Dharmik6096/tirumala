@@ -228,6 +228,7 @@ class CustomValidation extends Component {
                         [['aadhaar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
                         }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
+                        [['valid_from'], 'required', 'except' => ['importCsv', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                 ],
                 'TblUnions' => [
                         [['pincode'], 'required'],
@@ -322,8 +323,8 @@ class CustomValidation extends Component {
                         return $('#tblbulknotification-notification_type').val() == '1' || $('#tblbulknotification-notification_type').val() == '4' ;
                         }"],
                         [['department'], 'required', 'when' => function ($model) {
-                                return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
-                            }, 'whenClient' => "function (attribute, value) {
+                            return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
+                        }, 'whenClient' => "function (attribute, value) {
                                 return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL';
                         }"],
                         [['from_date', 'to_date'], 'required', 'when' => function ($model) {
