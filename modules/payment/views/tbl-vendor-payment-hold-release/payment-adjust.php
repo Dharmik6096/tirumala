@@ -139,7 +139,7 @@ $bmc_info .= (Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Y
             echo Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']);
         }
         ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+        <?= Yii::$app->controls->custombutton('Cancel', 'create'); ?> 
     </div>
 </div>
 <?php ActiveForm::end(); ?>
