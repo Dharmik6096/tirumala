@@ -68,7 +68,7 @@ class TblPlant extends \app\models\ChildModel {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
-            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code', 'is_virtual_plant'], 'safe'],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code', 'is_virtual_plant', 'is_not_actual_plant'], 'safe'],
             [['capacity'], 'integer'],
             [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
 //            [['plant_code'], 'integer', 'min' => 1],
@@ -111,6 +111,7 @@ class TblPlant extends \app\models\ChildModel {
             'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
             'is_virtual_plant' => Yii::t('app', 'is Virtual Plant?'),
+            'is_not_actual_plant' => Yii::t('app', 'Is Not Actual Plant'),
         ];
     }
 

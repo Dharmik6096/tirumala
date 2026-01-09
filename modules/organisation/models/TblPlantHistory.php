@@ -48,7 +48,7 @@ class TblPlantHistory extends \yii\db\ActiveRecord {
                 [['is_active', 'plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description', 'created_at', 'updated_at', 'history_created_at', 'operation_type', 'capacity', 'valid_from'], 'safe'],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'sap_vendor_code', 'is_virtual_plant'], 'safe'],
                 [['plant_code_ex', 'ref_code', 'vendor_code', 'auto_code', 'history_created_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'emilk_sync_status', 'emilk_sync_timestamp'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'emilk_sync_status', 'emilk_sync_timestamp', 'is_not_actual_plant'], 'safe'],
         ];
     }
 
