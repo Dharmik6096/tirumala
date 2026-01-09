@@ -2360,6 +2360,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partial Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject')],
             ],
+            'department_wise' => [
+                'name' => 'department_wise',
+                'prompt' => Yii::t('app', 'Department'),
+                'data' => [0 => Yii::t('app', 'All Departments'), 1 => Yii::t('app', 'My Department Only')],
+            ],
         ];
         return $records[$l];
     }

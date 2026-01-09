@@ -448,7 +448,7 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblTaskSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'task_type', 'form_type', 'user_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'task_type', 'form_type', 'user_code', 'from_date', 'to_date', 'department_wise'],
             ],
             'TblTaskTypeSearch' => [
                 'filter' => ['f_union_code'],
@@ -457,7 +457,7 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblUserAttendanceSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'state_code', 'region_code', 'area_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'state_code', 'region_code', 'area_code', 'from_date', 'to_date', 'department_wise'],
             ],
             'TblDcsProvisionalSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
