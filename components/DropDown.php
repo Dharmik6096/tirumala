@@ -2360,6 +2360,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partial Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject')],
             ],
+            'originating_type_options' => [
+                'name' => 'originating_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'PORTAL'), 1 => Yii::t('app', 'PORTAL'), 23 => Yii::t('app', 'Android AMCS'), 24 => Yii::t('app', 'Android AMCS')],
+            ],
         ];
         return $records[$l];
     }
