@@ -272,7 +272,7 @@ class TblPlant extends \app\models\ChildModel {
 
     public function getPlantData($plant_code) {
         $partyList = $this->find()->select(["CONCAT(plant_code, '#plant') AS plant_code, CONCAT(name, ' - ', ref_code, ' - PLANT') AS name"])
-                        ->where(['is_not_actual_plant' => 0])
+                        ->where(['ISNULL(is_not_actual_plant, 0)' => 0])
                         ->andWhere(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
         return ArrayHelper::map($partyList, 'plant_code', 'name');
     }
@@ -288,7 +288,7 @@ class TblPlant extends \app\models\ChildModel {
     }
 
     public function getNotActualPlant() {
-        $plantList = $this->find()->where(['is_not_actual_plant' => 1])->all();
+        $plantList = $this->find()->where(['ISNULL(is_not_actual_plant, 0)' => 1])->all();
         return !empty($plantList) ? array_column($plantList, 'plant_code') : [];
     }
 }
