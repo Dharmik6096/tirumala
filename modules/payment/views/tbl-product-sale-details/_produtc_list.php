@@ -11,6 +11,9 @@ $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult(Yii::$app->sess
 $attribute = [
 //    ['attribute' => 'product_sale_code'],
     ['attribute' => 'product_code', 'value' => 'productCode.product_name'],
+    ['attribute' => 'product_desc', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->productCode, 'product_desc');
+    }],
     ['attribute' => 'rate', 'format' => Yii::$app->general->CurrencyFormat(),],
     ['attribute' => 'quantity'],
     ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),],

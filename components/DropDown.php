@@ -2365,6 +2365,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Department'),
                 'data' => [0 => Yii::t('app', 'All Departments'), 1 => Yii::t('app', 'My Department Only')],
             ],
+            'originating_type_options' => [
+                'name' => 'originating_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'PORTAL'), 1 => Yii::t('app', 'PORTAL'), 23 => Yii::t('app', 'Android AMCS'), 24 => Yii::t('app', 'Android AMCS')],
+            ],
         ];
         return $records[$l];
     }

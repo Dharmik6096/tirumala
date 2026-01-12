@@ -974,6 +974,32 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAutoManualQtyDateShiftWiseSummary() {
+        $this->report = 'AutoManualQtyDateShiftWiseSummary';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AutoManualQtyDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AutoManualQtyConsolidated';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionSampleTimeMilkCollection() {
+        $this->report = 'SampleTimeMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SampleTimeBmcCollection';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SampleTimeComparision';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
         $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
@@ -2186,7 +2212,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VspOutstandingDetail';
         return $this->actionIndex();
     }
-    
+
     public function actionVehicleStatusReport() {
         $this->report = 'VehicleStatusReport';
         return $this->actionIndex();
@@ -4789,6 +4815,54 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'vehicle_code',
                 'sp_name' => 'sp_portal_dashboard_vehicle_wise_tanker_activity_report',
                 'title' => 'Vehicle Status Report',
+            ],
+            'AutoManualQtyDateShiftWiseSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_collection_type',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_qty_date_shift_wise',
+                'scenario' => 'AutoManualQtyDateShiftWiseSummary',
+                'title' => 'Auto Manual Qty Date And Shift Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
+            ],
+            'AutoManualQtyDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_collection_type',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_qty_date_wise',
+                'scenario' => 'AutoManualQtyDateShiftWiseSummary',
+                'title' => 'Auto Manual Qty Date Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
+            ],
+            'AutoManualQtyConsolidated' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_collection_type',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_qty_consolidate',
+                'scenario' => 'AutoManualQtyDateShiftWiseSummary',
+                'title' => 'Auto Manual Qty Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'bkg_export' => TRUE
+            ],
+            'SampleTimeMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sample_time_milk_collection',
+                'scenario' => 'SampleTimeMilkCollection',
+                'title' => 'Sample Time Milk Collection',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection'), Yii::t('app', 'Comparision')],
+                'bkg_export' => TRUE
+            ],
+            'SampleTimeBmcCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sample_time_bmc_collection',
+                'scenario' => 'SampleTimeMilkCollection',
+                'title' => 'Sample Time BMC Collection',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection'), Yii::t('app', 'Comparision')],
+                'bkg_export' => TRUE
+            ],
+            'SampleTimeComparision' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sample_time_comparision',
+                'scenario' => 'SampleTimeMilkCollection',
+                'title' => 'Sample Time Comparision',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection'), Yii::t('app', 'Comparision')],
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];
