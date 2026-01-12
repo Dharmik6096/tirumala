@@ -60,7 +60,7 @@ $grid_option = [
         'view' => true,
         'vetenary-assistance' => function ($url, $model) {
             $options = ['title' => 'Print', 'target' => '_blank'];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/veterinary/tbl-animal-treatment-request/vetenary-assistance', 'id' => $model->animal_treatment_request_id], $options);
+            return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/veterinary/tbl-animal-treatment-request/vetenary-assistance', 'id' => $model->animal_treatment_request_id], $options);
         },
     ]
 ];
