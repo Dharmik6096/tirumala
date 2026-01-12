@@ -10,8 +10,8 @@ $this->title = 'Transporter Payment Process : Step 2';
 if ($transporter_type == 0) {
     $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
             Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
-    if(is_array($model->bmc_code) && count($model->bmc_code) > 1) {
-        $bmc_info = 'All > '.Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+    if (is_array($model->bmc_code) && count($model->bmc_code) > 1) {
+        $bmc_info = 'All > ' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
     }
 } else {
     $bmc_info = $model->vendor_code . ' > ' . $model->transporter_name . ' > ' .
@@ -45,36 +45,37 @@ $net_amt = array_sum(array_map(function($array) {
         ?>
         <?php
         $attribute = [
-                ['attribute' => 'route_code', 'value' => function ($model) {
+            ['attribute' => 'route_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
                 }, 'label' => Yii::t('app', 'Route Code'), 'visible' => ($transporter_type == 0)],
-                ['attribute' => 'route_code', 'value' => function ($model) {
+            ['attribute' => 'route_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
                 }, 'visible' => ($transporter_type == 0)
             ],
-                ['attribute' => 'transporter_name', 'visible' => ($transporter_type == 0)],
-                ['attribute' => 'parsing_no'],
-                ['attribute' => 'fixed_amount', 'pageSummary' => true, 'visible' => ($transporter_type == 0)],
-                ['attribute' => 'total_amount', 'pageSummary' => true],
-                ['attribute' => 'total_addition', 'pageSummary' => true],
-                ['attribute' => 'total_deduction', 'pageSummary' => true],
-                ['attribute' => 'net_amount',
+            ['attribute' => 'transporter_name', 'visible' => ($transporter_type == 0)],
+            ['attribute' => 'parsing_no'],
+            ['attribute' => 'fixed_amount', 'pageSummary' => true, 'visible' => ($transporter_type == 0)],
+            ['attribute' => 'total_amount', 'pageSummary' => true],
+            ['attribute' => 'total_addition', 'pageSummary' => true],
+            ['attribute' => 'total_deduction', 'pageSummary' => true],
+            ['attribute' => 'net_amount',
                 'pageSummary' => true,
                 'contentOptions' => ['class' => 'net-amount'],
             ],
-                ['attribute' => 'adjust_amount',
+            ['attribute' => 'tds_amount', 'pageSummary' => true],
+            ['attribute' => 'adjust_amount',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form) {
                     return Html::activeHiddenInput($model, '[' . $index . ']transporter_payment_code', ['value' => $model->transporter_payment_code]) . $form->field($model, '[' . $index . ']adjust_amount')->textInput(['value' => $model->adjust_amount, 'class' => 'number-validate-negative adjust-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'final_amount',
+            ['attribute' => 'final_amount',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form) {
                     return $form->field($model, '[' . $index . ']final_amount')->textInput(['class' => 'number-validate final-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_remark',
+            ['attribute' => 'adjust_remark',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) use ($form) {
                     return $form->field($model, '[' . $index . ']adjust_remark')->textInput(['value' => $model->adjust_remark])->label(FALSE);

@@ -6,13 +6,14 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\tms\models\TblTask;
+use app\modules\usermanagement\models\User;
 
 /**
  * TblTaskSearch represents the model behind the search form about `app\modules\tms\models\TblTask`.
  */
 class TblTaskSearch extends TblTask {
 
-    public $from_date, $to_date, $bmc_name, $user_name;
+    public $from_date, $to_date, $bmc_name, $user_name, $department_wise = 1;
 
     /**
      * @inheritdoc
@@ -20,7 +21,7 @@ class TblTaskSearch extends TblTask {
     public function rules() {
         return [
                 [['task_code', 'task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type'], 'integer'],
-                [['task_performed_for', 'title', 'description', 'status', 'user_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['task_performed_for', 'title', 'description', 'status', 'user_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'department_wise'], 'safe'],
                 [['from_date', 'to_date', 'bmc_name', 'task_datetime', 'user_name'], 'safe']
         ];
     }
@@ -61,7 +62,10 @@ class TblTaskSearch extends TblTask {
         if (!empty($this->task_datetime)) {
             $query->andFilterWhere(['like', 'CAST(tbl_task.task_datetime AS DATE)', date('Y-m-d', strtotime($this->task_datetime))]);
         }
-
+        if($this->department_wise != 0) {
+            $department = User::find()->select('department')->where(['id' => Yii::$app->session->get('UserCode')])->scalar();
+            !empty($department) && $query->andWhere(['user.department' => $department]);
+        }
         $query->andFilterWhere([
             'is_cancel' => $this->is_cancel,
             'is_notified' => $this->is_notified,
