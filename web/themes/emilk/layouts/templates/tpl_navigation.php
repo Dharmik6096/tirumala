@@ -1096,6 +1096,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Qty Slab Report Format 2'), 'url' => ['/misreports/reports/avg-per-vlc-milk-qty-slab-wise-category']],
                             ['label' => Yii::t('app', 'Mcc Bonus'), 'url' => ['/jasperreports/default/mcc-bonus-report']],
                             ['label' => Yii::t('app', 'Mcc maintenance'), 'url' => ['/jasperreports/default/mcc-maintance-report']],
+                            ['label' => Yii::t('app', 'Auto Manual Qty Report'), 'url' => ['/misreports/reports/auto-manual-qty-date-shift-wise-summary']],
+                            ['label' => Yii::t('app', 'Sample Time Comparision Report'), 'url' => ['/misreports/reports/sample-time-milk-collection']],
                     ]
                 ],
                     [
@@ -1449,7 +1451,7 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
-                [
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Veterinary<b class="caret"></b></a>',
                     'items' => [
@@ -1461,9 +1463,9 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Case Type Fees'), 'url' => ['/veterinary/tbl-case-type-fees/index']],
                             ['label' => Yii::t('app', 'Member Animal Tag Details'), 'url' => ['/veterinary/tbl-member-animal-tag-details/index']],
                             ['label' => Yii::t('app', 'Animal Treatment Request'), 'url' => ['/veterinary/tbl-animal-treatment-request/index']],
-                            // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
-                            // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
-                            ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
+                        // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
+                        // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
+                        ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
                     ],
                 ],
             ],
