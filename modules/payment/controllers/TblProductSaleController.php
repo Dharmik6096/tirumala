@@ -1352,4 +1352,14 @@ class TblProductSaleController extends \app\controllers\ChildController {
         return Json::encode($data);
     }
 
+    public function actionProductSaleTransaction() {
+        $searchModel = new TblProductSaleSearch();
+        $dataProvider = $searchModel->searchSaleTransaction(Yii::$app->request->queryParams);
+
+        return $this->render('product-sale-transaction', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }
