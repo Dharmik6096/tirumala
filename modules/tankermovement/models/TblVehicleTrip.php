@@ -44,7 +44,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
     public $fl_type, $fl_code, $type;
-    public $generateAutoTrip = FALSE;
+    public $generateAutoTrip = FALSE, $is_not_actual_plant;
 
     /**
      * @inheritdoc
@@ -60,7 +60,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return [
                 [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip', 'chekinout']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'no_of_compartment', 'vehicle_capacity', 'remark'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime', 'is_not_actual_plant'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
@@ -327,11 +327,11 @@ class TblVehicleTrip extends \app\models\ChildModel {
     }
 
     public function getVehicleTripDetailCode() {
-        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['arrival_time' => null])->orderBy('sequence_no');
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['and', ['arrival_time' => null], ['departure_time' => null]])->orderBy('sequence_no');
     }
 
     public function getTakenTripDetailCode() {
-        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null])->orderBy('sequence_no');
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['or', ['is not', 'arrival_time', null], ['is not', 'departure_time', null]])->orderBy('sequence_no');
     }
 
     public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, &$validation, $is_last_destination = 0) {

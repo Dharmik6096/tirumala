@@ -103,6 +103,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
                             $historyClass = $modelClass . 'History';
                             $historyModel = new $historyClass();
                             if ($master_type == 'provisional_dcs') {
+                                $model->vendor = !empty($model->vendor_code) ? $model->vendor_code : '';
                                 $model->milk_type_code = !empty($model->milk_type) ? explode(',', $model->milk_type) : [];
                                 $model->scenario = 'updateDcs';
                             }
@@ -170,7 +171,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
-    public function actionZipAttachmentDownload($user_code,$module_code, $module_name) {
+    public function actionZipAttachmentDownload($user_code, $module_code, $module_name) {
         if (Yii::$app->user->id != $user_code) {
             throw new \yii\web\ForbiddenHttpException("You are not authorized to download this file.");
         }

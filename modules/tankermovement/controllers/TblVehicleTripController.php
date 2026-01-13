@@ -3,6 +3,7 @@
 namespace app\modules\tankermovement\controllers;
 
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblPlantConversionVendorMapping;
 use Yii;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -234,6 +235,8 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         $this->model->bmc_code = $bmc_array;
+        $plantModel = new TblPlant();
+        $this->model->is_not_actual_plant = $plantModel->getNotActualPlant();
         return $this->customRender();
     }
 

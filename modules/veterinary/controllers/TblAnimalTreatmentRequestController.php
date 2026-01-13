@@ -68,4 +68,11 @@ class TblAnimalTreatmentRequestController extends ChildController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionVetenaryAssistance($id) {
+        $controls = [];
+        $controls['request_id'] = $id;
+        $controls['p_report_name'] = 'Vetenary Assistance';
+        $this->printDocument($controls, 'staff/VetenaryAssistance', 'VetenaryAssistance', 'pdf');
+    }
 }
