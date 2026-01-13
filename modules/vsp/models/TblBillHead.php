@@ -118,7 +118,7 @@ class TblBillHead extends \app\models\ChildModel {
         $query->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
         if (!empty($union)) {
             $query->joinWith('defaultBillHeadCode');
-            $query->andWhere(['or', ['is_default' => 0], ['default_bill_head_name' => 'Product Sale']]);
+            $query->andWhere(['or', ['is_default' => 0], ['bill_head_type' => 1]]);
             $query->andWhere(['union_code' => $union]);
         } else {
             $query->andWhere(['is_default' => 0]);

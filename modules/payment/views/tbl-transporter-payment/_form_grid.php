@@ -63,6 +63,7 @@ $attribute = [
         ['attribute' => 'net_amount'],
         ['attribute' => 'adjust_amount'],
         ['attribute' => 'final_amount'],
+        ['attribute' => 'tds_amount'],
         ['attribute' => 'adjust_remark'],
         [
         'attribute' => 'payment_date',

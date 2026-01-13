@@ -11,7 +11,7 @@ use app\modules\payment\models\TblProductSaleTransaction;
  * TblProductSaleTransactionSearch represents the model behind the search form about `app\modules\payment\models\TblProductSaleTransaction`.
  */
 class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
-
+    public $product_desc;
     /**
      * @inheritdoc
      */
@@ -19,7 +19,7 @@ class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
         return [
             [['product_sale_transaction_code'], 'integer'],
             [['product_sale_code', 'product_sale_rate_applicability_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'remarks'], 'safe'],
-            [['rate', 'quantity', 'amount', 'product_code'], 'safe'],
+            [['rate', 'quantity', 'amount', 'product_code', 'product_desc'], 'safe'],
         ];
     }
 
@@ -72,7 +72,8 @@ class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
 
         $query->andFilterWhere(['like', 'tbl_product_sale_transaction.product_sale_code', $this->product_sale_code])
                 ->andFilterWhere(['like', 'tbl_product_sale_transaction.product_sale_rate_applicability_code', $this->product_sale_rate_applicability_code])
-                ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code]);
+                ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code])
+                ->andFilterWhere(['like', 'tbl_product.product_desc', $this->product_desc]);
 
         return $dataProvider;
     }

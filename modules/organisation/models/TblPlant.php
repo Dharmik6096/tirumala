@@ -68,7 +68,7 @@ class TblPlant extends \app\models\ChildModel {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
-            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code', 'is_virtual_plant'], 'safe'],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'sap_vendor_code', 'is_virtual_plant', 'is_not_actual_plant'], 'safe'],
             [['capacity'], 'integer'],
             [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
 //            [['plant_code'], 'integer', 'min' => 1],
@@ -111,6 +111,7 @@ class TblPlant extends \app\models\ChildModel {
             'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
             'is_virtual_plant' => Yii::t('app', 'is Virtual Plant?'),
+            'is_not_actual_plant' => Yii::t('app', 'Is Not Actual Plant'),
         ];
     }
 
@@ -271,7 +272,8 @@ class TblPlant extends \app\models\ChildModel {
 
     public function getPlantData($plant_code) {
         $partyList = $this->find()->select(["CONCAT(plant_code, '#plant') AS plant_code, CONCAT(name, ' - ', ref_code, ' - PLANT') AS name"])
-                        ->where(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
+                        ->where(['ISNULL(is_not_actual_plant, 0)' => 0])
+                        ->andWhere(['or', ['plant_code' => $plant_code], ['ref_code' => $plant_code]])->asArray()->all();
         return ArrayHelper::map($partyList, 'plant_code', 'name');
     }
 
@@ -285,4 +287,8 @@ class TblPlant extends \app\models\ChildModel {
                         ->all();
     }
 
+    public function getNotActualPlant() {
+        $plantList = $this->find()->where(['ISNULL(is_not_actual_plant, 0)' => 1])->all();
+        return !empty($plantList) ? array_column($plantList, 'plant_code') : [];
+    }
 }
