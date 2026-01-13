@@ -1,8 +1,7 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\helpers\Url;
-use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
