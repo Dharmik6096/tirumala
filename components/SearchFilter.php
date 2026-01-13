@@ -41,6 +41,7 @@ class SearchFilter {
             ],
             'TblProductSaleSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+                'action' => ['index', 'product-sale-transaction'],
             ],
             'TblDcsPaymentCycleSearch' => [
                 'filter' => ['f_union_code'],
