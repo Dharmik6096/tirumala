@@ -42,6 +42,7 @@ class TblOrganizationLatlongSearch extends TblOrganizationLatlong
     public function search($params)
     {
         $query = TblOrganizationLatlong::find();
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'customerCode', 'userCode']);
 
         // add conditions that should always apply here
 
