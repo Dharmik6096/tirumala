@@ -52,6 +52,7 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use yii\base\UserException;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -216,9 +217,7 @@ class TblMemberProvisional extends ChildModel {
                 [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
                 [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from', 'employee_code', 'employee_name', 'region_code'], 'safe'],
-                [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
-                    return ($this->chackExistRecord($params) && $this->is_active);
-                }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'updateProvisionalMember', 'hosync', 'hosyncUpdate']],
+                [['mobile_no'], 'validateProvisionalMobile', 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'hosync', 'hosyncUpdate']],
                 [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
                 [['ex_member_code'], 'setExMember'],
                 [['provisional_member_code'], 'setProvisionalMemberCode', 'on' => 'importCsv'],
@@ -257,6 +256,9 @@ class TblMemberProvisional extends ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#tblmemberprovisional-bank_account_no').val() != '';
                 }", 'except' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
+                [['mobile_no'], 'validateMobileNo', 'on' => ['createProvisionalMember', 'update_provisional_member']],
+                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createProvisionalMember', 'update_provisional_member']],
+                [['adhar_no'], 'validateAdharNo', 'on' => ['createProvisionalMember', 'update_provisional_member']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -1030,6 +1032,104 @@ class TblMemberProvisional extends ChildModel {
 
     public function getDcs($dcs_code) {
         return TblDcs::find()->select(['dcs_code_ex'])->where(['dcs_code' => $dcs_code])->one();
+    }
+
+    public function validateMobileNo($attribute, $params) {
+        $mobile = $this->$attribute;
+        $encryptedMobile = Yii::$app->general->encryptData($mobile);
+
+        if (!empty($mobile)) {
+            $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
+                    ->one();
+            if ($existsInMember) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                return;
+            }
+
+            $existsInContact = TblContactDetails::find()->select(['firstname', 'module_name', 'module_code'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
+                    ->one();
+
+            if ($existsInContact) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Contact Details. - First Name : ' . $existsInContact->firstname . ' , Module Name : ' . $existsInContact->module_name . ' , Module Code : ' . $existsInContact->module_code));
+                return;
+            }
+        }
+    }
+
+    public function validateProvisionalMobile($attribute, $params) {
+        if (!empty($this->$attribute)) {
+            $provisionalStatus = ['register', 'pending', 'inprogress', 'reject'];
+            $existsInProvisional = $this->find()->where(['is_active' => 1])->andWhere(['mobile_no' => $this->$attribute])->andWhere(['in', 'lower(provisional_status)', $provisionalStatus]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                return;
+            }
+        }
+    }
+
+    public function validateBankAccNo($attribute, $params) {
+        $bankAccNo = $this->$attribute;
+        $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
+
+        if (!empty($bankAccNo)) {
+            $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
+                    ->one();
+            if ($existsInMember) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                return;
+            }
+
+            $provisionalStatus = ['register', 'pending', 'inprogress', 'reject'];
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
+                    ->andWhere(['in', 'lower(provisional_status)', $provisionalStatus]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                return;
+            }
+        }
+    }
+
+    public function validateAdharNo($attribute, $params) {
+        $adharNo = $this->$attribute;
+        $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
+
+        if (!empty($adharNo)) {
+            $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['adhar_no' => $adharNo], ['adhar_no' => $encryptedAdharNo]])
+                    ->one();
+            if ($existsInMember) {
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                return;
+            }
+
+            $provisionalStatus = ['register', 'pending', 'inprogress', 'reject'];
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['adhar_no' => $this->$attribute], ['adhar_no' => $encryptedAdharNo]])
+                    ->andWhere(['in', 'lower(provisional_status)', $provisionalStatus]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                return;
+            }
+        }
     }
 
 }
