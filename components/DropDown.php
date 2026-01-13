@@ -2519,6 +2519,7 @@ class DropDown extends Component {
             'asset_type' => ['name' => 'asset_type_code', 'fields' => 'asset_type_code,asset_type_name,', 'prompt' => Yii::t('app', 'Select Asset Type'), 'model' => 'TblAssetType'],
             'caseType' => ['name' => 'case_type_id', 'fields' => 'case_type_id,case_type_name,', 'prompt' => Yii::t('app', 'Select Case Type'), 'model' => 'TblCaseType', 'depend' => 'union_code'],
             'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
+            'committee_type_code' => ['name' => 'committee_type_code', 'fields' => 'committee_type_code,committee_type_name', 'prompt' => 'Select Type', 'model' => 'TblCommitteeType'],
         ];
         return $label[$l];
     }
