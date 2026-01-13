@@ -5,16 +5,13 @@ namespace app\modules\payment\controllers;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\payment\models\TblVendorPaymentHoldRelease;
 use app\modules\payment\models\TblVendorPaymentHoldReleaseHistory;
+use app\modules\payment\models\TblVendorPaymentHoldReleaseSearch;
 use Yii;
 use app\modules\payment\models\TblVendorPaymentHoldReleaseSummary;
-use app\modules\payment\models\TblVendorPaymentHoldReleaseTransaction;
 use app\modules\payment\models\TblVendorPaymentHoldReleaseTransactionSearch;
-use app\modules\payment\models\TblVspPayment;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use app\modules\payment\models\TblVspOutstanding;
-use app\modules\payment\models\TblVspOutstandingHistory;
 use PHPExcel;
 use yii\data\ArrayDataProvider;
 use yii\web\NotFoundHttpException;
@@ -25,6 +22,31 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
 
     public $freeAccessActions = ['hold-release-payment-cycle', 'process-hold-release'];
    
+    /**
+     * Creates a new TblVendorPaymentHoldRelease model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionIndex() {
+        $searchModel = new TblVendorPaymentHoldReleaseSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionView($id) {
+        $searchModel = new TblVendorPaymentHoldReleaseTransactionSearch();
+        $searchModel->vendor_payment_hold_release_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('view', [
+                    'model' => $this->findModel($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+        ]);
+    }
+
     public function actionCreate() {
         $model = new TblVendorPaymentHoldReleaseSummary();
         $model->scenario = 'processpayment';
