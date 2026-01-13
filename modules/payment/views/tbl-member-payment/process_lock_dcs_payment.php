@@ -143,7 +143,7 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         $member_recovered_amount = floatval(Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount'));
                         $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
                         $rowclass = '';
-                        if ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && trim($total_shortage_amount) != trim($member_recovered_amount)) {
+                        if ($milk_short_recovery_member == 1 && $total_shortage_amount > 0 && bccomp($total_shortage_amount, $member_recovered_amount, 2) != 0) {
                             $rowclass = 'backgrnd-danger';
                         }
                     }
