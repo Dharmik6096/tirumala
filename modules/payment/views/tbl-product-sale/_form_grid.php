@@ -65,6 +65,11 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }, 'filter' => false, 'visible' => false],
+    [
+        'attribute' => 'originating_type',
+        'value' => function($model) {
+            return isset($model->originating_type) ? Yii::$app->dropdown->getRecords('originating_type_options')['data'][$model->originating_type] : '';
+        }, 'filter' => false],
 ];
 
 $grid_option = [

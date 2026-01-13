@@ -98,8 +98,10 @@ $form = ActiveForm::begin([
 
 <?php
 $bmcArray = json_encode($model->bmc_code);
+$isNotActualPlant = json_encode($model->is_not_actual_plant);
 $script = "
 var selectedBmcCodesInitial = $bmcArray;
+var isNotActualPlant = $isNotActualPlant;
 var isLoadPage = true;
 $(document).ready(function() {
     $('.field-tblvehicletrip-transporter_code').addClass('disabled no_pointer');
@@ -124,10 +126,12 @@ $('#tblvehicletrip-plant_code').on('change',function(){
                 var options='';  
 
                 $.each(plant_code, function(index, plant_code) {
-                    var uniquePlantValue = plant_code + '#plant';
-                    var plantText = $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text();
-                    options += '<option value=\"' + uniquePlantValue + '\">' + plantText + ' - PLANT</option>';
-                });          
+                    if ($.inArray(plant_code, isNotActualPlant) === -1) {
+                        var uniquePlantValue = plant_code + '#plant';
+                        var plantText = $('#tblvehicletrip-plant_code option[value=\"' + plant_code + '\"]').text();
+                        options += '<option value=\"' + uniquePlantValue + '\">' + plantText + ' - PLANT</option>';
+                    }
+                });
                 $.each(obj1.data, function(index, value) {
                     // if(jQuery.inArray(index,selarray) == -1){   
                         options += '<option value=\"'+index+'\">'+value+'</option>';  
