@@ -1060,8 +1060,8 @@ class TblMemberProvisional extends ChildModel {
 
     public function validateProvisionalMobile($attribute, $params) {
         if (!empty($this->$attribute)) {
-            $provisionalStatus = ['register', 'pending', 'inprogress', 'reject'];
-            $existsInProvisional = $this->find()->where(['is_active' => 1])->andWhere(['mobile_no' => $this->$attribute])->andWhere(['in', 'lower(provisional_status)', $provisionalStatus]);
+            $existsInProvisional = $this->find()->where(['is_active' => 1])->andWhere(['mobile_no' => $this->$attribute])
+                    ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
             if (!$this->isNewRecord) {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
             }
@@ -1087,10 +1087,9 @@ class TblMemberProvisional extends ChildModel {
                 return;
             }
 
-            $provisionalStatus = ['register', 'pending', 'inprogress', 'reject'];
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
-                    ->andWhere(['in', 'lower(provisional_status)', $provisionalStatus]);
+                    ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
             if (!$this->isNewRecord) {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
             }
@@ -1116,10 +1115,9 @@ class TblMemberProvisional extends ChildModel {
                 return;
             }
 
-            $provisionalStatus = ['register', 'pending', 'inprogress', 'reject'];
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['adhar_no' => $this->$attribute], ['adhar_no' => $encryptedAdharNo]])
-                    ->andWhere(['in', 'lower(provisional_status)', $provisionalStatus]);
+                    ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
             if (!$this->isNewRecord) {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
             }
