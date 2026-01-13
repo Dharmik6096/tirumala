@@ -166,6 +166,10 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
+                        'attribute' => 'tds_amount',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
                         'attribute' => 'final_amount',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
