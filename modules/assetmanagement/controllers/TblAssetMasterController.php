@@ -219,7 +219,7 @@ class TblAssetMasterController extends \app\controllers\ChildController {
             }
             if (!empty($ref_code)) {
                 $asset_txn = new TblAssetTransaction();
-                $data = $asset_txn->getSrNoAssets($ref_code, $slocType, true, true);
+                $data = $asset_txn->getSrNoAssets($ref_code, $slocType, true, true, true);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
