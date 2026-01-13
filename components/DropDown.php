@@ -1705,7 +1705,7 @@ class DropDown extends Component {
             'originating_type_flag' => [
                 'name' => 'originating_type_flag',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Manual'), 1 => Yii::t('app', 'Excel'), 11 => Yii::t('app', '8-BIT'), 12 => Yii::t('app', '32-BIT'), 13 => Yii::t('app', 'EIPL'), 21 => Yii::t('app', 'BIPL'), 22 => Yii::t('app', 'BIPL'), 23 => Yii::t('app', 'AMCS')],
+                'data' => [0 => Yii::t('app', 'Manual'), 1 => Yii::t('app', 'Excel'), 2 => Yii::t('app', 'GPRS'), 11 => Yii::t('app', '8-BIT'), 12 => Yii::t('app', '32-BIT'), 13 => Yii::t('app', 'EIPL'), 21 => Yii::t('app', 'BIPL'), 22 => Yii::t('app', 'BIPL'), 23 => Yii::t('app', 'AMCS'), 24 => Yii::t('app', 'AMCS LIVE')],
             ],
             'rate_price_type' => [
                 'name' => 'rate_price_type',

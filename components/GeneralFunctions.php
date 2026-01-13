@@ -2436,7 +2436,7 @@ class GeneralFunctions extends Component {
                 $value = 'Create';
             } elseif ($model->{$field} == 1) {
                 $value = 'Import';
-            } elseif (in_array($model->{$field}, [11, 12, 21, 23])) {
+            } elseif (in_array($model->{$field}, [2, 11, 12, 21, 23, 24])) {
                 $value = 'Sync';
             } elseif ($model->{$field} == 3) {
                 $value = 'Auto Entry';
