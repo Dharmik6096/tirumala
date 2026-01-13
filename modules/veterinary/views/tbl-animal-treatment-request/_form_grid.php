@@ -1,6 +1,7 @@
 <?php
 
 use kartik\grid\GridView;
+use app\modules\usermanagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'dcs_code', 'filter' => false],
@@ -57,6 +58,10 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+        'vetenary-assistance' => function ($url, $model) {
+            $options = ['title' => 'Print', 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-file-pdf"></i>', ['/veterinary/tbl-animal-treatment-request/vetenary-assistance', 'id' => $model->animal_treatment_request_id], $options);
+        },
     ]
 ];
 ?>

@@ -37,6 +37,9 @@ $attribute = [
     ['attribute' => 'user_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }, 'filter' => true],
+    ['attribute' => 'user_code', 'label' => Yii::t('app', 'Department'), 'value' => function($model) {
+        return Yii::$app->general->getmultiforeignkey($model->userCode, ['departmentCode'], 'department');
+        }, 'visible' => true, 'filter' => false],
     ['attribute' => 'task_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taskTypeCode, 'task_type');
         }, 'filter' => false],
