@@ -279,7 +279,6 @@ class TblDcsProvisional extends ChildModel {
                 [['voter_id'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'beforeDocUpload']],
-                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'beforeDocUpload']],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
                 [['ts_code_m', 'ts_code_e'], 'number'],
@@ -299,6 +298,9 @@ class TblDcsProvisional extends ChildModel {
                         $this->validOneDigitDecimal($this, $attribute, $params);
                     }
                 }, 'except' => ['uploadDoc']],
+                [['aadhaar_no'], 'validateAdharNo', 'on' => ['createDcs', 'updateDcs', 'beforeDocUpload']],
+                [['mobile_no'], 'validateMobileNo', 'on' => ['createDcs', 'updateDcs']],
+                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createDcs', 'updateDcs']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -646,6 +648,89 @@ class TblDcsProvisional extends ChildModel {
             }
         }
         return $defaultMilk;
+    }
+
+    public function validateMobileNo($attribute, $params) {
+        $mobile = $this->$attribute;
+
+        if (!empty($mobile)) {
+            $encryptedMobile = Yii::$app->general->encryptData($mobile);
+            $existsInDcs = TblDcs::find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
+                    ->one();
+            if ($existsInDcs) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                return false;
+            }
+
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
+                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInProvisional->dcs_provisional_code . ', Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
+                return false;
+            }
+        }
+    }
+
+    public function validateBankAccNo($attribute, $params) {
+        $bankAccNo = $this->$attribute;
+
+        if (!empty($bankAccNo)) {
+            $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
+            $existsInDcs = TblDcs::find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
+                    ->one();
+            if ($existsInDcs) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                return false;
+            }
+
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
+                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInProvisional->dcs_provisional_code . ', Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
+                return false;
+            }
+        }
+    }
+
+    public function validateAdharNo($attribute, $params) {
+        $adharNo = $this->$attribute;
+
+        if (!empty($adharNo)) {
+            $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
+            $existsInDcs = TblDcs::find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
+                    ->one();
+            if ($existsInDcs) {
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                return false;
+            }
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
+                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInProvisional->dcs_provisional_code . ', Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
+                return false;
+            }
+        }
     }
 
 }
