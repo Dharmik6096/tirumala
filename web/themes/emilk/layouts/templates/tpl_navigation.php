@@ -929,6 +929,7 @@ echo GhostMenu::widget([
                             ['label' => '634-' . Yii::t('app', 'Bank Advice'), 'url' => ['/jasperreports/default/bank-advice']],
                             ['label' => '635-' . Yii::t('app', 'Mcc Milk Bill Details With Incentive Route Wise'), 'url' => ['/misreports/reports/mcc-milk-bill-details-with-incentive-route-wise']],
                             ['label' => '636-' . Yii::t('app', 'Milk Purchase'), 'url' => ['/misreports/reports/mis-milk-purchase']],
+                            ['label' => '637-' . Yii::t('app', 'Member Bank Payment - PDF Report'), 'url' => ['/jasperreports/default/member-bank-payment-report']],
                     ]
                 ],
                     [
@@ -1134,6 +1135,7 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'TPT Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
                             ['label' => Yii::t('app', 'TPT Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
+                            ['label' => Yii::t('app', 'TPT Cost Summary 2'), 'url' => ['/misreports/reports/tp-cost-summary-new-format']],
                             ['label' => Yii::t('app', 'TPT Bill'), 'url' => ['/jasperreports/default/primary-transporter-monthly-bill']],
                     ]
                 ],
@@ -1303,6 +1305,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Capacity'), 'url' => ['/globalmaster/tbl-capacity/index'], 'active' => ($cntrl == 'tbl-capacity')],
                             ['label' => Yii::t('app', 'Vehicle Type'), 'url' => ['/globalmaster/tbl-vehicle-type/index'], 'active' => ($cntrl == 'tbl-vehicle-type')],
                             ['label' => Yii::t('app', 'Backend Data'), 'url' => ['/general/default/backend-data'], 'active' => ($cntrl == 'backend-data')],
+                            ['label' => Yii::t('app', 'Committee Master'), 'url' => ['/globalmaster/tbl-committee-members/index'], 'active' => ($cntrl == 'tbl-committee-members')],
                     ]
                 ],
                     ['label' => Yii::t('app', 'Bank'), 'url' => ['/organisation/tbl-banks/index'], 'active' => ($cntrl == 'tbl-banks')],
