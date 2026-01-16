@@ -929,6 +929,7 @@ echo GhostMenu::widget([
                             ['label' => '634-' . Yii::t('app', 'Bank Advice'), 'url' => ['/jasperreports/default/bank-advice']],
                             ['label' => '635-' . Yii::t('app', 'Mcc Milk Bill Details With Incentive Route Wise'), 'url' => ['/misreports/reports/mcc-milk-bill-details-with-incentive-route-wise']],
                             ['label' => '636-' . Yii::t('app', 'Milk Purchase'), 'url' => ['/misreports/reports/mis-milk-purchase']],
+                            ['label' => '637-' . Yii::t('app', 'Member Bank Payment - PDF Report'), 'url' => ['/jasperreports/default/member-bank-payment-report']],
                     ]
                 ],
                     [

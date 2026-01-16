@@ -584,6 +584,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberBankPaymentReport() {
+        $this->report = 'MemberBankPaymentReport';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -1379,6 +1384,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'UserAttendanceReport',
                 'title' => 'User Attendance Report PDF',
                 'bkg_export' => TRUE,
+            ],
+            'MemberBankPaymentReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_bank_type',
+                'path' => 'vsp/MemberBankPayment',
+                'scenario' => 'MemberBankPaymentReport',
+                'title' => 'Member Bank Payment - PDF',
             ],
         ];
         return $label[$l];

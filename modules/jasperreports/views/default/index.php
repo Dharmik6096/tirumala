@@ -421,6 +421,15 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                                 </div>
                                                 <?php
                                             }
+                                            if (in_array($value, array('p_bank_type'))) {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?php
+                                                    echo Yii::$app->dropdown->dropdownStatic('p_bank_type', $model, $form, 'form-group', $model->getAttributeLabel('p_bank_type'), false, $value, false);
+                                                    ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -737,7 +746,7 @@ if('" . $report . "'=='InchargeRemuneration'){
         }
     });
 }
-if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'&& '" . $report . "'!='MemberBillAbstract'&& '" . $report . "'!='VendorMilkBillVarddan'&& '" . $report . "'!='VendorBillMmd' && '" . $report . "'!='FarmerIncentive'&& '" . $report . "'!='VendorMilkBillSnmilk'&&'" . $report . "'!='VendorMilkBillJgf'&& '" . $report . "'!='VlccTransactionDataReport'&& '" . $report . "'!='VendorMilkBillAnig'&& '" . $report . "'!='VendorMilkBillShivPrasad'&& '" . $report . "'!='MemberMilkBillShivPrasad'&& '" . $report . "'!='VlccTransactionDataReportRegionAll'){
+if('" . $report . "'!='MccDayBookDispatchHub' && '" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'&& '" . $report . "'!='MemberBillAbstract'&& '" . $report . "'!='VendorMilkBillVarddan'&& '" . $report . "'!='VendorBillMmd' && '" . $report . "'!='FarmerIncentive'&& '" . $report . "'!='VendorMilkBillSnmilk'&&'" . $report . "'!='VendorMilkBillJgf'&& '" . $report . "'!='VlccTransactionDataReport'&& '" . $report . "'!='VendorMilkBillAnig'&& '" . $report . "'!='VendorMilkBillShivPrasad'&& '" . $report . "'!='MemberMilkBillShivPrasad'&& '" . $report . "'!='VlccTransactionDataReportRegionAll'&& '" . $report . "'!='MemberBankPaymentReport'){
     $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){
