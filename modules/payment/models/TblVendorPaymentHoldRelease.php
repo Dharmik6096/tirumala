@@ -4,10 +4,12 @@ namespace app\modules\payment\models;
 
 use app\models\ChildModel;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
 use Yii;
 
 /**
@@ -73,7 +75,7 @@ use Yii;
  */
 class TblVendorPaymentHoldRelease extends ChildModel
 {
-    public $payment_cycle_code, $otp_code;
+    public $payment_cycle_code, $otp_code, $customer_ex_code;
     /**
      * @inheritdoc
      */
@@ -106,30 +108,30 @@ class TblVendorPaymentHoldRelease extends ChildModel
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route'),
-            'customer_type' => Yii::t('app', 'Customer Type'),
-            'customer_code' => Yii::t('app', 'Customer Code'),
+            'customer_type' => Yii::t('app', 'Type'),
+            'customer_code' => Yii::t('app', 'Code'),
             'customer_name' => Yii::t('app', 'Customer Name'),
             'payment_transaction_code' => Yii::t('app', 'Payment Transaction Code'),
             'from_datetime' => Yii::t('app', 'From Datetime'),
             'from_shift' => Yii::t('app', 'From Shift'),
             'to_datetime' => Yii::t('app', 'To Datetime'),
             'to_shift' => Yii::t('app', 'To Shift'),
-            'kg_fat' => Yii::t('app', 'Kg Fat'),
-            'kg_snf' => Yii::t('app', 'Kg Snf'),
+            'kg_fat' => Yii::t('app', 'KgFAT'),
+            'kg_snf' => Yii::t('app', 'KgSNF'),
             'total_qty' => Yii::t('app', 'Total Qty'),
             'rec_qty' => Yii::t('app', 'Rec Qty'),
             'rec_fat_kg' => Yii::t('app', 'Rec Fat Kg'),
             'rec_snf_kg' => Yii::t('app', 'Rec Snf Kg'),
-            'amount' => Yii::t('app', 'Amount'),
-            'addition' => Yii::t('app', 'Addition'),
-            'deduction' => Yii::t('app', 'Deduction'),
+            'amount' => Yii::t('app', 'Amount(+)'),
+            'addition' => Yii::t('app', 'Addition(+)'),
+            'deduction' => Yii::t('app', 'Deduction(-)'),
             'net_payable' => Yii::t('app', 'Net Payable'),
-            'adjust_amount' => Yii::t('app', 'Adjust Amount'),
-            'previous_hold' => Yii::t('app', 'Previous Hold'),
-            'previous_due' => Yii::t('app', 'Previous Due'),
-            'hold_amount' => Yii::t('app', 'Hold Amount'),
+            'adjust_amount' => Yii::t('app', 'Additional Pay(+)'),
+            'previous_hold' => Yii::t('app', 'Previous Hold(+)'),
+            'previous_due' => Yii::t('app', 'Previous Due(-)'),
+            'hold_amount' => Yii::t('app', 'Hold Amount(-)'),
             'final_pay' => Yii::t('app', 'Final Pay'),
-            'adjust_remark' => Yii::t('app', 'Adjust Remark'),
+            'adjust_remark' => Yii::t('app', 'Remarks'),
             'disburse_amount' => Yii::t('app', 'Disburse Amount'),
             'payment_date' => Yii::t('app', 'Payment Date'),
             'disburse_date' => Yii::t('app', 'Disburse Date'),
@@ -160,6 +162,10 @@ class TblVendorPaymentHoldRelease extends ChildModel
         ];
     }
 
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
     public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
@@ -178,6 +184,10 @@ class TblVendorPaymentHoldRelease extends ChildModel
 
     public function getCustomerType() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
     public function getRecords() {
