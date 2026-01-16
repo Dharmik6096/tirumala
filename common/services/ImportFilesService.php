@@ -21,7 +21,7 @@ class ImportFilesService {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+            $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 $model->updateCronPickedDate($row);
                 $this->process_files_data($row);
@@ -193,7 +193,6 @@ class ImportFilesService {
                     $column_header = array_keys($error_lines[0]);
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
-//                        $absoluteBaseUrl = Url::base(true);
                         $objPHPExcel = new PHPExcel();
                         $sheet = $objPHPExcel->getActiveSheet();
                         $sheet->fromArray(
@@ -220,7 +219,6 @@ class ImportFilesService {
                     $column_header = array_keys($success_sp_result[0]);
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
-//                        $absoluteBaseUrl = Url::base(true);
                         $objPHPExcel = new PHPExcel();
                         $sheet = $objPHPExcel->getActiveSheet();
                         $sheet->fromArray(
@@ -238,8 +236,6 @@ class ImportFilesService {
                         $successfilePath = $path . 'success_' . $row->file_name;
                         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
                         $objWriter->save($successfilePath);
-//                    copy($row->file_path, $path . $row->file_name);
-//                    unlink($row->file_path);
                         $successfilePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'success_' . $row->file_name;
                     }
                 }

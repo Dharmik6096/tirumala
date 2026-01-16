@@ -48,7 +48,6 @@ class InboxParseService {
                 foreach ($modelData as $transaction_data) {
                     try {
                         $process_record = TRUE;
-                        $is_insert = TRUE;
                         $delete = [];
                         $childModel = [];
                         $delete [] = $transaction_data;
@@ -58,12 +57,10 @@ class InboxParseService {
                         if (in_array($transaction_data->table_name, $ignore_tables)) {
                             $process_record = FALSE;
                         } else if (in_array($transaction_data->table_name, $version_ignore_tables)) {
-//  if (!in_array($transaction_data->dest_org_id, ['001'])) {
                             $version_no = (int) str_replace('d_', '', $transaction_data->version_no);
                             if ($version_no <= 100) {
                                 $process_record = FALSE;
                             }
-// }
                         }
                         if ($process_record) {
                             $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
@@ -83,7 +80,6 @@ class InboxParseService {
                                 if ($model_count != 0) {
                                     $model_data = $model->find()->where([$unique_key => $unique_value])->one();
                                     if (!empty($model_data)) {
-                                        $is_insert = FALSE;
                                         $model = $model_data;
                                         $history = $model_name . 'History';
                                         $historyModel = new $history();

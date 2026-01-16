@@ -18,7 +18,7 @@ class ImportFilesBackgroudService {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+            $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 $model->updateCronPickedDate($row);
                 $this->bulk_files_data($row);
@@ -47,7 +47,7 @@ class ImportFilesBackgroudService {
             $data['created_by'] = $row->created_by;
             $import = new DefaultController('', '');
             $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
-        
+
             $filePath = NULL;
             $successfilePath = NULL;
             $error_lines = [];
@@ -58,7 +58,6 @@ class ImportFilesBackgroudService {
                 $error_lines = $values['allData']['error_lines'];
                 $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                 if (Yii::$app->general->checkDirectory($path)) {
-//                    $absoluteBaseUrl = Url::base(true);
                     $objPHPExcel = new PHPExcel();
                     $sheet = $objPHPExcel->getActiveSheet();
                     $sheet->fromArray(
@@ -86,7 +85,6 @@ class ImportFilesBackgroudService {
                 $success_lines = $values['allData']['success_lines'];
                 $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                 if (Yii::$app->general->checkDirectory($path)) {
-//                    $absoluteBaseUrl = Url::base(true);
                     $objPHPExcel = new PHPExcel();
                     $sheet = $objPHPExcel->getActiveSheet();
                     $sheet->fromArray(
@@ -104,8 +102,6 @@ class ImportFilesBackgroudService {
                     $successfilePath = $path . 'success_' . $row->file_name;
                     $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
                     $objWriter->save($successfilePath);
-//                    copy($row->file_path, $path . $row->file_name);
-//                    unlink($row->file_path);
                     $successfilePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'success_' . $row->file_name;
                 }
             }
