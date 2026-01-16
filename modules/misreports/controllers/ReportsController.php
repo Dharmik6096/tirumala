@@ -1849,6 +1849,9 @@ class ReportsController extends \app\controllers\ChildController {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'StockRegisterBmcToSummary';
             }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'StockRegisterBmcAndTypeWise';
+            }
         }
         return $this->actionIndex();
     }
@@ -2215,6 +2218,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVehicleStatusReport() {
         $this->report = 'VehicleStatusReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionTpCostSummaryNewFormat() {
+        $this->report = 'TpCostSummaryNewFormat';
         return $this->actionIndex();
     }
 
@@ -4277,21 +4285,28 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_stock_register_bmc_wise_sap_batch_wise',
                 'scenario' => 'StockRegisterBmcToSap',
                 'title' => 'BMC Wise Stock',
-                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary'), Yii::t('app', 'Product and Type Wise')],
             ],
             'StockRegisterBmcToProduct' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_stock_register_bmc_wise_product_wise',
                 'scenario' => 'StockRegisterBmcToSap',
                 'title' => 'BMC Wise Stock',
-                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary'), Yii::t('app', 'Product and Type Wise')],
             ],
             'StockRegisterBmcToSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_stock_register_bmc_wise_summary',
                 'scenario' => 'StockRegisterBmcToSap',
                 'title' => 'BMC Wise Stock',
-                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary'), Yii::t('app', 'Product and Type Wise')],
+            ],
+            'StockRegisterBmcAndTypeWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_bmc_wise_product_wise_type_wise',
+                'scenario' => 'StockRegisterBmcToSap',
+                'title' => 'BMC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary'), Yii::t('app', 'Product and Type Wise')],
             ],
             'AssetDetailsReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,current_status:static:asset_detail_status',
@@ -4875,6 +4890,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Sample Time Comparision',
                 'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection'), Yii::t('app', 'Comparision')],
                 'bkg_export' => TRUE
+            ],
+            'TpCostSummaryNewFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transporter_code:union_code',
+                'sp_name' => 'mis_tpt_cost_summary_new_format',
+                'scenario' => 'TpCostSummaryNewFormat',
+                'title' => 'Tp Cost Summary 2',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];
