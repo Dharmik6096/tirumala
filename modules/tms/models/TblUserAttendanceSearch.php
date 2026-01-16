@@ -6,13 +6,14 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\tms\models\TblUserAttendance;
+use app\modules\usermanagement\models\User;
 
 /**
  * TblUserAttendanceSearch represents the model behind the search form about `app\modules\tms\models\TblUserAttendance`.
  */
 class TblUserAttendanceSearch extends TblUserAttendance
 {
-    public $from_date, $to_date;
+    public $from_date, $to_date, $department_wise = 1;
     /**
      * @inheritdoc
      */
@@ -20,7 +21,7 @@ class TblUserAttendanceSearch extends TblUserAttendance
     {
         return [
             [['attendance_code', 'originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_code', 'attendance_date', 'in_time', 'out_time', 'in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_code', 'attendance_date', 'in_time', 'out_time', 'in_lat_long', 'out_lat_long', 'in_desc', 'out_desc', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'department_wise'], 'safe'],
             [['day_count'], 'number'],
             [['from_date', 'to_date', 'duration', 'api_status', 'pick_datetime', 'response_datetime', 'response_msg', 'state_code', 'region_code', 'area_code'], 'safe']
         ];
@@ -65,7 +66,10 @@ class TblUserAttendanceSearch extends TblUserAttendance
         $query->andFilterWhere([
             'tbl_user_attendance.attendance_date' => $this->attendance_date,
         ]);
-
+        if($this->department_wise != 0) {
+            $department = User::find()->select('department')->where(['id' => Yii::$app->session->get('UserCode')])->scalar();
+            !empty($department) && $query->andWhere(['user.department' => $department]);
+        }
         $query->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
             ->andFilterWhere(['like', 'tbl_plant.name', $this->plant_code])
             ->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_plant_code])

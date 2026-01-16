@@ -13,14 +13,14 @@ use app\modules\payment\models\TblPaymentCycleApplicability;
  */
 class TblProductSaleSearch extends TblProductSale {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $rate, $tax_amount, $commission, $product_name, $product_desc;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date', 'rate', 'tax_amount', 'commission', 'product_name', 'product_desc'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
             [['is_installment', 'no_of_installment'], 'integer'],
             [['plant_code', 'union_code', 'bmc_code', 'mcc_plant_code', 'from_date', 'to_date'], 'required', 'on' => ['memberBulkDelete', 'memberBulkDeleteApproval']],
@@ -208,4 +208,63 @@ class TblProductSaleSearch extends TblProductSale {
         return $dataProvider;
     }
 
+    public function searchSaleTransaction($params) {
+        $query = TblProductSaleTransaction::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+        $query->joinWith(['productSaleCode', 'productCode', 'productSaleCode.dcsCode', 'productSaleCode.mainCustomerCode', 'productSaleCode.memberCode', 'productSaleCode.bmcCode']);
+        $query->join('LEFT JOIN', 'tbl_dcs as dcs', 'dcs.dcs_code = tbl_product_sale.dcs_code');
+
+        if (!empty($this->invoice_date))
+            $query->andFilterWhere(['tbl_product_sale.invoice_date' => date('Y-m-d', strtotime($this->invoice_date)).' 00:00:00']);
+
+        if (!empty($this->created_at)) {
+            $created_at_start = date('Y-m-d', strtotime($this->created_at)) . ' 00:00:00';
+            $created_at_end = date('Y-m-d', strtotime($this->created_at)) . ' 23:59:00';
+
+            $query->andFilterWhere(['and',
+                ['>=', 'tbl_product_sale.created_at', $created_at_start],
+                ['<=', 'tbl_product_sale.created_at', $created_at_end]
+            ]);
+        }
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $query->andFilterWhere(['>=', 'tbl_product_sale.invoice_date', $from_date.' 00:00:00']);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_product_sale.invoice_date', $to_date.' 23:59:00']);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
+        if (!$this->validate()) {
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andFilterWhere([
+            'tbl_product_sale_transaction.amount' => $this->amount,
+            'tbl_product_sale_transaction.rate' => $this->rate,
+            'tbl_product_sale.other_amount' => $this->other_amount,
+            'tbl_product_sale_transaction.discount' => $this->discount,
+            'tbl_product_sale.paid_amount' => $this->paid_amount,
+            'tbl_product_sale_transaction.tax_amount' => $this->tax_amount,
+            'tbl_product_sale_transaction.commission' => $this->commission,
+            'tbl_product_sale.is_installment' => $this->is_installment,
+            'tbl_product_sale.no_of_installment' => $this->no_of_installment,
+        ]);
+        if (!empty($this->payment_mode) || $this->payment_mode == '0') {
+            $query->andFilterWhere(['tbl_product_sale.payment_mode' => (int) $this->payment_mode]);
+        }
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'tbl_member.member_name', $this->customer_name]]);
+        $query->andFilterWhere(['or', ['like', 'dcs.ref_code', $this->dcs_code], ['like', 'tbl_dcs.ref_code', $this->dcs_code]]);
+        $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code])
+                ->andFilterWhere(['like', 'tbl_product_sale.customer_type', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_product_sale.customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_name])
+                ->andFilterWhere(['like', 'tbl_product.product_desc', $this->product_desc])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
+
+        return $dataProvider;
+    }
 }

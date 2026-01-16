@@ -33,7 +33,7 @@ $form = ActiveForm::begin([
                 return Yii::$app->general->getforeignkey($model->assetCode, 'asset_name');
             }],
             ['attribute' => 'detail_code', 'label' => 'Contact person name', 'value' => function ($model) {
-                return Yii::$app->general->getforeignkey($model->contactDetailCode, 'contact_person');
+                return Yii::$app->general->getforeignkey($model->contactDetailCode, 'firstname');
             }],
         ];
 

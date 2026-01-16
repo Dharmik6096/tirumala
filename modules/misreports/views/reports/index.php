@@ -156,8 +156,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
-                                                </div>
+                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>                                                </div>
                                                 <?php
                                             } else {
                                                 ?>
@@ -180,8 +179,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>
-                                                </div>
+                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>                                                </div>
                                                 <?php
                                             }
                                         }
@@ -584,6 +582,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('department'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('department', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('department'), false, 'department'); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
@@ -707,7 +712,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                         $attr_arr['label'] = Yii::t('app', $str);
                         $attr_arr['format'] = $format;
                         $attr_arr['filter'] = true;
-                        
+
                         $datatabel = [];
                         $datatabel['data'] = $att;
                         $datatabel['title'] = Yii::t('app', $str);

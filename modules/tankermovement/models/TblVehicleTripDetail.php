@@ -332,6 +332,9 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $model->out_remarks = $remarks;
             $trip->trip_sub_status = 'gate_out';
             $visibility_status = (empty($model->arrival_time) || $model->sequence_no == 1) ? 1 : 0;
+            if(empty($model->arrival_time)){
+                $model->arrival_time = date('Y-m-d H:i:s', strtotime($model->departure_time) - 1);
+            }
         }
         if ($isValid && $model->validate()) {
             $trip->sub_status_time = $action_datetime;

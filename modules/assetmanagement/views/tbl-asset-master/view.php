@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Asset Master');
@@ -44,9 +43,14 @@ $this->title = Yii::$app->label->title('view', 'Asset Master');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'asset_type_code',
+                            'value' => Yii::$app->general->getforeignkey($model->assetTypeCode, 'asset_type_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'union_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

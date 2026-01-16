@@ -929,6 +929,7 @@ echo GhostMenu::widget([
                             ['label' => '634-' . Yii::t('app', 'Bank Advice'), 'url' => ['/jasperreports/default/bank-advice']],
                             ['label' => '635-' . Yii::t('app', 'Mcc Milk Bill Details With Incentive Route Wise'), 'url' => ['/misreports/reports/mcc-milk-bill-details-with-incentive-route-wise']],
                             ['label' => '636-' . Yii::t('app', 'Milk Purchase'), 'url' => ['/misreports/reports/mis-milk-purchase']],
+                            ['label' => '637-' . Yii::t('app', 'Member Bank Payment - PDF Report'), 'url' => ['/jasperreports/default/member-bank-payment-report']],
                     ]
                 ],
                     [
@@ -1096,6 +1097,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Qty Slab Report Format 2'), 'url' => ['/misreports/reports/avg-per-vlc-milk-qty-slab-wise-category']],
                             ['label' => Yii::t('app', 'Mcc Bonus'), 'url' => ['/jasperreports/default/mcc-bonus-report']],
                             ['label' => Yii::t('app', 'Mcc maintenance'), 'url' => ['/jasperreports/default/mcc-maintance-report']],
+                            ['label' => Yii::t('app', 'Auto Manual Qty Report'), 'url' => ['/misreports/reports/auto-manual-qty-date-shift-wise-summary']],
+                            ['label' => Yii::t('app', 'Sample Time Comparision Report'), 'url' => ['/misreports/reports/sample-time-milk-collection']],
                     ]
                 ],
                     [
@@ -1132,6 +1135,7 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'TPT Cost Detail'), 'url' => ['/misreports/reports/tp-cost-detail']],
                             ['label' => Yii::t('app', 'TPT Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
+                            ['label' => Yii::t('app', 'TPT Cost Summary 2'), 'url' => ['/misreports/reports/tp-cost-summary-new-format']],
                             ['label' => Yii::t('app', 'TPT Bill'), 'url' => ['/jasperreports/default/primary-transporter-monthly-bill']],
                     ]
                 ],
@@ -1301,6 +1305,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Capacity'), 'url' => ['/globalmaster/tbl-capacity/index'], 'active' => ($cntrl == 'tbl-capacity')],
                             ['label' => Yii::t('app', 'Vehicle Type'), 'url' => ['/globalmaster/tbl-vehicle-type/index'], 'active' => ($cntrl == 'tbl-vehicle-type')],
                             ['label' => Yii::t('app', 'Backend Data'), 'url' => ['/general/default/backend-data'], 'active' => ($cntrl == 'backend-data')],
+                            ['label' => Yii::t('app', 'Committee Master'), 'url' => ['/globalmaster/tbl-committee-members/index'], 'active' => ($cntrl == 'tbl-committee-members')],
                     ]
                 ],
                     ['label' => Yii::t('app', 'Bank'), 'url' => ['/organisation/tbl-banks/index'], 'active' => ($cntrl == 'tbl-banks')],
@@ -1449,7 +1454,7 @@ echo GhostMenu::widget([
                     ],
                 ],
                     ['label' => Yii::t('app', 'Alert Rule Mapping'), 'url' => ['/sms/tbl-alert-rule-mapping/index'], 'active' => ($cntrl == 'tbl-alert-rule-mapping')],
-                [
+                    [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Veterinary<b class="caret"></b></a>',
                     'items' => [
@@ -1461,9 +1466,9 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Case Type Fees'), 'url' => ['/veterinary/tbl-case-type-fees/index']],
                             ['label' => Yii::t('app', 'Member Animal Tag Details'), 'url' => ['/veterinary/tbl-member-animal-tag-details/index']],
                             ['label' => Yii::t('app', 'Animal Treatment Request'), 'url' => ['/veterinary/tbl-animal-treatment-request/index']],
-                            // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
-                            // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
-                            ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
+                        // ['label' => Yii::t('app', 'Diagnosis Details'), 'url' => ['/veterinary/tbl-diagnosis-details/index']],
+                        // ['label' => Yii::t('app', 'Treatment Details'), 'url' => ['/veterinary/tbl-treatment-details/index']],
+                        ['label' => Yii::t('app', 'Medicine Stock'), 'url' => ['/veterinary/tbl-medicine-stock/index']],
                     ],
                 ],
             ],
