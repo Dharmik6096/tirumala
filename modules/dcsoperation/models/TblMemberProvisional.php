@@ -1040,8 +1040,11 @@ class TblMemberProvisional extends ChildModel {
         if (!empty($mobile)) {
             $encryptedMobile = Yii::$app->general->encryptData($mobile);
             $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
-                    ->one();
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
+            if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInMember->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInMember = $existsInMember->one();
             if ($existsInMember) {
                 $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
                 return false;
@@ -1073,8 +1076,12 @@ class TblMemberProvisional extends ChildModel {
         if (!empty($bankAccNo)) {
             $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
             $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
-                    ->one();
+                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]]);
+            if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInMember->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInMember = $existsInMember->one();
+
             if ($existsInMember) {
                 $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
                 return false;
@@ -1101,8 +1108,12 @@ class TblMemberProvisional extends ChildModel {
         if (!empty($adharNo)) {
             $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
             $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['adhar_no' => $adharNo], ['adhar_no' => $encryptedAdharNo]])
-                    ->one();
+                    ->andWhere(['or', ['adhar_no' => $adharNo], ['adhar_no' => $encryptedAdharNo]]);
+            if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInMember->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInMember = $existsInMember->one();
+
             if ($existsInMember) {
                 $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
                 return false;
