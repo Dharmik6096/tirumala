@@ -1751,7 +1751,7 @@ class DropDown extends Component {
             'originating_type_flag' => [
                 'name' => 'originating_type_flag',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Manual'), 1 => Yii::t('app', 'Excel'), 11 => Yii::t('app', '8-BIT'), 12 => Yii::t('app', '32-BIT'), 13 => Yii::t('app', 'EIPL'), 21 => Yii::t('app', 'BIPL'), 22 => Yii::t('app', 'BIPL'), 23 => Yii::t('app', 'AMCS')],
+                'data' => [0 => Yii::t('app', 'Manual'), 1 => Yii::t('app', 'Excel'), 2 => Yii::t('app', 'GPRS'), 11 => Yii::t('app', '8-BIT'), 12 => Yii::t('app', '32-BIT'), 13 => Yii::t('app', 'EIPL'), 21 => Yii::t('app', 'BIPL'), 22 => Yii::t('app', 'BIPL'), 23 => Yii::t('app', 'AMCS'), 24 => Yii::t('app', 'AMCS LIVE')],
             ],
             'rate_price_type' => [
                 'name' => 'rate_price_type',
@@ -2407,6 +2407,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'PORTAL'), 1 => Yii::t('app', 'PORTAL'), 23 => Yii::t('app', 'Android AMCS'), 24 => Yii::t('app', 'Android AMCS')],
             ],
+            'p_bank_type' => [
+                'name' => 'p_bank_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+            ],
         ];
         return $records[$l];
     }
@@ -2565,6 +2570,7 @@ class DropDown extends Component {
             'asset_type' => ['name' => 'asset_type_code', 'fields' => 'asset_type_code,asset_type_name,', 'prompt' => Yii::t('app', 'Select Asset Type'), 'model' => 'TblAssetType'],
             'caseType' => ['name' => 'case_type_id', 'fields' => 'case_type_id,case_type_name,', 'prompt' => Yii::t('app', 'Select Case Type'), 'model' => 'TblCaseType', 'depend' => 'union_code'],
             'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
+            'committee_type_code' => ['name' => 'committee_type_code', 'fields' => 'committee_type_code,committee_type_name', 'prompt' => 'Select Type', 'model' => 'TblCommitteeType'],
         ];
         return $label[$l];
     }

@@ -37,7 +37,7 @@ class Path extends Component {
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
             'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason', 'TblRejectionResponsibility',
-            'TblDeviceMaster', 'TblDeviceMasterMapping', 'TblRateClass', 'TblAnimalTypeAdditional',
+            'TblDeviceMaster', 'TblDeviceMasterMapping', 'TblRateClass', 'TblAnimalTypeAdditional','TblCommitteeType',
         ],
         '\\app\modules\organisation\models\\' =>
             ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
