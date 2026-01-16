@@ -14,10 +14,7 @@ class CronjobController extends \yii\console\Controller {
 
     public function actionReportGenerate() {
         $report_folder_main = '/web/export_report/';
-
         $report_path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $report_folder_main;
-
-
 
         Yii::$app->general->checkDirectory($report_path);
         Yii::$app->general->checkDirectory($report_path . '/mis/');

@@ -7,9 +7,10 @@ use Yii;
 use ruskid\csvimporter\CSVImporter;
 use ruskid\csvimporter\CSVReader;
 use app\modules\import\importData;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\collection\models\TblBulkBillingImport;
 use \app\modules\collection\models\TblBulkDataImport;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ImportFilesService {
 
@@ -29,7 +30,6 @@ class ImportFilesService {
         }
     }
 
- 
     private function process_files_data($row) {
         try {
             $flag = '';
@@ -173,7 +173,6 @@ class ImportFilesService {
                         $data['response_msg'] = 'File Record error.';
                         $error_lines[] = $data;
                     }
-                    
                 }
                 $sp_param = [];
                 $sp_param[] = $uuid;
@@ -193,7 +192,7 @@ class ImportFilesService {
                     $column_header = array_keys($error_lines[0]);
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
-                        $objPHPExcel = new PHPExcel();
+                        $objPHPExcel = new Spreadsheet();
                         $sheet = $objPHPExcel->getActiveSheet();
                         $sheet->fromArray(
                                 $column_header, // The data to set
@@ -208,7 +207,7 @@ class ImportFilesService {
                                 //    we want to set these values (default is A1)
                         );
                         $filePath = $path . 'error_' . $row->file_name;
-                        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                         $objWriter->save($filePath);
                         copy($row->file_path, $path . $row->file_name);
                         unlink($row->file_path);
@@ -219,7 +218,7 @@ class ImportFilesService {
                     $column_header = array_keys($success_sp_result[0]);
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
-                        $objPHPExcel = new PHPExcel();
+                        $objPHPExcel = new Spreadsheet();
                         $sheet = $objPHPExcel->getActiveSheet();
                         $sheet->fromArray(
                                 $column_header, // The data to set
@@ -234,7 +233,7 @@ class ImportFilesService {
                                 //    we want to set these values (default is A1)
                         );
                         $successfilePath = $path . 'success_' . $row->file_name;
-                        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                         $objWriter->save($successfilePath);
                         $successfilePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'success_' . $row->file_name;
                     }
