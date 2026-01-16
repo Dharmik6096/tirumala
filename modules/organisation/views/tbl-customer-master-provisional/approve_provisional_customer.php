@@ -116,6 +116,7 @@ $approval_detail = $customer_provisional->customerPrivisionalApproval;
                                 <th><?= Yii::t('app', 'Status By') ?></th>
                                 <th><?= Yii::t('app', 'Status') ?></th>
                                 <th><?= Yii::t('app', 'Date') ?></th>
+                                <th><?= Yii::t('app', 'Department') ?></th>
                                 <th><?= Yii::t('app', 'Remarks') ?></th>
 
                             </tr>
@@ -140,6 +141,7 @@ $approval_detail = $customer_provisional->customerPrivisionalApproval;
                                     ?>
                                 </td>
                                 <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
+                                <td><?= $approval->department; ?></td>
                                 <td><?= $approval->remarks; ?></td>
                             </tr>
                         <?php } ?>

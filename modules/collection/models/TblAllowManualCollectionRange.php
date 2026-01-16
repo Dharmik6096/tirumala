@@ -278,7 +278,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
 
     public function getcollectionApproval() {
         $this->allow_manual_collection_code = (string) $this->allow_manual_collection_code;
-        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'allow_manual_collection_code'])->orderBy('level ASC');
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'allow_manual_collection_code'])->onCondition(['process_name' => 'tbl_allow_manual_collection_range'])->orderBy('level ASC');
     }
 
     public function checkUniqueDate($attribute, $params) {
