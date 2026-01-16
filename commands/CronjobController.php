@@ -12,81 +12,85 @@ use Jaspersoft\Client\Client;
 
 class CronjobController extends \yii\console\Controller {
 
-    public $report_folder_main = '/export_report/';
-    public $report_folder = '';
-    public $report_path = '';
-    public $output = '';
-    public $model = '';
-
     public function actionReportGenerate() {
-        $report_path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web' . $this->report_folder_main;
+        $report_folder_main = '/web/export_report/';
+
+        $report_path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $report_folder_main;
+
+
+
         Yii::$app->general->checkDirectory($report_path);
         Yii::$app->general->checkDirectory($report_path . '/mis/');
         Yii::$app->general->checkDirectory($report_path . '/jasper/');
-        $i = 0;
-        while ($i < 1) {
+        while (true) {
+            $model = TblReportTxnLog::find()->where(['status' => 0])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
+            if (empty($model)) {
+                sleep(30);
+                unset($model);
+                continue;
+            }
             sleep(2);
             try {
-                $this->model = new TblReportTxnLog();
-                $this->model = $this->model->find()->where(['status' => 0])->orderBy(['report_txn_log_id' => SORT_ASC])->one();
-                if (!empty($this->model)) {
-                    $this->report_folder = $this->report_folder_main . $this->model->report_type . '/';
-                    $this->report_path = $report_path . $this->model->report_type . '/';
-                    $this->model->status = 1;
-                    $this->model->updated_at = $this->model->pick_datetime = $this->model->cron_pick_datetime = date('Y-m-d H:i:s');
-                    $this->model->save();
-                    $status = 3;
-                    $msg = 'Error While Report Generate.';
-                    $controls = json_decode($this->model->input_param, TRUE);
-                    if ($this->model->report_type == 'mis') {
+                $report_folder = $report_folder_main . $model->report_type . '/';
+                $report_path_type = $report_path . $model->report_type . '/';
 
-                        //              var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP CALL');
-                        $this->output = \Yii::$app->general->getSpData($this->model->sp_name, $controls);
-                        //               var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP Result');
-                        if (!empty($this->output)) {
-                            $result = $this->SaveExcel();
-                            if ($result === TRUE) {
-                                $status = 2;
-                                $msg = 'Report Generated.';
-                            } else {
-                                $status = 3;
-                                $msg = $result;
-                            }
-                        } else {
+                $model->status = 1;
+                $model->updated_at = $model->pick_datetime = $model->cron_pick_datetime = date('Y-m-d H:i:s');
+                $model->save();
+                $status = 3;
+                $msg = 'Error While Report Generate.';
+                $controls = json_decode($model->input_param, TRUE);
+                if ($model->report_type == 'mis') {
+
+                    //              var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP CALL');
+                    $output = \Yii::$app->general->getSpData($model->sp_name, $controls);
+                    //               var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SP Result');
+                    if (!empty($output)) {
+                        $result = $this->SaveExcel($model, $output, $report_path_type, $report_folder);
+                        if ($result === TRUE) {
                             $status = 2;
-                            $msg = 'No Data Found.';
+                            $msg = 'Report Generated.';
+                        } else {
+                            $status = 3;
+                            $msg = $result;
                         }
                     } else {
-                        $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
-                        $clientJasper->setRequestTimeout(600);
-                        $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->model->sp_name, 'pdf', null, null, $controls);
-                        $this->SaveJasperPdf();
                         $status = 2;
-                        $msg = 'Report Generated.';
+                        $msg = 'No Data Found.';
                     }
-                    $this->model->status = $status;
-                    $this->model->response_msg = $msg;
-                    $this->model->updated_at = $this->model->response_datetime = date('Y-m-d H:i:s');
-                    $this->model->save();
+                    unset($output);
+                } else {
+                    $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+                    $clientJasper->setRequestTimeout(600);
+                    $output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $model->sp_name, 'pdf', null, null, $controls);
+                    $this->SaveJasperPdf($model, $output, $report_path_type, $report_folder);
+                    $status = 2;
+                    $msg = 'Report Generated.';
+                    unset($output, $clientJasper);
                 }
+                $model->status = $status;
+                $model->response_msg = $msg;
+                $model->updated_at = $model->response_datetime = date('Y-m-d H:i:s');
+                $model->save();
             } catch (\Throwable $ex) {
                 //     var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . ' Error occurred: ' . $ex->getMessage());
                 $msg = substr($ex->getMessage(), 0, 254);
-                $this->model->status = 3;
-                $this->model->response_msg = $msg;
-                $this->model->updated_at = $this->model->response_datetime = date('Y-m-d H:i:s');
-                $this->model->save();
+                $model->status = 3;
+                $model->response_msg = $msg;
+                $model->updated_at = $model->response_datetime = date('Y-m-d H:i:s');
+                $model->save();
             }
+            unset($model, $controls, $report_folder, $report_path_type, $status, $msg);
         }
     }
 
-    public function SaveExcel() {
+    public function SaveExcel($model, $output, $report_path, $report_folder) {
         $chunk_size = 1000;
         $chunk_limit = 100;
         $sheet_change_on_chunk = 251;
 
         $record_limit = ($chunk_limit * $chunk_size);
-        if (count($this->output) > $record_limit) {
+        if (count($output) > $record_limit) {
             return 'More than ' . $record_limit . ' Records.Please Change Your Filter.';
         }
         //   var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Start');
@@ -96,9 +100,9 @@ class CronjobController extends \yii\console\Controller {
             'writer' => IOFactory::WRITER_XLSX,
         ];
         $objPHPExcel = new Spreadsheet();
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $file_header = !empty($output) ? array_keys($output[0]) : [];
 
-        $dataToDecrypt = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
+        $dataToDecrypt = !empty($model->decrypt_data) ? json_decode($model->decrypt_data, TRUE) : [];
         // $decrypt_data = !empty($this->model->decrypt_data) ? json_decode($this->model->decrypt_data, TRUE) : [];
         // $dataToDecrypt = [];
         // $dataToText = [];
@@ -107,30 +111,29 @@ class CronjobController extends \yii\console\Controller {
         //     $dataToText = !empty($decrypt_data['to_text']) ? json_decode($decrypt_data['to_text'], TRUE) : [];
         // }
         $dataToDecryptCheck = false;
-        foreach ($this->output[0] as $att => $value) {
+        foreach ($output[0] as $att => $value) {
             if (!$dataToDecryptCheck && !empty($dataToDecrypt) && in_array($att, $dataToDecrypt)) {
                 $dataToDecryptCheck = true;
             }
         }
         if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
-            for ($i = 0; $i < count($this->output); $i++) {
+            for ($i = 0; $i < count($output); $i++) {
                 foreach ($dataToDecrypt as $decKey) {
-                    if (!empty($this->output[$i]) && !empty($this->output[$i][$decKey])) {
-                        $this->output[$i][$decKey] = Yii::$app->general->decryptData($this->output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($this->output[$i][$decKey]) : $this->output[$i][$decKey];
+                    if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
+                        $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
                     }
                 }
             }
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Decrypted');
 
-        $output_chunk = array_chunk($this->output, $chunk_size, TRUE);
+        $output_chunk = array_chunk($output, $chunk_size, TRUE);
         $chunk_count = count($output_chunk);
 
         $a = 1;
         $sheet_no = 2;
         //   var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Sheet Count ' . count($chunk_count));
         //    var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Data Count ' . count($this->output));
-
         // $sheet = $objPHPExcel->getActiveSheet();
         // $sheet->setTitle('Sheet1');
         $customWorksheet = new Worksheet($objPHPExcel, 'Sheet1');
@@ -138,7 +141,7 @@ class CronjobController extends \yii\console\Controller {
         $objPHPExcel->removeSheetByIndex(0);
 
         $customWorksheet->fromArray($file_header, NULL, 'A1');
-        $customWorksheet->fromArray($this->output, NULL, 'A2');
+        $customWorksheet->fromArray($output, NULL, 'A2');
         // $sheet->fromArray($file_header, NULL, 'A1');
         // if (!empty($dataToText)) {
         //     foreach ($dataToText as $columnName) {
@@ -182,25 +185,26 @@ class CronjobController extends \yii\console\Controller {
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . str_replace('/', '_', $this->model->report_title);
+        $labelT = date('YmdHis') . '_' . $model->user_code . '_' . $model->report_txn_log_id . '_' . str_replace('/', '_', $model->report_title);
         $fileName = $labelT . '.' . $header['extension'];
 
         $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
-        $objWriter->save($this->report_path . $fileName);
+        $objWriter->save($report_path . $fileName);
 
         //      var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel Done');
 
-        $this->model->file_name = $fileName;
-        $this->model->file_path = $this->report_folder . $fileName;
-
+        $model->file_name = $fileName;
+        $model->file_path = $report_folder . $fileName;
+        unset($objPHPExcel, $objWriter, $output, $file_header, $dataToDecrypt, $output_chunk);
         return TRUE;
     }
 
-    public function SaveJasperPdf() {
-        $fileName = date('YmdHis') . '_' . $this->model->user_code . '_' . $this->model->report_txn_log_id . '_' . str_replace('/', '_', $this->model->report_title) . '.pdf';
-        file_put_contents($this->report_path . $fileName, $this->output);
-        $this->model->file_name = $fileName;
-        $this->model->file_path = $this->report_folder . $fileName;
+    public function SaveJasperPdf($model, $output, $report_path, $report_folder) {
+        $fileName = date('YmdHis') . '_' . $model->user_code . '_' . $model->report_txn_log_id . '_' . str_replace('/', '_', $model->report_title) . '.pdf';
+        file_put_contents($report_path . $fileName, $output);
+        $model->file_name = $fileName;
+        $model->file_path = $report_folder . $fileName;
+        unset($fileName);
     }
 
 }
