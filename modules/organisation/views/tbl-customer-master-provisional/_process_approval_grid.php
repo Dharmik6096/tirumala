@@ -22,6 +22,7 @@ $attribute = [
     ['attribute' => 'created_at', 'label' => 'Date', 'vAlign' => 'middle', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->created_at);
         }, 'filter' => false],
+    ['attribute' => 'department', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
 ];
 
