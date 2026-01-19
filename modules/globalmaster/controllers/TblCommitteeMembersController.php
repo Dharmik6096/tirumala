@@ -50,6 +50,7 @@ class TblCommitteeMembersController extends \app\controllers\ChildController {
         $this->model = new TblCommitteeMembers();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->committee_member_code = Yii::$app->general->getUuid();
             $this->model->election_date = Yii::$app->formatter->asDate($this->model->election_date, DATE_FORMAT);
             $this->model->tenure_from_date = Yii::$app->formatter->asDate($this->model->tenure_from_date, DATE_FORMAT);
             $this->model->tenure_to_date = Yii::$app->formatter->asDate($this->model->tenure_to_date, DATE_FORMAT);
