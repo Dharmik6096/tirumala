@@ -5,6 +5,7 @@ namespace app\modules\androiddpu\v5\controllers;
 use Yii;
 use app\modules\syncutility\models\TblInbox;
 use app\modules\androiddpu\components\HttpRequest;
+use app\modules\syncutility\models\TblSentboxDesktop;
 
 class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController {
 
@@ -46,4 +47,52 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         return $this->response;
     }
 
+    public function actionSentboxDesktop() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (true) {
+            $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
+            $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+            $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
+            $model = new TblSentboxDesktop();
+            $model->dest_org_id = $code;
+            $model->dest_org_type = $type;
+            $model->device_id = $device_id;
+            $res_data = $model->getData();
+            $this->response['data'] = $res_data;
+        }
+        return $this->response;
+    }
+
+    public function actionSentboxCountDesktop() {
+        $response = [];
+        $data = $this->post_data;
+        $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
+        $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+        $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
+        $model = new TblSentboxDesktop();
+        $model->dest_org_id = $code;
+        $model->dest_org_type = $type;
+        $model->device_id = $device_id;
+        $response['count'] = $model->getDataCount();
+        $this->response['data'] = $response;
+        return $this->response;
+    }
+
+    public function actionAcknowledgementDesktop() {
+        $res_data = [];
+        $res_data['message'] = 'Sentbox Not Updated.';
+        $data = $this->post_data;
+        $sync_active_model = $this->syncActiveRecord($data);
+        if (!empty($sync_active_model)) {
+            $content = $data['content'];
+            $ids = $content['uuid'];
+            $record = $this->generalModel->deleteMapping(['TblSentboxDesktop', 'TblSentboxDesktopClone'], 'uuid', $ids);
+            if (!in_array(FALSE, $record)) {
+                $res_data['message'] = 'Sentbox Updated Successfully.';
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
 }

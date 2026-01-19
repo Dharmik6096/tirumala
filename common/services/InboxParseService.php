@@ -195,6 +195,9 @@ class InboxParseService {
                                 $masterSave = [];
                                 if ($process_record) {
                                     $masterSave[] = $model;
+                                    if(!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL'.$transaction_data->originating_org_id.'AMCS'){
+                                        $transaction_data->generateSentBox($masterSave);
+                                    }
                                 }
                                 $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                                 if ($transaction != 'customRedirect') {
@@ -218,6 +221,9 @@ class InboxParseService {
                                     $successCount++;
                                 }
                             } else {
+                                echo 'ssss<pre>';
+                                print_r($model->getErrors());
+                                die;
                                 $errorCount++;
                                 $transaction_data->error_log = Json::encode($model->getErrors());
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
@@ -236,6 +242,9 @@ class InboxParseService {
                             }
                         }
                     } catch (\Throwable $ex) {
+                        echo 'qqqq<pre>';
+                        print_r($ex->getMessage());
+                        die;
                         $errorCount++;
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
@@ -250,6 +259,9 @@ class InboxParseService {
                 $verifyCountModel->save();
             }
         } catch (yii\base\Exception $e) {
+            echo 'wwww<pre>';
+                        print_r($e->getMessage());
+                        die;
             try {
                 if (isset($verifyCountModel)) {
                     $verifyCountModel->x_col1 = substr($e->getMessage(), 0, 7900);
@@ -259,9 +271,14 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
-                
+                echo 'rrr<pre>';
+                        print_r($e->getMessage());
+                        die;
             }
         } catch (\Throwable $e) {
+            echo 'tttt<pre>';
+                        print_r($e->getMessage());
+                        die;
             try {
                 if (isset($verifyCountModel)) {
                     $verifyCountModel->x_col1 = substr($e->getMessage(), 0, 7900);
@@ -271,7 +288,9 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
-                
+                echo 'yyyy<pre>';
+                        print_r($e->getMessage());
+                        die;
             }
         }
     }
