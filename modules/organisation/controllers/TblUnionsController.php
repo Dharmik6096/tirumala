@@ -13,6 +13,7 @@ use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\controllers\ChildController;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
@@ -237,10 +238,7 @@ class TblUnionsController extends ChildController {
         $modelUnion = $this->findModel($id);
         $values = $model->getDistrict($modelUnion);
         if (Yii::$app->request->post()) {
-
-            $bank_code = Yii::$app->request->post('TblUnionsDistrictMapping')['union_code'];
             $district_code = Yii::$app->request->post('TblUnionsDistrictMapping')['district_code'];
-
             $postData = array_filter($district_code);
             if (empty($postData)) {
                 $model->addError('union_code', 'Please select at lease one district.');
@@ -250,19 +248,10 @@ class TblUnionsController extends ChildController {
                 ]);
             }
 
-
-            $data = $model->find()->where(['union_code' => $id, 'is_active' => 1])->all();
-
-            $returnedArray = \yii\helpers\ArrayHelper::map($data, 'district_code', 'district_code');
-
-            $districts = Yii::$app->general->array_flatten($values['district_list'], 1);
-            $postData = Yii::$app->general->array_flatten($postData);
-            $oldAssignments = array_keys($returnedArray);
-            $newAssignments = array_intersect(array_flip($districts), $postData);
-
+            $oldAssignments = array_keys(ArrayHelper::map($model->find()->where(['union_code' => $id, 'is_active' => 1])->all(), 'district_code', 'district_code'));
+            $newAssignments = Yii::$app->general->array_flatten($postData);
             $toAssign = array_diff($newAssignments, $oldAssignments);
             $toRevoke = array_diff($oldAssignments, $newAssignments);
-
             $record = $this->generalModel->mappingTransaction($toRevoke, $toAssign, ['TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory'], ['union_code', 'district_code'], $id);
 
             if ($record) {

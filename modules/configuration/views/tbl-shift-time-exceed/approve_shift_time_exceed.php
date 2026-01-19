@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
 use yii\widgets\MaskedInput;
 
 $this->title = Yii::$app->label->title('view', 'Shift Time Exceed Provision Approval');
@@ -161,6 +160,7 @@ $this->title = Yii::$app->label->title('view', 'Shift Time Exceed Provision Appr
                                 <th><?= Yii::t('app', 'Status By') ?></th>
                                 <th><?= Yii::t('app', 'Status') ?></th>
                                 <th><?= Yii::t('app', 'Date') ?></th>
+                                <th><?= Yii::t('app', 'Department') ?></th>
                                 <th><?= Yii::t('app', 'Remarks') ?></th>
                             </tr>
                         </thead>
@@ -186,6 +186,7 @@ $this->title = Yii::$app->label->title('view', 'Shift Time Exceed Provision Appr
                                         ?>
                                     </td>
                                     <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
+                                    <td><?= $approval->department; ?></td>
                                     <td><?= $approval->remarks; ?></td>
                                 </tr>
                             <?php } ?>
