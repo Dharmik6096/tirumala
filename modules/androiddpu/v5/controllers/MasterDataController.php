@@ -53,11 +53,9 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         if (true) {
             $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
             $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
-            $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
             $model = new TblSentboxDesktop();
             $model->dest_org_id = $code;
             $model->dest_org_type = $type;
-            $model->device_id = $device_id;
             $res_data = $model->getData();
             $this->response['data'] = $res_data;
         }
@@ -69,11 +67,9 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $data = $this->post_data;
         $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
         $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
-        $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
         $model = new TblSentboxDesktop();
         $model->dest_org_id = $code;
         $model->dest_org_type = $type;
-        $model->device_id = $device_id;
         $response['count'] = $model->getDataCount();
         $this->response['data'] = $response;
         return $this->response;
@@ -83,14 +79,11 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $res_data = [];
         $res_data['message'] = 'Sentbox Not Updated.';
         $data = $this->post_data;
-        $sync_active_model = $this->syncActiveRecord($data);
-        if (!empty($sync_active_model)) {
-            $content = $data['content'];
-            $ids = $content['uuid'];
-            $record = $this->generalModel->deleteMapping(['TblSentboxDesktop', 'TblSentboxDesktopClone'], 'uuid', $ids);
-            if (!in_array(FALSE, $record)) {
-                $res_data['message'] = 'Sentbox Updated Successfully.';
-            }
+        $content = $data['content'];
+        $ids = $content['uuid'];
+        $record = $this->generalModel->deleteMapping(['TblSentboxDesktop', 'TblSentboxDesktopClone'], 'uuid', $ids);
+        if (!in_array(FALSE, $record)) {
+            $res_data['message'] = 'Sentbox Updated Successfully.';
         }
         $this->response['data'] = $res_data;
         return $this->response;

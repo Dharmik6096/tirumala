@@ -94,7 +94,7 @@ class TblSentboxDesktop extends \yii\db\ActiveRecord
 
     public function getData() {
         $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type])
                 ->orderBy('posting_timestamp')
                 ->limit(5)
                 ->all();
@@ -107,7 +107,7 @@ class TblSentboxDesktop extends \yii\db\ActiveRecord
 
     public function getDataCount() {
         $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type])
                 ->count();
         return $data;
     }
