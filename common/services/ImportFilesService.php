@@ -27,6 +27,9 @@ class ImportFilesService {
                 $model->updateCronPickedDate($row);
                 $this->process_files_data($row);
             }
+            return true;
+        } else {
+            return false;
         }
     }
 

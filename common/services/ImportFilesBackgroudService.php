@@ -24,6 +24,9 @@ class ImportFilesBackgroudService {
                 $model->updateCronPickedDate($row);
                 $this->bulk_files_data($row);
             }
+            return true;
+        } else {
+            return false;
         }
     }
 

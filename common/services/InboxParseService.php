@@ -251,6 +251,8 @@ class InboxParseService {
                 $verifyCountModel->success_count = $successCount;
                 $verifyCountModel->error_count = $errorCount;
                 $verifyCountModel->save();
+            } else {
+                return false;
             }
         } catch (yii\base\Exception $e) {
             try {
@@ -275,6 +277,7 @@ class InboxParseService {
             } catch (\Throwable $e) {
             }
         }
+        return true;
     }
 
 }
