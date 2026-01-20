@@ -8,7 +8,7 @@ use yii\base\UserException;
 use yii\widgets\ActiveForm;
 use yii\base\Model;
 use app\modules\import\models\TblImportFileLog;
-use app\modules\bkgprocess\controllers\SchedulerController;
+use common\services\ImportFilesService;
 
 class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
 
@@ -66,7 +66,7 @@ class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
                             $msg = 'File Imported Successfully.';
                             if ($process_status == 2) {
                                 $model->pick_datetime = $model->cron_pick_datetime = date('Y-m-d H:i:s');
-                                $import = new SchedulerController('', '');
+                                $import = new ImportFilesService();
                                 $import->process_files_data($model);
                                 $msg = $model->response_msg;
                             }

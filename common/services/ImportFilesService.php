@@ -30,7 +30,7 @@ class ImportFilesService {
     }
 
  
-    private function process_files_data($row) {
+    public function process_files_data($row) {
         try {
             $flag = '';
             if ($row->file_type == 'bmc_collection') {
