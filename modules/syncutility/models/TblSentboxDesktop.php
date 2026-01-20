@@ -94,7 +94,7 @@ class TblSentboxDesktop extends \yii\db\ActiveRecord
 
     public function getData() {
         $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type])
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
                 ->orderBy('posting_timestamp')
                 ->limit(5)
                 ->all();
@@ -107,7 +107,7 @@ class TblSentboxDesktop extends \yii\db\ActiveRecord
 
     public function getDataCount() {
         $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type])
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
                 ->count();
         return $data;
     }
@@ -142,7 +142,6 @@ class TblSentboxDesktop extends \yii\db\ActiveRecord
                 $new_key = str_replace('_', ' ', $key);
                 $new_key = ucwords($new_key);
                 $new_key = str_replace(' ', '', $new_key);
-                $new_key = (in_array($new_key, array('NATIONAL', 'UNION', 'FEDERATION'))) ? $new_key : lcfirst($new_key);
                 $newModel[$new_key] = $a;
             }
         }

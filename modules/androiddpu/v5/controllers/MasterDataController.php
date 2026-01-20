@@ -50,15 +50,15 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
     public function actionSentboxDesktop() {
         $res_data = [];
         $data = $this->post_data;
-        if (true) {
-            $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
-            $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
-            $model = new TblSentboxDesktop();
-            $model->dest_org_id = $code;
-            $model->dest_org_type = $type;
-            $res_data = $model->getData();
-            $this->response['data'] = $res_data;
-        }
+        $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
+        $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+        $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
+        $model = new TblSentboxDesktop();
+        $model->dest_org_id = $code;
+        $model->dest_org_type = $type;
+        $model->device_id = $device_id;
+        $res_data = $model->getData();
+        $this->response['data'] = $res_data;
         return $this->response;
     }
 
@@ -67,9 +67,11 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $data = $this->post_data;
         $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
         $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+        $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
         $model = new TblSentboxDesktop();
         $model->dest_org_id = $code;
         $model->dest_org_type = $type;
+        $model->device_id = $device_id;
         $response['count'] = $model->getDataCount();
         $this->response['data'] = $response;
         return $this->response;
