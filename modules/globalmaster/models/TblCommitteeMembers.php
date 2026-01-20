@@ -10,6 +10,8 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\globalmaster\models\TblCommitteeType;
+use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_committee_members".
@@ -51,7 +53,7 @@ class TblCommitteeMembers extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['committee_type_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'member_name', 'election_date', 'tenure_from_date', 'tenure_to_date', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'local_name'], 'safe'],
+            [['committee_member_code', 'committee_type_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'member_name', 'election_date', 'tenure_from_date', 'tenure_to_date', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'local_name'], 'safe'],
             [['committee_type_code' ,'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'member_name', 'election_date', 'tenure_from_date', 'tenure_to_date'], 'required'],
             [['tenure_to_date'], 'validateToDate'],
             [['local_name'], function ($attribute, $params) {
@@ -127,6 +129,28 @@ class TblCommitteeMembers extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater than From Date.'));
             return false;
         }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = ((isset($this->operation) && $this->operation == true) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
