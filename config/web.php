@@ -11,6 +11,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
+        '@common' => '@app/common',
     ],
     'components' => [
         'session' => ['name' => 'eiplportal'],
@@ -67,7 +68,7 @@ $config = [
         /*  ],
           ], */
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
+// !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'PqRQWzXJwmIUsAA96iTQhWvWzgREpvc2',
         ],
         //        'user' => [
@@ -285,7 +286,7 @@ if (!empty($params['redis'])) {
     ];
 }
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
+// configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
