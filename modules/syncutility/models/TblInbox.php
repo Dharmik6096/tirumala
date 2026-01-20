@@ -110,4 +110,21 @@ class TblInbox extends \yii\db\ActiveRecord {
                 ])->all();
     }
 
+    public function generateSentBox(&$masterSave){
+        $sentboxDesktop = new TblSentboxDesktop();
+        $sentboxDesktop->setAttributes($this->attributes);
+        $dest_org_id = $sentboxDesktop->source_org_id;
+        $dest_org_type = $sentboxDesktop->source_org_type;
+        $sentboxDesktop->source_org_id = $sentboxDesktop->dest_org_id;
+        $sentboxDesktop->source_org_type = $sentboxDesktop->dest_org_type;
+        $sentboxDesktop->dest_org_id = $dest_org_id;
+        $sentboxDesktop->dest_org_type = $dest_org_type;
+        $sentboxDesktop->device_id = 'AMUL'.$dest_org_id.'AMCS';
+        $sentboxDesktop->posting_timestamp = $sentboxDesktop->received_time = date('Y-m-d H:i:s');
+        $sentboxDesktop->picked_datetime = $sentboxDesktop->sync_timestamp = $sentboxDesktop->sync_time = $sentboxDesktop->error_log = NULL;
+        $sentboxDesktop->data_post_status = 0;
+        $masterSave[] = $sentboxDesktop;
+        return;
+    }
+
 }

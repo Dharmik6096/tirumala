@@ -30,7 +30,8 @@ class ImportFilesService {
         }
     }
 
-    private function process_files_data($row) {
+ 
+    public function process_files_data($row) {
         try {
             $flag = '';
             if ($row->file_type == 'bmc_collection') {
@@ -102,6 +103,9 @@ class ImportFilesService {
             } else if ($row->file_type == 'sample_milk_collection') {
                 $flag = 'sample-milk-collection';
                 $sp_name = 'DB_JOB_PORTAL_Sample_Milk_Collection';
+            } else if ($row->file_type == 'member_payment_shortage_recovery') {
+                $flag = 'member-payment-shortage-recovery-bulk';
+                $sp_name = 'DB_JOB_PORTAL_member_payment_shortage_recovery_pending';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -149,6 +153,9 @@ class ImportFilesService {
                         $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
                     } else {
                         $model = new TblBulkDataImport();
+                        if (!empty($config['bkg_scenario'])) {
+                            $model->scenario = $config['bkg_scenario'];
+                        }
                         $model->attributes = $data;
                         $model->uuid = $uuid;
                         $model->union_code = $row->union_code;
@@ -157,7 +164,7 @@ class ImportFilesService {
                         if (in_array($row->file_type, $FileType)) {
                             $model->SetDataForShagunDPU();
                         } else {
-                            $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                            $model->shift_code = (!empty($model->shift_code) && strtoupper($model->shift_code) == 'M') ? 1 : 2;
                             $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
                         }
                         $DefaultSampleNo = ['sample_milk_collection'];

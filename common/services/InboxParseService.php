@@ -195,6 +195,9 @@ class InboxParseService {
                                 $masterSave = [];
                                 if ($process_record) {
                                     $masterSave[] = $model;
+                                    if(!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL'.$transaction_data->source_org_id.'AMCS'){
+                                        $transaction_data->generateSentBox($masterSave);
+                                    }
                                 }
                                 $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                                 if ($transaction != 'customRedirect') {
@@ -259,7 +262,6 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
-                
             }
         } catch (\Throwable $e) {
             try {
@@ -271,7 +273,6 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
-                
             }
         }
     }
