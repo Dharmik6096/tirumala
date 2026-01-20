@@ -153,7 +153,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'report_type'], 'required', 'on' => ['BiplData', 'BiplDataAdmin']],
                 [['union_code', 'login_user_code', 'from_date', 'to_date'], 'required', 'on' => ['DetailsReport']],
                 [['union_code', 'state_code'], 'required', 'on' => ['RegionWiseUserAttendanceReport', 'EiplInstalledUsersDetails', 'AreBmcCollectionShiftReport', 'AreBmcCollDateShiftWiseSummary', 'AreBmcCollDateShiftWiseSummary', 'AreBmcCollDateShiftWiseSummary', 'AreSocietyWiseCda', 'AreSocietyWiseCda', 'AreSocietyWiseCda', 'AreVendorPayment', 'AreMemberPaymentDcsWise', 'AreMemberPaymentDcsWise', 'AreVendorBankPayment', 'AreMemberBankPayment']],
-                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_type', 'from_date', 'to_date'], 'required', 'on' => ['DcsWiseBillHeadApplicability']],
+                [['union_code', 'payment_type', 'from_date', 'to_date'], 'required', 'on' => ['DcsWiseBillHeadApplicability']],
                 [['union_code', 'mcc_code', 'bmc_code'], 'required', 'on' => 'SapWqFile'],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcCollectionSummaryRahema', 'MilkCollectionFilterBased']],
                 [['user_login_type'], 'required', 'on' => 'MobileAppReport'],
