@@ -59,7 +59,8 @@ class TblCommitteeMembers extends \app\models\ChildModel {
             [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            ['dcs_code', 'unique', 'targetAttribute' => ['dcs_code', 'committee_type_code'], 'message' => Yii::t('app/validation', 'Combination of DCS and Committee Type has already been taken.')],
+            ['dcs_code', 'unique', 'targetAttribute' => ['dcs_code', 'committee_type_code'], 'message' => Yii::t('app/validation', 'Combination of DCS and Committee Type has already been taken.')],   
+            [['committee_member_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 
