@@ -142,6 +142,7 @@ class TblSentboxDesktop extends \yii\db\ActiveRecord
                 $new_key = str_replace('_', ' ', $key);
                 $new_key = ucwords($new_key);
                 $new_key = str_replace(' ', '', $new_key);
+                $new_key = lcfirst($new_key);
                 $newModel[$new_key] = $a;
             }
         }
