@@ -151,11 +151,14 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                 [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE],
+                [['aadhaar_no'], 'validateProvisionalAdharNo'],
                 [['ts_code_m', 'ts_code_e'], 'number', 'max' => 10],
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
+                [['aadhaar_no'], 'validateAdharNo', 'on' => ['createFront', 'updateFront']],
+                [['mobile_no'], 'validateMobileNo', 'on' => ['createFront', 'updateFront']],
+                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createFront', 'updateFront']],
         ];
     }
 
@@ -240,7 +243,7 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'), 
+            'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
             'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
         ];
     }
@@ -325,6 +328,103 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
     public function getCustomerPrivisionalApproval() {
         $this->customer_provisional_code = (string) $this->customer_provisional_code;
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'customer_provisional_code'])->andOnCondition(['process_name' => 'tbl_customer_master_provisional'])->orderBy('level ASC');
+    }
+
+    public function validateMobileNo($attribute, $params) {
+        $mobile = $this->$attribute;
+
+        if (!empty($mobile)) {
+            $encryptedMobile = Yii::$app->general->encryptData($mobile);
+
+            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
+                    ->one();
+            if ($existsInCustomer) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ' , ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
+                return false;
+            }
+
+            $existsInProvisional = $this->find()->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
+                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInProvisional->customer_provisional_code . ', Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
+                return false;
+            }
+        }
+    }
+
+    public function validateBankAccNo($attribute, $params) {
+        $bankAccNo = $this->$attribute;
+
+        if (!empty($bankAccNo)) {
+            $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
+
+            $existsInCustomerBank = TblBankDetails::find()->select(['tbl_bank_details.module_code', 'cus.customer_name'])
+                            ->leftJoin('tbl_customer_master cus', 'cus.customer_code = tbl_bank_details.module_code')
+                            ->where(['tbl_bank_details.is_active' => 1])
+                            ->andWhere(['tbl_bank_details.module_name' => 'customer'])
+                            ->andWhere(['tbl_bank_details.is_default' => 1])
+                            ->andWhere(['or', ['tbl_bank_details.bank_account_no' => $bankAccNo], ['tbl_bank_details.bank_account_no' => $encryptedBankAccNo]])
+                            ->asArray()->one();
+
+            if ($existsInCustomerBank) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Customer') . ' Bank Detail - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomerBank['module_code'] . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomerBank['customer_name']));
+                return false;
+            }
+
+            $existsInProvisional = $this->find()->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
+                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInProvisional->customer_provisional_code . ', Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
+                return false;
+            }
+        }
+    }
+
+    public function validateAdharNo($attribute, $params) {
+        $adharNo = $this->$attribute;
+
+        if (!empty($adharNo)) {
+            $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
+
+            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
+                    ->one();
+            if ($existsInCustomer) {
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
+                return false;
+            }
+        }
+    }
+
+    public function validateProvisionalAdharNo($attribute, $params) {
+        $adharNo = $this->$attribute;
+
+        if (!empty($adharNo)) {
+            $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
+
+            $existsInProvisional = $this->find()->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
+                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            if (!$this->isNewRecord) {
+                $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInProvisional->customer_provisional_code . ', Provisional ' . Yii::t('app', 'Customer') . ' Name :' . $existsInProvisional->customer_name));
+                return false;
+            }
+        }
     }
 
 }

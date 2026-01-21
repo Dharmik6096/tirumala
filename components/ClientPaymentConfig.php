@@ -101,6 +101,14 @@ class ClientPaymentConfig extends Component {
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'disburse_party_payment',
                 ],
+                'hold_release_payment' => [
+                    'param' => 'union_code,bmc_code,customer_type,from_datetime,from_shift,to_datetime,to_shift,user_code',
+                    'sp_name' => 'sp_vendor_hold_release_payment_process',
+                ],
+                'hold_release_payment_disburse' => [
+                    'param' => 'union_code,bmc_code,customer_type,from_datetime,from_shift,to_datetime,to_shift,user_code',
+                    'sp_name' => 'sp_vendor_hold_release_payment_disburse',
+                ],
             ],
             'VARDDAN' => [
                 'vsp_payment' => [
