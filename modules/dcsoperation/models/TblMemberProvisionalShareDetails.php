@@ -51,8 +51,8 @@ class TblMemberProvisionalShareDetails extends ChildModel {
         $main_rules = [
                 [['amount_deposit', 'payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'balance_amount', 'admission_fee_recovery', 'deposit_date', 'created_at', 'updated_at', 'no_of_share_req', 'no_of_share_apply', 'originating_type', 'union_code', 'provisional_member_code', 'mode_of_payment', 'bank_name', 'ref_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'per_share_rate', 'gender_code', 'bmc_code'], 'safe'],
                 [['balance_amount', 'admission_fee_recovery'], 'default', 'value' => 0],
-                [['payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required', 'except' => ['import_receipt_detail']],
-                [['no_of_share_apply'], 'validateMaxShare', 'except' => ['import_receipt_detail']],
+                [['payable_share_amount', 'admission_fee', 'amount_payable', 'total_amount', 'no_of_share_req', 'no_of_share_apply'], 'required', 'except' => ['import_receipt_detail', 'share_detail']],
+                [['no_of_share_apply'], 'validateMaxShare', 'except' => ['import_receipt_detail', 'share_detail']],
                 [['bank_name', 'deposit_date', 'mode_of_payment', 'amount_payable'], 'required', 'on' => ['import_receipt_detail']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisionalShareDetails', $this->form_validation_type);
