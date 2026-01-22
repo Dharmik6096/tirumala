@@ -225,6 +225,8 @@ $btn = $type == 'create' ? 'create' : 'update';
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group mt20">
+            <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+            <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
             <?php
             AjaxSubmitButton::begin([
                 'label' => Yii::t('app', Yii::t('app', 'NEXT')),
@@ -263,7 +265,7 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                 }
                                                  }'),
                 ],
-                'options' => ['class' => 'btn btn-default btn-raised',
+                'options' => ['class' => 'btn btn-default btn-raised saveBtn',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();
@@ -273,6 +275,11 @@ $btn = $type == 'create' ? 'create' : 'update';
         </div>
     </div>
 </div>
+<?=
+$this->render('@app/modules/document/views/tbl-attachment/_reroute', [
+    'model' => $model,
+])
+?>
 <?php ActiveForm::end(); ?>
 
 <?php

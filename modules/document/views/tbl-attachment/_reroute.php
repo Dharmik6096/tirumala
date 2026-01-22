@@ -42,6 +42,9 @@ use yii\web\View;
 <?php
 $script = "
 $(document).on('click', '.re-route', function() {
+    $('.error-summary').empty().hide();
+     $('.help-block').empty();
+    $('.form-group').removeClass('has-error');
     $('#ProvisionalModal').modal('hide');
     $('.set_operation').val($(this).attr('value'));
     $('.saveBtn').trigger('click');
