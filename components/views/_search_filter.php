@@ -338,7 +338,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status', 'quality_config_process_name', 'department_wise'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status', 'quality_config_process_name', 'department_wise', 'smart_master_type'))) {
                                         $flag = isset($value_array[1]) ? $value_array[1] : $value;
                                         $f_cnt++;
                                         ?>

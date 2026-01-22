@@ -1267,6 +1267,7 @@ echo GhostMenu::widget([
                             ]
                         ],
                             ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => User::canRoute(['/site/help-manual']) ? (($eiplCode == 'GYAN') ? TRUE : FALSE) : FALSE],
+                            ['label' => Yii::t('app', 'BIPL Smart Re-Push'), 'url' => ['/dcsoperation/tbl-member/repush-bulk-data'], 'active' => ($cntrl == 'tbl-member' && $action == 'repush-bulk-data')],
                             ['label' => Yii::t('app', 'Client Erp Api Logs'), 'url' => ['/clienterp/tbl-client-erp-api-log/index']],
                             ['label' => Yii::t('app', 'Request Data'), 'url' => ['/syncutility/tbl-force-sync-request/index']],
                             ['label' => Yii::t('app', 'Data Exchange Logs'), 'url' => ['/clienterp/tbl-data-exchange-log/index']],

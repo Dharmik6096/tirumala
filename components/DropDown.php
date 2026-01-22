@@ -2371,6 +2371,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
             ],
+            'smart_master_type' => [
+                'name' => 'master_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['0' => Yii::t('app', 'Member'), '1' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }

@@ -9,10 +9,14 @@ class SearchFilter {
     public function getRecord($l) {
         $label = [
             'TblDcsSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'route_code', 'smart_master_type', 'send_status', 'from_date', 'to_date'],
+                'action' => ['index', 'repush-bulk-data'],
+                'removefield' => ['index' => ['f_dcs_code','smart_master_type', 'send_status', 'from_date', 'to_date'], 'repush-bulk-data' => ['route_code']],
             ],
             'TblMemberSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'smart_master_type', 'send_status', 'from_date', 'to_date'],
+                'action' => ['index', 'repush-bulk-data'],
+                'removefield' => ['index' => ['smart_master_type', 'send_status', 'from_date', 'to_date']]
             ],
             'TblMilkCollectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],

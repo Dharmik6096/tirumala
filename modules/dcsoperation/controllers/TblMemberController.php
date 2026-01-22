@@ -36,6 +36,9 @@ use app\modules\dcsoperation\models\TblMemberAnimalDetailsSearch;
 use app\modules\document\models\TblAttachment;
 use app\modules\veterinary\models\TblMemberAnimalTagDetailsSearch;
 use yii\data\ActiveDataProvider;
+use app\modules\organisation\models\TblDcsSearch;
+use yii\helpers\Url;
+use app\modules\organisation\models\TblDcsHistory;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -684,6 +687,54 @@ class TblMemberController extends \app\controllers\ChildController {
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return ['data' => $data, 'modelData' => $modelData];
+    }
+
+    public function actionRepushBulkData() {
+        $param = Yii::$app->request->queryParams;
+        $isDcs = !empty($param['TblMemberSearch']['smart_master_type']) || !empty($param['TblDcsSearch']['smart_master_type']);
+        $searchModel = $isDcs ? new TblDcsSearch() : new TblMemberSearch();
+        if (!empty($param['TblMemberSearch']['smart_master_type'])) {
+            $param['TblDcsSearch'] = $param['TblMemberSearch'];
+        } elseif (!empty($param['TblDcsSearch']) && empty($param['TblDcsSearch']['smart_master_type'])) {
+            $param['TblMemberSearch'] = $param['TblDcsSearch'];
+        }
+        $searchModel->scenario = 'listSearch';
+        $dataProvider = $searchModel->searchrepush($param);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $selectedcodes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                foreach ($selectedcodes as $code) {
+                    if ($_REQUEST['type'] && $_REQUEST['type'] == 'dcs') {
+                        $model = TblDcs::findOne($code);
+                        $historyModel = new TblDcsHistory();
+                    } else {
+                        $model = $this->findModel($code);
+                        $historyModel = new TblMemberHistory();
+                    }
+                    
+                    Yii::$app->operation->history($model, $historyModel, UPDATE);
+                    $historyModel->operation_type = 'BIPLREPUSH';
+                    $saveModel[] = $historyModel;
+                    $model->data_post_status = 0;
+                    $model->resp_desc = null;
+                    $model->resp_status = null;
+                    $model->response_datetime = null;
+                    $model->picked_datetime = null;
+                    
+                    $saveModel[] = $model;
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['BIPL Smart Re-Push', 'edit']);
+                var_dump($transaction); die;
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(Url::previous());
+                }
+            }
+        }
+        return $this->render('_repush_data', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

@@ -71,12 +71,12 @@ class GeneralModel {
             $master = [];
             foreach ($model as $m) {
                 $master[] = $m->save();
-                //var_dump($m->getErrors());
+                var_dump($m->getErrors());
             }
             //exit;
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
-                //var_dump($master);exit;
+                var_dump($master);exit;
 
                 Yii::$app->display->message(true, $message[0], $message[1]);
                 return 'customRedirect';
@@ -86,18 +86,24 @@ class GeneralModel {
                     $child->decryptModel($m);
                 }
                 $transaction->rollback();
-                //var_dump($model);exit;
+                var_dump($model);exit;
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => 'Your transaction is not saved successfully']);
                 return 'customRender';
             }
         } catch (UserException $e) {
             $transaction->rollback();
+            echo '<pre>';
+            print_r($e->getMessage());
+            die;
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => $e->getMessage()]);
             return false;
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
+            echo '<pre>';
+            print_r($e->getMessage());
+            die;
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return false;
