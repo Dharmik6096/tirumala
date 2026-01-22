@@ -225,7 +225,7 @@ $btn = $type == 'create' ? 'create' : 'update';
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group mt20">
             <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-            <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
+            <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
             <?php
             AjaxSubmitButton::begin([
                 'label' => Yii::t('app', Yii::t('app', 'NEXT')),

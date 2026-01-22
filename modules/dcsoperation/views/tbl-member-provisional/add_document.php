@@ -167,9 +167,9 @@ $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'wo
                                 ]);
                                 AjaxSubmitButton::end();
                                 if ($configValue == 0) {
-                                    echo Html::button(Yii::t('app', 'Save & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve', 'id' => 'approve']);
+                                    echo Html::button(Yii::t('app', 'Save & Approve'), ['class' => 'btn btn-primary apply-shortcut btn-login ml2', 'name' => 'submitBtn', 'value' => 'approve', 'id' => 'approve']);
                                     ?>
-                                    <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary apply-shortcut reject', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
+                                    <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary apply-shortcut reject btn-login', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
                                     <?php
                                 }
                                 ?>

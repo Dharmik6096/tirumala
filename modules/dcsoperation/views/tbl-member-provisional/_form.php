@@ -332,7 +332,7 @@ if ($model->isNewRecord) {
             <?php //Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
             <?php if ($type == 'edit') { ?>
                 <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]) ?>
+                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
             <?php } ?>
             <?= Html::submitButton(Yii::t('app', 'NEXT'), ['class' => 'btn btn-primary apply-shortcut btn-login saveBtn', 'name' => 'submitBtn', 'value' => 'save']); ?>
             <?= Yii::$app->controls->reset(); ?>

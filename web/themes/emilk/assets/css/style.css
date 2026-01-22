@@ -6271,3 +6271,6 @@ div#dashboardFarmerPopup {
 .sticky-header {
     z-index: 999 !important;
 }
+.ml2{
+    margin-left: 2px;
+}
