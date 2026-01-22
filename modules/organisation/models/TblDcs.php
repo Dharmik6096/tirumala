@@ -277,12 +277,12 @@ class TblDcs extends ChildModel {
                 [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'password'], 'safe'],
                 [['cheque_number', 'cheque_amount', 'is_security_cheque', 'emilk_sync_status', 'emilk_sync_timestamp', 'cheque_bank', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
                 [['dcs_code'], function ($attribute, $params) {
-                    ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+                    ($this->vendor == 'BIPL' && $this->dpu_type == '91') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv'], 'when' => function ($model) {
                     return $model->isAttributeChanged('ref_code', FALSE);
                 }],
                 [['dcs_code'], function ($attribute, $params) {
-                    ($this->vendor == 'BIPL' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+                    ($this->vendor == 'BIPL' && $this->dpu_type == '91' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs']],
                 [['dcs_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
@@ -1769,6 +1769,48 @@ class TblDcs extends ChildModel {
             $rows[] = $row;
         }
         Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
+    }
+
+    public function getMasterRecord(){
+        $data = (new \yii\db\Query())
+            ->select([
+                'companyCode' => 'u.x_col1',
+                'mppCode' => 'd.ref_code',
+                'mppName' => 'd.dcs_name',
+                'sapMppCode' => new \yii\db\Expression("ISNULL(d.sap_vendor_code, '')"),
+                'sapRouteCode' => new \yii\db\Expression("ISNULL(rm.sap_route_code, '')"),
+                'sapPlantCode' => new \yii\db\Expression("''"),
+                'mobileNo' => 'c.mobile_no',
+                'bmcCode' => 'b.ref_code',
+                'routeCode' => 'rm.ref_code',
+                'bankId' => new \yii\db\Expression("0"),
+                'accountNumber' => new \yii\db\Expression("''"),
+                'ifsc' => new \yii\db\Expression("''"),
+                'isActive' => 'd.is_active',
+                'effectiveDate' => 'd.valid_from',
+                'censusCode' => 'd.dcs_code'
+            ])
+            ->from('tbl_dcs d')
+            ->innerJoin('tbl_unions u', 'u.union_code = d.union_code')
+            ->innerJoin('tbl_bmc b', 'b.bmc_code = d.bmc_code')
+            ->leftJoin('tbl_route_mapping rm', 'rm.route_code  = d.route_code')
+            ->leftJoin('tbl_contact_details c', 'c.module_code = d.dcs_code AND c.is_default = 1 AND c.is_active = 1')
+            ->where(['isnull(d.data_post_status,0)' => 0])
+            ->limit(5)
+            ->all();
+        if (!empty($data)) {
+            array_walk($data, function(&$item) { $item['isActive'] = (bool)$item['isActive']; });
+            return [
+                'companyCode' => (string)$data[0]['companyCode'],
+                'mppDetails' => $data
+            ];
+        }
+        return [];
+
+    }
+
+    public function updateStatus($updateData, $ids) {
+        return $this->updateAll($updateData, ['dcs_code' => $ids]);
     }
 
 }
