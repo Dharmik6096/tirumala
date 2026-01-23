@@ -22,7 +22,7 @@ class TblMemberSearch extends TblMember {
                 [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'rate_class', 'witness_name', 'place'], 'safe'],
                 [['ex_member_code', 'ref_code', 'employee_code', 'employee_name', 'region_code', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'is_kyc_verified', 'sap_farmer_code'], 'safe'],
                 [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'smart_master_type', 'data_post_status', 'from_date', 'to_date'], 'safe'],
-                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'smart_master_type'], 'required', 'on' => ['listSearch']],
+                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'smart_master_type'], 'required', 'on' => ['repushSearch']],
         ];
     }
 
@@ -249,22 +249,30 @@ class TblMemberSearch extends TblMember {
         ]);
 
         $this->load($params);
+        if (!$this->validate()) {
+            $query->where('0=1');
+            return $dataProvider;
+        }
         $query->joinWith(['dcsCode'])->andWhere(['tbl_member.is_active' => 1]);
         Yii::$app->general->filterByOrg($query, $this);
         
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'CAST(tbl_member.created_at as DATE)', $from_date]);
-
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'CAST(tbl_member.created_at as DATE)', $to_date]);
+        $query->andWhere([
+            'OR',
+            [
+                'AND',
+                ['>=', 'CAST(tbl_member.created_at as DATE)', $from_date],
+                ['<=', 'CAST(tbl_member.created_at as DATE)', $to_date],
+            ],
+            [
+                'AND',
+                ['>=', 'CAST(tbl_member.updated_at as DATE)', $from_date],
+                ['<=', 'CAST(tbl_member.updated_at as DATE)', $to_date],
+            ],
+        ]);
         
-        $query->andFilterWhere(['like', 'tbl_member.data_post_status', $this->data_post_status]);
-        
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            $query->where('0=1');
-            return $dataProvider;
-        }
+        $query->andFilterWhere(['tbl_member.data_post_status' => $this->data_post_status]);
         return $dataProvider;
     }
 

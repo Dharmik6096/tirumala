@@ -19,7 +19,7 @@ use yii\web\View;
         ['attribute' => 'union_code', 'filter' => false, 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
             }, 'visible' => FALSE],
-        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Census Code'), 'filter' => false],
+        ['attribute' => 'dcs_code', 'filter' => false],
         ['attribute' => 'ref_code', 'filter' => false],
         ['attribute' => 'dcs_name', 'filter' => false],
         ['attribute' => 'sap_vendor_code', 'filter' => false],
@@ -73,9 +73,6 @@ use yii\web\View;
         'id' => 'dcs-list',
         'attributes' => $attribute,
         'active_column' => false,
-        'actions' => [
-            'view' => FALSE,
-        ],
     ];
 
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

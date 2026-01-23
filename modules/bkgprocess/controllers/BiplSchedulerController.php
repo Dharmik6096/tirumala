@@ -26,8 +26,6 @@ class BiplSchedulerController extends ChildController {
     public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master', 'bipl-dcs-api-master', 'bipl-member-api-master'];
     public $errorPath = '';
     public $token = '';
-    public $update_ids = '';
-    public $dcsRefCodes = '';
 
     public function init() {
         parent::init();
@@ -566,130 +564,92 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
-    public function actionBiplDcsApiMaster() {
+    private function processMasterApi($modelClass, $endpointKey, $dataKey, $idKey, $extraIdKey = null) {
+        $localModel = null;
+        $current_ids = [];
+        $current_extra_ids = null;
         try {
-            $base_url = \Yii::$app->params['clienterp_authentication']['gyan']['api_base_url'];
-            $this->model = new TblDcs();
-            $dcsData = $this->model->getMasterRecord();
-            if(!empty($dcsData) && $this->AuthenticateRequest($base_url)){
-                $end_point = \Yii::$app->params['clienterp_authentication']['gyan']['dcs_endpoint'];
-                if(!empty($dcsData)){
-                    $this->update_ids = array_column($dcsData['mppDetails'], 'mppCode');
-                    $date = date('Y-m-d H:i:s');
-                    $updateData = ['data_post_status' => 1, 'updated_at' => $date, 'picked_datetime' => $date];
-                    $this->model->updateStatus($updateData, $this->update_ids);
-                    try {
-                        $api = new WebApi();
-                        $api->return_actual = true;
-                        $api->serverUrl = $base_url;
-                        $api->apiurl = $end_point;
-                        $api->body = $dcsData;
-                        $api->is_header_merge = true;
-                        $api->header_info['Authorization'] = "Bearer " . $this->token;
-                        $result = $api->GuzzleCURL();
-                        $response = $result->getBody()->getContents();
-                        if(!empty($response)){
-                            $response = json_decode($response);
-                            $data_post_status = $response->isSuccessful ? 2 : 3;
-                            $responseTimestamp = date('Y-m-d H:i:s');
-                            foreach($response->data->remarks as $val){
-                                $updateData = ['data_post_status' => $data_post_status, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'resp_desc' => $val->remark];
-                                $this->model->updateStatus($updateData, $val->mppCode);
-                            }
+            $config = \Yii::$app->params['clienterp_authentication']['gyan'];
+            $base_url = $config['api_base_url'];
+            if (!$this->AuthenticateRequest($base_url)) return;
+
+            $localModel = new $modelClass();
+            $masterData = $localModel->getMasterRecord();
+            if (empty($masterData)) return;
+
+            $current_ids = array_column($masterData[$dataKey], $idKey);
+            $current_extra_ids = $extraIdKey ? array_unique(array_column($masterData[$dataKey], $extraIdKey)) : null;
+            $now = date('Y-m-d H:i:s');
+            $initialUpdate = ['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now];
+            $localModel->updateStatus($initialUpdate, $current_ids, $current_extra_ids);
+            try {
+                $api = new WebApi();
+                $api->return_actual = true;
+                $api->serverUrl = $base_url;
+                $api->apiurl = $config[$endpointKey];
+                $api->body = $masterData;
+                $api->is_header_merge = true;
+                $api->header_info['Authorization'] = "Bearer " . $this->token;
+                $result = $api->GuzzleCURL();
+                $response = json_decode($result->getBody()->getContents());
+                if (!empty($response)) {
+                    $status = $response->isSuccessful ? 2 : 3;
+                    $respTime = date('Y-m-d H:i:s');
+                    if (!empty($response->data->remarks)) {
+                        foreach ($response->data->remarks as $val) {
+                            $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->remark];
+                            $param3 = $extraIdKey ? $val->$extraIdKey : null;
+                            $localModel->updateStatus($update, $val->$idKey, $param3);
                         }
-                    }  catch (\GuzzleHttp\Exception\RequestException $ex) {
-                        $response = $ex->hasResponse() ? $ex->getResponse()->getBody()->getContents() : $ex->getMessage();
-                        $responseTimestamp = date('Y-m-d H:i:s');                     
-                        $updateData = ['data_post_status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'resp_desc' => json_encode($response)];                          
-                        $this->model->updateStatus($updateData, $this->update_ids);
-                    } catch (\Throwable $ex) {
-                        if(!empty($this->update_ids)){
-                            $response = $ex->getMessage();
-                            $responseTimestamp = date('Y-m-d H:i:s');
-                            $updateData = ['data_post_status' => 3, 'updated_at' => $date, 'response_datetime' => $responseTimestamp, 'resp_desc' => json_encode($response)];
-                            $this->model->updateStatus($updateData, $this->update_ids);
-                        }
+                    } else {
+                        $msg = !empty($response->message) ? $response->message : 'The record could not be sent. Please try again';
+                        $updateData = ['data_post_status' => $status,'updated_at' => $respTime,'response_datetime' => $respTime,'resp_desc' => $msg];
+                        $localModel->updateStatus($updateData, $current_ids, $current_extra_ids);
                     }
                 }
+            } catch (\GuzzleHttp\Exception\RequestException $ex) {
+                $this->handleApiError($ex, $localModel, $current_ids, $current_extra_ids, true);
+            } catch (\Throwable $ex) {
+                $this->handleApiError($ex, $localModel, $current_ids, $current_extra_ids, false);
             }
         } catch (\Throwable $ex) {
-            if(!empty($this->update_ids)){
-                $response = $ex->getMessage();
-                $date = date('Y-m-d H:i:s');
-                $updateData = ['data_post_status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'resp_desc' => json_encode($response)];
-                $this->model->updateStatus($updateData, $this->update_ids);
-            }
+            $this->handleApiError($ex, $localModel, $current_ids, $current_extra_ids, false);
         }
+    }
+
+    private function handleApiError($ex, $model, $ids, $extras, $isGuzzle) {
+        if ($model && !empty($ids)) {
+            $now = date('Y-m-d H:i:s');
+            $errorMsg = $ex->getMessage();
+            if ($isGuzzle && method_exists($ex, 'hasResponse') && $ex->hasResponse()) {
+                $resBody = $ex->getResponse()->getBody()->getContents();
+                $decoded = json_decode($resBody);
+                $errorMsg = !empty($decoded->errors) ? json_encode($decoded->errors) : (!empty($decoded->message) ? $decoded->message : $resBody);
+            }
+
+            $updateData = ['data_post_status' => 3, 'updated_at' => $now, 'response_datetime' => $now, 'resp_desc' => json_encode($errorMsg)];
+            $model->updateStatus($updateData, $ids, $extras);
+        }
+    }
+
+
+    public function actionBiplDcsApiMaster() {
+        $this->processMasterApi(TblDcs::class, 'dcs_endpoint', 'mppDetails', 'mppCode');
     }
 
     public function actionBiplMemberApiMaster() {
-        try {
-            $base_url = \Yii::$app->params['clienterp_authentication']['gyan']['api_base_url'];
-            $this->model = new TblMember();
-            $memberData = $this->model->getMasterRecord();
-            if(!empty($memberData) && $this->AuthenticateRequest($base_url)){
-                $end_point = \Yii::$app->params['clienterp_authentication']['gyan']['member_endpoint'];
-                if(!empty($memberData)){
-                    $this->update_ids = array_column($memberData['farmerImport'], 'memberCode');
-                    $this->dcsRefCodes = array_unique(array_column($memberData['farmerImport'], 'mppCode'));
-                    $date = date('Y-m-d H:i:s');
-                    $updateData = ['data_post_status' => 1, 'updated_at' => $date, 'picked_datetime' => $date];
-                    $this->model->updateStatus($updateData, $this->update_ids, $this->dcsRefCodes);
-                    try {
-                        $api = new WebApi();
-                        $api->return_actual = true;
-                        $api->serverUrl = $base_url;
-                        $api->apiurl = $end_point;
-                        $api->body = $memberData;
-                        $api->is_header_merge = true;
-                        $api->header_info['Authorization'] = "Bearer " . $this->token;
-                        $result = $api->GuzzleCURL();
-                        $response = $result->getBody()->getContents();
-                        if(!empty($response)){
-                            $response = json_decode($response);
-                            $data_post_status = $response->isSuccessful ? 2 : 3;
-                            $responseTimestamp = date('Y-m-d H:i:s');
-                            foreach($response->data->remarks as $val){
-                                $updateData = ['data_post_status' => $data_post_status, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'resp_desc' => $val->remark];
-                                $this->model->updateStatus($updateData, $val->memberCode, $val->mppCode);
-                            }
-                        }
-                    }  catch (\GuzzleHttp\Exception\RequestException $ex) {
-                        $response = $ex->hasResponse() ? $ex->getResponse()->getBody()->getContents() : $ex->getMessage();
-                        $response = json_decode($response);
-                        $response = !empty($response->errors) ? json_encode($response->errors) : json_encode($response);
-                        $responseTimestamp = date('Y-m-d H:i:s');
-                        $updateData = ['data_post_status' => 3, 'updated_at' => $responseTimestamp, 'response_datetime' => $responseTimestamp, 'resp_desc' => json_encode($response)];                          
-                        $this->model->updateStatus($updateData, $this->update_ids, $this->dcsRefCodes);
-                    } catch (\Throwable $ex) {
-                        if(!empty($this->update_ids)){
-                            $response = $ex->getMessage();
-                            $responseTimestamp = date('Y-m-d H:i:s');
-                            $updateData = ['data_post_status' => 3, 'updated_at' => $date, 'response_datetime' => $responseTimestamp, 'resp_desc' => json_encode($response)];
-                            $this->model->updateStatus($updateData, $this->update_ids, $this->dcsRefCodes);
-                        }
-                    }
-                }
-            }
-        } catch (\Throwable $ex) {
-            if(!empty($this->update_ids)){
-                $response = $ex->getMessage();
-                $date = date('Y-m-d H:i:s');
-                $updateData = ['data_post_status' => 3, 'updated_at' => $date, 'response_datetime' => $date, 'resp_desc' => json_encode($response)];
-                $this->model->updateStatus($updateData, $this->update_ids, $this->dcsRefCodes);
-            }
-        }
+        $this->processMasterApi(TblMember::class, 'member_endpoint', 'farmerImport', 'memberCode', 'mppCode');
     }
 
     public function AuthenticateRequest($base_url){
-        $end_point = \Yii::$app->params['clienterp_authentication']['gyan']['auth_endpoint'];
+        $config = \Yii::$app->params['clienterp_authentication']['gyan'];
         $api = new WebApi();
         $api->return_actual = true;
         $api->authentication = [];
         $api->serverUrl = $base_url;
-        $api->apiurl = $end_point;
+        $api->apiurl = $config['auth_endpoint'];
         $api->is_header_merge = false;
-        $authentication = Yii::$app->params['clienterp_authentication']['gyan']['authentication']['user'];
+        $authentication = $config['authentication']['user'];
         $api->body = $authentication;
         $result = $api->GuzzleCURL();
         $response = $result->getBody()->getContents();

@@ -22,6 +22,7 @@ use yii\web\View;
         ['attribute' => 'dcs_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false],
+        ['attribute' => 'member_code', 'filter' => false],
         ['attribute' => 'ex_member_code', 'filter' => false],
         ['attribute' => 'sap_farmer_code', 'filter' => false],
         ['attribute' => 'surname', 'filter' => false],
@@ -68,9 +69,6 @@ use yii\web\View;
         'id' => 'member-list',
         'attributes' => $attribute,
         'active_column' => false,
-        'actions' => [
-            'view' => FALSE,
-        ],
     ];
 
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

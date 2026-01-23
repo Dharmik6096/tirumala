@@ -698,36 +698,30 @@ class TblMemberController extends \app\controllers\ChildController {
         } elseif (!empty($param['TblDcsSearch']) && empty($param['TblDcsSearch']['smart_master_type'])) {
             $param['TblMemberSearch'] = $param['TblDcsSearch'];
         }
-        $searchModel->scenario = 'listSearch';
+        $searchModel->scenario = 'repushSearch';
         $dataProvider = $searchModel->searchrepush($param);
         if (Yii::$app->request->post()) {
-            if (isset($_REQUEST['selection'])) {
+            if (!empty($_REQUEST['selection'])) {
                 $saveModel = [];
-                $selectedcodes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
-                foreach ($selectedcodes as $code) {
-                    if ($_REQUEST['type'] && $_REQUEST['type'] == 'dcs') {
+                foreach ($_REQUEST['selection'] as $code) {
+                    if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'dcs') {
                         $model = TblDcs::findOne($code);
                         $historyModel = new TblDcsHistory();
                     } else {
                         $model = $this->findModel($code);
                         $historyModel = new TblMemberHistory();
                     }
-                    
+                    $model->scenario = 'repush';
                     Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $historyModel->operation_type = 'BIPLREPUSH';
                     $saveModel[] = $historyModel;
-                    $model->data_post_status = 0;
-                    $model->resp_desc = null;
-                    $model->resp_status = null;
-                    $model->response_datetime = null;
-                    $model->picked_datetime = null;
-                    
                     $saveModel[] = $model;
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['BIPL Smart Re-Push', 'edit']);
-                var_dump($transaction); die;
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(Url::previous());
+                } else {
+                    return $this->redirect(\Yii::$app->request->referrer);
                 }
             }
         }

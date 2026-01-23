@@ -11,7 +11,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'BIPL Smart Re-Push
         </div>
         <div class="panel-body">
             <?php
-            if ($searchModel->smart_master_type == 0) {
+            if (empty($searchModel->smart_master_type)) {
                 echo $this->render('_repush_bulk_grid', [
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
