@@ -388,7 +388,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $memberdoc = [];
                                 $attachment = [];
                                 if (strtolower($model->provisional_status) == 'approve') {
-                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachment);
+                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message, $unlink_files, $attachment);
                                 }
                                 if (!empty($message)) {
                                     foreach ($message as $msg) {
