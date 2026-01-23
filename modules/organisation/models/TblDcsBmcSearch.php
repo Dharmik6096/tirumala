@@ -11,13 +11,15 @@ use app\modules\organisation\models\TblDcsBmc;
  * TblDcsBmcSearch represents the model behind the search form about `app\modules\organisation\models\TblDcsBmc`.
  */
 class TblDcsBmcSearch extends TblDcsBmc {
+    
+    public $mobile_no;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name', 'is_weight_manual', 'is_quality_manual', 'is_rented_bmc'], 'safe'],
+            [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name', 'is_weight_manual', 'is_quality_manual', 'is_rented_bmc', 'mobile_no'], 'safe'],
             [['bmc_code_ex', 'ref_code', 'rate_calculate_on_merge', 'x_col1', 'aadhaar_no', 'pincode', 'address'], 'safe'],
         ];
     }
@@ -62,7 +64,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['channelMaster']);
+        $query->joinWith(['dcsCode', 'contactDetails', 'plantCode', 'channelMaster']);
         if (!empty($this->mcc_plant_code)) {
             $query->joinWith(['tblMccPlant']);
             $query->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_plant_code]);
@@ -109,7 +111,8 @@ class TblDcsBmcSearch extends TblDcsBmc {
                 ->andFilterWhere(['like', 'tbl_channel_master.channel_desc', $this->x_col1])
                 ->andFilterWhere(['like', 'tbl_bmc.address', $this->address])
                 ->andFilterWhere(['like', 'tbl_bmc.pincode', $this->pincode])
-                ->andFilterWhere(['like', 'tbl_bmc.aadhaar_no', $this->aadhaar_no]);
+                ->andFilterWhere(['like', 'tbl_bmc.aadhaar_no', $this->aadhaar_no])
+                ->andFilterWhere(['like', 'tbl_contact_details.mobile_no', $this->mobile_no]);
 
 
         return $dataProvider;
