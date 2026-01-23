@@ -108,7 +108,7 @@ class TblDiseaseMasterController extends ChildController {
         $searchModel->disease_id = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         foreach ($values['results'] as $value) {
-            $symtom[$value['symptom_id'] . '-' . $value['symptom_name']] = $value['symptom_id'] . ' - ' . $value['symptom_name'];
+            $symtom[$value['symptom_id']] = $value['symptom_id'] . ' - ' . $value['symptom_name'];
         }
         if (Yii::$app->request->post()) {
             $symptom_id = Yii::$app->request->post('TblDiseaseSymptomMapping')['symptom_id'];
@@ -121,8 +121,7 @@ class TblDiseaseMasterController extends ChildController {
                 $validatefalse = 0;
                 foreach ($postData as $data) {
                     $modelnew = new TblDiseaseSymptomMapping();
-                    $d = explode('-', $data);
-                    $modelnew->symptom_id = $d[0];
+                    $modelnew->symptom_id = $data;
                     $modelnew->disease_id = $disease_id;
                     if ($modelnew->validate()) {
                         $saveModel[] = $modelnew;
