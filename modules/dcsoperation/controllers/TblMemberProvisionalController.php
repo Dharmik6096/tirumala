@@ -202,6 +202,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code, $this->model);
             }
             $this->model->member_code = $this->model->getCode();
+            $operation = Yii::$app->request->post()['operation'];
+            if (!empty($operation) && ($operation == 'reroute')) {
+                $this->model->provisional_status = 'Reroute';
+            }
             $provisionalStatus = ['Register', 'Pending', 'Inprogress', 'Reroute'];
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code', 'provisional_status'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code, $provisionalStatus]);
@@ -213,9 +217,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
 
                 if ($transaction == 'customRedirect') {
+                    if (($this->model->provisional_status == 'Reroute') && ($operation == 'reroute')) {
+                        return $this->redirect(['index']);
+                    }
+
                     if ($config == 1) {
                         return $this->redirect(['member-detail', 'id' => $this->model->provisional_member_code]);
-                    } else if ($config == 0 && ($this->model->provisional_status == 'Pending' || $this->model->provisional_status == 'Reroute')) {
+                    } else if ($config == 0 && ($this->model->provisional_status == 'Pending' || $this->model->provisional_status == 'Reroute') && ($operation != 'reroute')) {
                         return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
                     } else {
                         return $this->redirect(['pending-approval']);
@@ -351,24 +359,24 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $status = 'Register';
                                 $model->scenario = 'MemberDocument';
                             }
+                            $model->provisional_status = empty($approval_stages) ? 'Approve' : $status;
+                            if (strtolower($model->provisional_status) == 'approve') {
+                                $model->member_status = 1; //Created
+                                $model->scenario = 'MemberDocument';
+                            }
                             if (!empty(Yii::$app->request->post()['operation'] == 'reroute')) {
                                 $provisionalModel = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
                                 $historyModel = new TblMemberProvisionalHistory();
                                 Yii::$app->operation->history($provisionalModel, $historyModel, UPDATE);
                                 $save_model[] = $historyModel;
                                 $model->remarks = !empty(Yii::$app->request->post()['remarks']) ? Yii::$app->request->post()['remarks'] : '';
-                                if (!empty($approval_stages)) {
-                                    $status = 'Reroute';
-                                }
+                                $status = 'Reroute';
+                                $model->provisional_status = $status;
                                 $model->scenario = 'MemberReroute';
-                            }
-                            $model->provisional_status = empty($approval_stages) ? 'Approve' : $status;
-                            if (strtolower($model->provisional_status) == 'approve') {
-                                $model->member_status = 1; //Created
-                                $model->scenario = 'MemberDocument';
                             }
                             $save_model[] = $model;
                         } else {
+                            $operation = Yii::$app->request->post('operation');
                             if (Yii::$app->request->post('request_button') === 'approve') {
                                 $model->provisional_status = 'Approve';
                                 $status = 'Approve';
@@ -387,6 +395,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                         $member_error .= $msg;
                                     }
                                 }
+                            } else if (!empty($operation) && (in_array($operation, ['reject', 'reroute']))) {
+                                $provisionalModel = TblMemberProvisional::find()->where(['provisional_member_code' => $model->provisional_member_code])->one();
+                                $historyModel = new TblMemberProvisionalHistory();
+                                Yii::$app->operation->history($provisionalModel, $historyModel, UPDATE);
+                                $save_model[] = $historyModel;
+                                $model->remarks = !empty(Yii::$app->request->post()['remarks']) ? Yii::$app->request->post()['remarks'] : '';
+                                $status = ($operation == 'reject') ? 'Reject' : 'Reroute';
+                                $model->provisional_status = $status;
+                                $model->scenario = 'MemberReroute';
+                                $save_model[] = $model;
                             } else {
                                 $model->scenario = 'MemberDocument';
                                 $model->is_approved = 0;
@@ -676,6 +694,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $memberShareDetail->total_amount = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
             $memberShareDetail->per_share_rate = $shares['per_share_rate'];
         }
+        if (!Yii::$app->request->post()) {
+            $memberShareDetail->scenario = 'share_detail';
+        }
         $this->setShareModelData($memberShareDetail, $h_model, $id);
         $this->model->scenario = 'member_detail';
 
@@ -694,6 +715,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberData->attributes = $this->model->attributes;
                 $memberData->setAttributes($member_details);
                 $memberData->scenario = 'create_animal';
+                if (!empty(Yii::$app->request->post()['operation']) && (Yii::$app->request->post()['operation'] == 'reroute')) {
+                    $memberData->remarks = !empty($member_details['remarks']) ? $member_details['remarks'] : '';
+                    $memberData->provisional_status = 'Reroute';
+                    $memberShareDetail->scenario = 'share_detail';
+                }
                 $master_model[] = $memberData;
             }
             $animal_details = $post_data['TblMemberProvisionalAnimalDetails'];
@@ -709,18 +735,23 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             if (empty($memberShareDetail->getErrors()) && empty($this->model->getErrors()) && empty($member_animal_model->getErrors()) && $memberShareDetail->validate() && $member_animal_model->validate() && $this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($master_model, $h_model, ['member provisional', 'create']);
                 $msg = '';
-                if (Yii::$app->session->hasFlash('success')) {
-                    $msg = Yii::$app->session->getFlash('success');
-                    $msg = $msg['message'];
-                }
+
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
+                    if ($memberData->provisional_status == 'Reroute' && Yii::$app->request->post('operation') == 'reroute') {
+                        return $this->redirect(['index']);
+                    } else {
+                        return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
+                    }
                 } else {
                     $data = [];
                     $data['status'] = 'error';
                     $data['errors'] = ActiveForm::validate($this->model, $memberShareDetail, $member_animal_model);
                     $data['message'] = $msg;
                     return $data;
+                }
+                if (Yii::$app->session->hasFlash('success')) {
+                    $msg = Yii::$app->session->getFlash('success');
+                    $msg = $msg['message'];
                 }
             } else {
                 $data = [];
