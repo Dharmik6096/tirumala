@@ -1292,7 +1292,7 @@ class TblDcsController extends ChildController {
                 $applicability = new TblPurchaseRateApplicability();
                 $applicableData = $applicability->getDcsApplicability($dcsModel->dcs_code, date('Y-m-d'));
                 $purchaseRate = !empty($applicableData) ? $applicableData->purchase_rate_code : '';
-                if (!empty($purchaseRate)) {
+                if (!empty($purchaseRate) && $dcsModel->dpu_type == 91) {
                     $org_model = new TblOrgFileLog();
                     $org_model->module_code = $model->module_code;
                     $model->value1 = $purchaseRate;
