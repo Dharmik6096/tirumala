@@ -1,12 +1,7 @@
 <?php
 
-use yii\helpers\Html;
-use app\modules\usermanagement\components\GhostHtml;
-use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 use app\modules\installation\models\TblAndroidInstallationDetails;
-?>
-
-<?php
 
 $attribute = [
         ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
@@ -55,39 +50,25 @@ $attribute = [
         },],
         ['attribute' => 'bmc_milk_type', 'value' => 'bmcMilkType.animal_type_name', 'visible' => false, 'filter' => false],
 // Contact Detail
-    ['label' => 'Contact Person', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
-            isset($detail->firstname) ? $detail = $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : $detail = '';
-            return $detail;
+    ['label' => 'Contact Person', 'visible' => false, 'filter' => false, 'value' => function($model) {
+            $detail = $model->contactDetails;
+            return isset($detail->firstname) ? $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : '';
         }
     ],
-        ['label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
-            isset($detail->local_firstname) ? $detail = $detail->local_firstname . ' ' . $detail->local_lastname . ' ' . $detail->local_surname : $detail = '';
-            return $detail;
+        ['label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false, 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->contactDetails, 'local_firstname');
         }
     ],
-        ['label' => 'Email', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
-            isset($detail->email) ? $detail = $detail->email : $detail = '';
-            return $detail;
+        ['label' => 'Email', 'visible' => false, 'filter' => false, 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->contactDetails, 'email');
         }
     ],
-        ['label' => 'Mobile No', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
-            isset($detail->mobile_no) ? $detail = $detail->mobile_no : $detail = '';
-            return $detail;
+        ['attribute' => 'mobile_no', 'label' => 'Mobile No', 'visible' => false, 'filter' => true, 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->contactDetails, 'mobile_no');
         }
     ],
-        ['label' => 'Department', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
-            isset($detail->department) ? $detail = $detail->department : $detail = '';
-            return $detail;
+        ['label' => 'Department', 'visible' => false, 'filter' => false, 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->contactDetails, 'department');
         }
     ],
         ['attribute' => 'rate_calculate_on_merge',
