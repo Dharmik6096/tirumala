@@ -122,12 +122,10 @@ $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'wo
                             <div class="form-group">
                                 <?php
                                 echo Html::hiddenInput('request_button', 'save', ['id' => 'request_button']);
-                                if ($configValue == 1) {
-                                    ?>
-                                    <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-                                    <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
-                                    <?php
-                                }
+                                ?>
+                                <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+                                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn-login btn btn-primary apply-shortcut reroute', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
+                                <?php
                                 AjaxSubmitButton::begin([
                                     'label' => Yii::t('app', 'Save'),
                                     'id' => 'request_approve',
@@ -169,7 +167,10 @@ $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'wo
                                 ]);
                                 AjaxSubmitButton::end();
                                 if ($configValue == 0) {
-                                    echo Html::button(Yii::t('app', 'Save & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve', 'id' => 'approve']);
+                                    echo Html::button(Yii::t('app', 'Save & Approve'), ['class' => 'btn btn-primary apply-shortcut btn-login ml2', 'name' => 'submitBtn', 'value' => 'approve', 'id' => 'approve']);
+                                    ?>
+                                    <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary apply-shortcut reject btn-login', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
+                                    <?php
                                 }
                                 ?>
                                 <?= Yii::$app->controls->reset(); ?>
@@ -198,18 +199,29 @@ $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'wo
         </div>
     </div>
 </div>
-<?php if ($configValue == 1) { ?>
-    <?=
-    $this->render('@app/modules/document/views/tbl-attachment/_reroute', [
-        'model' => $model,
-    ])
-    ?>
-<?php } ?>
+<?=
+$this->render('@app/modules/document/views/tbl-attachment/_reroute', [
+    'model' => $model,
+])
+?>
 <?php
 $script = "
     $('#approve').click(function() {
         $('#request_button').val('approve');
         $('#request_approve').trigger('click');
+    });
+    $('.reject').click(function() {
+        $('.set_operation').val('reject');
+        $('#myModalLabel').text('Reject Provisional Process');
+        $('.re-route').text('Reject');
+        $('#request_button').val('reroute');
+        $('.re-route').val('reject');
+    });
+    $('.reroute').click(function() {
+        $('#myModalLabel').text('Re-Route Provisional Process');
+        $('.re-route').text('Re-Route');
+        $('#request_button').val('reroute');
+        $('.re-route').val('reroute');
     });
 ";
 $this->registerJs($script, View::POS_END, 'document');

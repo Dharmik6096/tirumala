@@ -217,6 +217,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'aadhaar_card_address')->textarea() ?>
         </div>
         <div class="col-sm-4">
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                                                                                                                                                                                                                                             ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -291,6 +292,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                                                                                                                                                                                                                                             ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2">
@@ -326,14 +328,25 @@ if ($model->isNewRecord) {
 <div class="row">           
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'NEXT'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'name' => 'submitBtn', 'value' => 'save']); ?>
             <?php // Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
             <?php //Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
+            <?php if ($type == 'edit') { ?>
+                <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
+                <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
+            <?php } ?>
+            <?= Html::submitButton(Yii::t('app', 'NEXT'), ['class' => 'btn btn-primary apply-shortcut btn-login saveBtn', 'name' => 'submitBtn', 'value' => 'save']); ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
 </div>
+<?php if ($type == 'edit') { ?>
+    <?=
+    $this->render('@app/modules/document/views/tbl-attachment/_reroute', [
+        'model' => $model,
+    ])
+    ?>
+<?php } ?>
 <?php ActiveForm::end(); ?>
 
 <?php
