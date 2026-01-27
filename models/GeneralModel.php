@@ -72,8 +72,12 @@ class GeneralModel {
             }
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
-
-                Yii::$app->display->message(true, $message[0], $message[1]);
+                //var_dump($master);exit;
+                if (Yii::$app->request->isConsoleRequest) {
+                    echo Yii::$app->label->message($message[1], $message[0]) . "\n";
+                } else {
+                    Yii::$app->display->message(true, $message[0], $message[1]);
+                }
                 return 'customRedirect';
             } else {
                 $child = new ChildModel();
@@ -81,19 +85,35 @@ class GeneralModel {
                     $child->decryptModel($m);
                 }
                 $transaction->rollback();
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => 'Your transaction is not saved successfully']);
+                //var_dump($model);exit;
+                if (Yii::$app->request->isConsoleRequest) {
+                    echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Your transaction is not saved successfully']);
+                }
                 return 'customRender';
             }
         } catch (UserException $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => $e->getMessage()]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $e->getMessage() . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $e->getMessage()]);
+            }
+
             return false;
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            $message = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $message . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $message]);
+            }
+
             return false;
         }
     }
@@ -496,17 +516,29 @@ class GeneralModel {
             }
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
-                Yii::$app->display->message(true, $message[0], $message[1]);
+                if (Yii::$app->request->isConsoleRequest) {
+                    echo Yii::$app->label->message($message[1], $message[0]) . "\n";
+                } else {
+                    Yii::$app->display->message(true, $message[0], $message[1]);
+                }
                 return 'customRedirect';
             }
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
+            }
             return 'customRender';
         } catch (UserException $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => $e->getMessage()]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $e->getMessage() . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $e->getMessage()]);
+            }
             if ($returnException) {
                 return $e->getMessage();
             } else {
@@ -515,8 +547,12 @@ class GeneralModel {
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
             $message = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => $message]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $message . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $message]);
+            }
             if ($returnException) {
                 return $message;
             } else {
@@ -544,22 +580,38 @@ class GeneralModel {
             }
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
-                Yii::$app->display->message(true, $message[0], $message[1]);
+                if (Yii::$app->request->isConsoleRequest) {
+                    echo Yii::$app->label->message($message[1], $message[0]) . "\n";
+                } else {
+                    Yii::$app->display->message(true, $message[0], $message[1]);
+                }
                 return 'customRedirect';
             }
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
+            }
             return 'customRender';
         } catch (UserException $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => $e->getMessage()]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $e->getMessage() . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $e->getMessage()]);
+            }
             return false;
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            if (Yii::$app->request->isConsoleRequest) {
+                echo htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8') . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            }
             return false;
         }
     }

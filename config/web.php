@@ -11,6 +11,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
+        '@common' => '@app/common',
     ],
     'components' => [
         'session' => ['name' => 'eiplportal'],
@@ -66,7 +67,7 @@ $config = [
         /*  ],
           ], */
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
+// !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'PqRQWzXJwmIUsAA96iTQhWvWzgREpvc2',
         ],
 //        'user' => [
@@ -76,7 +77,7 @@ $config = [
         'user' => [
             'class' => 'webvimark\modules\UserManagement\components\UserConfig',
             //'enableAutoLogin' => true,
-            // Comment this if you don't want to record user logins
+// Comment this if you don't want to record user logins
             'on afterLogin' => function($event) {
 
                 \webvimark\modules\UserManagement\models\UserVisitLog::newVisitor($event->identity->id);
@@ -120,8 +121,8 @@ $config = [
                 'baseUrl' => '@web/themes/pcdf',
                 'pathMap' => ['@app/views' => '@app/themes/pcdf',
                     '@vendor/kartik-v/yii2-dynagrid/views' => '@app/themes/pcdf/dynaGrid/views'
-                //'@app/modules' => '@app/themes/tradiecom/modules',
-                //'@vendor/webvimark/module-user-management/views' => '@app/themes/tradiecom/modules/UserManagement/views',
+//'@app/modules' => '@app/themes/tradiecom/modules',
+//'@vendor/webvimark/module-user-management/views' => '@app/themes/tradiecom/modules/UserManagement/views',
                 ],
             ],
         ],
@@ -155,8 +156,8 @@ $config = [
         ],
         'db' => require(__DIR__ . '/db.php'),
 //        'db_rmrd' => require(__DIR__ . '/db_rmrd.php'),
-        // 'db_reil' => require(__DIR__ . '/db_reil.php'),
-        // 'db_creamy' => require(__DIR__ . '/db_creamy.php'),
+// 'db_reil' => require(__DIR__ . '/db_reil.php'),
+// 'db_creamy' => require(__DIR__ . '/db_creamy.php'),
         'db_sql' => require(__DIR__ . '/db_sql.php'),
         'db_mysql' => require(__DIR__ . '/db_mysql.php'),
         /*
@@ -183,9 +184,9 @@ $config = [
         'user-management' => [
             'class' => 'app\modules\usermanagement\usermanagement',
 //            'class' => 'webvimark\modules\UserManagement\UserManagementModule',
-            // 'enableRegistration' => true,
-            // Here you can set your handler to change layout for any controller or action
-            // Tip: you can use this event in any module
+// 'enableRegistration' => true,
+// Here you can set your handler to change layout for any controller or action
+// Tip: you can use this event in any module
             'on beforeAction' => function(yii\base\ActionEvent $event) {
                 if ($event->action->uniqueId == 'user-management/auth/login') {
                     $event->action->controller->layout = 'loginLayout.php';
@@ -283,7 +284,7 @@ if (!empty($params['redis'])) {
     ];
 }
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
+// configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
