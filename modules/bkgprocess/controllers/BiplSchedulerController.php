@@ -569,9 +569,9 @@ class BiplSchedulerController extends ChildController {
         $current_ids = [];
         $current_extra_ids = null;
         try {
-            $config = \Yii::$app->params['clienterp_authentication']['gyan'];
+            $config = \Yii::$app->params['clienterp_authentication']['eipl'];
             $base_url = $config['api_base_url'];
-            if (!$this->AuthenticateRequest($base_url)) return;
+            if (!$this->AuthenticateRequest($config)) return;
 
             $localModel = new $modelClass();
             $masterData = $localModel->getMasterRecord();
@@ -626,8 +626,8 @@ class BiplSchedulerController extends ChildController {
                 $decoded = json_decode($resBody);
                 $errorMsg = !empty($decoded->errors) ? json_encode($decoded->errors) : (!empty($decoded->message) ? $decoded->message : $resBody);
             }
-
-            $updateData = ['data_post_status' => 3, 'updated_at' => $now, 'response_datetime' => $now, 'resp_desc' => json_encode($errorMsg)];
+            $shortDesc = (strlen($errorMsg) > 800) ? substr($errorMsg, 0, 800) : $errorMsg;
+            $updateData = ['data_post_status' => 3, 'updated_at' => $now, 'response_datetime' => $now, 'resp_desc' => json_encode($shortDesc)];
             $model->updateStatus($updateData, $ids, $extras);
         }
     }
@@ -641,15 +641,14 @@ class BiplSchedulerController extends ChildController {
         $this->processMasterApi(TblMember::class, 'member_endpoint', 'farmerImport', 'memberCode', 'mppCode');
     }
 
-    public function AuthenticateRequest($base_url){
-        $config = \Yii::$app->params['clienterp_authentication']['gyan'];
+    public function AuthenticateRequest($config){
         $api = new WebApi();
         $api->return_actual = true;
         $api->authentication = [];
-        $api->serverUrl = $base_url;
+        $api->serverUrl = $config['api_base_url'];
         $api->apiurl = $config['auth_endpoint'];
         $api->is_header_merge = false;
-        $authentication = $config['authentication']['user'];
+        $authentication = $config['bipl_authentication']['user'];
         $api->body = $authentication;
         $result = $api->GuzzleCURL();
         $response = $result->getBody()->getContents();
