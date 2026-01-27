@@ -41,12 +41,12 @@ class CustomValidation extends Component {
                 ],
                 'TblDcs' => [
                     'default' => [
-                            [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'repush']],
+                            [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                             [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                             [
                                 ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'repush']
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                         ],
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
@@ -78,7 +78,7 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->ifsc);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -86,15 +86,15 @@ class CustomValidation extends Component {
                             }", 'on' => ['importCsv']],
                             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblBranch' => [
@@ -159,17 +159,17 @@ class CustomValidation extends Component {
                         }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
                 ],
                 'TblDcs' => [
-                        [['hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['repush']],
-                        [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport', 'repush']],
+                        [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
+                        [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                         [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
-                        [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'repush']],
+                        [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                         [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                             return $model->isAttributeChanged('sap_vendor_code', FALSE);
                         }],
-                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'repush']],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                         [
                             ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'repush']
+                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                     ],
                         [['aadhaar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
@@ -181,9 +181,9 @@ class CustomValidation extends Component {
                         [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                 ],
                 'TblMember' => [
-                        [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv', 'repush']],
+                        [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                         [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                         [['bank_account_no'], 'required', 'when' => function ($model) {
                             return !empty($model->branch_code);
                         }, 'whenClient' => "function (attribute, value) { 
@@ -191,15 +191,15 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                         ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                             return $model->is_active;
-                        }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv', 'repush']],
+                        }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
                         [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                             return $model->is_active;
-                        }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
-                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                        }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                         [['adhar_no'], function ($attribute, $params) {
                             Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                 ],
                 'TblBranch' => [
                         [['hamlet_code', 'pincode'], 'required'],
@@ -339,12 +339,12 @@ class CustomValidation extends Component {
             'NIFPL' => [
                 'TblDcs' => [
                     'default' => [
-                            [['dcs_type_code'], 'required', 'except' => ['repush']],
+                            [['dcs_type_code'], 'required'],
                             [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                             [
                                 ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'repush']
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                         ],
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
@@ -377,21 +377,21 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'specialCodeImportCsv']],
                             [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
                             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ]
                 ],
                 'BackGroundDataImport' => [],
@@ -407,9 +407,9 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -417,12 +417,12 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblUserAndroid' => [
@@ -437,9 +437,9 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -447,12 +447,12 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblUserAndroid' => [
@@ -468,9 +468,9 @@ class CustomValidation extends Component {
                 'TblMember' => [
                     'default' => [
                             [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv', 'verification', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv', 'verification']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -478,12 +478,12 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
                 'TblUserAndroid' => [
@@ -536,9 +536,9 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -546,12 +546,12 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblDcsProvisional' => [
@@ -594,21 +594,21 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['vendor_code'], 'required', 'except' => ['repush']],
+                            [['vendor_code'], 'required'],
                             [['max_allowed_qty'], 'number', 'min' => 0.5],
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblDcsProvisional' => [
@@ -709,33 +709,33 @@ class CustomValidation extends Component {
                             [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
                         //[['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
                         [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'repush']],
+                            [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
             'UMANG' => [
                 'TblDcs' => [
                     'default' => [
-                            [['hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['repush']],
-                            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport', 'repush']],
+                            [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
+                            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                             [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
-                            [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'repush']],
+                            [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                         //[['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                         [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                             [
                                 ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'repush']
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                         ],
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
@@ -848,11 +848,11 @@ class CustomValidation extends Component {
                 ],
                 'TblDcs' => [
                     'default' => [
-                            [['pincode'], 'required', 'except' => ['repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['routeMapping', 'repush']],
+                            [['pincode'], 'required'],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['routeMapping']],
                             [
                                 ['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping', 'repush']
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping']
                         ],
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
@@ -895,11 +895,11 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblTransporter' => [
@@ -1018,11 +1018,11 @@ class CustomValidation extends Component {
                 ],
                 'TblDcs' => [
                     'default' => [
-                            [['pincode'], 'required', 'except' => ['repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['routeMapping', 'repush']],
+                            [['pincode'], 'required'],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['routeMapping']],
                             [
                                 ['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping', 'repush']
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping']
                         ],
                             [['aadhaar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
@@ -1065,11 +1065,11 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblTransporter' => [
@@ -1161,7 +1161,7 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['gender_code'], 'required', 'except' => ['specialCodeImportCsv', 'repush']],
+                            [['gender_code'], 'required', 'except' => ['specialCodeImportCsv']],
                             [['daily_milk_total', 'home_consumption_milk', 'market_surplus_milk'], 'required', 'on' => ['member_detail']],
                     ],
                 ],
@@ -1178,17 +1178,17 @@ class CustomValidation extends Component {
                             [['max_allowed_qty'], 'number', 'min' => 0.5],
                         //[['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
                         [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
             ],
@@ -1198,17 +1198,17 @@ class CustomValidation extends Component {
                             [['max_allowed_qty'], 'number', 'min' => 0.5],
                         //[['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
                         [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['animal_type_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
             ],
@@ -1220,9 +1220,9 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -1230,15 +1230,15 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
                 'TblBranch' => [
@@ -1363,9 +1363,9 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [
                     'default' => [
-                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv', 'repush']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
@@ -1373,12 +1373,12 @@ class CustomValidation extends Component {
                         }", 'on' => ['importCsv']],
                             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
-                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv', 'repush']],
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
                             [['adhar_no'], function ($attribute, $params) {
                                 Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv', 'repush']],
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
             ],

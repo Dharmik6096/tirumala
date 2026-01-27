@@ -133,27 +133,27 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'routeMapping', 'repush']],
-                [['dcs_short_name'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate', 'repush']],
+                [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'routeMapping']],
+                [['dcs_short_name'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
                 [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'ref_code'], 'required', 'on' => ['customImport']],
                 [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
                 [['milk_type_code'], 'required', 'on' => ['importCsv']],
-                [['dcs_code', 'is_bmc', 'destination_type'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'repush']],
+                [['dcs_code', 'is_bmc', 'destination_type'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                 [
                     ['milk_type_code'], 'required', 'when' => function ($model) {
                     return empty($model->milk_type_auto);
                 },
-                'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'repush']
+                'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']
             ],
-                [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType', 'repush']],
+                [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
                 [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
-                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate', 'repush']],
+                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
                 [['dpu_type'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type');
                     }
-                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType', 'repush']],
+                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
                 [['same_milk_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
@@ -163,9 +163,9 @@ class TblDcs extends ChildModel {
                 [['department'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'department');
                 }, 'on' => ['importCsv']],
-                [['state_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate', 'repush']],
-                [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
-                [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate', 'repush']],
+                [['state_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
+                [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData', 'routeMapping']],
+                [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             //[['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             // [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             // [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
@@ -175,14 +175,14 @@ class TblDcs extends ChildModel {
                     return $model->isAttributeChanged('gst_no', FALSE);
                 }],
             // [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
-            [['allow_multi_family_member', /* 'destination_type', */], 'integer', 'except' => ['routeMapping', 'repush']],
+            [['allow_multi_family_member', /* 'destination_type', */], 'integer', 'except' => ['routeMapping']],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date', 'type_of_dcs'], 'safe'],
                 [['fssi_expiry_date'], 'required', 'when' => function ($model) {
                     return !empty($model->fssi);
                 }, 'whenClient' => "function (attribute, value) {return $('#tbldcs-fssi').val() !== '';
             }"],
-                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['routeMapping', 'repush'], 'when' => function ($model) {
+                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['routeMapping'], 'when' => function ($model) {
                     return $model->isAttributeChanged('sap_vendor_code', FALSE);
                 }],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
@@ -197,13 +197,13 @@ class TblDcs extends ChildModel {
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
             [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
                 [['gst_no'], function ($attribute, $params) {
                     $this->validateGstNo($attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
                 [['phone_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
             //            [['service_tax'], function ($attribute, $params) {
             //                    Yii::$app->general->vaildateServiceTax($this, $attribute,$params);
             //                },'skipOnEmpty'=> false],
@@ -214,21 +214,21 @@ class TblDcs extends ChildModel {
 //            }, 'except' => ['saveCreamyData', 'routeMapping']/* , 'targetAttribute' => 'bank_code' */],
             [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
             //                [['dcs_name', 'contact_person'], function ($attribute, $params) {
             //                    Yii::$app->general->validateName($this, $attribute, $params);
             //                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
                 [['registration_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateNumericField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
                 [
                     ['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
                     return $model->is_registered == 1;
                 },
-                'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }", 'except' => ['routeMapping', 'repush']
+                'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }", 'except' => ['routeMapping']
             ],
             //    [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'except' => ['routeMapping', 'importCsv']],
             //     [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'except' => ['routeMapping']],
@@ -262,7 +262,7 @@ class TblDcs extends ChildModel {
             // [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
             [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['routeMapping', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['routeMapping']],
                 [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
                 [['dcs_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
@@ -295,7 +295,7 @@ class TblDcs extends ChildModel {
                 [['data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
                 [['dcs_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'repush']],
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
                 [['route'], 'required', 'on' => ['importCsv']],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
                 [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
@@ -325,17 +325,17 @@ class TblDcs extends ChildModel {
                 }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['cutoff', 'morning_kms', 'evening_kms'], 'default', 'value' => 0],
                 [['cutoff_val'], 'default', 'value' => 0.1],
-                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'repush']],
+                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
                 [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) {
                     return $model->cutoff == 1;
                 },
-                'whenClient' => "function (attribute, value) { return $('#tbldcs-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'repush']
+                'whenClient' => "function (attribute, value) { return $('#tbldcs-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']
             ],
                 [['cutoff_val'], function ($attribute, $params) {
                     if (!empty($this->cutoff) && $this->cutoff != '0000') {
                         Yii::$app->general->validOneDigitDecimal($this, $attribute, $params);
                     }
-                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'repush']],
+                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
                 [['is_security_cheque'], 'default', 'value' => 0],
                 [['dcs_code'], 'resetDefaultValue']
         ];
