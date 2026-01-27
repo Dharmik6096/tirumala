@@ -593,17 +593,17 @@ class BiplSchedulerController extends ChildController {
                 $result = $api->GuzzleCURL();
                 $response = json_decode($result->getBody()->getContents());
                 if (!empty($response)) {
-                    $status = $response->isSuccessful ? 2 : 3;
                     $respTime = date('Y-m-d H:i:s');
                     if (!empty($response->data->remarks)) {
                         foreach ($response->data->remarks as $val) {
+                            $status = $val->integrationFlag ? 2 : 3;
                             $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->remark];
                             $param3 = $extraIdKey ? $val->$extraIdKey : null;
                             $localModel->updateStatus($update, $val->$idKey, $param3);
                         }
                     } else {
                         $msg = !empty($response->message) ? $response->message : 'The record could not be sent. Please try again';
-                        $updateData = ['data_post_status' => $status,'updated_at' => $respTime,'response_datetime' => $respTime,'resp_desc' => $msg];
+                        $updateData = ['data_post_status' => 3,'updated_at' => $respTime,'response_datetime' => $respTime,'resp_desc' => $msg];
                         $localModel->updateStatus($updateData, $current_ids, $current_extra_ids);
                     }
                 }

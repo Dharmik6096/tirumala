@@ -46,6 +46,7 @@ use app\modules\product\models\TblProductSaleRate;
 use yii\base\UserException;
 use yii\helpers\Html;
 use app\modules\organisation\models\TblMasterHierarchy;
+use yii\db\Expression;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -1780,34 +1781,42 @@ class TblDcs extends ChildModel {
     public function getMasterRecord(){
         $data = (new \yii\db\Query())
             ->select([
-                'companyCode' => 'u.x_col1',
-                'mppCode' => 'd.ref_code',
-                'mppName' => 'd.dcs_name',
-                'sapMppCode' => new \yii\db\Expression("ISNULL(d.sap_vendor_code, '')"),
-                'sapRouteCode' => new \yii\db\Expression("ISNULL(rm.sap_route_code, '')"),
-                'sapPlantCode' => new \yii\db\Expression("''"),
-                'mobileNo' => 'c.mobile_no',
-                'bmcCode' => 'b.ref_code',
-                'routeCode' => 'rm.ref_code',
-                'bankId' => new \yii\db\Expression("0"),
-                'accountNumber' => new \yii\db\Expression("''"),
-                'ifsc' => new \yii\db\Expression("''"),
-                'isActive' => 'd.is_active',
-                'effectiveDate' => 'd.valid_from',
-                'censusCode' => 'd.dcs_code'
+                'companyCode' => new Expression("ISNULL(u.x_col1, '')"),
+                'mppCode' => new Expression("ISNULL(d.ref_code, '')"),
+                'mppName' => new Expression("ISNULL(d.dcs_name, '')"),
+                'sapMppCode' => new Expression("ISNULL(d.sap_vendor_code, '')"),
+                'sapRouteCode' => new Expression("ISNULL(rm.sap_route_code, '')"),
+                'sapPlantCode' => new Expression("''"),
+                'mobileNo' => new Expression("ISNULL(c.mobile_no, '')"),
+                'bmcCode' => new Expression("ISNULL(b.ref_code, '')"),
+                'routeCode' => new Expression("ISNULL(rm.ref_code, '')"),
+                'bankId' => new Expression("0"),
+                'bankBranchName' => new Expression("''"),
+                'accountName' => new Expression("''"),
+                'accountNumber' => new Expression("''"),
+                'ifsc' => new Expression("''"),
+                'isActive' => new Expression("ISNULL(d.is_active, 0)"),
+                'effectiveDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), d.valid_from, 120), '')"),
+                'effectiveShift' => new Expression("''"),
+                'censusCode' => new Expression("ISNULL(d.dcs_code, '')"),
+                'sapVendorCode' => new Expression("''"),
             ])
             ->from('tbl_dcs d')
             ->innerJoin('tbl_unions u', 'u.union_code = d.union_code')
             ->innerJoin('tbl_bmc b', 'b.bmc_code = d.bmc_code')
             ->leftJoin('tbl_route_mapping rm', 'rm.route_code  = d.route_code')
             ->leftJoin('tbl_contact_details c', 'c.module_code = d.dcs_code AND c.is_default = 1 AND c.is_active = 1')
-            ->where(['isnull(d.data_post_status,0)' => 0])
+            ->where(['isnull(d.data_post_status,0)' => [0,'']])
             ->limit(5)
             ->all();
         if (!empty($data)) {
-            array_walk($data, function(&$item) { $item['isActive'] = (bool)$item['isActive']; });
+            $companyCode = (string)$data[0]['companyCode'];
+            array_walk($data, function(&$item) {
+                $item['isActive'] = (bool)$item['isActive'];
+                unset($item['companyCode']);
+            });
             return [
-                'companyCode' => (string)$data[0]['companyCode'],
+                'companyCode' => $companyCode,
                 'mppDetails' => $data
             ];
         }
