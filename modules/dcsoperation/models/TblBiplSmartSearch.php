@@ -31,26 +31,7 @@ class TblBiplSmartSearch extends TblBiplSmart {
 
         if ($this->bipl_type == '1') {
             $query = TblDcs::find()->alias('dcs')
-                    ->select([
-                        'dcs.dcs_code AS code',
-                        'u.union_name as union_name',
-                        'dcs.dcs_code_ex as ex_code',
-                        'dcs.dcs_code AS dcs_code',
-                        'dcs.dcs_name AS name',
-                        'dcs.sap_vendor_code AS sap_vendor_code',
-                        'dcs.ref_code AS dcs_ref_code',
-                        'bmc.ref_code AS bmc_ref_code',
-                        'route.ref_code AS route_ref_code',
-                        'route.sap_route_code',
-                        'contact.mobile_no as mobile_no',
-                        'dcs.is_active',
-                        'dcs.valid_from as effective_date',
-                        'dcs.data_post_status as data_post_status',
-                        'dcs.picked_datetime as picked_datetime',
-                        'dcs.response_datetime as response_datetime',
-                        'dcs.resp_status as resp_status',
-                        'dcs.resp_desc as resp_desc',
-                    ])
+                    ->select(['u.union_name as union_name', 'bmc.ref_code AS bmc_ref_code', 'dcs.ref_code AS dcs_ref_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs.sap_vendor_code', 'route.ref_code AS route_ref_code', 'route.sap_route_code', 'contact.mobile_no', 'dcs.is_active', 'dcs.valid_from', 'dcs.data_post_status', 'dcs.picked_datetime', 'dcs.response_datetime', 'dcs.resp_status', 'dcs.resp_desc'])
                     ->leftJoin('tbl_bmc bmc', 'dcs.bmc_code = bmc.bmc_code')
                     ->leftJoin('tbl_route_mapping route', 'dcs.route_code = route.route_code')
                     ->leftJoin('tbl_contact_details contact', "contact.module_code = dcs.dcs_code AND contact.module_name = 'society'")
@@ -59,29 +40,7 @@ class TblBiplSmartSearch extends TblBiplSmart {
             $tablePrefix = 'dcs';
         } else {
             $query = TblMember::find()->alias('member')
-                    ->select([
-                        'member.member_code AS code',
-                        'member.member_code AS member_code',
-                        'u.union_name as union_name',
-                        'member.ex_member_code as ex_code',
-                        'member.dcs_code AS dcs_code',
-                        'member.member_name AS name',
-                        'member.surname AS last_name',
-                        'member.sap_farmer_code AS sap_vendor_code',
-                        'dcs.ref_code AS dcs_ref_code',
-                        'bmc.ref_code AS bmc_ref_code',
-                        'member.mobile_no as mobile_no',
-                        'member.is_active',
-                        'member.registration_date as effective_date',
-                        'member.adhar_no',
-                        'member.address',
-                        'gender.gender',
-                        'member.data_post_status as data_post_status',
-                        'member.picked_datetime as picked_datetime',
-                        'member.response_datetime as response_datetime',
-                        'member.resp_status as resp_status',
-                        'member.resp_desc as resp_desc',
-                    ])
+                    ->select(['u.union_name as union_name', 'bmc.ref_code AS bmc_ref_code', 'dcs.ref_code AS dcs_ref_code', 'member.dcs_code', 'member_code', 'ex_member_code', 'member_name', 'surname', 'sap_farmer_code', 'member.mobile_no', 'member.is_active', 'member.registration_date', 'adhar_no', 'member.address', 'gender.gender', 'member.data_post_status', 'member.picked_datetime', 'member.response_datetime', 'member.resp_status', 'member.resp_desc'])
                     ->leftJoin('tbl_dcs dcs', 'member.dcs_code = dcs.dcs_code')
                     ->leftJoin('tbl_bmc bmc', 'dcs.bmc_code = bmc.bmc_code')
                     ->leftJoin('tbl_gender gender', 'member.gender_code = gender.gender_code')

@@ -1,5 +1,4 @@
 <?php
-
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
@@ -8,40 +7,32 @@ use yii\web\View;
 
 <div class="grid-searchno-effect" >
     <?php
-    $isVisible = $searchModel->bipl_type == '1';
+    $models = $dataProvider->getModels();
+    $firstModel = !empty($models) ? $models[0] : [];
+    
     $attribute = [
         ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
                 $disabled = $model['data_post_status'] == 0 ? true : false;
-                $value = $model['code'];
+                $value = isset($model['member_code']) ? $model['member_code'] : $model['dcs_code'];
                 return ['class' => 'checkbox-collection', 'value' => $value, 'disabled' => $disabled];
             }],
-        ['attribute' => 'union_name', 'filter' => false],
-        ['attribute' => 'code', 'filter' => false],
-        ['attribute' => 'ex_code', 'filter' => false],
-        ['attribute' => 'name', 'filter' => false],
-        ['attribute' => 'sap_vendor_code', 'filter' => false],
-        ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS Ref Code'), 'filter' => false],
-        ['attribute' => 'bmc_ref_code', 'label' => Yii::t('app', 'BMC Ref Code'), 'filter' => false],
-        ['attribute' => 'route_ref_code', 'label' => Yii::t('app', 'Route Ref Code'), 'filter' => false, 'visible' => $isVisible],
-        ['attribute' => 'sap_route_code', 'filter' => false, 'visible' => $isVisible],
-        ['attribute' => 'mobile_no', 'filter' => false],
-        ['attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
-            'value' => function($model) {
-                return $model['is_active'] == '1' ? 'Active' : 'In Active';
-            }],
-        ['attribute' => 'effective_date'],
-        ['attribute' => 'data_post_status', 'filter' => false],
-        ['attribute' => 'last_name', 'filter' => false, 'visible' => !$isVisible],
-        ['attribute' => 'gender', 'filter' => false, 'visible' => !$isVisible],
-        ['attribute' => 'address', 'filter' => false, 'visible' => !$isVisible],
-        ['attribute' => 'picked_datetime'],
-        ['attribute' => 'response_datetime'],
-        ['attribute' => 'resp_status', 'filter' => false],
-        ['attribute' => 'resp_desc', 'filter' => false],
     ];
+    
+    if (!empty($firstModel)) {
+        foreach ($firstModel as $field => $value) {
+            $columnConfig = ['attribute' => $field, 'filter' => false];
+            if ($field === 'is_active') {
+                $columnConfig['label'] = Yii::t('app', 'Status');
+                $columnConfig['value'] = function($model) {
+                    return $model['is_active'] == '1' ? 'Active' : 'In Active';
+                };
+            }
+            $attribute[] = $columnConfig;
+        }
+    }
 
     $grid_option = [
         'id' => 'bipl-smart-list',
@@ -64,7 +55,7 @@ use yii\web\View;
     <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
 </div>
 <?php
-$type = $isVisible ? 'dcs' : 'member';
+$type = $searchModel->bipl_type == '1' ? 'dcs' : 'member';
 $script = '
     $("#bipl-repush-bulk").click(function() {
         var len = $("input[class=\"checkbox-collection kv-row-checkbox\"]:checked").length;
