@@ -4,7 +4,7 @@ use app\components\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = $title;
 ?>
@@ -124,7 +124,7 @@ $bmc_info .= (Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Y
             'actions' => [
                 'bill-head' => function ($url, $model) {
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->vendor_payment_hold_release_code];
-                    return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-vendor-payment-hold-release/bill-head', 'id' => $model->vendor_payment_hold_release_code], $options);
+                    return GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-vendor-payment-hold-release/bill-head', 'id' => $model->vendor_payment_hold_release_code], $options);
                 },
             ]
         ];
@@ -139,7 +139,7 @@ $bmc_info .= (Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Y
             echo Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']);
         }
         ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'create'); ?> 
+        <?= Yii::$app->controls->custombutton('Cancel', 'create','','btn-login'); ?> 
     </div>
 </div>
 <?php ActiveForm::end(); ?>

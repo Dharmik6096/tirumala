@@ -105,8 +105,8 @@ $this->title = 'Process for Payment Hold Release Disburse';
     <div class="clearfix"></div>
     <?php if (!empty($dataProvider->getModels())) { ?>
         <div class="col-md-12" >              
-            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'vendor']); ?>
-            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'vendor-file']); ?>
+            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn-login btn btn-primary bank', 'name' => 'vendor']); ?>
+            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn-login btn btn-primary sub', 'name' => 'vendor-file']); ?>
         </div>
     <?php } ?>
 
