@@ -67,12 +67,16 @@ class TblOrgFileCreator extends \app\models\ChildModel {
         $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
 
         $query = $this->find()
-                ->where(['file_status' => $this->file_status, 'status' => $this->status])
+                ->innerJoin('tbl_dcs', 'tbl_org_file_creator.module_code = tbl_dcs.dcs_code')
+                ->where(['tbl_org_file_creator.file_status' => $this->file_status, 'tbl_org_file_creator.status' => $this->status])
+                ->andWhere(['!=', 'tbl_dcs.dpu_type', 93])
                 ->limit(30);
 
         $pendingDataQuery = $this->find()
-                ->where(['file_status' => $this->file_status, 'status' => 1])
+                ->innerJoin('tbl_dcs', 'tbl_org_file_creator.module_code = tbl_dcs.dcs_code')
+                ->where(['tbl_org_file_creator.file_status' => $this->file_status, 'tbl_org_file_creator.status' => 1])
                 ->andWhere(['<', 'tbl_org_file_creator.pick_datetime', $datetime])
+                ->andWhere(['!=', 'tbl_dcs.dpu_type', 93])
                 ->limit(10);
 
         return $unionQuery = (new ActiveQuery(TblOrgFileCreator::className()))->from([
