@@ -104,13 +104,13 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                             }'),
                         ],
                         'options' => [
-                            'class' => 'btn btn-primary',
+                            'class' => 'btn-login btn btn-primary',
                             'type' => 'submit'
                         ],
                     ]);
                     AjaxSubmitButton::end();
                     ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
+                    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?>
                 </div>
             </div>
         </div>

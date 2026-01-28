@@ -12,7 +12,7 @@ use app\modules\payment\models\TblVendorPaymentHoldReleaseTransactionSearch;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use yii\data\ArrayDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\widgets\ActiveForm;
@@ -144,7 +144,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
     }
 
     public function actionPaymentAdjust() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblVendorPaymentHoldRelease();
         $model->load(Yii::$app->request->get());
         if (Yii::$app->request->post()) {
@@ -261,7 +261,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
     }
 
     public function actionPaymentDisburse() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblVendorPaymentHoldRelease();
         $model->scenario = 'disbursepayment';
         $model->load(Yii::$app->request->get());
@@ -294,7 +294,7 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
     }
 
     public function actionConfirmPayment() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         if (Yii::$app->request->post()) {
             $model = new TblVendorPaymentHoldRelease();
             $model->load(Yii::$app->request->post());
@@ -408,13 +408,12 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
             'writer' => 'CSV',
         ];
 
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $objPHPExcel->setActiveSheetIndex(0);
         $objPHPExcel->getDefaultStyle()
                 ->getNumberFormat()
-                ->setFormatCode(
-                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-        );
+                ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+
         $rowCount = 1;
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Vendor Code');
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Vendor Name');
@@ -439,11 +438,11 @@ class TblVendorPaymentHoldReleaseController extends \app\controllers\ChildContro
             $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
             $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
         }
-        $fileName = "vendor_hold_release_payment_disburse." . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
+        $fileName = "vendor_hold_release_payment_disburse." . $header['extension'];
+        header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Csv');
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
