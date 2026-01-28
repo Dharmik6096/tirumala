@@ -569,7 +569,7 @@ class BiplSchedulerController extends ChildController {
         $current_ids = [];
         $current_extra_ids = null;
         try {
-            $config = \Yii::$app->params['clienterp_authentication']['eipl'];
+            $config = \Yii::$app->params['clienterp_authentication']['bipl_smart'];
             $base_url = $config['api_base_url'];
             if (!$this->AuthenticateRequest($config)) return;
 
@@ -648,7 +648,7 @@ class BiplSchedulerController extends ChildController {
         $api->serverUrl = $config['api_base_url'];
         $api->apiurl = $config['auth_endpoint'];
         $api->is_header_merge = false;
-        $authentication = $config['bipl_authentication']['user'];
+        $authentication = $config['authentication']['user'];
         $api->body = $authentication;
         $result = $api->GuzzleCURL();
         $response = $result->getBody()->getContents();

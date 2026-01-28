@@ -13,7 +13,7 @@ use yii\db\Expression;
  */
 class TblDcsSearch extends TblDcs {
 
-    public $federation_code, $customer_type, $smart_master_type, $from_date, $to_date;
+    public $federation_code, $customer_type;
 
     /**
      * @inheritdoc
@@ -22,12 +22,10 @@ class TblDcsSearch extends TblDcs {
         return [
                 [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type', 'customer_type', 'is_chiller', 'machine_owned'], 'safe'],
                 [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'machine_owned'], 'integer'],
-                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword', 'repushSearch']],
+                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
                 [['dcs_code_ex', 'ref_code', 'aadhaar_no', 'ts_code_m', 'ts_code_e'], 'safe'],
                 [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code', 'type_of_dcs'], 'safe'],
                 [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']],
-                [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'smart_master_type', 'data_post_status', 'from_date', 'to_date'], 'safe'],
-                [['smart_master_type'], 'required', 'on' => ['repushSearch']],
         ];
     }
 
@@ -167,39 +165,6 @@ class TblDcsSearch extends TblDcs {
         }
         $query->andFilterWhere(['like', 'tbl_dcs.route_code', $this->route_code]);
 
-        return $dataProvider;
-    }
-    
-    public function searchrepush($params) {
-        $query = TblDcs::find()->where(['is_active' => 1]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => FALSE
-        ]);
-
-        $this->load($params);
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            $query->where('0=1');
-            return $dataProvider;
-        }
-        Yii::$app->general->filterByOrg($query, $this);
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andWhere([
-            'OR',
-            [
-                'AND',
-                ['>=', 'CAST(created_at as DATE)', $from_date],
-                ['<=', 'CAST(created_at as DATE)', $to_date],
-            ],
-            [
-                'AND',
-                ['>=', 'CAST(updated_at as DATE)', $from_date],
-                ['<=', 'CAST(updated_at as DATE)', $to_date],
-            ],
-        ]);
-        $query->andFilterWhere(['data_post_status' => $this->data_post_status]);
         return $dataProvider;
     }
 
