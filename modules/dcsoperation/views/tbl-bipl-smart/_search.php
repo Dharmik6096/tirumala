@@ -31,6 +31,7 @@ use app\components\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('bipl_type', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Bipl Type'), false, 'bipl_type') ?> 
     </div>

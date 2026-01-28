@@ -49,10 +49,10 @@ use yii\web\View;
 <div class="col-sm-12 form-group" >
     <?php
     if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn btn-primary', 'id' => 'bipl-repush-bulk']);
+        echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn btn-primary btn-login', 'id' => 'bipl-repush-bulk']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
+    <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data', '', 'btn-login'); ?>
 </div>
 <?php
 $type = $searchModel->bipl_type == '1' ? 'dcs' : 'member';
