@@ -30,6 +30,20 @@ use yii\web\View;
                 $columnConfig['value'] = function($model) {
                     return $model['is_active'] == '1' ? 'Active' : 'In Active';
                 };
+            } elseif ($field == 'dcs_ref_code') {
+                $columnConfig['label'] = Yii::t('app', 'DCS') . Yii::t('app', ' Ref Code');
+            } elseif ($field == 'data_post_status') {
+                $columnConfig['value'] = function($model) {
+                    return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model['data_post_status']]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model['data_post_status']] : 'Pending';
+                };
+            } elseif ($field == 'picked_datetime') {
+                $columnConfig['value'] = function($model) {
+                    return Yii::$app->controls->view_datetime($model['picked_datetime'], 'php:d-m-Y H:i:s');
+                };
+            } elseif ($field == 'response_datetime') {
+                $columnConfig['value'] = function($model) {
+                    return Yii::$app->controls->view_datetime($model['response_datetime'], 'php:d-m-Y H:i:s');
+                };
             }
             $attribute[] = $columnConfig;
         }
@@ -53,7 +67,7 @@ use yii\web\View;
         echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn btn-primary', 'id' => 'bipl-repush-bulk']);
     }
     ?>
-<?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
+    <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
 </div>
 <?php
 $type = $searchModel->bipl_type == '1' ? 'dcs' : ($searchModel->bipl_type == '2' ? 'rate' : ($searchModel->bipl_type == '3' ? 'rateapp' : 'member'));
