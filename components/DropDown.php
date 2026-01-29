@@ -2374,7 +2374,7 @@ class DropDown extends Component {
             'bipl_type' => [
                 'name' => 'bipl_type',
                 'prompt' => Yii::t('app', 'Select Bipl Type'),
-                'data' => ['0' => Yii::t('app', 'Member'), '1' => Yii::t('app', 'DCS'), '2' => Yii::t('app', 'Rate'), '3' => Yii::t('app', 'Rate Applicability')],
+                'data' => ['0' => Yii::t('app', 'Member'), '1' => Yii::t('app', 'DCS')],
             ],
         ];
         return $records[$l];
