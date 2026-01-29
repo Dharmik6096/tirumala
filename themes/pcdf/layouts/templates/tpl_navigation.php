@@ -1063,6 +1063,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'TPT Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
                             ['label' => Yii::t('app', 'TPT Cost Summary 2'), 'url' => ['/misreports/reports/tp-cost-summary-new-format']],
                             ['label' => Yii::t('app', 'TPT Bill'), 'url' => ['/jasperreports/default/primary-transporter-monthly-bill']],
+                            ['label' => Yii::t('app', 'Inward Bill Summary'), 'url' => ['/misreports/reports/inward-bill-summary']],
+                            ['label' => Yii::t('app', 'Payment Advice - Inward'), 'url' => ['/misreports/reports/payment-advice-inward-summary']],
                     ]
                 ],
                     [
