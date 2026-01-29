@@ -1798,7 +1798,7 @@ class TblDcs extends ChildModel {
                 'isActive' => new Expression("ISNULL(d.is_active, 0)"),
                 'effectiveDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), d.valid_from, 120), '')"),
                 'effectiveShift' => new Expression("''"),
-                'censusCode' => new Expression("ISNULL(d.dcs_code, '')"),
+                'census_code' => new Expression("ISNULL(d.dcs_code, '')"),
                 'sapVendorCode' => new Expression("''"),
             ])
             ->from('tbl_dcs d')
@@ -1824,7 +1824,7 @@ class TblDcs extends ChildModel {
 
     }
 
-    public function updateStatus($updateData, $ids, $extr_value = '') {
+    public function updateStatus($updateData, $ids) {
         return $this->updateAll($updateData, ['ref_code' => $ids]);
     }
 

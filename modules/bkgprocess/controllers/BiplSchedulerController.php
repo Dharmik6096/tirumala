@@ -578,10 +578,10 @@ class BiplSchedulerController extends ChildController {
             if (empty($masterData)) return;
 
             $current_ids = array_column($masterData[$dataKey], $idKey);
-            $current_extra_ids = $extraIdKey ? array_unique(array_column($masterData[$dataKey], $extraIdKey)) : null;
+            $current_extra_ids = !empty($extraIdKey) && !empty($masterData[$extraIdKey]) ? $masterData[$extraIdKey] : $current_ids;
             $now = date('Y-m-d H:i:s');
             $initialUpdate = ['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now];
-            $localModel->updateStatus($initialUpdate, $current_ids, $current_extra_ids);
+            $localModel->updateStatus($initialUpdate, $current_extra_ids);
             try {
                 $api = new WebApi();
                 $api->return_actual = true;
@@ -598,26 +598,30 @@ class BiplSchedulerController extends ChildController {
                         foreach ($response->data->remarks as $val) {
                             $status = $val->integrationFlag ? 2 : 3;
                             $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->remark];
-                            $param3 = $extraIdKey ? $val->$extraIdKey : null;
-                            $localModel->updateStatus($update, $val->$idKey, $param3);
+                            $id = $val->$idKey;
+                            if(!empty($extraIdKey) && property_exists($val, $extraIdKey)){
+                                $key = $val->$idKey . $val->$extraIdKey;
+                                $id = $current_extra_ids[$key] ?? $id; 
+                            }
+                            $localModel->updateStatus($update, $id);
                         }
                     } else {
                         $msg = !empty($response->message) ? $response->message : 'The record could not be sent. Please try again';
                         $updateData = ['data_post_status' => 3,'updated_at' => $respTime,'response_datetime' => $respTime,'resp_desc' => $msg];
-                        $localModel->updateStatus($updateData, $current_ids, $current_extra_ids);
+                        $localModel->updateStatus($updateData, $current_extra_ids);
                     }
                 }
             } catch (\GuzzleHttp\Exception\RequestException $ex) {
-                $this->handleApiError($ex, $localModel, $current_ids, $current_extra_ids, true);
+                $this->handleApiError($ex, $localModel, $current_extra_ids, true);
             } catch (\Throwable $ex) {
-                $this->handleApiError($ex, $localModel, $current_ids, $current_extra_ids, false);
+                $this->handleApiError($ex, $localModel, $current_extra_ids, false);
             }
         } catch (\Throwable $ex) {
-            $this->handleApiError($ex, $localModel, $current_ids, $current_extra_ids, false);
+            $this->handleApiError($ex, $localModel, $current_extra_ids, false);
         }
     }
 
-    private function handleApiError($ex, $model, $ids, $extras, $isGuzzle) {
+    private function handleApiError($ex, $model, $ids, $isGuzzle) {
         if ($model && !empty($ids)) {
             $now = date('Y-m-d H:i:s');
             $errorMsg = $ex->getMessage();
@@ -628,7 +632,7 @@ class BiplSchedulerController extends ChildController {
             }
             $shortDesc = (strlen($errorMsg) > 800) ? substr($errorMsg, 0, 800) : $errorMsg;
             $updateData = ['data_post_status' => 3, 'updated_at' => $now, 'response_datetime' => $now, 'resp_desc' => json_encode($shortDesc)];
-            $model->updateStatus($updateData, $ids, $extras);
+            $model->updateStatus($updateData, $ids);
         }
     }
 
