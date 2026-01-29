@@ -820,6 +820,7 @@ class TblMember extends ChildModel {
         $farmers = (new Query())
             ->select([
                 'companyCode' => new Expression("ISNULL(u.x_col1, '')"),
+                'mainMemberCode' => new Expression("ISNULL(m.member_code, '')"),
                 'memberCode' => new Expression("ISNULL(m.ex_member_code, '')"),
                 'sapFarmerCode' => new Expression("ISNULL(m.sap_farmer_code, '')"),
                 'memberName' => new Expression("ISNULL(m.member_name, '')"),
@@ -850,13 +851,18 @@ class TblMember extends ChildModel {
             ->limit(20)
             ->all();
         if (!empty($farmers)) {
+            $primaryKeyCode = [];
             $companyCode = (string)$farmers[0]['companyCode'];
-            array_walk($farmers, function(&$item) {
+            array_walk($farmers, function(&$item) use (&$primaryKeyCode){
+                $key = $item['memberCode'].$item['mppCode'];
+                $primaryKeyCode[$key] = $item['mainMemberCode'];
                 $item['isActive'] = (bool)$item['isActive'];
                 $item['aadharNumber'] = !empty($item['aadharNumber']) ? \Yii::$app->general->decryptData($item['aadharNumber']) : '';
                 unset($item['companyCode']);
+                unset($item['mainMemberCode']);
             });
             return [
+                'mppCode' => $primaryKeyCode,
                 'companyCode' => $companyCode,
                 'farmerImport' => $farmers
             ];
@@ -865,20 +871,9 @@ class TblMember extends ChildModel {
 
     }
     
-    public function updateStatus($updateData, $ids, $dcsRefCodes) 
+    public function updateStatus($updateData, $ids) 
     {
-        return $this->updateAll(
-            $updateData,
-            [
-                'AND',
-                ['in', 'ex_member_code', $ids],
-                ['in', 'dcs_code', (new \yii\db\Query())
-                    ->select('dcs_code')
-                    ->from('tbl_dcs')
-                    ->where(['in', 'ref_code', $dcsRefCodes])
-                ]
-            ]
-        );
+        return $this->updateAll($updateData,['member_code' => $ids]);
     }
 
 }
