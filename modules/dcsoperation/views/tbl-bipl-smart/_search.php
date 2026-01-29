@@ -33,10 +33,10 @@ use app\components\ActiveForm;
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('bipl_type', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Bipl Type'), false, 'bipl_type') ?> 
+        <?= Yii::$app->dropdown->dropdownStatic('bipl_type', $model, $form, 'form-group padding-right-5 selection_clear', Yii::t('app', 'Bipl Type'), false, 'bipl_type') ?> 
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('send_status', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Status'), false, 'data_post_status') ?> 
+        <?= Yii::$app->dropdown->dropdownStatic('send_status', $model, $form, 'form-group padding-right-5 selection_clear', Yii::t('app', 'Status'), false, 'data_post_status') ?> 
     </div>
 
     <div class="col-sm-3 mt23">
