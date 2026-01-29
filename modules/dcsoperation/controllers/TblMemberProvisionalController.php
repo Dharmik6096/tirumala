@@ -46,6 +46,7 @@ use app\modules\dcsoperation\models\TblMemberAnimalDetailsHistory;
 use app\modules\dcsoperation\models\TblMemberFamilyDetailsHistory;
 use app\modules\general\models\TblProcessApprovalSearch;
 use Exception;
+use app\modules\bkgprocess\models\TblFtpTxnLog;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -53,6 +54,7 @@ use Exception;
 class TblMemberProvisionalController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['get-ex-member-code'];
+    public $toEncrypt = ['MemberDOB', 'AdharNo'];
 
     /**
      * Lists all TblMemberProvisional models.
@@ -1279,6 +1281,73 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionUploadMemberDataToSapFtp() {
+        $model = new TblMemberProvisional();
+        $searchModel = new TblMemberProvisionalSearch();
+        $searchModel->scenario = 'sapFtpUpload';
+        $dataProvider = $searchModel->searchSapFtpUpload(Yii::$app->request->queryParams);
+        $msg = '';
+        if (Yii::$app->request->post()) {
+            $searchDataOutput = $dataProvider->getModels();
+            $queryParams = Yii::$app->request->queryParams['TblMemberProvisionalSearch'];
+            $all_data = [];
+
+            $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation']) : '';
+            if ($status == 'upload') {
+                $qryParam = Yii::$app->request->queryParams['TblMemberProvisionalSearch'] ?? [];
+                $sp_params = [
+                    'union_code' => $qryParam['union_code'] ?? '',
+                    'plant_code' => $qryParam['plant_code'] ?? '',
+                    'mcc_plant_code' => !empty($qryParam['mcc_plant_code']) ? $qryParam['mcc_plant_code'] : (Yii::$app->session->get('MCC') ? ',' . Yii::$app->session->get('MCC') . ',' : 0),
+                    'bmc_code' => !empty($qryParam['bmc_code']) ? $qryParam['bmc_code'] : (Yii::$app->session->get('BMC') ? ',' . Yii::$app->session->get('BMC') . ',' : 0),
+                    'dcs_code' => !empty($qryParam['dcs_code']) ? $qryParam['dcs_code'] : (Yii::$app->session->get('Dcs') ? ',' . Yii::$app->session->get('Dcs') . ',' : 0),
+                    'from_date' => date('Y-m-d', strtotime($qryParam['from_date'] ?? '')),
+                    'to_date' => date('Y-m-d', strtotime($qryParam['to_date'] ?? '')),
+                    'sap_status' => $qryParam['sap_status'] ?? '',
+                ];
+                $output = \Yii::$app->general->getSpData('sp_file_member_sap_ftp_data_upload', $sp_params);
+
+                $data_array = array_merge($sp_params, [
+                    'module_name' => 'TblMemberProvisional',
+                    'module_code' => $output[0]['BMCCode'] ?? '',
+                ]);
+
+                if (!empty($output)) {
+                    $title = $output[0]['ftp_txn_file_name'];
+                    $all_data = array_map(function($row) {
+                        foreach ($this->toEncrypt as $col) {
+                            if (!empty($row[$col])) {
+                                $decrypted = Yii::$app->general->decryptData($row[$col]);
+                                $row[$col] = ($decrypted !== false) ? $decrypted : $row[$col];
+                            }
+                        }
+                        unset($row['ftp_txn_file_name']);
+                        return $row;
+                    }, $output);
+
+                    $ftp_model = new TblFtpTxnLog();
+                    $result = $ftp_model->exportData($data_array, $title, $all_data, '', FALSE, TRUE);
+                    if (!empty($result)) {
+                        $model->updateProcessStatus(2, $output[0]['ftp_txn_file_name']);
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => Yii::t('app', 'FTP Uploaded Successfully.')]);
+                        return $this->redirect(['index']);
+                    } else {
+                        $model->updateProcessStatus(3, $output[0]['ftp_txn_file_name']);
+                        $msg = Yii::t('app', 'FTP Upload Failed. Please try again later.');
+                    }
+                } else {
+                    $msg = Yii::t('app', 'No data found for the given parameters.');
+                }
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $msg]);
+            }
+        }
+        return $this->render('sap_ftp_upload', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

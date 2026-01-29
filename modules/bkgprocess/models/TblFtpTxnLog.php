@@ -209,7 +209,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             if ($FTPProcess['ext'] == '.xml') {
-                $xmlContent = $this->convertArrayToXml($output);
+                $xmlTags = isset($FTPProcess['xml_tag']) ? $FTPProcess['xml_tag'] : 'MT_RMRD_File_SND,Header';
+                $xmlContent = $this->convertArrayToXml($output, $xmlTags);
                 file_put_contents($filePath . $fileName, $xmlContent);
             } else if (Yii::$app->session->get('eiplCode') == 'DODLA') {
                 $objPHPExcel = new PHPExcel();
@@ -288,7 +289,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
     }
 
     private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall, $ftpDetails = []) {
-        if(!empty($ftpDetails)){
+        if (!empty($ftpDetails)) {
             $ftpData = $ftpDetails;
         } else {
             $ftpDetail = new TblFtpDetail();
@@ -299,7 +300,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $ftp_file_path = (empty($ftpPath) ? $ftpData->ftp_path : ($append_ftp_path ? $ftpData->ftp_path . $ftpPath : $ftpPath));
             $ftp_file = new TblFtpTxnLog();
             $ftp_file->attributes = $ftpData->attributes;
-            if(!empty($ftpDetails)){
+            if (!empty($ftpDetails)) {
                 $ftp_file->setAttributes($data);
                 $ftp_file->ftp_host = !empty($ftpData->ftp_host) ? $ftpData->ftp_host : '';
             } else {
@@ -375,13 +376,17 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return FALSE;
     }
 
-    private function convertArrayToXml($output) {
-        $xml = new \SimpleXMLElement('<?xml version = "1.0" encoding = "UTF-8"?>'
-                . '<MT_RMRD_File_SND></MT_RMRD_File_SND>');
-        foreach ($output as $item) {
-            $headerElement = $xml->addChild('Header');
-            foreach ($item as $key => $value) {
-                $headerElement->addChild($key, htmlspecialchars($value != null ? $value : ''));
+    private function convertArrayToXml($output, $tags) {
+        $tags = explode(',', $tags);
+        $rootTag = array_shift($tags);
+        $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><' . $rootTag . '></' . $rootTag . '>');
+        foreach ($output as $rowData) {
+            $currentNode = $xml;
+            for ($i = 0; $i < count($tags); $i++) {
+                $currentNode = $currentNode->addChild($tags[$i]);
+            }
+            foreach ($rowData as $key => $value) {
+                $currentNode->addChild($key, htmlspecialchars($value !== null ? $value : ''));
             }
         }
         return $xml->asXML();
@@ -498,7 +503,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection'])->count();
     }
 
-    public function saveLogData($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall, $ftpDetails){
+    public function saveLogData($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall, $ftpDetails) {
         return $this->saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall, $ftpDetails);
     }
 
