@@ -65,15 +65,11 @@ class GeneralModel {
      */
     public function save2($model, $message) {
         $transaction = \Yii::$app->db->beginTransaction();
-        //   $model[2]->save();
-        //var_dump($model);exit;
         try {
             $master = [];
             foreach ($model as $m) {
                 $master[] = $m->save();
-                //var_dump($m->getErrors());
             }
-            //exit;
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
                 //var_dump($master);exit;

@@ -30,6 +30,7 @@ use app\modules\geo\models\TblRegion;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblMemberSpecialCode;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_member".
@@ -211,6 +212,7 @@ class TblMember extends ChildModel {
                 [['ifsc', 'bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'on' => 'kycVerify'],
                 [['rate_class'], 'validateRateClass', 'on' => ['androidsync']],
                 [['member_code'], 'refCodeValidate', 'on' => ['androidsync']],
+                [['member_code'], 'resetDefaultValue']
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -807,6 +809,71 @@ class TblMember extends ChildModel {
         if (empty($this->hamlet_code)) {
             $this->hamlet_code = Yii::$app->general->getforeignkey($this->dcsCode, 'hamlet_code');
         }
+    }
+
+    public function resetDefaultValue() {
+        $this->data_post_status = 0;
+        $this->picked_datetime = $this->response_datetime = $this->resp_desc = NULL;
+    }
+
+    public function getMasterRecord(){
+        $farmers = (new Query())
+            ->select([
+                'companyCode' => new Expression("ISNULL(u.x_col1, '')"),
+                'mainMemberCode' => new Expression("ISNULL(m.member_code, '')"),
+                'memberCode' => new Expression("ISNULL(m.ex_member_code, '')"),
+                'sapFarmerCode' => new Expression("ISNULL(m.sap_farmer_code, '')"),
+                'memberName' => new Expression("ISNULL(m.member_name, '')"),
+                'lastName' => new Expression("ISNULL(m.surname, '')"),
+                'gender' => new Expression("ISNULL(LEFT(g.gender, 1), '')"),
+                'address' => new Expression("ISNULL(m.address, '')"),
+                'bmcCode' => new Expression("ISNULL(b.ref_code, '')"),
+                'mppCode' => new Expression("ISNULL(d.ref_code, '')"),
+                'bankId' => new Expression("0"),
+                'accountNumber' => new Expression("''"),
+                'accountHolderName' => new Expression("''"),
+                'ifscCode' => new Expression("''"),
+                'branchName' => new Expression("''"),
+                'mobileNumber' => new Expression("ISNULL(m.mobile_no, '')"),
+                'effectiveDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), m.registration_date, 120), '')"),
+                'isActive' => new Expression("ISNULL(m.is_active, 0)"),
+                'expiryDate' => new Expression("''"),
+                'expiryShift' => new Expression("''"),
+                'approvalDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), m.registration_date, 120), '')"),
+                'aadharNumber' => new Expression("ISNULL(m.adhar_no, '')"),
+            ])
+            ->from(['m' => 'tbl_member'])
+            ->innerJoin(['u' => 'tbl_unions'], 'u.union_code = m.union_code')
+            ->innerJoin(['d' => 'tbl_dcs'], 'm.dcs_code = d.dcs_code')
+            ->innerJoin(['b' => 'tbl_bmc'], 'd.bmc_code = b.bmc_code')
+            ->leftJoin(['g' => 'tbl_gender'], 'm.gender_code = g.gender_code')
+            ->where(['isnull(m.data_post_status,0)' => [0,'']])
+            ->limit(20)
+            ->all();
+        if (!empty($farmers)) {
+            $primaryKeyCode = [];
+            $companyCode = (string)$farmers[0]['companyCode'];
+            array_walk($farmers, function(&$item) use (&$primaryKeyCode){
+                $key = $item['memberCode'].$item['mppCode'];
+                $primaryKeyCode[$key] = $item['mainMemberCode'];
+                $item['isActive'] = (bool)$item['isActive'];
+                $item['aadharNumber'] = !empty($item['aadharNumber']) ? \Yii::$app->general->decryptData($item['aadharNumber']) : '';
+                unset($item['companyCode']);
+                unset($item['mainMemberCode']);
+            });
+            return [
+                'mppCode' => $primaryKeyCode,
+                'companyCode' => $companyCode,
+                'farmerImport' => $farmers
+            ];
+        }
+        return [];
+
+    }
+    
+    public function updateStatus($updateData, $ids) 
+    {
+        return $this->updateAll($updateData,['member_code' => $ids]);
     }
 
 }

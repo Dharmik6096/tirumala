@@ -1409,7 +1409,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS'), 92 => Yii::t('app', 'PROMPT')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS'), 92 => Yii::t('app', 'PROMPT'), 93 => Yii::t('app', 'BIPL SMART')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -1615,7 +1615,7 @@ class DropDown extends Component {
             'BIPL_dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [91 => Yii::t('app', 'BIPL')],
+                'data' => [91 => Yii::t('app', 'BIPL'), 93 => Yii::t('app', 'BIPL SMART')],
             ],
             'PROMPT_dpu_type' => [
                 'name' => 'dpu_type',
@@ -2416,6 +2416,11 @@ class DropDown extends Component {
                 'name' => 'p_bank_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+            ],
+            'bipl_type' => [
+                'name' => 'bipl_type',
+                'prompt' => Yii::t('app', 'Select Bipl Type'),
+                'data' => ['0' => Yii::t('app', 'Member'), '1' => Yii::t('app', 'DCS')],
             ],
         ];
         return $records[$l];
