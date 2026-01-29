@@ -33,17 +33,15 @@ class TblBiplSmartSearch extends TblBiplSmart {
 
         if ($this->bipl_type == '1') {
             $query = TblDcs::find()->alias('dcs')
-                    ->select(['u.union_name as union_name', 'bmc.ref_code AS bmc_ref_code', 'dcs.ref_code AS dcs_ref_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs.sap_vendor_code', 'route.ref_code AS route_ref_code', 'route.sap_route_code', 'contact.mobile_no', 'dcs.is_active', 'dcs.valid_from', 'dcs.data_post_status', 'dcs.picked_datetime', 'dcs.response_datetime', 'dcs.resp_desc'])
+                    ->select(['bmc.ref_code AS bmc_ref_code', 'dcs.ref_code AS dcs_ref_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs.sap_vendor_code', 'route.ref_code AS route_ref_code', 'route.sap_route_code', 'contact.mobile_no', 'dcs.is_active', 'dcs.valid_from', 'dcs.data_post_status', 'dcs.picked_datetime', 'dcs.response_datetime', 'dcs.resp_desc'])
                     ->leftJoin('tbl_bmc bmc', 'dcs.bmc_code = bmc.bmc_code')
                     ->leftJoin('tbl_route_mapping route', 'dcs.route_code = route.route_code')
                     ->leftJoin('tbl_contact_details contact', "contact.module_code = dcs.dcs_code AND contact.module_name = 'society'")
-                    ->leftJoin('tbl_unions u', 'dcs.union_code = u.union_code')
                     ->where(['dcs.is_active' => 1]);
             $tablePrefix = 'dcs';
         } elseif ($this->bipl_type == '2') {
             $query = TblPurchaseRate::find()->alias('rate')
-                    ->select(['u.union_name as union_name', 'rate.purchase_rate_code', 'rate.wef_date', 's.shift', 'rt.rate_type', 'rate.description', 'rate.data_post_status', 'rate.picked_datetime', 'rate.response_datetime', 'rate.resp_desc'])
-                    ->leftJoin('tbl_unions u', 'rate.union_code = u.union_code')
+                    ->select(['rate.purchase_rate_code', 'rate.wef_date', 's.shift', 'rt.rate_type', 'rate.description', 'rate.data_post_status', 'rate.picked_datetime', 'rate.response_datetime', 'rate.resp_desc'])
                     ->leftJoin('tbl_shift s', 'rate.shift_id = s.id')
                     ->leftJoin(['min_rde' => (new \yii\db\Query())
                         ->select(['purchase_rate_code', 'min_code' => 'MAX(code)'])
@@ -55,19 +53,17 @@ class TblBiplSmartSearch extends TblBiplSmart {
             $tablePrefix = 'rate';
         } elseif ($this->bipl_type == '3') {
             $query = TblPurchaseRateApplicability::find()->alias('rateapp')
-                    ->select(['u.union_name as union_name', 'rateapp.purchase_rate_code', 'rateapp.rate_app_code', 'rateapp.dcs_code', 'rateapp.wef_date', 's.shift', 'rateapp.data_post_status', 'rateapp.picked_datetime', 'rateapp.response_datetime', 'rateapp.resp_desc'])
+                    ->select(['rateapp.purchase_rate_code', 'rateapp.rate_app_code', 'rateapp.dcs_code', 'rateapp.wef_date', 's.shift', 'rateapp.data_post_status', 'rateapp.picked_datetime', 'rateapp.response_datetime', 'rateapp.resp_desc'])
                     ->leftJoin('tbl_dcs dcs', 'rateapp.dcs_code = dcs.dcs_code')
-                    ->leftJoin('tbl_unions u', 'rateapp.union_code = u.union_code')
                     ->leftJoin('tbl_shift s', 'rateapp.shift_code = s.id')
                     ->where(['rateapp.is_active' => 1]);
             $tablePrefix = 'rateapp';
         } else {
             $query = TblMember::find()->alias('member')
-                    ->select(['u.union_name as union_name', 'bmc.ref_code AS bmc_ref_code', 'dcs.ref_code AS dcs_ref_code', 'member.dcs_code', 'member_code', 'ex_member_code', 'member_name', 'surname', 'sap_farmer_code', 'member.mobile_no', 'member.is_active', 'member.registration_date', 'adhar_no', 'member.address', 'gender.gender', 'member.data_post_status', 'member.picked_datetime', 'member.response_datetime', 'member.resp_desc'])
+                    ->select(['bmc.ref_code AS bmc_ref_code', 'dcs.ref_code AS dcs_ref_code', 'member.dcs_code', 'member_code', 'ex_member_code', 'member_name', 'surname', 'sap_farmer_code', 'member.mobile_no', 'member.is_active', 'member.registration_date', 'adhar_no', 'member.address', 'gender.gender', 'member.data_post_status', 'member.picked_datetime', 'member.response_datetime', 'member.resp_desc'])
                     ->leftJoin('tbl_dcs dcs', 'member.dcs_code = dcs.dcs_code')
                     ->leftJoin('tbl_bmc bmc', 'dcs.bmc_code = bmc.bmc_code')
                     ->leftJoin('tbl_gender gender', 'member.gender_code = gender.gender_code')
-                    ->leftJoin('tbl_unions u', 'dcs.union_code = u.union_code')
                     ->where(['member.is_active' => 1]);
             $tablePrefix = 'member';
         }
