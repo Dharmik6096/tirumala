@@ -587,23 +587,30 @@ class BiplSchedulerController extends ChildController {
                 $api->return_actual = true;
                 $api->serverUrl = $base_url;
                 $api->apiurl = $config[$endpointKey];
-                $api->body = $masterData;
+                $api->body = json_encode($masterData);
                 $api->is_header_merge = true;
-                $api->header_info['Authorization'] = "Bearer " . $this->token;
-                $result = $api->GuzzleCURL();
-                $response = json_decode($result->getBody()->getContents());
+                $api->header_info = ["Authorization: Bearer " . $this->token]; 
+                $api->authentication = [];
+                $result = $api->POSTDATA();
+                $response = !empty($result) ? json_decode($result) : [];
                 if (!empty($response)) {
                     $respTime = date('Y-m-d H:i:s');
                     if (!empty($response->data->remarks)) {
                         foreach ($response->data->remarks as $val) {
-                            $status = $val->integrationFlag ? 2 : 3;
-                            $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->remark];
-                            $id = $val->$idKey;
-                            if(!empty($extraIdKey) && property_exists($val, $extraIdKey)){
-                                $key = $val->$idKey . $val->$extraIdKey;
-                                $id = $current_extra_ids[$key] ?? $id; 
+                            if(!isset($val->isSuccessful)){
+                                $status = $val->integrationFlag ? 2 : 3;
+                                $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->remark];
+                                $id = $val->$idKey;
+                                if(!empty($extraIdKey) && property_exists($val, $extraIdKey)){
+                                    $key = $val->$idKey . $val->$extraIdKey;
+                                    $id = $current_extra_ids[$key] ?? $id; 
+                                }
+                                $localModel->updateStatus($update, $id);
+                            } else {
+                                $status = $val->isSuccessful ? 2 : 3;
+                                $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->message];
+                                $localModel->updateStatus($update, $current_extra_ids);
                             }
-                            $localModel->updateStatus($update, $id);
                         }
                     } else {
                         $msg = !empty($response->message) ? $response->message : 'The record could not be sent. Please try again';
@@ -611,25 +618,18 @@ class BiplSchedulerController extends ChildController {
                         $localModel->updateStatus($updateData, $current_extra_ids);
                     }
                 }
-            } catch (\GuzzleHttp\Exception\RequestException $ex) {
-                $this->handleApiError($ex, $localModel, $current_extra_ids, true);
             } catch (\Throwable $ex) {
-                $this->handleApiError($ex, $localModel, $current_extra_ids, false);
+                $this->handleApiError($ex, $localModel, $current_extra_ids);
             }
         } catch (\Throwable $ex) {
-            $this->handleApiError($ex, $localModel, $current_extra_ids, false);
+            $this->handleApiError($ex, $localModel, $current_extra_ids);
         }
     }
 
-    private function handleApiError($ex, $model, $ids, $isGuzzle) {
+    private function handleApiError($ex, $model, $ids) {
         if ($model && !empty($ids)) {
             $now = date('Y-m-d H:i:s');
             $errorMsg = $ex->getMessage();
-            if ($isGuzzle && method_exists($ex, 'hasResponse') && $ex->hasResponse()) {
-                $resBody = $ex->getResponse()->getBody()->getContents();
-                $decoded = json_decode($resBody);
-                $errorMsg = !empty($decoded->errors) ? json_encode($decoded->errors) : (!empty($decoded->message) ? $decoded->message : $resBody);
-            }
             $shortDesc = (strlen($errorMsg) > 800) ? substr($errorMsg, 0, 800) : $errorMsg;
             $updateData = ['data_post_status' => 3, 'updated_at' => $now, 'response_datetime' => $now, 'resp_desc' => json_encode($shortDesc)];
             $model->updateStatus($updateData, $ids);
@@ -653,10 +653,9 @@ class BiplSchedulerController extends ChildController {
         $api->apiurl = $config['auth_endpoint'];
         $api->is_header_merge = false;
         $authentication = $config['authentication']['user'];
-        $api->body = $authentication;
-        $result = $api->GuzzleCURL();
-        $response = $result->getBody()->getContents();
-        $response = !empty($response) ? json_decode($response) : [];
+        $api->body = json_encode($authentication);
+        $result = $api->POSTDATA();
+        $response = !empty($result) ? json_decode($result) : [];
         if(!empty($response->isSuccessful)){
             $this->token = $response->data->token;
             return true;
