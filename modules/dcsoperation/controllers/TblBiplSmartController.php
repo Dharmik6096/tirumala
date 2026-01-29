@@ -11,6 +11,10 @@ use app\modules\dcsoperation\models\TblMemberHistory;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\Response;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRateHistory;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 
 class TblBiplSmartController extends \app\controllers\ChildController {
 
@@ -25,11 +29,18 @@ class TblBiplSmartController extends \app\controllers\ChildController {
                     if (!empty($type) && $type == 'dcs') {
                         $model = TblDcs::findOne($code);
                         $historyModel = new TblDcsHistory();
+                        $model->is_sentbox = false;
+                    } elseif (!empty($type) && $type == 'rate') {
+                        $model = TblPurchaseRate::findOne($code);
+                        $historyModel = new TblPurchaseRateHistory();
+                    } elseif (!empty($type) && $type == 'rateapp') {
+                        $model = TblPurchaseRateApplicability::findOne($code);
+                        $historyModel = new TblPurchaseRateApplicabilityHistory();
                     } else {
                         $model = TblMember::findOne($code);
                         $historyModel = new TblMemberHistory();
+                        $model->is_sentbox = false;
                     }
-                    $model->is_sentbox = false;
                     Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $historyModel->operation_type = 'BIPLREPUSH';
                     $model->data_post_status = 0;

@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
@@ -9,18 +10,18 @@ use yii\web\View;
     <?php
     $models = $dataProvider->getModels();
     $firstModel = !empty($models) ? $models[0] : [];
-    
+
     $attribute = [
         ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
                 $disabled = $model['data_post_status'] == 0 ? true : false;
-                $value = isset($model['member_code']) ? $model['member_code'] : $model['dcs_code'];
+                $value = !empty($model['member_code']) ? $model['member_code'] : (!empty($model['rate_app_code']) ? $model['rate_app_code'] : (!empty($model['purchase_rate_code']) ? $model['purchase_rate_code'] : $model['dcs_code']));
                 return ['class' => 'checkbox-collection', 'value' => $value, 'disabled' => $disabled];
             }],
     ];
-    
+
     if (!empty($firstModel)) {
         foreach ($firstModel as $field => $value) {
             $columnConfig = ['attribute' => $field, 'filter' => false];
@@ -52,10 +53,10 @@ use yii\web\View;
         echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn btn-primary', 'id' => 'bipl-repush-bulk']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
+<?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
 </div>
 <?php
-$type = $searchModel->bipl_type == '1' ? 'dcs' : 'member';
+$type = $searchModel->bipl_type == '1' ? 'dcs' : ($searchModel->bipl_type == '2' ? 'rate' : ($searchModel->bipl_type == '3' ? 'rateapp' : 'member'));
 $script = '
     $("#bipl-repush-bulk").click(function() {
         var len = $("input[class=\"checkbox-collection kv-row-checkbox\"]:checked").length;
