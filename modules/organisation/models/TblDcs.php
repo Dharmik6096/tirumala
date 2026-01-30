@@ -1807,6 +1807,7 @@ class TblDcs extends ChildModel {
             ->leftJoin('tbl_route_mapping rm', 'rm.route_code  = d.route_code')
             ->leftJoin('tbl_contact_details c', 'c.module_code = d.dcs_code AND c.is_default = 1 AND c.is_active = 1')
             ->where(['isnull(d.data_post_status,0)' => [0,'']])
+            ->andWhere(['d.dpu_type' => 93])
             ->limit(5)
             ->all();
         if (!empty($data)) {

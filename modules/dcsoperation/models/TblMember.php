@@ -848,6 +848,7 @@ class TblMember extends ChildModel {
             ->innerJoin(['b' => 'tbl_bmc'], 'd.bmc_code = b.bmc_code')
             ->leftJoin(['g' => 'tbl_gender'], 'm.gender_code = g.gender_code')
             ->where(['isnull(m.data_post_status,0)' => [0,'']])
+            ->andWhere(['d.dpu_type' => 93])
             ->limit(20)
             ->all();
         if (!empty($farmers)) {

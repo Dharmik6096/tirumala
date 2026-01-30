@@ -20,10 +20,12 @@ use app\modules\bkgprocess\models\BiplFtpTankerDispatch;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 
 class BiplSchedulerController extends ChildController {
 
-    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master', 'bipl-dcs-api-master', 'bipl-member-api-master'];
+    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master', 'bipl-dcs-api-master', 'bipl-member-api-master', 'bipl-rate-api-master', 'bipl-rate-mapping-api-master'];
     public $errorPath = '';
     public $token = '';
 
@@ -626,6 +628,100 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
+    private function processRateMasterApi($modelClass, $endpointKey, $dataKey, $idKey, $extraIdKey = null) {
+        $config = \Yii::$app->params['clienterp_authentication']['bipl_smart'];
+        $base_url = $config['api_base_url'];
+        if (!$this->AuthenticateRequest($config)) return;
+
+        $localModel = new $modelClass();
+        $masterData = $localModel->getMasterRecord();
+        if (empty($masterData)) return;
+
+        if (!empty($extraIdKey)) {
+            $current_extra_ids = $masterData[$extraIdKey] ?? [];
+            $payload = $masterData;
+            unset($payload[$extraIdKey]);
+            $this->executeApiCall($localModel, $base_url, $config[$endpointKey], $payload, $current_extra_ids, $idKey, $extraIdKey);
+        } else {
+            foreach ($masterData[$dataKey] as $value) {
+                $rateId = $value[$idKey] ?? null;
+                $value[$dataKey] = $localModel->getDetails($rateId) ?: [];
+                $this->executeApiCall($localModel, $base_url, $config[$endpointKey], $value, $rateId);
+            }
+        }
+    }
+
+    private function executeApiCall($model, $baseUrl, $apiUrl, $payload, $extraIds = null, $idKey = null, $extraIdKey = null) {
+        $now = date('Y-m-d H:i:s');
+        $model->updateStatus(['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now], $extraIds);
+        try {
+            $api = new WebApi();
+            $api->return_actual = true;
+            $api->serverUrl = $baseUrl;
+            $api->apiurl = $apiUrl;
+            $api->body = json_encode($payload);
+            $api->is_header_merge = true;
+            $api->authentication = [];
+            $api->header_info = ["Authorization: Bearer " . $this->token];
+            $result = $api->POSTDATA();
+            $response = !empty($result) ? json_decode($result) : null;
+            if (!$response) return false;
+
+            $isSuccess = $response->isSuccessful ?? false;
+            $respTime = date('Y-m-d H:i:s');
+            $mainRemark = $response->message ?? ($response->title ?? '');
+            if (isset($response->errors) && is_object($response->errors)) {
+                $validationErrors = [];
+                foreach ($response->errors as $field => $messages) {
+                    $validationErrors[] = $field . ": " . (is_array($messages) ? implode(', ', $messages) : $messages);
+                }
+                $mainRemark .= " | Validation: " . implode('; ', $validationErrors);
+                $model->updateStatus(['data_post_status' => 3, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($mainRemark, 0, 800)], $extraIds);
+                return false;
+            }
+
+            if ($isSuccess && empty($response->data->remarks)) {
+                $model->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($mainRemark ?: 'Integrated successfully.', 0, 800)], $extraIds);
+                return true;
+            }
+
+            $failedKeys = [];
+            if (isset($response->data->remarks) && is_array($response->data->remarks)) {
+                $idKey = ucfirst($idKey);
+                foreach ($response->data->remarks as $val) {
+                    $status = 3;
+                    $msg = $val->Remark ?? ($val->remark ?? '');
+                    $updateData = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($msg, 0, 800)];
+                    if ($extraIdKey && property_exists($val, $idKey) && property_exists($val, $extraIdKey)) {
+                        $uniqueKey = $val->$idKey . $val->$extraIdKey;
+                        if (isset($extraIds[$uniqueKey])) {
+                            $failedKeys[] = $uniqueKey;
+                            $targetId = $extraIds[$uniqueKey];
+                            $model->updateStatus($updateData, $targetId);
+                        }
+                    } else {
+                        $model->updateStatus($updateData, $extraIds);
+                    }
+                }
+            }
+
+            if (!empty($extraIdKey) && is_array($extraIds)) {
+                $successUniqueKeys = array_diff(array_keys($extraIds), $failedKeys);
+                if (!empty($successUniqueKeys)) {
+                    $successTargetIds = [];
+                    foreach ($successUniqueKeys as $uKey) {
+                        $successTargetIds[] = $extraIds[$uKey];
+                    }
+                    $model->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => 'Integrated successfully.'], $successTargetIds);
+                }
+            }
+            return $isSuccess;
+        } catch (\Throwable $ex) {
+            $this->handleApiError($ex, $model, $extraIds);
+            return false;
+        }
+    }
+
     private function handleApiError($ex, $model, $ids) {
         if ($model && !empty($ids)) {
             $now = date('Y-m-d H:i:s');
@@ -636,6 +732,13 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
+    public function actionBiplRateApiMaster() {
+        $this->processRateMasterApi(TblPurchaseRate::class, 'rate_endpoint', 'rateDetails', 'rateId');
+    }
+
+    public function actionBiplRateMappingApiMaster() {
+        $this->processRateMasterApi(TblPurchaseRateApplicability::class, 'rate_mapping_endpoint', 'mappingDetails', 'rateCode', 'SocietyCode');
+    }
 
     public function actionBiplDcsApiMaster() {
         $this->processMasterApi(TblDcs::class, 'dcs_endpoint', 'mppDetails', 'mppCode');

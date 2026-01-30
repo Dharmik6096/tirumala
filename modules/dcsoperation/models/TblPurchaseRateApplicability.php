@@ -15,6 +15,7 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblCustomerMaster;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_purchase_rate_applicability".
@@ -651,4 +652,44 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
     }
 
+    public function getMasterRecord(){
+        $data = (new \yii\db\Query())
+            ->select([
+                'companyCode' => new Expression("ISNULL(u.x_col1, '')"),
+                'rateAppCode' => new Expression("ISNULL(app.rate_app_code, '')"),
+                'rateCode' => new Expression("ISNULL(rate.purchase_rate_code, '')"),
+                'societyCode' => new Expression("ISNULL(dcs.ref_code, '')"),
+                'effectiveDate' => new Expression("ISNULL(cast(app.wef_date as date), '')"),
+                'effectiveShift' => new Expression("''"),
+            ])
+            ->from('tbl_purchase_rate_applicability app')
+            ->innerJoin('tbl_purchase_rate rate', 'rate.purchase_rate_code = app.purchase_rate_code')
+            ->innerJoin('tbl_unions u', 'u.union_code = rate.union_code')
+            ->innerJoin('tbl_dcs dcs', 'dcs.dcs_code = app.dcs_code and dcs.dpu_type = 93')
+            ->where(['or',['app.data_post_status' => 0],['app.data_post_status' => ''],['app.data_post_status' => null]])
+            ->andWhere(['rate.data_post_status' => 2])
+            ->orderBy(['rate.purchase_rate_code' => SORT_ASC])
+            ->limit(10)
+            ->all();
+        if (!empty($data)) {
+            $primaryKeyCode = [];
+            $companyCode = (string)$data[0]['companyCode'];
+            array_walk($data, function(&$item) use (&$primaryKeyCode){
+                $key = $item['rateCode'].$item['societyCode'];
+                $primaryKeyCode[$key] = $item['rateAppCode'];
+                unset($item['companyCode'], $item['rateAppCode']);
+            });
+            return [
+                'SocietyCode' => $primaryKeyCode,
+                'companyCode' => $companyCode,
+                'mappingDetails' => $data,
+            ];
+        }
+        return $data;
+
+    }
+
+    public function updateStatus($updateData, $ids) {
+        return $this->updateAll($updateData, ['rate_app_code' => $ids]);
+    }
 }
