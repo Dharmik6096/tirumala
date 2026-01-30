@@ -6,7 +6,7 @@ use yii\helpers\Url;
 use yii\web\View;
 ?>
 
-<div class="grid-searchno-effect" >
+<div class="report-area" >
     <?php
     $models = $dataProvider->getModels();
     $firstModel = !empty($models) ? $models[0] : [];
@@ -62,11 +62,7 @@ use yii\web\View;
 </div>
 
 <div class="col-sm-12 form-group" >
-    <?php
-    if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn btn-primary', 'id' => 'bipl-repush-bulk']);
-    }
-    ?>
+    <?= Html::button(Yii::t('app', 'Repush Bulk'), ['class' => 'btn btn-primary', 'id' => 'bipl-repush-bulk']); ?>
     <?= Yii::$app->controls->custombutton('Cancel', 'repush-bulk-data'); ?>
 </div>
 <?php

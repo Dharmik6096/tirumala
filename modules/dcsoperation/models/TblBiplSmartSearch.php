@@ -18,7 +18,10 @@ class TblBiplSmartSearch extends TblBiplSmart {
     public function rules() {
         return [
             [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code', 'f_dcs_code', 'bipl_type', 'data_post_status', 'from_date', 'to_date'], 'safe'],
-            [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code', 'bipl_type'], 'required'],
+            [['bipl_type'], 'required'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code'], 'required', 'when' => function($model) {
+                return $model->bipl_type != '2';
+            }],
         ];
     }
 
