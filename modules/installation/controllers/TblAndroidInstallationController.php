@@ -14,7 +14,6 @@ use app\modules\installation\models\TblAndroidInstallationDetailsHistory;
 use yii\web\Response;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
-use yii\data\ActiveDataProvider;
 
 /**
  * TblAndroidInstallationController implements the CRUD actions for TblAndroidInstallation model.
@@ -29,7 +28,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
      */
     public function actionIndex() {
         $searchModel = new TblAndroidInstallationDetailsSearch();
-        $searchModel->from_date = date('d-m-Y', strtotime('-365 days'));
+        $searchModel->from_date = date('d-m-Y', strtotime('-15 days'));
         $searchModel->to_date = date('d-m-Y');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
