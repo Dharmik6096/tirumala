@@ -4,10 +4,7 @@ namespace app\modules\installation\controllers;
 
 use Yii;
 use app\modules\installation\models\TblAndroidInstallation;
-use app\modules\installation\models\TblAndroidInstallationSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\installation\models\TblAndroidInstallationDetails;
 use app\modules\installation\models\TblAndroidInstallationDetailsSearch;
 use yii\helpers\Json;
@@ -23,7 +20,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
  */
 class TblAndroidInstallationController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['device-list'];
+    public $freeAccessActions = ['device-list', 'activation-key-details'];
 
     /**
      * Lists all TblAndroidInstallation models.
@@ -31,8 +28,9 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
      */
     public function actionIndex() {
         $searchModel = new TblAndroidInstallationDetailsSearch();
+        $searchModel->from_date = date('d-m-Y', strtotime('-15 days'));
+        $searchModel->to_date = date('d-m-Y');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -378,5 +376,9 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-    
+
+    public function actionActivationKeyDetails() {
+        return $this->renderAjax('_activation_key_grid', ['hashKey' => Yii::$app->request->post('hash_key'), 'syncKey' => Yii::$app->request->post('sync_key'), 'title'=> Yii::$app->request->post('title')]);
     }
+
+}

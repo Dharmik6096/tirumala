@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
@@ -194,6 +193,11 @@ $grid_option = [
             $path = $model->db_path;
             return GhostHtml::a('<i class="fa fa-download"></i>', ['/installation/tbl-android-installation/download', 'id' => Yii::$app->basePath . $path], $options);
         },
+        'activation-key' => function ($url, $model) {
+            $androidInstallationData = $model->androidInstallationCode;
+            $options = ['title' => Yii::t('app', 'Activation Details'), 'class' => 'activation-key-popup', 'data-hash-key' => $model->hash_key, 'data-sync-key' => $model->sync_key, 'data-title' => $androidInstallationData->organization_type . ' - ' . $androidInstallationData->organization_code];
+            return GhostHtml::a('<i class="fa fa-life-ring"></i>', 'javascript:void(0)', $options);
+        },
         'deactive' => function ($url, $model) {
             $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
             $name = '';
@@ -228,10 +232,22 @@ $grid_option = [
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<div id='activation-key-detail'></div>
 <?php
 
 $script = "
 $(document).ready(function(){
+    $(document).on('click','.activation-key-popup',function(e){
+       $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/installation/tbl-android-installation/activation-key-details']) . "',
+            data: {hash_key: $(this).attr('data-hash-key'), sync_key: $(this).attr('data-sync-key'), title: $(this).attr('data-title')},
+            success: function(data) {
+                $('#activation-key-detail').html(data);
+                $('#activation-key-content').modal('toggle');
+            },
+        });
+    });
     $(document).on('click','.deactivate-identity',function(e){
     var id= $(this).attr('data-val');
     var name = $(this).attr('data-name');
