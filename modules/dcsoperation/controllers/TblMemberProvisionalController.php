@@ -496,6 +496,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $memberModel->remarks = $model->remarks;
                 $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
                 $memberModel->member_status = 0; // Approved
+                if (strtolower($status) == 'approve' && $memberCreationPendingForSapApproval == 1) {
+                    $memberModel->approved_at = date('Y-m-d H:i:s');
+                    $memberModel->approved_by = Yii::$app->session['UserCode'];
+                }
                 if (strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')) {
                     $memberModel->member_status = 1; // Created
                 }
