@@ -13,14 +13,14 @@ use app\modules\organisation\models\TblDcsBmc;
  */
 class TblVehicleTripSearch extends TblVehicleTrip {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $parsing_no;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'no_of_compartment', 'vehicle_capacity', 'remark'], 'safe'],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'no_of_compartment', 'vehicle_capacity', 'remark', 'parsing_no'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -119,6 +119,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
                 ->andFilterWhere(['like', 't.trip_sub_status', $this->trip_sub_status])
                 ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode])
                 ->andFilterWhere(['like', 't.remark', $this->remark])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->parsing_no])
                 ->andFilterWhere(['like', 't.driver_name', $this->driver_name]);
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
             't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name', 't.mobile_no', 't.remark', 't.vehicle_capacity', 't.no_of_compartment']);
