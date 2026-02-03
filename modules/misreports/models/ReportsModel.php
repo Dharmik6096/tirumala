@@ -133,7 +133,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['AutoManualMilkCollection']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['SocietyWiseRateDifferenceReport']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MccBilling', 'CDAReport']],
-                [['from_date', 'to_date'], 'required', 'on' => ['BmcRegister', 'AllReportRequest', 'PlantWiseMilkCollectionTracking', 'UserAttendanceDetails', 'PaymentAdviceInwardSummary']],
+                [['from_date', 'to_date'], 'required', 'on' => ['BmcRegister', 'AllReportRequest', 'PlantWiseMilkCollectionTracking', 'UserAttendanceDetails', 'PaymentAdviceInwardSummary', 'InwardBillSummary']],
                 [['union_code', 'plant_register_type', 'from_date', 'to_date'], 'required', 'on' => ['PlantRegister']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['TankerReceiptNote', 'MemberProvisionalFamilyDetail']],
                 [['from_date', 'to_date', 'bmc_code'], 'required', 'on' => ['MccReceiptVsBmcDispatch']],

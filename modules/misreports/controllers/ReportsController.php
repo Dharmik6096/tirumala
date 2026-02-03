@@ -4909,8 +4909,9 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'InwardBillSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,transporter_code:union_code',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,transporter_code:union_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_inward_bill_summary',
+                'scenario' => 'InwardBillSummary',
                 'title' => 'Inward Bill Summary',
             ],
             'PaymentAdviceInwardSummary' => [
