@@ -679,6 +679,7 @@ echo GhostMenu::widget([
                             'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Member Collection') . ' <b class="caret"></b></a>',
                             'items' => [
                                     ['label' => '101 -' . Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection']],
+                                    ['label' => '101 -' . Yii::t('app', 'Member Collection Detail 2'), 'url' => ['/misreports/reports/member-daily-collection-second']],
                                     ['label' => '102 -' . Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary']],
                                     ['label' => '103 -' . Yii::t('app', 'Member Collection Shift Report'), 'url' => ['/misreports/reports/member-collection-shift-report']],
                                     ['label' => '104 -' . Yii::t('app', 'Member Collection Payment Cycle Wise'), 'url' => ['/misreports/reports/member-collection-payment-cycle-wise']],
