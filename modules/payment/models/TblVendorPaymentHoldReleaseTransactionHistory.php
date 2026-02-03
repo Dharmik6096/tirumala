@@ -40,7 +40,7 @@ class TblVendorPaymentHoldReleaseTransactionHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id','vendor_payment_hold_release_transaction_code','vendor_payment_hold_release_code','bill_head_code','bill_head_type','amount','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','operation_type'], 'safe'],
+            [['id','vendor_payment_hold_release_transaction_code','vendor_payment_hold_release_code','bill_head_code','bill_head_type','amount','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','history_created_at','history_created_by','operation_type','is_reserved'], 'safe'],
         ];
     }
 
@@ -66,6 +66,7 @@ class TblVendorPaymentHoldReleaseTransactionHistory extends \yii\db\ActiveRecord
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
             'operation_type' => Yii::t('app', 'Operation Type'),
+            'is_reserved' => Yii::t('app', 'Is Reserved'),
         ];
     }
 }

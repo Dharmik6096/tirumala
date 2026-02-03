@@ -2235,6 +2235,16 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberPaymentShortageRecovery';
         return $this->actionIndex();
     }
+    
+    public function actionInwardBillSummary() {
+        $this->report = 'InwardBillSummary';
+        return $this->actionIndex();
+    }
+    
+    public function actionPaymentAdviceInwardSummary() {
+        $this->report = 'PaymentAdviceInwardSummary';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4908,6 +4918,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_tpt_cost_summary_new_format',
                 'scenario' => 'TpCostSummaryNewFormat',
                 'title' => 'Tp Cost Summary 2',
+                'bkg_export' => TRUE,
+            ],
+            'InwardBillSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,transporter_code:union_code',
+                'sp_name' => 'mis_inward_bill_summary',
+                'title' => 'Inward Bill Summary',
+            ],
+            'PaymentAdviceInwardSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_payment_advice_inward_summary',
+                'scenario' => 'PaymentAdviceInwardSummary',
+                'title' => 'Payment Advice - Inward',
                 'bkg_export' => TRUE,
             ],
         ];
