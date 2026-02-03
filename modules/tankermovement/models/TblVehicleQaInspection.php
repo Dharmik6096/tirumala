@@ -108,7 +108,7 @@ class TblVehicleQaInspection extends \app\models\ChildModel {
         $tankerQualifiedWithin = Yii::$app->general->getUnionConfiguration($unionCode, 'tanker_qualified_within', 'PORTAL');
         $inspectionVehicle = TblVehicleMaster::find()->alias('vm')->select('vm.vehicle_code, vm.parsing_no')
                         ->innerJoin('tbl_vehicle_qa_inspection as vqi', 'vqi.vehicle_code = vm.vehicle_code')
-                        ->where(['vqi.status' => 'pending', 'vm.vehicle_use_type' => [1, 2]])
+                        ->where(['vqi.status' => 'pending', 'vm.vehicle_use_type' => [1, 2], 'vm.is_active' => 1])
                         ->andWhere(['>=', 'vqi.transaction_datetime', new Expression('DATEADD(HOUR, -' . (int) $tankerQualifiedWithin . ', GETDATE())')])
                         ->orderBy('vqi.transaction_datetime', SORT_DESC)->all();
         return ArrayHelper::map($inspectionVehicle, 'vehicle_code', 'parsing_no');
