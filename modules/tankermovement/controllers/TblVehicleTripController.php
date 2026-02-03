@@ -356,22 +356,31 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
     public function actionCloseTrip($id) {
         $tripModel = $this->findModel($id);
-        $historyModel = new TblVehicleTripHistory();
-        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
-        $tripModel->scenario = 'closetrip';
-        $tripModel->trip_status = 'closed';
-        $tripModel->trip_sub_status = 'cleaning_pending';
-        $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
-        $msg = Yii::$app->getSession()->getFlash('success')['message'];
-        if ($transaction == 'customRedirect') {
-            $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
-            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, 'Trip Close Forcefully');
-            $record = ['status' => 'success', 'msg' => $msg];
-        } else {
-            $record = ['status' => 'error', 'msg' => $msg];
+        if (Yii::$app->request->isPost) {
+            if ($tripModel->load(Yii::$app->request->post())) {
+                $historyModel = new TblVehicleTripHistory();
+                Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+                $tripModel->scenario = 'closetrip';
+                $tripModel->trip_status = 'closed';
+                $tripModel->trip_sub_status = 'cleaning_pending';
+                $tripModel->force_close = 1;
+                $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                if ($transaction == 'customRedirect') {
+                    $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, 'Trip Close Forcefully');
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                return Json::encode($record);
+            }
         }
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_close_trip', ['model' => $tripModel]);
+        }
+        return $this->redirect(['index']);
     }
 
     public function actionInactiveTrip($id) {

@@ -20,7 +20,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'no_of_compartment', 'vehicle_capacity', 'remark', 'parsing_no'], 'safe'],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'no_of_compartment', 'vehicle_capacity', 'remark', 'parsing_no', 'force_close', 'force_close_remarks'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -55,7 +55,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             'rejected_count' => "SUM(CASE WHEN tbl_bmc_milk_dispatch_txn.is_rejected=1 THEN 1 ELSE 0 END)",
             'kg_fat' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.fat/100,2)})",
             'kg_snf' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.snf/100,2)})",
-            't.remark', 't.vehicle_capacity', 't.no_of_compartment'
+            't.remark', 't.vehicle_capacity', 't.no_of_compartment', 't.force_close', 't.force_close_remarks'
         ]);
 
         // add conditions that should always apply here
@@ -113,6 +113,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             't.vehicle_code' => $this->vehicle_code,
             't.is_auto_trip' => $this->is_auto_trip,
             't.trip_status' => $this->trip_status,
+            't.force_close' => $this->force_close,
         ]);
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
@@ -120,9 +121,10 @@ class TblVehicleTripSearch extends TblVehicleTrip {
                 ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode])
                 ->andFilterWhere(['like', 't.remark', $this->remark])
                 ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->parsing_no])
-                ->andFilterWhere(['like', 't.driver_name', $this->driver_name]);
+                ->andFilterWhere(['like', 't.driver_name', $this->driver_name])
+                ->andFilterWhere(['like', 't.force_close_remarks', $this->force_close_remarks]);
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name', 't.mobile_no', 't.remark', 't.vehicle_capacity', 't.no_of_compartment']);
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name', 't.mobile_no', 't.remark', 't.vehicle_capacity', 't.no_of_compartment', 't.force_close', 't.force_close_remarks']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);
         return $dataProvider;
     }
