@@ -16,7 +16,7 @@ class TblVendorPaymentHoldReleaseTransactionSearch extends TblVendorPaymentHoldR
      */
     public function rules() {
         return [
-            [['vendor_payment_hold_release_transaction_code','vendor_payment_hold_release_code','bill_head_code','bill_head_type','amount','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type'], 'safe'],
+            [['vendor_payment_hold_release_transaction_code','vendor_payment_hold_release_code','bill_head_code','bill_head_type','amount','created_at','created_by','updated_at','updated_by','originating_org_code','originating_org_type','originating_type','is_reserved'], 'safe'],
             [['vendor_payment_hold_release_transaction_code'], 'integer'],
             [['amount'], 'number'],
         ];

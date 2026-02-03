@@ -119,9 +119,9 @@ $form = ActiveForm::begin([
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("select2:select");
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("change");
                                                                   
-                                                                    $("#change_event").val("1");
-                                                                    $("#change_event").trigger("change");
-                                                                   
+                                                                    var current_change_event_val = $("#change_event").val();
+                                                                    $("#change_event").val(current_change_event_val == "1" ? "0" : "1").trigger("change");
+                                                                    
                                                                     $(".panel-body").scrollTop(0);
                                                                    
                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
