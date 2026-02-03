@@ -2417,6 +2417,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
             ],
+            'sap_status' => [
+                'name' => 'sap_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['generate' => Yii::t('app', 'Generate'), 'regenerate' => Yii::t('app', 'Regenerate')],
+            ],
         ];
         return $records[$l];
     }
