@@ -22,7 +22,6 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
 <?= Html::activeHiddenInput($model, 'bmc_milk_dispatch_code'); ?>
-<?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken, ['id' => 'csrf-token']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -455,9 +454,9 @@ $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
 function setVehicleCapacity(vehicleCode) {
     if (setData(vehicleCode)) {
         $.ajax({
-            type: 'post',
+            type: 'get',
             url: '" . Url::to(['total-vehicle-capacity']) . "',
-            data: {vehicle_code: vehicleCode, [$('#csrf-token').attr('name')]: $('#csrf-token').val()},
+            data: {vehicle_code: vehicleCode},
             success: function(data) {
                 var res = JSON.parse(data);
                 $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');

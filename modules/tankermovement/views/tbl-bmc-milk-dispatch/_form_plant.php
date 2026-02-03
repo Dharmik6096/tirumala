@@ -331,9 +331,9 @@ $(document).ready(function(){
     function setVehicleCapacity(vehicleCode) {
         if (setData(vehicleCode)) {
             $.ajax({
-                type: 'post',
+                type: 'get',
                 url: '" . Url::to(['total-vehicle-capacity']) . "',
-                data: {vehicle_code: vehicleCode, [$('#csrf-token').attr('name')]: $('#csrf-token').val()},
+                data: {vehicle_code: vehicleCode},
                 success: function(data) {
                     var res = JSON.parse(data);
                     $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');

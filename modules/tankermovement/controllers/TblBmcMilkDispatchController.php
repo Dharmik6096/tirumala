@@ -733,9 +733,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
     }
 
     public function actionTotalVehicleCapacity() {
-        $totalVehicleCapacity = TblVehicleCompartmentDetail::find()
-                ->where(['vehicle_code' => Yii::$app->request->post('vehicle_code')])
-                ->sum('capacity');
+        $totalVehicleCapacity = TblVehicleCompartmentDetail::find()->where(['vehicle_code' => Yii::$app->request->get('vehicle_code')])->sum('capacity');
         Yii::$app->response->format = Response::FORMAT_JSON;
         return json_encode(['totalVehicleCapacity' => $totalVehicleCapacity ?? 0]);
     }
