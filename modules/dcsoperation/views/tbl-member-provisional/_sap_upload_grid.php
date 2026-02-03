@@ -79,13 +79,13 @@ $form = ActiveForm::begin([
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     ?>
 </div>
-<div class="col-sm-12 margin-top-10 form-group" >
+<div class="col-sm-12 margin-top-10 form-group mb-2" >
     <?php
     if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'Upload File'), ['class' => 'btn btn-primary', 'id' => 'upload', 'value' => 'upload', 'name' => 'upload']);
+        echo Html::button(Yii::t('app', 'Upload File'), ['class' => 'btn btn-primary btn-login', 'id' => 'upload', 'value' => 'upload', 'name' => 'upload']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
