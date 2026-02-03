@@ -2422,6 +2422,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Bipl Type'),
                 'data' => ['0' => Yii::t('app', 'Member'), '1' => Yii::t('app', 'DCS')],
             ],
+            'sap_status' => [
+                'name' => 'sap_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['generate' => Yii::t('app', 'Generate'), 'regenerate' => Yii::t('app', 'Regenerate')],
+            ],
         ];
         return $records[$l];
     }
