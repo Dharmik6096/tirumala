@@ -38,6 +38,9 @@ $update_count = 0;
                         return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
                     },],
                     ['attribute' => 'amount'],
+                    ['attribute' => 'is_reserved', 'value' => function ($model) {
+                            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_reserved]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_reserved] : '';
+                        }, 'filter' => false],
                 ];
                 $grid_option = [
                     'id' => 'bill-head-detail-list',
