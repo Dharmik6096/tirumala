@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Member SAP Upload');
+$this->title = Yii::t('app', 'Member') . ' Provisional FTP Upload';
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -9,10 +9,10 @@ $this->title = Yii::t('app', 'Member SAP Upload');
         <div class="row theme_border_left theme_border_right theme_border_bottom">
             <div class="col-md-12 padding_10_0 theme-box ">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                    <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Member') . ' SAP Upload' ?></h4>
+                    <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Member') . ' Provisional FTP Upload' ?></h4>
                 </div>
                 <div class="large-search hidden-print">
-                    <?php echo $this->render('_search_sap_upload', ['model' => $searchModel, 'dataProvider' => $dataProvider, $action = 'sap-upload']); ?>
+                    <?php echo $this->render('_search_sap_upload', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
                     <div class="clearfix"></div>
                     <?php
                     echo $this->render('_sap_upload_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);

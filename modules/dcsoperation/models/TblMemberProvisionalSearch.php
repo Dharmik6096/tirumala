@@ -183,7 +183,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $sp_params['dcs_code'] = $this->dcs_code;
             $sp_params['from_date'] = date('Y-m-d', strtotime($sp_params['from_date']));
             $sp_params['to_date'] = date('Y-m-d', strtotime($sp_params['to_date']));
-            $output = \Yii::$app->general->getSpData('sp_file_member_sap_ftp_data_export', $sp_params);
+            $output = \Yii::$app->general->getSpData('member_provisional_sap_ftp_data_export_mpcrmrd', $sp_params);
         }
 
         if (!$this->validate()) {

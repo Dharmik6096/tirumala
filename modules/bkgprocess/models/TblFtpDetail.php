@@ -71,7 +71,6 @@ class TblFtpDetail extends \yii\db\ActiveRecord {
     public function getData() {
         return $this->find()
                         ->where(['ftp_connection_code' => $this->ftp_connection_code])
-                        ->andWhere(['is_active' => 1])
                         ->one();
     }
 

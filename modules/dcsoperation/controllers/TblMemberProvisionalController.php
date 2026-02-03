@@ -1311,7 +1311,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'to_date' => date('Y-m-d', strtotime($qryParam['to_date'] ?? '')),
                     'sap_status' => $qryParam['sap_status'] ?? '',
                 ];
-                $output = \Yii::$app->general->getSpData('sp_file_member_sap_ftp_data_upload', $sp_params);
+                $output = \Yii::$app->general->getSpData('member_provisional_sap_ftp_data_upload_mpcrmrd', $sp_params);
 
                 $data_array = array_merge($sp_params, [
                     'module_name' => 'TblMemberProvisional',
