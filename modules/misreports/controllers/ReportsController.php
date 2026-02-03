@@ -4929,6 +4929,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_inward_bill_summary',
                 'scenario' => 'InwardBillSummary',
                 'title' => 'Inward Bill Summary',
+                'to_decrypt' => ['PAN_No'],
             ],
             'PaymentAdviceInwardSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
