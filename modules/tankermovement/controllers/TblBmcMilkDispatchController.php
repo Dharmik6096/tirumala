@@ -5,11 +5,8 @@ namespace app\modules\tankermovement\controllers;
 use Yii;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
-use app\modules\configuration\models\TblConfigMapping;
 use app\modules\tankermovement\models\TblConfigTxnResult;
 use app\modules\configuration\models\TblConfig;
 use yii\helpers\Json;
@@ -30,6 +27,7 @@ use app\components\ActiveForm;
 use app\modules\configuration\models\TblMilkQualityParamRange;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnHistory;
 use app\modules\tankermovement\models\TblConfigTxnResultHistory;
+use app\modules\transporter\models\TblVehicleCompartmentDetail;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -37,7 +35,7 @@ use yii\helpers\ArrayHelper;
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-date-purchase-details', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input', 'get-quality-param-range'];
+    public $freeAccessActions = ['get-date-purchase-details', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code', 'calculate-clr', 'get-clr-input', 'get-quality-param-range', 'total-vehicle-capacity'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
@@ -732,6 +730,14 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return ['status' => $status, 'modelData' => $modelData, 'configData' => $config_data];
+    }
+
+    public function actionTotalVehicleCapacity() {
+        $totalVehicleCapacity = TblVehicleCompartmentDetail::find()
+                ->where(['vehicle_code' => Yii::$app->request->post('vehicle_code')])
+                ->sum('capacity');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return json_encode(['totalVehicleCapacity' => $totalVehicleCapacity ?? 0]);
     }
 
 }

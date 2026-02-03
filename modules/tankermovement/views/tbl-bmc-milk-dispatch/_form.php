@@ -22,6 +22,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
 <?= Html::activeHiddenInput($model, 'bmc_milk_dispatch_code'); ?>
+<?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken, ['id' => 'csrf-token']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -134,6 +135,9 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'total_vehicle_capacity')->textInput(['readonly' => true]) ?>
             </div>
         </div>
         <div class="col-lg-4">
@@ -447,6 +451,30 @@ $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '
     var destType = $(this).val().toUpperCase();
     updateLastDestinationCheckbox(destType);
 });
+$('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+function setVehicleCapacity(vehicleCode) {
+    if (setData(vehicleCode)) {
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['total-vehicle-capacity']) . "',
+            data: {vehicle_code: vehicleCode, [$('#csrf-token').attr('name')]: $('#csrf-token').val()},
+            success: function(data) {
+                var res = JSON.parse(data);
+                $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');
+            }
+        });
+    } else {
+        $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+    }
+}
+$(document).off('change', '#tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-vehicle_code', function () {
+    var vehicleCode = $(this).val();
+    setVehicleCapacity(vehicleCode);
+});
+if (isSecondTransaction) {
+    var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+    setVehicleCapacity(vehicleCode);
+}
 if(!isSecondTransaction) {
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
         var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();

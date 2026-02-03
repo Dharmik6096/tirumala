@@ -104,6 +104,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'total_vehicle_capacity')->textInput(['readonly' => true]) ?>
+            </div>
         </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box ">
@@ -324,6 +327,30 @@ $(document).ready(function(){
         var destType = $(this).val().toUpperCase();
         updateLastDestinationCheckbox(destType);
     });
+    $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+    function setVehicleCapacity(vehicleCode) {
+        if (setData(vehicleCode)) {
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['total-vehicle-capacity']) . "',
+                data: {vehicle_code: vehicleCode, [$('#csrf-token').attr('name')]: $('#csrf-token').val()},
+                success: function(data) {
+                    var res = JSON.parse(data);
+                    $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');
+                }
+            });
+        } else {
+            $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+        }
+    }
+    $(document).off('change', '#tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-vehicle_code', function () {
+        var vehicleCode = $(this).val();
+        setVehicleCapacity(vehicleCode);
+    });
+    if (isSecondTransaction) {
+        var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+        setVehicleCapacity(vehicleCode);
+    }
     if(!isSecondTransaction) {
         $(document).on('change', '#tblbmcmilkdispatch-plant_code, #tblbmcmilkdispatch-trip_code', function() {   
             var source_org_code = $('#tblbmcmilkdispatch-plant_code').val();
