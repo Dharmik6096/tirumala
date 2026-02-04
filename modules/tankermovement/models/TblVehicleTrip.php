@@ -510,5 +510,12 @@ class TblVehicleTrip extends \app\models\ChildModel {
             }
         }
     }
-
+    public function getPlantCodeFromBmc($bmcCodeArray){
+        $plantCodeArray = TblDcsBmc::find()->select('plant_code')
+            ->where(['bmc_code' => $bmcCodeArray])
+            ->asArray()
+            ->distinct()
+            ->all();
+        return !empty($plantCodeArray) ? array_column($plantCodeArray, 'plant_code') : [];
+    }
 }
