@@ -90,7 +90,10 @@ $form = ActiveForm::begin([
     <div class="col-sm-6 mt-2">
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
         <div class="well box-well">
-            <input type="text" class="form-control mb-2" id="search-available-bmc" placeholder="Search Available BMC...">
+            <div class="sticky_head sticky-column">
+                <button type="button" class="btn btn-default btn-block mb-10 width_100" id="btn-move-right" title="Move Selected to Right"><i class="fa fa-arrow-right"></i></button>
+                <input type="text" class="form-control mb-2" id="search-available-bmc" placeholder="Search Available BMC...">
+            </div>
             <?= Sortable::widget([
                 'type' => Sortable::TYPE_LIST,
                 'items' => [],
@@ -102,7 +105,10 @@ $form = ActiveForm::begin([
     <div class="col-sm-6 mt-2">
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?> Seleted</label>
         <div class="well box-well">
-            <input type="text" class="form-control mb-2" id="search-selected-bmc" placeholder="Search Selected BMC...">
+            <div class="sticky_head sticky-column">
+                <button type="button" class="btn btn-default btn-block mb-10 width_100" id="btn-move-left" title="Move Selected to Left"><i class="fa fa-arrow-left"></i></button>
+                <input type="text" class="form-control mb-2" id="search-selected-bmc" placeholder="Search Selected BMC...">
+            </div>
             <?= Sortable::widget([
                 'type' => Sortable::TYPE_LIST,
                 'items' => $model->bmc_code ? array_map(function($code) {
@@ -323,7 +329,61 @@ $('#search-selected-bmc').on('keyup', function () {
         $(this).toggle(text.includes(search));
     });
 });
+$('body').on('click', '.list-group-item', function() {
+    $(this).toggleClass('active');
+});
 
+$('#btn-move-right').on('click', function() {
+    $('#available-bmc-list .active').each(function() {
+        var li = $(this);
+        var code = li.data('code');
+        li.removeClass('active');
+        $('#available-bmc-list').append(li);            
+        var exists = $('#selected-bmc-list li').filter(function() { return $(this).data('code') == code; }).length > 0;            
+        if (!exists) {
+            var clone = li.clone();
+            clone.removeClass('active');
+            $('#selected-bmc-list').append(clone);
+        }
+    });
+    updateSelectedBmcCodes();
+});
+
+$('#btn-move-left').on('click', function() {
+    $('#selected-bmc-list .active').each(function() {
+        var li = $(this);
+        li.remove();
+    });
+    updateSelectedBmcCodes();
+});
+
+(function() {
+    document.addEventListener('touchstart', touchHandler, true);
+    document.addEventListener('touchmove', touchHandler, true);
+    document.addEventListener('touchend', touchHandler, true);
+    document.addEventListener('touchcancel', touchHandler, true);
+
+    function touchHandler(event) {
+        var touches = event.changedTouches,
+            first = touches[0],
+            type = '';
+
+        switch(event.type) {
+            case 'touchstart': type = 'mousedown'; break;
+            case 'touchmove':  type = 'mousemove'; break;        
+            case 'touchend':   type = 'mouseup';   break;
+            default: return;
+        }
+
+        var simulatedEvent = document.createEvent('MouseEvent');
+        simulatedEvent.initMouseEvent(type, true, true, window, 1, 
+            first.screenX, first.screenY, 
+            first.clientX, first.clientY, false, 
+            false, false, false, 0, null);
+
+        first.target.dispatchEvent(simulatedEvent);
+    }
+})();
 ";
 
 $this->registerJs($script, View::POS_END, 'vehicle-trip-sortable-bmc-list');

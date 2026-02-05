@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 //Url::remember();
 $form_validation_type = !empty($form_validation_type) ? $form_validation_type : 'default';
-$mail_info = !empty($mail_info) ? $mail_info : ($module == 'mccPlant' ? TRUE : FALSE);
+$mail_info = !empty($mail_info) ? $mail_info : (in_array($module, ['mccPlant', 'plant']) ? TRUE : FALSE);
 $show_optional_fields = in_array($module, ['mccPlant', 'bmc', 'society', 'routeMapping']);
 $url = Url::to(['/details/tbl-contact-details/create', 'module' => $module, 'id' => $id, 'form_validation_type' => $form_validation_type]);
 $this->title = Yii::$app->label->title('create', 'Contact Detail');
