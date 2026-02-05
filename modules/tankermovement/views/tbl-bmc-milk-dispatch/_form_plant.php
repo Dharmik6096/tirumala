@@ -62,9 +62,9 @@ $form = ActiveForm::begin([
                     </div>
                 <?php } ?>
             <?php } else { ?>
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
-                </div>
+                <div class="col-sm-2"> 
+                        <?= Yii::$app->dropdown->vehicleForEligibleTrip($model, $form, 'tblbmcmilkdispatch-union_code', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                    </div>
                 <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
@@ -223,7 +223,6 @@ var isTransactionFormLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
-isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
@@ -231,8 +230,6 @@ $(document).ready(function(){
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
         $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
-            if (isTripTriggerChange) return;
-            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
@@ -247,7 +244,6 @@ $(document).ready(function(){
                         var lastOptionValue = tripCodeOptions.last().val();
                         $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
                     }
-                    isTripTriggerChange = false;
                 }, 200);
             }
         });

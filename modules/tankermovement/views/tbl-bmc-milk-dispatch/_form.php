@@ -294,7 +294,6 @@ var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
 var txnEdit = `$txnEdit`;
-isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
@@ -302,8 +301,6 @@ $(document).ready(function(){
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
         $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
-            if (isTripTriggerChange) return;
-            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
@@ -318,7 +315,6 @@ $(document).ready(function(){
                         var lastOptionValue = tripCodeOptions.last().val();
                         $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
                     }
-                    isTripTriggerChange = false;
                 }, 200);
             }
         });

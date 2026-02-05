@@ -379,4 +379,21 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
+    public function actionVehicleForEligibleTrip() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $vehicleTripDetailModel = new TblVehicleMaster();
+                $list = $vehicleTripDetailModel->getVehicleListForEligibleTrip($parents[0]);
+                foreach ($list as $key => $r) {
+                    $out[] = array('id' => $key,
+                        'name' => $r);
+                }
+                return Json::encode(['output' => $out]);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => []]);
+    }
+
 }
