@@ -2240,6 +2240,22 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'PaymentAdviceInwardSummary';
         return $this->actionIndex();
     }
+    
+    public function actionMemberDailyCollectionSecond() {
+        $this->report = 'MemberPassbookSecond';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberDailyCollectionSecond';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'MemberConsolidatedSecond';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'MemberConsolidatedWithBankSecond';
+            }
+        }
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -4913,6 +4929,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_inward_bill_summary',
                 'scenario' => 'InwardBillSummary',
                 'title' => 'Inward Bill Summary',
+                'to_decrypt' => ['PAN_No'],
             ],
             'PaymentAdviceInwardSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
@@ -4920,6 +4937,42 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'PaymentAdviceInwardSummary',
                 'title' => 'Payment Advice - Inward',
                 'bkg_export' => TRUE,
+            ],
+            'MemberDailyCollectionSecond' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_day_wise_report',
+                'scenario' => 'MemberDailyCollectionSecond',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberPassbookSecond' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_passbook',
+                'scenario' => 'MemberDailyCollectionSecond',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberConsolidatedSecond' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_summary',
+                'scenario' => 'MemberDailyCollectionSecond',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
+            ],
+            'MemberConsolidatedWithBankSecond' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_collection_summary_with_bank',
+                'scenario' => 'MemberDailyCollectionSecond',
+                'title' => '101 - Member Collection Detail',
+                'to_decrypt' => ['aadhar_no'],
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];
