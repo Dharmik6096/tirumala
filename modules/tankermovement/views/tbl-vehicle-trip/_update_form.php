@@ -91,7 +91,7 @@ $form = ActiveForm::begin([
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?></label>
         <div class="well box-well">
             <div class="sticky_head sticky-column">
-                <button type="button" class="btn btn-default btn-block mb-10" id="btn-move-right" title="Move Selected to Right"><i class="fa fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-default btn-block mb-10 width_100" id="btn-move-right" title="Move Selected to Right"><i class="fa fa-arrow-right"></i></button>
                 <input type="text" class="form-control mb-2" id="search-available-bmc" placeholder="Search Available BMC...">
             </div>
             <?= Sortable::widget([
@@ -106,7 +106,7 @@ $form = ActiveForm::begin([
         <label class="control-label"><?= Yii::t('app', 'PLANT/BMC') ?> Seleted</label>
         <div class="well box-well">
             <div class="sticky_head sticky-column">
-                <button type="button" class="btn btn-default btn-block mb-10" id="btn-move-left" title="Move Selected to Left"><i class="fa fa-arrow-left"></i></button>
+                <button type="button" class="btn btn-default btn-block mb-10 width_100" id="btn-move-left" title="Move Selected to Left"><i class="fa fa-arrow-left"></i></button>
                 <input type="text" class="form-control mb-2" id="search-selected-bmc" placeholder="Search Selected BMC...">
             </div>
             <?= Sortable::widget([

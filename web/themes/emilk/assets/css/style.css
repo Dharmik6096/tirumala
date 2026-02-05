@@ -5788,6 +5788,7 @@ h4{
     height: 370px;
     overflow: auto;
     border: 1px solid #ccc;
+    overflow-x: hidden;
 }
 
 .box-well .list-group-item, .box-well .list-group-item:last-child, .box-well .list-group-item:first-child{
@@ -5795,7 +5796,7 @@ h4{
     padding: 4px;
     font-size: 11px;
     margin: 5px;
-    width: 325px;
+    width: 98%;
     box-shadow: inset 0px 2px 3px 0px rgba(208, 206, 206, 0.69);
 }
 .margin_left_20_reverse{
@@ -6273,4 +6274,14 @@ div#dashboardFarmerPopup {
 }
 .ml2{
     margin-left: 2px;
+}
+
+#available-bmc-list .list-group-item,
+#selected-bmc-list .list-group-item {
+    touch-action: none;
+    -ms-touch-action: none;
+}
+
+.well.box-well .sortable li:focus, .sortable li:hover {
+    background-color: #0d6efd;
 }

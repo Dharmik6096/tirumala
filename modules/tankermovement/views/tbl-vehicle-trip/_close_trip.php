@@ -10,7 +10,7 @@ use yii\web\View;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title"><?= Yii::t('app', 'Close Trip') ?> (<?= $model->trip_code ?>)</h4>
             </div>
 
@@ -30,7 +30,7 @@ use yii\web\View;
                     <div class="modal-footer mt10 col-sm-12">
                         <div class="col-md-12">
                             <?= Yii::$app->controls->save(Yii::t('app', 'Save'), $model, 'save_data'); ?>
-                            <?= Html::resetButton('Reset', ['class' => 'btn btn-danger']) ?>
+                            <?= Html::resetButton('Reset', ['class' => 'btn btn-danger btn-login']) ?>
                         </div>
                     </div>
 
