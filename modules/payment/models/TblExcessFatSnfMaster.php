@@ -130,7 +130,7 @@ class TblExcessFatSnfMaster extends \app\models\ChildModel {
     }
 
     public function validateFatSnf($attribute, $params) {
-        if ($this->fat <= 0 && $this->snf <= 0) {
+        if ($this->fat == 0 && $this->snf == 0) {
             $this->addError($attribute, 'Fat or SNF must be greater than zero.');
         }
     }

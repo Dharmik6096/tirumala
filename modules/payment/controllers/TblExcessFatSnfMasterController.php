@@ -95,7 +95,7 @@ class TblExcessFatSnfMasterController extends \app\controllers\ChildController {
         $transaction = $this->generalModel->saveTransaction([$this->model, $masterModel], ['Excess Fat Snf Master', 'edit']);
         if ($transaction !== FALSE) {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                'message' => 'deactivated successfully.']);
+                'message' => 'Excess Fat Snf Master deactivated successfully.']);
         } else {
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => 'Could not deactivate. Please try again.']);
