@@ -39,6 +39,7 @@ $this->title = Yii::$app->label->title('create', 'Mapping');
             'selectedMccCode' => $selectedMccCode,
             'selectedBmcCode' => $selectedBmcCode,
             'login_type' => $login_type,
+            'department' => $department,
             'periodic_applicability' => $periodic_applicability,
             'is_bulk_notification' => $is_bulk_notification,
             'load_data_on_apply_to_checkbox' => $load_data_on_apply_to_checkbox,

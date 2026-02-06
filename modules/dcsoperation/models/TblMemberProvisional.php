@@ -1134,4 +1134,8 @@ class TblMemberProvisional extends ChildModel {
         }
     }
 
+    public function updateProcessStatus($data_post_status, $file_name) {
+        return $this->updateAll(['data_post_status' => $data_post_status], ['resp_desc' => $file_name]);
+    }
+
 }

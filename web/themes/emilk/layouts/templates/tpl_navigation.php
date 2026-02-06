@@ -382,6 +382,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Bonus Payment - Previous Data'), 'url' => ['/payment/tbl-bonus-payment-previous-data/index'], 'active' => ($cntrl == 'tbl-bonus-payment-previous-data' && $action == 'index')],
                     ['label' => Yii::t('app', 'Bonus Payment'), 'url' => ['/payment/tbl-bonus-payment/index'], 'active' => ($cntrl == 'tbl-bonus-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Party Payment'), 'url' => ['/payment/tbl-party-payment/index'], 'active' => ($cntrl == 'tbl-party-payment' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Excess Fat Snf Master'), 'url' => ['/payment/tbl-excess-fat-snf-master/index'], 'active' => ($cntrl == 'tbl-excess-fat-snf-master' && $action == 'index')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -679,6 +680,7 @@ echo GhostMenu::widget([
                             'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Member Collection') . ' <b class="caret"></b></a>',
                             'items' => [
                                     ['label' => '101 -' . Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection']],
+                                    ['label' => '101 -' . Yii::t('app', 'Member Collection Detail 2'), 'url' => ['/misreports/reports/member-daily-collection-second']],
                                     ['label' => '102 -' . Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary']],
                                     ['label' => '103 -' . Yii::t('app', 'Member Collection Shift Report'), 'url' => ['/misreports/reports/member-collection-shift-report']],
                                     ['label' => '104 -' . Yii::t('app', 'Member Collection Payment Cycle Wise'), 'url' => ['/misreports/reports/member-collection-payment-cycle-wise']],
@@ -1138,6 +1140,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'TPT Cost Summary'), 'url' => ['/misreports/reports/tp-cost-summary']],
                             ['label' => Yii::t('app', 'TPT Cost Summary 2'), 'url' => ['/misreports/reports/tp-cost-summary-new-format']],
                             ['label' => Yii::t('app', 'TPT Bill'), 'url' => ['/jasperreports/default/primary-transporter-monthly-bill']],
+                            ['label' => Yii::t('app', 'Inward Bill Summary'), 'url' => ['/misreports/reports/inward-bill-summary']],
+                            ['label' => Yii::t('app', 'Payment Advice - Inward'), 'url' => ['/misreports/reports/payment-advice-inward-summary']],
                     ]
                 ],
                     [

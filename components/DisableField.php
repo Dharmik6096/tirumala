@@ -33,7 +33,7 @@ class DisableField extends Component {
             ],
             'DODLA' => [
                 'TblBmcMilkDispatchTxn' => [
-                    'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff',
+                    'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'dip_open', 'dip_close', 'dip_diff',
                 ],
             ],
             'BANAS' => [

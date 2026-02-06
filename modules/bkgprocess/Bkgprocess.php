@@ -135,6 +135,16 @@ class Bkgprocess extends \yii\base\Module {
                 'append_ftp_path' => TRUE,
                 'append_ftp_collection_code' => 'rmrd',
             ],
+            'TblMemberProvisional' => [
+                'ext' => '.xml',
+                'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,from_date,to_date,sap_status',
+                'sp_name' => 'member_provisional_sap_ftp_data_upload_mpcrmrd',
+                'export_title' => '',
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
+                'ftp_path' => '/PRD/ZPIB',
+                'append_ftp_path' => TRUE,
+                'xml_tag' => 'MAF_MT_Sen,Header,item'
+            ],
         ];
     }
 

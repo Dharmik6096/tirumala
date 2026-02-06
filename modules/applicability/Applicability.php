@@ -204,6 +204,7 @@ class Applicability extends \yii\base\Module {
                     'selectedRouteCode' => $this->selectedRouteCode,
                     'generateMail' => $this->generateMail,
                     'login_type' => $this->login_type,
+                    'department' => $this->department,
                     'is_bulk_notification' => $this->is_bulk_notification,
                     'periodic_applicability' => $this->periodic_applicability,
                     'load_data_on_apply_to_checkbox' => $this->load_data_on_apply_to_checkbox,

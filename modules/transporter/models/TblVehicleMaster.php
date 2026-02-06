@@ -355,7 +355,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 ->select(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
                 ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
                 ->innerJoin('tbl_vehicle_trip_detail', 'tbl_vehicle_trip_detail.trip_code = tbl_vehicle_trip.trip_code')
-                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'LOWER(tbl_vehicle_trip_detail.source_org_type)' => strtolower($type), 'tbl_vehicle_trip_detail.source_org_code' => $code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2]])
+                ->where(['tbl_vehicle_master.union_code' => $unionCode, 'LOWER(tbl_vehicle_trip_detail.source_org_type)' => strtolower($type), 'tbl_vehicle_trip_detail.source_org_code' => $code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2], 'tbl_vehicle_master.is_active' => 1])
                 ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date])
                 ->andWhere(['IS NOT', 'arrival_time', null])
                 ->andWhere(['IS', 'departure_time', null]);
@@ -386,12 +386,26 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 ->select(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
                 ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
                 ->innerJoin('tbl_vehicle_trip_detail', 'tbl_vehicle_trip_detail.trip_code = tbl_vehicle_trip.trip_code')
-                ->where(['tbl_vehicle_master.union_code' => $this->union_code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2], 'tbl_vehicle_trip.trip_status' => 'closed', 'tbl_vehicle_trip.trip_sub_status' => $subStatus])
+                ->where(['tbl_vehicle_master.union_code' => $this->union_code, 'tbl_vehicle_master.vehicle_use_type' => [1, 2], 'tbl_vehicle_trip.trip_status' => 'closed', 'tbl_vehicle_trip.trip_sub_status' => $subStatus, 'tbl_vehicle_master.is_active' => 1])
                 ->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', date('Y-m-d')])
                 ->groupBy(['tbl_vehicle_master.vehicle_code', 'tbl_vehicle_master.parsing_no'])
                 ->all();
 
         return ArrayHelper::map($data, 'vehicle_code', 'parsing_no');
+    }
+
+    public function getVehicleListForEligibleTrip($unionCode) {
+        $data = $this->find()->alias('vm')
+            ->select(['vm.vehicle_code', 'vm.parsing_no'])
+            ->leftJoin("tbl_vehicle_trip t", "t.vehicle_code = vm.vehicle_code AND t.trip_status != 'closed'")
+            ->where(['vm.union_code' => $unionCode, 'vm.is_active' => 1, 'vm.vehicle_use_type' => [1, 2]])
+            ->andWhere(['t.vehicle_code' => null])
+            ->groupBy(['vm.vehicle_code', 'vm.parsing_no'])
+            ->all();
+
+        return ArrayHelper::map($data, 'vehicle_code', function($value) {
+                    return $value->parsing_no;
+                });
     }
 
 }

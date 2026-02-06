@@ -775,6 +775,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-chamber-list', Yii::t('app', 'Select Chamber'), $multiple, '', $readonly);
     }
 
+    public function vehicleForEligibleTrip($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/vehicle-for-eligible-trip', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
+    }
+    
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -2375,6 +2380,11 @@ class DropDown extends Component {
                 'name' => 'bipl_type',
                 'prompt' => Yii::t('app', 'Select Bipl Type'),
                 'data' => ['0' => Yii::t('app', 'Member'), '1' => Yii::t('app', 'DCS'), '2' => Yii::t('app', 'Rate'), '3' => Yii::t('app', 'Rate Applicability')],
+            ],
+            'sap_status' => [
+                'name' => 'sap_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['generate' => Yii::t('app', 'Generate'), 'regenerate' => Yii::t('app', 'Regenerate')],
             ],
         ];
         return $records[$l];
