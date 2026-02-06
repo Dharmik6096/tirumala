@@ -10,10 +10,12 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'BIPL Smart Api Log
             <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
             <div class="clearfix"></div>
             <?php
-            echo $this->render('_repush_bulk_grid', [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-            ]);
+            if (!empty($dataProvider->getModels())) {
+                echo $this->render('_repush_bulk_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ]);
+            }
             ?>
         </div>
     </div>

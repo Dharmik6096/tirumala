@@ -20,10 +20,12 @@ use app\modules\bkgprocess\models\BiplFtpTankerDispatch;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 
 class BiplSchedulerController extends ChildController {
 
-    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master', 'bipl-dcs-api-master', 'bipl-member-api-master'];
+    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master', 'bipl-dcs-api-master', 'bipl-member-api-master', 'bipl-rate-api-master', 'bipl-rate-mapping-api-master'];
     public $errorPath = '';
     public $token = '';
 
@@ -577,7 +579,7 @@ class BiplSchedulerController extends ChildController {
             $masterData = $localModel->getMasterRecord();
             if (empty($masterData)) return;
 
-            $current_ids = array_column($masterData[$dataKey], $idKey);
+            $current_ids = !empty($dataKey) ? array_column($masterData[$dataKey], $idKey) : $masterData[$idKey];
             $current_extra_ids = !empty($extraIdKey) && !empty($masterData[$extraIdKey]) ? $masterData[$extraIdKey] : $current_ids;
             $now = date('Y-m-d H:i:s');
             $initialUpdate = ['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now];
@@ -595,7 +597,20 @@ class BiplSchedulerController extends ChildController {
                 $response = !empty($result) ? json_decode($result) : [];
                 if (!empty($response)) {
                     $respTime = date('Y-m-d H:i:s');
-                    if (!empty($response->data->remarks)) {
+                    $isSuccess = $response->isSuccessful ?? false;
+                    if (isset($response->errors) && is_object($response->errors)) {
+                        $validationErrors = [];
+                        foreach ($response->errors as $field => $messages) {
+                            $validationErrors[] = $field . ": " . (is_array($messages) ? implode(', ', $messages) : $messages);
+                        }
+                        $errorMessage = "Validation: " . implode('; ', $validationErrors);
+                        $updateData = ['data_post_status' => 3, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($errorMessage, 0, 800)];
+                        $localModel->updateStatus($updateData, $current_extra_ids);
+                        return false;
+                    } else if ($isSuccess && empty($response->data->remarks)) {
+                        $localModel->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($response->message ?: 'Integrated successfully.', 0, 800)], $current_extra_ids);
+                        return true;
+                    } else if (!empty($response->data->remarks)) {
                         foreach ($response->data->remarks as $val) {
                             if(!isset($val->isSuccessful)){
                                 $status = $val->integrationFlag ? 2 : 3;
@@ -636,6 +651,13 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
+    public function actionBiplRateApiMaster() {
+        $this->processMasterApi(TblPurchaseRate::class, 'rate_endpoint', '', 'rateId');
+    }
+
+    public function actionBiplRateMappingApiMaster() {
+        $this->processMasterApi(TblPurchaseRateApplicability::class, 'rate_mapping_endpoint', 'mappingDetails', 'rateId', 'mppCode');
+    }
 
     public function actionBiplDcsApiMaster() {
         $this->processMasterApi(TblDcs::class, 'dcs_endpoint', 'mppDetails', 'mppCode');

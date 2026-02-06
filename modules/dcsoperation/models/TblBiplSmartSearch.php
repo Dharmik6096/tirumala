@@ -18,7 +18,10 @@ class TblBiplSmartSearch extends TblBiplSmart {
     public function rules() {
         return [
             [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code', 'f_dcs_code', 'bipl_type', 'data_post_status', 'from_date', 'to_date'], 'safe'],
-            [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code', 'bipl_type'], 'required'],
+            [['bipl_type'], 'required'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code'], 'required', 'when' => function($model) {
+                return $model->bipl_type != '2';
+            }],
         ];
     }
 
@@ -37,7 +40,7 @@ class TblBiplSmartSearch extends TblBiplSmart {
                     ->leftJoin('tbl_bmc bmc', 'dcs.bmc_code = bmc.bmc_code')
                     ->leftJoin('tbl_route_mapping route', 'dcs.route_code = route.route_code')
                     ->leftJoin('tbl_contact_details contact', "contact.module_code = dcs.dcs_code AND contact.module_name = 'society'")
-                    ->where(['dcs.is_active' => 1]);
+                    ->where(['dcs.dpu_type' => 93, 'dcs.is_active' => 1]);
             $tablePrefix = 'dcs';
         } elseif ($this->bipl_type == '2') {
             $query = TblPurchaseRate::find()->alias('rate')
@@ -49,14 +52,17 @@ class TblBiplSmartSearch extends TblBiplSmart {
                         ->groupBy('purchase_rate_code')], 'rate.purchase_rate_code = min_rde.purchase_rate_code')
                     ->leftJoin(['rde' => 'tbl_purchase_rate_details'], 'rde.purchase_rate_code = min_rde.purchase_rate_code AND rde.code = min_rde.min_code')
                     ->leftJoin('tbl_rate_type rt', 'rde.rate_type_code = rt.code')
-                    ->where(['rate.is_active' => 1]);
+                    ->leftJoin('tbl_purchase_rate_applicability pra', 'rate.purchase_rate_code = pra.purchase_rate_code')
+                    ->leftJoin('tbl_dcs dcs', 'pra.dcs_code = dcs.dcs_code')
+                    ->where(['dcs.dpu_type' => 93, 'rate.is_active' => 1])
+                    ->groupBy(['rate.purchase_rate_code', 'rate.wef_date', 's.shift', 'rt.rate_type', 'rate.description', 'rate.data_post_status', 'rate.picked_datetime', 'rate.response_datetime', 'rate.resp_desc']);
             $tablePrefix = 'rate';
         } elseif ($this->bipl_type == '3') {
             $query = TblPurchaseRateApplicability::find()->alias('rateapp')
                     ->select(['rateapp.purchase_rate_code', 'rateapp.rate_app_code', 'rateapp.dcs_code', 'rateapp.wef_date', 's.shift', 'rateapp.data_post_status', 'rateapp.picked_datetime', 'rateapp.response_datetime', 'rateapp.resp_desc'])
                     ->leftJoin('tbl_dcs dcs', 'rateapp.dcs_code = dcs.dcs_code')
                     ->leftJoin('tbl_shift s', 'rateapp.shift_code = s.id')
-                    ->where(['rateapp.is_active' => 1]);
+                    ->where(['dcs.dpu_type' => 93, 'rateapp.is_active' => 1]);
             $tablePrefix = 'rateapp';
         } else {
             $query = TblMember::find()->alias('member')
@@ -64,7 +70,7 @@ class TblBiplSmartSearch extends TblBiplSmart {
                     ->leftJoin('tbl_dcs dcs', 'member.dcs_code = dcs.dcs_code')
                     ->leftJoin('tbl_bmc bmc', 'dcs.bmc_code = bmc.bmc_code')
                     ->leftJoin('tbl_gender gender', 'member.gender_code = gender.gender_code')
-                    ->where(['member.is_active' => 1]);
+                    ->where(['dcs.dpu_type' => 93, 'member.is_active' => 1]);
             $tablePrefix = 'member';
         }
 
