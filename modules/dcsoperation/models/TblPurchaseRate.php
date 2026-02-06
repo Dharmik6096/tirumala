@@ -254,54 +254,28 @@ class TblPurchaseRate extends \app\models\ChildModel {
     }
 
     public function getMasterRecord(){
-        // $data = (new \yii\db\Query())
-        //     ->select([
-        //         'companyCode'            => new Expression("ISNULL(u.x_col1, '')"),
-        //         'rateId'                 => 'rate.purchase_rate_code',
-        //         'effectiveDate'          => new Expression("CAST(rate.wef_date AS DATE)"),
-        //         'effectiveShift'         => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
-        //         'shift'                  => new Expression("ISNULL(LEFT(app.shift_applicability, 1), '')"),
-        //     ])
-        //     ->from('tbl_purchase_rate rate')
-        //     ->innerJoin('tbl_purchase_rate_applicability app', 'app.purchase_rate_code = rate.purchase_rate_code')
-        //     ->innerJoin('tbl_dcs dcs', 'dcs.dcs_code = app.dcs_code AND dcs.dpu_type = 93')
-        //     ->innerJoin('tbl_shift shift', 'shift.id = rate.shift_id')
-        //     ->innerJoin('tbl_shift shift', 'shift.id = app.shift_applicability')
-        //     ->innerJoin('tbl_unions u', 'u.union_code = rateid')
-        //     ->innerJoin('tbl_unions u', 'u.union_code = rate.union_code')
-        //     ->leftJoin('tbl_purchase_rate_based base', 'base.purchase_rate_code = rate.purchase_rate_code')
-        //     ->leftJoin('tbl_rate_type type', 'type.code = base.rate_type_code')
-        //     ->where(['or', ['rate.data_post_status' => 0], ['rate.data_post_status' => ''], ['rate.data_post_status' => null]])
-        //     ->groupBy(['rate.purchase_rate_code','u.x_col1','rate.wef_date','shift.shift','rate.description','type.rate_type'])
-        //     ->one();
-
         $data = (new \yii\db\Query())
-            ->select([
-                'companyCode'    => new Expression("ISNULL(u.x_col1, '')"),
-                'rateId'         => 'rate.purchase_rate_code',
-                'effectiveDate'  => new Expression("CAST(rate.wef_date AS DATE)"),
-                'effectiveShift' => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
-                'shift'          => new Expression("ISNULL(LEFT(app_shift.shift, 1), '')"),
-            ])
-            ->from('tbl_purchase_rate rate')
-            ->innerJoin(['app' => (new \yii\db\Query())
-                ->select(['purchase_rate_code', 'shift_applicability', 'dcs_code'])
-                ->from('tbl_purchase_rate_applicability')
-                ->limit(1)
-            ], 'app.purchase_rate_code = rate.purchase_rate_code')
-            ->innerJoin('tbl_dcs dcs', 'dcs.dcs_code = app.dcs_code AND dcs.dpu_type = 93')
-            ->innerJoin('tbl_shift shift', 'shift.id = rate.shift_id')
-            ->leftJoin('tbl_shift app_shift', 'app_shift.id = app.shift_applicability')
-            ->innerJoin('tbl_unions u', 'u.union_code = rate.union_code')
-            ->where(['or', ['rate.data_post_status' => 0], ['rate.data_post_status' => ''], ['rate.data_post_status' => null]])
-            ->one();
+                ->select([
+                    'companyCode' => new Expression("DISTINCT ISNULL(u.x_col1, '')"),
+                    'rateId' => 'rate.purchase_rate_code',
+                    'effectiveDate' => new Expression("CAST(rate.wef_date AS DATE)"),
+                    'effectiveShift' => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
+                    'shift' => new Expression("ISNULL(LEFT(app_shift.shift, 1), '')")
+                ])
+                ->from(['rate' => 'tbl_purchase_rate'])
+                ->innerJoin(['app' => 'tbl_purchase_rate_applicability'], 'app.purchase_rate_code = rate.purchase_rate_code')
+                ->innerJoin(['dcs' => 'tbl_dcs'], 'dcs.dcs_code = app.dcs_code AND dcs.dpu_type = 93')
+                ->innerJoin(['shift' => 'tbl_shift'], 'shift.id = rate.shift_id')
+                ->leftJoin(['app_shift' => 'tbl_shift'], 'app_shift.id = app.shift_applicability')
+                ->innerJoin(['u' => 'tbl_unions'], 'u.union_code = rate.union_code')
+                ->where(['OR', ['rate.data_post_status' => 0], ['rate.data_post_status' => ''], ['rate.data_post_status' => null]])
+                ->one();
 
         if (!empty($data)) {
             $rateDetails = $this->getDetails($data['rateId']);
             $data['rateDetails'] = $rateDetails;
         }
         return $data;
-
     }
 
     public function getDetails($rateId) {
