@@ -254,41 +254,51 @@ class TblPurchaseRate extends \app\models\ChildModel {
     }
 
     public function getMasterRecord(){
+        // $data = (new \yii\db\Query())
+        //     ->select([
+        //         'companyCode'            => new Expression("ISNULL(u.x_col1, '')"),
+        //         'rateId'                 => 'rate.purchase_rate_code',
+        //         'effectiveDate'          => new Expression("CAST(rate.wef_date AS DATE)"),
+        //         'effectiveShift'         => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
+        //         'shift'                  => new Expression("ISNULL(LEFT(app.shift_applicability, 1), '')"),
+        //     ])
+        //     ->from('tbl_purchase_rate rate')
+        //     ->innerJoin('tbl_purchase_rate_applicability app', 'app.purchase_rate_code = rate.purchase_rate_code')
+        //     ->innerJoin('tbl_dcs dcs', 'dcs.dcs_code = app.dcs_code AND dcs.dpu_type = 93')
+        //     ->innerJoin('tbl_shift shift', 'shift.id = rate.shift_id')
+        //     ->innerJoin('tbl_shift shift', 'shift.id = app.shift_applicability')
+        //     ->innerJoin('tbl_unions u', 'u.union_code = rateid')
+        //     ->innerJoin('tbl_unions u', 'u.union_code = rate.union_code')
+        //     ->leftJoin('tbl_purchase_rate_based base', 'base.purchase_rate_code = rate.purchase_rate_code')
+        //     ->leftJoin('tbl_rate_type type', 'type.code = base.rate_type_code')
+        //     ->where(['or', ['rate.data_post_status' => 0], ['rate.data_post_status' => ''], ['rate.data_post_status' => null]])
+        //     ->groupBy(['rate.purchase_rate_code','u.x_col1','rate.wef_date','shift.shift','rate.description','type.rate_type'])
+        //     ->one();
+
         $data = (new \yii\db\Query())
             ->select([
-                'companyCode'            => new Expression("ISNULL(u.x_col1, '')"),
-                'effectiveDate'          => new Expression("CAST(rate.wef_date AS DATE)"),
-                'effectiveShift'         => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
-                'descriptionForHeader'   => new Expression("ISNULL(rate.description, '')"),
-                'buffaloCommission'      => new Expression("0"),
-                'cowCommission'          => new Expression("0"),
-                'descriptionForRateType' => new Expression("ISNULL(rate.description, '')"),
-                'isMixed'                => new Expression("0"),
-                'sameRateForAllMilkType' => new Expression("0"),
-                'sameRateForAllShfit'    => new Expression("0"),
-                'rateStructureText'      => new Expression("ISNULL(type.rate_type, '')"),
-                'rateId'                 => 'rate.purchase_rate_code',
+                'companyCode'    => new Expression("ISNULL(u.x_col1, '')"),
+                'rateId'         => 'rate.purchase_rate_code',
+                'effectiveDate'  => new Expression("CAST(rate.wef_date AS DATE)"),
+                'effectiveShift' => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
+                'shift'          => new Expression("ISNULL(LEFT(app_shift.shift, 1), '')"),
             ])
             ->from('tbl_purchase_rate rate')
-            ->innerJoin('tbl_purchase_rate_applicability app', 'app.purchase_rate_code = rate.purchase_rate_code')
+            ->innerJoin(['app' => (new \yii\db\Query())
+                ->select(['purchase_rate_code', 'shift_applicability', 'dcs_code'])
+                ->from('tbl_purchase_rate_applicability')
+                ->limit(1)
+            ], 'app.purchase_rate_code = rate.purchase_rate_code')
             ->innerJoin('tbl_dcs dcs', 'dcs.dcs_code = app.dcs_code AND dcs.dpu_type = 93')
             ->innerJoin('tbl_shift shift', 'shift.id = rate.shift_id')
+            ->leftJoin('tbl_shift app_shift', 'app_shift.id = app.shift_applicability')
             ->innerJoin('tbl_unions u', 'u.union_code = rate.union_code')
-            ->leftJoin('tbl_purchase_rate_based base', 'base.purchase_rate_code = rate.purchase_rate_code')
-            ->leftJoin('tbl_rate_type type', 'type.code = base.rate_type_code')
             ->where(['or', ['rate.data_post_status' => 0], ['rate.data_post_status' => ''], ['rate.data_post_status' => null]])
-            ->groupBy(['rate.purchase_rate_code','u.x_col1','rate.wef_date','shift.shift','rate.description','type.rate_type'])
-            ->limit(1)
-            ->all();
+            ->one();
+
         if (!empty($data)) {
-            array_walk($data, function(&$item) {
-                $item['isMixed'] = (bool)$item['isMixed'];
-                $item['sameRateForAllMilkType'] = (bool)$item['sameRateForAllMilkType'];
-                $item['sameRateForAllShfit'] = (bool)$item['sameRateForAllShfit'];
-            });
-            return [
-                'rateDetails' => $data
-            ];
+            $rateDetails = $this->getDetails($data['rateId']);
+            $data['rateDetails'] = $rateDetails;
         }
         return $data;
 
@@ -299,12 +309,13 @@ class TblPurchaseRate extends \app\models\ChildModel {
             ->select([
                 'fat' => new Expression("ISNULL(fat, '')"),
                 'snf' => new Expression("ISNULL(snf, '')"),
-                'rate' => new Expression("ISNULL(rate.ts_rate, 0)"),
+                'rate' => new Expression("ISNULL(rtpl, 0)"),
                 'lr' => new Expression("0"),
-                'shift' => new \yii\db\Expression("''"),
+                'type' => new Expression("ISNULL(LEFT(type.animal_type_name, 1), '')"),
             ])
             ->from('tbl_purchase_rate_details as detail')
             ->innerJoin('tbl_purchase_rate rate', 'rate.purchase_rate_code = detail.purchase_rate_code')
+            ->innerJoin('tbl_animal_type type', 'type.animal_type_code = detail.milk_type_code')
             ->where(['detail.purchase_rate_code' => $rateId, 'detail.is_active' => 1])
             ->all();
         return $data;

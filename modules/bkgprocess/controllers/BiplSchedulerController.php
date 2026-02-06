@@ -579,7 +579,7 @@ class BiplSchedulerController extends ChildController {
             $masterData = $localModel->getMasterRecord();
             if (empty($masterData)) return;
 
-            $current_ids = array_column($masterData[$dataKey], $idKey);
+            $current_ids = !empty($dataKey) ? array_column($masterData[$dataKey], $idKey) : $masterData[$idKey];
             $current_extra_ids = !empty($extraIdKey) && !empty($masterData[$extraIdKey]) ? $masterData[$extraIdKey] : $current_ids;
             $now = date('Y-m-d H:i:s');
             $initialUpdate = ['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now];
@@ -597,7 +597,20 @@ class BiplSchedulerController extends ChildController {
                 $response = !empty($result) ? json_decode($result) : [];
                 if (!empty($response)) {
                     $respTime = date('Y-m-d H:i:s');
-                    if (!empty($response->data->remarks)) {
+                    $isSuccess = $response->isSuccessful ?? false;
+                    if (isset($response->errors) && is_object($response->errors)) {
+                        $validationErrors = [];
+                        foreach ($response->errors as $field => $messages) {
+                            $validationErrors[] = $field . ": " . (is_array($messages) ? implode(', ', $messages) : $messages);
+                        }
+                        $errorMessage = "Validation: " . implode('; ', $validationErrors);
+                        $updateData = ['data_post_status' => 3, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($errorMessage, 0, 800)];
+                        $localModel->updateStatus($updateData, $current_extra_ids);
+                        return false;
+                    } else if ($isSuccess && empty($response->data->remarks)) {
+                        $localModel->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($response->message ?: 'Integrated successfully.', 0, 800)], $current_extra_ids);
+                        return true;
+                    } else if (!empty($response->data->remarks)) {
                         foreach ($response->data->remarks as $val) {
                             if(!isset($val->isSuccessful)){
                                 $status = $val->integrationFlag ? 2 : 3;
@@ -628,100 +641,6 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
-    private function processRateMasterApi($modelClass, $endpointKey, $dataKey, $idKey, $extraIdKey = null) {
-        $config = \Yii::$app->params['clienterp_authentication']['bipl_smart'];
-        $base_url = $config['api_base_url'];
-        if (!$this->AuthenticateRequest($config)) return;
-
-        $localModel = new $modelClass();
-        $masterData = $localModel->getMasterRecord();
-        if (empty($masterData)) return;
-
-        if (!empty($extraIdKey)) {
-            $current_extra_ids = $masterData[$extraIdKey] ?? [];
-            $payload = $masterData;
-            unset($payload[$extraIdKey]);
-            $this->executeApiCall($localModel, $base_url, $config[$endpointKey], $payload, $current_extra_ids, $idKey, $extraIdKey);
-        } else {
-            foreach ($masterData[$dataKey] as $value) {
-                $rateId = $value[$idKey] ?? null;
-                $value[$dataKey] = $localModel->getDetails($rateId) ?: [];
-                $this->executeApiCall($localModel, $base_url, $config[$endpointKey], $value, $rateId);
-            }
-        }
-    }
-
-    private function executeApiCall($model, $baseUrl, $apiUrl, $payload, $extraIds = null, $idKey = null, $extraIdKey = null) {
-        $now = date('Y-m-d H:i:s');
-        $model->updateStatus(['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now], $extraIds);
-        try {
-            $api = new WebApi();
-            $api->return_actual = true;
-            $api->serverUrl = $baseUrl;
-            $api->apiurl = $apiUrl;
-            $api->body = json_encode($payload);
-            $api->is_header_merge = true;
-            $api->authentication = [];
-            $api->header_info = ["Authorization: Bearer " . $this->token];
-            $result = $api->POSTDATA();
-            $response = !empty($result) ? json_decode($result) : null;
-            if (!$response) return false;
-
-            $isSuccess = $response->isSuccessful ?? false;
-            $respTime = date('Y-m-d H:i:s');
-            $mainRemark = $response->message ?? ($response->title ?? '');
-            if (isset($response->errors) && is_object($response->errors)) {
-                $validationErrors = [];
-                foreach ($response->errors as $field => $messages) {
-                    $validationErrors[] = $field . ": " . (is_array($messages) ? implode(', ', $messages) : $messages);
-                }
-                $mainRemark .= " | Validation: " . implode('; ', $validationErrors);
-                $model->updateStatus(['data_post_status' => 3, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($mainRemark, 0, 800)], $extraIds);
-                return false;
-            }
-
-            if ($isSuccess && empty($response->data->remarks)) {
-                $model->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($mainRemark ?: 'Integrated successfully.', 0, 800)], $extraIds);
-                return true;
-            }
-
-            $failedKeys = [];
-            if (isset($response->data->remarks) && is_array($response->data->remarks)) {
-                $idKey = ucfirst($idKey);
-                foreach ($response->data->remarks as $val) {
-                    $status = 3;
-                    $msg = $val->Remark ?? ($val->remark ?? '');
-                    $updateData = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($msg, 0, 800)];
-                    if ($extraIdKey && property_exists($val, $idKey) && property_exists($val, $extraIdKey)) {
-                        $uniqueKey = $val->$idKey . $val->$extraIdKey;
-                        if (isset($extraIds[$uniqueKey])) {
-                            $failedKeys[] = $uniqueKey;
-                            $targetId = $extraIds[$uniqueKey];
-                            $model->updateStatus($updateData, $targetId);
-                        }
-                    } else {
-                        $model->updateStatus($updateData, $extraIds);
-                    }
-                }
-            }
-
-            if (!empty($extraIdKey) && is_array($extraIds)) {
-                $successUniqueKeys = array_diff(array_keys($extraIds), $failedKeys);
-                if (!empty($successUniqueKeys)) {
-                    $successTargetIds = [];
-                    foreach ($successUniqueKeys as $uKey) {
-                        $successTargetIds[] = $extraIds[$uKey];
-                    }
-                    $model->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => 'Integrated successfully.'], $successTargetIds);
-                }
-            }
-            return $isSuccess;
-        } catch (\Throwable $ex) {
-            $this->handleApiError($ex, $model, $extraIds);
-            return false;
-        }
-    }
-
     private function handleApiError($ex, $model, $ids) {
         if ($model && !empty($ids)) {
             $now = date('Y-m-d H:i:s');
@@ -733,11 +652,11 @@ class BiplSchedulerController extends ChildController {
     }
 
     public function actionBiplRateApiMaster() {
-        $this->processRateMasterApi(TblPurchaseRate::class, 'rate_endpoint', 'rateDetails', 'rateId');
+        $this->processMasterApi(TblPurchaseRate::class, 'rate_endpoint', '', 'rateId');
     }
 
     public function actionBiplRateMappingApiMaster() {
-        $this->processRateMasterApi(TblPurchaseRateApplicability::class, 'rate_mapping_endpoint', 'mappingDetails', 'rateCode', 'SocietyCode');
+        $this->processMasterApi(TblPurchaseRateApplicability::class, 'rate_mapping_endpoint', 'mappingDetails', 'rateId', 'mppCode');
     }
 
     public function actionBiplDcsApiMaster() {
