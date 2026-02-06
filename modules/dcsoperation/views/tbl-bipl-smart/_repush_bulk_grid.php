@@ -44,6 +44,10 @@ use yii\web\View;
                 $columnConfig['value'] = function($model) {
                     return Yii::$app->controls->view_datetime($model['response_datetime'], 'php:d-m-Y H:i:s');
                 };
+            } elseif ($field == 'adhar_no') {
+                $columnConfig['value'] = function($model) {
+                    return \Yii::$app->general->decryptData($model['adhar_no']);
+                };
             }
             $attribute[] = $columnConfig;
         }
