@@ -118,9 +118,11 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
         if (Yii::$app->session->get('UserType') == 7) {
             $query->andFilterWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         } elseif (Yii::$app->session->get('UserType') == 6) {
-            $query->andFilterWhere(['or', ['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))], ['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]]);
+            $query->andFilterWhere(['or', ['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))], ['tbl_dcs.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]]);
+        } elseif (Yii::$app->session->get('UserType') == 5) {
+            $query->andFilterWhere(['or', ['tbl_bmc.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))], ['tbl_dcs.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]]);
         } elseif (Yii::$app->session->get('UserType') == 4) {
-            $query->andFilterWhere(['or', ['tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_mcc_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]]);
+            $query->andFilterWhere(['or', ['tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_bmc.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_dcs.plant_code' => explode(',', Yii::$app->session->get('Plant'))]]);
         }
         if (!empty($this->f_dcs_code)) {
             $query->andFilterWhere(['tbl_dcs.dcs_code' => $this->f_dcs_code]);
