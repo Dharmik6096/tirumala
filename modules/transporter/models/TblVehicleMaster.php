@@ -394,18 +394,4 @@ class TblVehicleMaster extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'vehicle_code', 'parsing_no');
     }
 
-    public function getVehicleListForEligibleTrip($unionCode) {
-        $data = $this->find()->alias('vm')
-            ->select(['vm.vehicle_code', 'vm.parsing_no'])
-            ->leftJoin("tbl_vehicle_trip t", "t.vehicle_code = vm.vehicle_code AND t.trip_status != 'closed'")
-            ->where(['vm.union_code' => $unionCode, 'vm.is_active' => 1, 'vm.vehicle_use_type' => [1, 2]])
-            ->andWhere(['t.vehicle_code' => null])
-            ->groupBy(['vm.vehicle_code', 'vm.parsing_no'])
-            ->all();
-
-        return ArrayHelper::map($data, 'vehicle_code', function($value) {
-                    return $value->parsing_no;
-                });
-    }
-
 }

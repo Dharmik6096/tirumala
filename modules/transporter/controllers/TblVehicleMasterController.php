@@ -6,12 +6,9 @@ use Yii;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\transporter\models\TblVehicleMasterSearch;
 use app\modules\transporter\models\TblVehicleMasterHistory;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\Response;
-use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblVehicleWiseQtyFlag;
 use app\modules\document\controllers\TblAttachmentController;
 use app\modules\transporter\models\TblVehicleCompartmentDetail;
@@ -377,23 +374,6 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
         $record = ['status' => $status, 'data' => $vehicleData];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
-    }
-
-    public function actionVehicleForEligibleTrip() {
-        $out = [];
-        if (isset($_POST['depdrop_parents'])) {
-            $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0])) {
-                $vehicleTripDetailModel = new TblVehicleMaster();
-                $list = $vehicleTripDetailModel->getVehicleListForEligibleTrip($parents[0]);
-                foreach ($list as $key => $r) {
-                    $out[] = array('id' => $key,
-                        'name' => $r);
-                }
-                return Json::encode(['output' => $out]);
-            }
-        }
-        return Json::encode(['output' => '', 'selected' => []]);
     }
 
 }
