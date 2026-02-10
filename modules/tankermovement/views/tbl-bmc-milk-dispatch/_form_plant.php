@@ -63,7 +63,13 @@ $form = ActiveForm::begin([
                 <?php } ?>
             <?php } else { ?>
                 <div class="col-sm-2"> 
-                        <?= Yii::$app->dropdown->vehicleForEligibleTrip($model, $form, 'tblbmcmilkdispatch-union_code', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, '', $readonly); ?>
+                        <?php
+                            if ($tankerMovementWithTripSubStatus) {
+                                echo Yii::$app->dropdown->vehicleQaInspectionList($model, $form, 'tblbmcmilkdispatch-union_code', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE);
+                            } else {
+                                echo Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly);
+                            }
+                        ?>
                     </div>
                 <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
