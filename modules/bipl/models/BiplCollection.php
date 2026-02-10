@@ -54,7 +54,7 @@ class BiplCollection extends \yii\db\ActiveRecord
         return [
             [['svc', 'usr', 'pswd', 'census_code','local_code','cp_code','date','time','milk_type','qty', 'fat', 'snf', 'awm', 'rate', 'amt', 'shift','vendor_id'],'required'],
             [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id', 'milk_type', 'local_code', 'ext_code', 'mobile', 'given_name', 'family_name', 'father_name', 'm_mode', 'qty_mode', 'shift'], 'string'],
-            [['date', 'time'], 'safe'],
+            [['date', 'time', 'status', 'entry_datetime', 'response_datetime', 'response_msg', 'dop_milksamplenum'], 'safe'],
             [['qty', 'fat', 'snf', 'awm', 'rate', 'amt'], 'number','min'=>0],
             ['cp_code', 'string', 'min' => 7, 'max' => 12, 'skipOnEmpty'=>true],
             [['census_code'],function ($attribute, $params) {
