@@ -31,6 +31,13 @@ $config = [
         'EIPLSecurity' => ['class' => 'app\components\EIPLSecurity'],
         'apiError' => ['class' => 'app\modules\webservice\components\SetError'],
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
+        // androiddpu HTTP helpers (module moved to app components for app-wide reuse)
+        'androidHttpRequest' => [
+            'class' => 'app\modules\androiddpu\components\HttpRequest',
+        ],
+        'androidHttpResponse' => [
+            'class' => 'app\modules\androiddpu\components\HttpResponse',
+        ],
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
         'alertnotification' => ['class' => 'app\components\AlertNotification'],
         'customvalidation' => ['class' => 'app\components\CustomValidation'],
