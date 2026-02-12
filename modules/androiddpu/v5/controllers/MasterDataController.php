@@ -18,7 +18,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         if (!empty($data['content'])) {
             foreach ($data['content'] as $transaction_data) {
                 if (!empty($transaction_data['uuid'])) {
-                    $request = new HttpRequest();
+                    $request = Yii::$app->get('androidHttpRequest');
                     $transaction_data = $request->camelCaseToUnderscore($transaction_data);
                     $model = new TblInbox();
                     $model->setAttributes($transaction_data);
