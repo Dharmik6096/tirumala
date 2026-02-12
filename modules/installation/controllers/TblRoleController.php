@@ -113,7 +113,7 @@ class TblRoleController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionAppMenuMapping($id) {
+    public function actionAppMenuMappingOld($id) {
         $models = $this->findModel($id);
         $this->model = new TblAction();
         $menuArray = [];
@@ -228,7 +228,7 @@ class TblRoleController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionAppMenuMappingNew($id) {
+    public function actionAppMenuMapping($id) {
         $models = $this->findModel($id);
         $this->model = new TblAction();
         $menuArray = $this->model->getActionDetail();
