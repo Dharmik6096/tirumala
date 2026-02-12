@@ -79,9 +79,10 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
 
     public function importData($attribute, $params) {
         $member_model = new TblVehicleMaster();
-        $vehicleCode = $member_model->find()->select('vehicle_code')->where(['or', ['vehicle_code' => $this->vehicle_code], ['parsing_no' => $this->vehicle_code]])->scalar();
-        if (!empty($vehicleCode)) {
-            $this->vehicle_code = $vehicleCode;
+        $vehicleData = $member_model->find()->select(['union_code','vehicle_code'])->where(['or', ['vehicle_code' => $this->vehicle_code], ['parsing_no' => $this->vehicle_code]])->one();
+        if (!empty($vehicleData)) {
+            $this->union_code = $vehicleData->union_code;
+            $this->vehicle_code = $vehicleData->vehicle_code;
         } else {
             $this->addError('vehicle_code', Yii::t('app/validation', Yii::t('app', 'Vehicle Code') . ' is invalid'));
         }
