@@ -321,8 +321,9 @@ class TblRoleController extends \app\controllers\ChildController {
             foreach ($model as $a) {
                 $ackModel = new TblUserDownloadAck();
                 $ackModel->setAttributes($a);
-                $dest_org_type = $this->getOrgType($ackModel);
-                $dest_org_id = $this->getOrgType($ackModel, 'code');
+                $orgData = $this->getOrgType($ackModel);
+                $dest_org_type = $orgData['type'];
+                $dest_org_id = $orgData['code'];
                 $existAck = $ackModel->getExistDataAck($dest_org_type);
                 if (!empty($existAck)) {
                     foreach ($existAck as $exist) {
@@ -333,38 +334,31 @@ class TblRoleController extends \app\controllers\ChildController {
                 $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
                 if (!empty($activeDevice)) {
                     foreach ($activeDevice as $value) {
-                        $ackModel->device_id = $value->device_id;
-                        $ackModel->hash_key = NULL;
-                        $ackModel->download_pending = 1;
-                        $ackModel->created_at = date('Y-m-d H:i:s');
-                        $ackModel->created_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                        $ackModel->originating_org_code = \Yii::$app->session->get('organizations_code');
-                        $ackModel->originating_org_type = 'PORTAL';
-                        $ackModel->originating_type = 0;
-                        $saveModel[] = $ackModel;
+                        $newAckModel = new TblUserDownloadAck();
+                        $newAckModel->setAttributes($a);
+                        $newAckModel->device_id = $value->device_id;
+                        $newAckModel->hash_key = NULL;
+                        $newAckModel->download_pending = 1;
+                        $newAckModel->created_at = date('Y-m-d H:i:s');
+                        $newAckModel->created_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                        $newAckModel->originating_org_code = \Yii::$app->session->get('organizations_code');
+                        $newAckModel->originating_org_type = 'PORTAL';
+                        $newAckModel->originating_type = 0;
+                        $saveModel[] = $newAckModel;
                     }
                 }
             }
         }
+        $ackIdsToUpdate = array_values(array_unique($ackIdsToUpdate));
     }
 
-    public function getOrgType($data, $return = 'type') {
-        if ($return == 'type') {
-            if (!empty($data->dcs_code)) {
-                return 'VLC';
-            } elseif (!empty($data->bmc_code)) {
-                return 'BMC';
-            } elseif (!empty($data->mcc_plant_code)) {
-                return 'MCC';
-            }
-        } else {
-            if (!empty($data->dcs_code)) {
-                return $data->dcs_code;
-            } elseif (!empty($data->bmc_code)) {
-                return $data->bmc_code;
-            } elseif (!empty($data->mcc_plant_code)) {
-                return $data->mcc_plant_code;
-            }
+    public function getOrgType($data) {
+        if (!empty($data->dcs_code)) {
+            return ['type' => 'VLC', 'code' => $data->dcs_code];
+        } elseif (!empty($data->bmc_code)) {
+            return ['type' => 'BMC', 'code' => $data->bmc_code];
+        } elseif (!empty($data->mcc_plant_code)) {
+            return ['type' => 'MCC', 'code' => $data->mcc_plant_code];
         }
     }
 
