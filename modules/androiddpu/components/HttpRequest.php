@@ -109,11 +109,11 @@ class HttpRequest extends \yii\base\Component {
 
             $model = new TblAndroidInstallationDetails();
             if ($model->getActiveRecordCount($this->request) == 1) {
-                // cache positive auth for 10 minutes (600 seconds)
+                // cache positive auth for 4.17hr (15000 seconds)
                 try {
                     if (!empty(Yii::$app) && Yii::$app->has('redis')) {
                         $redis = Yii::$app->get('redis');
-                        $redis->setex($cacheKey, 600, '1');
+                        $redis->setex($cacheKey, 15000, '1');
                     }
                 } catch (\Exception $e) {
                     // ignore redis failures

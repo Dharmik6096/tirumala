@@ -90,6 +90,7 @@ class RestController extends ActiveController {
             'data' => [],
         ];
         echo json_encode($error);
+        die;
     }
 
     public function getOrgDetail($type, $code, $is_string = TRUE) {
