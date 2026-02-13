@@ -291,6 +291,7 @@ if (!empty($params['redis'])) {
         'class' => 'yii\redis\Cache',
         'redis' => $params ['redis']
     ];
+    $config['components']['redis'] = $params ['redis'];
 }
 if (YII_ENV_DEV) {
 // configuration adjustments for 'dev' environment
