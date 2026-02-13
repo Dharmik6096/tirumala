@@ -42,6 +42,7 @@ class TblVendorPaymentHoldReleaseTransactionSearch extends TblVendorPaymentHoldR
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false
         ]);
 
 
