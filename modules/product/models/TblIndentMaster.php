@@ -290,7 +290,7 @@ class TblIndentMaster extends \app\models\ChildModel {
     public function setChildTable(&$model, &$saveModel, &$errors) {
         if (!empty($model)) {
             $modelStages = new TblApprovalStagesDetail();
-            $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $saveModel, $approval_stages);
+            $modelStages->setApprovalData($model->union_code, 'indent_master', $model->indent_code, $saveModel, $approval_stages);
             $model->status = empty($approval_stages) ? 2 : 0;
         }
     }
@@ -310,7 +310,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             }
             if (!empty($model)) {
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $childModel, $approval_stages);
+                $modelStages->setApprovalData($model->union_code, 'indent_master', $model->indent_code, $childModel, $approval_stages);
                 $model->status = empty($approval_stages) ? '2' : '0';
             }
         } else {
