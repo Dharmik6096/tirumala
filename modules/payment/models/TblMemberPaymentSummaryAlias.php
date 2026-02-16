@@ -167,4 +167,32 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
         $bill_head = TblBillHead::find()->where(['union_code' => $this->union_code,'bill_head_for'=>'member','default_bill_head_code' => 16,'is_active'=>1])->one();
         return !empty($bill_head) ? $bill_head->bill_head_code : '';
     }    
+
+    public function getPaymentCycleApplicabilityForMemberLock($payment_cycle_code, $bmc_code) {
+        try {
+            $applicabilityCodes = TblMemberPaymentSummaryAlias::find()
+                ->select('payment_cycle_applicabilty_code')
+                ->distinct()
+                ->where([
+                    'bmc_code' => $bmc_code,
+                    'payment_cycle_code' => $payment_cycle_code
+                ])
+                ->column();
+
+            if (!empty($applicabilityCodes)) {
+                $applicabilityModels = TblPaymentCycleApplicability::find()
+                    ->where(['payment_cycle_applicabilty_code' => $applicabilityCodes])
+                    ->all();
+
+                foreach ($applicabilityModels as $model) {
+                    $model->process_lock_member = 1;
+                    $model->scenario = 'processLock';
+                }
+                return $applicabilityModels;
+            }
+        } catch (\Exception $e) {
+            return [];
+        }
+        return [];
+    }
 }
