@@ -81,7 +81,7 @@ class TblPaymentCycleController extends ChildController {
 
             if ($this->model->validate()) {
                 $save_model = [];
-                for ($i = 0; $from_date < $to_date; $i++) {
+                for ($i = 0; $from_date <= $to_date; $i++) {
                     $shift_from_date = $from_date->format('Y-m-d');
                     $new_model = new ReflectionClass($this->model->className());
                     $model = $new_model->newInstanceArgs();
