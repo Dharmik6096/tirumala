@@ -74,8 +74,8 @@ class TblPaymentCycleController extends ChildController {
                 $shift_to_type = 2;
             }
 
-            $from_date = new DateTime($this->model->from_date . ' ' . $shift_from_time);
-            $to_date = new DateTime($this->model->to_date . ' ' . $shift_to_time);
+            $from_date = new DateTime($this->model->from_date);
+            $to_date = new DateTime($this->model->to_date);
             $this->model->from_date = $from_date->format('Y-m-d') . ' ' . $shift_from_time;
             $this->model->to_date = $to_date->format('Y-m-d') . ' ' . $shift_to_time;
 
