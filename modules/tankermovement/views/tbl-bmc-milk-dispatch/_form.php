@@ -135,6 +135,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'total_vehicle_capacity')->textInput(['readonly' => true]) ?>
+            </div>
         </div>
         <div class="col-lg-4">
             <h5 class="panel-heading mb15"><?= Yii::t('app', 'Purchase Information') ?></h5>
@@ -291,7 +294,6 @@ var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
 var txnEdit = `$txnEdit`;
-isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
@@ -299,8 +301,6 @@ $(document).ready(function(){
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
         $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
-            if (isTripTriggerChange) return;
-            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
@@ -315,7 +315,6 @@ $(document).ready(function(){
                         var lastOptionValue = tripCodeOptions.last().val();
                         $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
                     }
-                    isTripTriggerChange = false;
                 }, 200);
             }
         });
@@ -447,6 +446,30 @@ $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '
     var destType = $(this).val().toUpperCase();
     updateLastDestinationCheckbox(destType);
 });
+$('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+function setVehicleCapacity(vehicleCode) {
+    if (setData(vehicleCode)) {
+        $.ajax({
+            type: 'get',
+            url: '" . Url::to(['total-vehicle-capacity']) . "',
+            data: {vehicle_code: vehicleCode},
+            success: function(data) {
+                var res = JSON.parse(data);
+                $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');
+            }
+        });
+    } else {
+        $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+    }
+}
+$(document).off('change', '#tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-vehicle_code', function () {
+    var vehicleCode = $(this).val();
+    setVehicleCapacity(vehicleCode);
+});
+if (isSecondTransaction) {
+    var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+    setVehicleCapacity(vehicleCode);
+}
 if(!isSecondTransaction) {
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
         var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();

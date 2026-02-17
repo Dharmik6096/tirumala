@@ -356,22 +356,31 @@ class TblVehicleTripController extends \app\controllers\ChildController {
 
     public function actionCloseTrip($id) {
         $tripModel = $this->findModel($id);
-        $historyModel = new TblVehicleTripHistory();
-        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
-        $tripModel->scenario = 'closetrip';
-        $tripModel->trip_status = 'closed';
-        $tripModel->trip_sub_status = 'cleaning_pending';
-        $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
-        $msg = Yii::$app->getSession()->getFlash('success')['message'];
-        if ($transaction == 'customRedirect') {
-            $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
-            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, 'Trip Close Forcefully');
-            $record = ['status' => 'success', 'msg' => $msg];
-        } else {
-            $record = ['status' => 'error', 'msg' => $msg];
+        if (Yii::$app->request->isPost) {
+            if ($tripModel->load(Yii::$app->request->post())) {
+                $historyModel = new TblVehicleTripHistory();
+                Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+                $tripModel->scenario = 'closetrip';
+                $tripModel->trip_status = 'closed';
+                $tripModel->trip_sub_status = 'cleaning_pending';
+                $tripModel->force_close = 1;
+                $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                if ($transaction == 'customRedirect') {
+                    $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, 'Trip Close Forcefully');
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                return Json::encode($record);
+            }
         }
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_close_trip', ['model' => $tripModel]);
+        }
+        return $this->redirect(['index']);
     }
 
     public function actionInactiveTrip($id) {
@@ -568,10 +577,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $type = Yii::$app->request->get('type');
         $this->model->type = !empty($type) ? $type : 'normal';
         $vehicleTripDetails = $this->model->vehicleTripDetailCode ?? [];
-
-        $sourceBmc = array_map(function($item) {
+        $bmcCodeArray = [];
+        $sourceBmc = array_map(function($item) use (&$bmcCodeArray) {
             if (!empty($item->source_org_code) && !empty($item->source_org_type) && $item->is_virtual_location != 2) {
                 if($item->source_org_type == 'bmc'){
+                    $bmcCodeArray[] = $item->source_org_code;
                     return $item->source_org_code;
                 } else if($item->is_virtual_location == 1){
                     return $item->source_org_code . '#' . strtolower($item->source_org_type) .'#conversion_vendor';
@@ -581,19 +591,22 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
             return null;
         }, $vehicleTripDetails);
-
+        $tripModel = clone $this->model;
         $this->model->bmc_code = array_values($sourceBmc);
         $saveModel = [];
         $deleteModel = [];
         $this->viewFile = 'update';
+        $cnt = 0;
 
         if (Yii::$app->request->post()) {
+            $is_last_destination = 0;
             $this->model->load(Yii::$app->request->post());
             $tripDetailData = TblVehicleTripDetail::find()->where(['vehicle_trip_code' => $this->model->vehicle_trip_code])->andWhere(['IS NOT', 'arrival_time', null])->one();
             $is_auto_trip = $this->model->is_auto_trip;
             if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
                 $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
                 $bmc_detail = explode(':::', $bmc_string);
+                $cnt = count($bmc_detail);
                 foreach ($bmc_detail as $k => $v) {
                     $bmc_index = explode('~~~', $v);
                     $bmc_array[$bmc_index[0]] = $bmc_index[1];
@@ -687,6 +700,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     } else {
                         if (!$is_auto_trip || (isset($sloc_detail[1]) && $sloc_detail[1] == 'plant')) {
                             $trip_detail->is_last_destination = 1;
+                            $is_last_destination = 1;
                         }
                     }
 
@@ -775,6 +789,19 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $sequence_no++;
                 }
                 if ($validate) {
+                    $newStatus = null;
+                    if ((!$is_last_destination || $cnt > 1) && $tripModel->trip_status == 'tankerfull') {
+                        $newStatus = 'open';
+                    } elseif ($cnt == 1 && $is_last_destination && $tripModel->trip_status == 'open') {
+                        $newStatus = 'tankerfull';
+                    }
+                    if ($newStatus) {
+                        $historyModel = new TblVehicleTripHistory();
+                        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+                        $tripModel->trip_status = $newStatus;
+                        $saveModel[] = $historyModel;
+                        $saveModel[] = $tripModel;
+                    }
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                     if ($transaction !== FALSE) {
                         return $this->{$transaction}();
@@ -783,6 +810,10 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         $combined_array = [$this->model->plant_code];
+        if(!empty($bmcCodeArray)){
+            $plantCodeArray = $this->model->getPlantCodeFromBmc($bmcCodeArray);
+            $combined_array = !empty($plantCodeArray) ? array_merge($combined_array, $plantCodeArray) : $combined_array;
+        }
         foreach ($this->model->bmc_code as $code) {
             if (strpos($code, '#plant') !== false) {
                 $plant_code_from_bmc = str_replace('#plant', '', $code);

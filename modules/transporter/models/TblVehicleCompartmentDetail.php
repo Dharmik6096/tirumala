@@ -89,11 +89,11 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
     }
 
     public function getChamberList() {
-        $compartmentNoCount = $this->find()->select('vehicle_code')->where(['vehicle_code' => (int) $this->vehicle_code])->count();
-        if ($compartmentNoCount > 0) {
-            return ArrayHelper::map(array_map(function ($comp) {
-                                return ['id' => $comp, 'value' => $comp];
-                            }, range(1, $compartmentNoCount)), 'id', 'value');
+        $compartmentData = $this->find()->where(['vehicle_code' => (int) $this->vehicle_code])->all();
+        if (!empty($compartmentData)) {
+            return ArrayHelper::map($compartmentData, 'compartment_no', function($model) {
+                        return $model->compartment_no . ' - ' . $model->capacity;
+                    });
         }
         return [];
     }

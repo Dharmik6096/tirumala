@@ -82,6 +82,7 @@ class Grid extends Widget {
             ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
         ];
 
+        
         if (isset($grid_option->actions)) {
             if ($viewHistory == true) { //allow view history
                 $grid_option->actions['view-history'] = 1;

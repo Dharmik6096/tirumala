@@ -398,7 +398,7 @@ class TblDcsController extends ChildController {
                         $vendorModel = $vendorModelData;
                     }
                     $vendorModel->vendor_code = $this->model->vendor;
-                    if ($this->model->vendor == 'BIPL') {
+                    if ($this->model->vendor == 'BIPL' && $this->model->dpu_type == 91) {
                         Yii::$app->general->generateFTPDir($this->model, 'dcs_code', [], $this->model->mcc_plant_code, $this->model->ref_code);
                     }
                     array_push($mappingList, $vendorModel);
@@ -1292,7 +1292,7 @@ class TblDcsController extends ChildController {
                 $applicability = new TblPurchaseRateApplicability();
                 $applicableData = $applicability->getDcsApplicability($dcsModel->dcs_code, date('Y-m-d'));
                 $purchaseRate = !empty($applicableData) ? $applicableData->purchase_rate_code : '';
-                if (!empty($purchaseRate)) {
+                if (!empty($purchaseRate) && $dcsModel->dpu_type == 91) {
                     $org_model = new TblOrgFileLog();
                     $org_model->module_code = $model->module_code;
                     $model->value1 = $purchaseRate;
@@ -1302,9 +1302,11 @@ class TblDcsController extends ChildController {
                     $saveModel[] = $model;
                 }
             } else {
-                $org_model = new TblOrgFileLog();
-                $org_model->module_code = $model->module_code;
-                $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                if($dcsModel->dpu_type == 91){
+                    $org_model = new TblOrgFileLog();
+                    $org_model->module_code = $model->module_code;
+                    $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                }
                 $model->status = 2;
                 $model->file_status = 1;
                 $saveModel[] = $model;
