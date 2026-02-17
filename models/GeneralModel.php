@@ -65,15 +65,11 @@ class GeneralModel {
      */
     public function save2($model, $message) {
         $transaction = \Yii::$app->db->beginTransaction();
-        //   $model[2]->save();
-        //var_dump($model);exit;
         try {
             $master = [];
             foreach ($model as $m) {
                 $master[] = $m->save();
-                //var_dump($m->getErrors());
             }
-            //exit;
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
                 //var_dump($master);exit;
@@ -559,6 +555,19 @@ class GeneralModel {
             }
             if ($returnException) {
                 return $message;
+            } else {
+                return false;
+            }
+        } catch (\Throwable $e) {
+            $transaction->rollback();
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $e->getMessage() . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $e->getMessage()]);
+            }
+            if ($returnException) {
+                return $e->getMessage();
             } else {
                 return false;
             }

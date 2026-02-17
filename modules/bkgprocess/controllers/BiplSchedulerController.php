@@ -9,6 +9,7 @@ use yii\data\ArrayDataProvider;
 use PHPExcel;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use app\components\FTPConnection;
+use app\components\WebApi;
 use app\modules\organisation\models\TblDcs;
 use yii\filters\VerbFilter;
 use app\controllers\ChildController;
@@ -18,11 +19,15 @@ use app\modules\bkgprocess\models\BiplFtpDispatch;
 use app\modules\bkgprocess\models\BiplFtpTankerDispatch;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 
 class BiplSchedulerController extends ChildController {
 
-    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master'];
+    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data', 'upload-error-files-master', 'bipl-dcs-api-master', 'bipl-member-api-master', 'bipl-rate-api-master', 'bipl-rate-mapping-api-master'];
     public $errorPath = '';
+    public $token = '';
 
     public function init() {
         parent::init();
@@ -561,4 +566,122 @@ class BiplSchedulerController extends ChildController {
         }
     }
 
+    private function processMasterApi($modelClass, $endpointKey, $dataKey, $idKey, $extraIdKey = null) {
+        $localModel = null;
+        $current_ids = [];
+        $current_extra_ids = null;
+        try {
+            $config = \Yii::$app->params['clienterp_authentication']['bipl_smart'];
+            $base_url = $config['api_base_url'];
+            if (!$this->AuthenticateRequest($config)) return;
+
+            $localModel = new $modelClass();
+            $masterData = $localModel->getMasterRecord();
+            if (empty($masterData)) return;
+
+            $current_ids = !empty($dataKey) ? array_column($masterData[$dataKey], $idKey) : $masterData[$idKey];
+            $current_extra_ids = !empty($extraIdKey) && !empty($masterData[$extraIdKey]) ? $masterData[$extraIdKey] : $current_ids;
+            $now = date('Y-m-d H:i:s');
+            $initialUpdate = ['data_post_status' => 1, 'updated_at' => $now, 'picked_datetime' => $now];
+            $localModel->updateStatus($initialUpdate, $current_extra_ids);
+            try {
+                $api = new WebApi();
+                $api->return_actual = true;
+                $api->serverUrl = $base_url;
+                $api->apiurl = $config[$endpointKey];
+                $api->body = json_encode($masterData);
+                $api->is_header_merge = true;
+                $api->header_info = ["Authorization: Bearer " . $this->token]; 
+                $api->authentication = [];
+                $result = $api->POSTDATA();
+                $response = !empty($result) ? json_decode($result) : [];
+                if (!empty($response)) {
+                    $respTime = date('Y-m-d H:i:s');
+                    $isSuccess = $response->isSuccessful ?? false;
+                    if (isset($response->errors) && is_object($response->errors)) {
+                        $validationErrors = [];
+                        foreach ($response->errors as $field => $messages) {
+                            $validationErrors[] = $field . ": " . (is_array($messages) ? implode(', ', $messages) : $messages);
+                        }
+                        $errorMessage = "Validation: " . implode('; ', $validationErrors);
+                        $updateData = ['data_post_status' => 3, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($errorMessage, 0, 800)];
+                        $localModel->updateStatus($updateData, $current_extra_ids);
+                        return false;
+                    } else if ($isSuccess && empty($response->data->remarks)) {
+                        $localModel->updateStatus(['data_post_status' => 2, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => substr($response->message ?: 'Integrated successfully.', 0, 800)], $current_extra_ids);
+                        return true;
+                    } else if (!empty($response->data->remarks)) {
+                        foreach ($response->data->remarks as $val) {
+                            if(!isset($val->isSuccessful)){
+                                $status = $val->integrationFlag ? 2 : 3;
+                                $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->remark];
+                                $id = $val->$idKey;
+                                if(!empty($extraIdKey) && property_exists($val, $extraIdKey)){
+                                    $key = $val->$idKey . $val->$extraIdKey;
+                                    $id = $current_extra_ids[$key] ?? $id; 
+                                }
+                                $localModel->updateStatus($update, $id);
+                            } else {
+                                $status = $val->isSuccessful ? 2 : 3;
+                                $update = ['data_post_status' => $status, 'updated_at' => $respTime, 'response_datetime' => $respTime, 'resp_desc' => $val->message];
+                                $localModel->updateStatus($update, $current_extra_ids);
+                            }
+                        }
+                    } else {
+                        $msg = !empty($response->message) ? $response->message : 'The record could not be sent. Please try again';
+                        $updateData = ['data_post_status' => 3,'updated_at' => $respTime,'response_datetime' => $respTime,'resp_desc' => $msg];
+                        $localModel->updateStatus($updateData, $current_extra_ids);
+                    }
+                }
+            } catch (\Throwable $ex) {
+                $this->handleApiError($ex, $localModel, $current_extra_ids);
+            }
+        } catch (\Throwable $ex) {
+            $this->handleApiError($ex, $localModel, $current_extra_ids);
+        }
+    }
+
+    private function handleApiError($ex, $model, $ids) {
+        if ($model && !empty($ids)) {
+            $now = date('Y-m-d H:i:s');
+            $errorMsg = $ex->getMessage();
+            $shortDesc = (strlen($errorMsg) > 800) ? substr($errorMsg, 0, 800) : $errorMsg;
+            $updateData = ['data_post_status' => 3, 'updated_at' => $now, 'response_datetime' => $now, 'resp_desc' => json_encode($shortDesc)];
+            $model->updateStatus($updateData, $ids);
+        }
+    }
+
+    public function actionBiplRateApiMaster() {
+        $this->processMasterApi(TblPurchaseRate::class, 'rate_endpoint', '', 'rateId');
+    }
+
+    public function actionBiplRateMappingApiMaster() {
+        $this->processMasterApi(TblPurchaseRateApplicability::class, 'rate_mapping_endpoint', 'mappingDetails', 'rateId', 'mppCode');
+    }
+
+    public function actionBiplDcsApiMaster() {
+        $this->processMasterApi(TblDcs::class, 'dcs_endpoint', 'mppDetails', 'mppCode');
+    }
+
+    public function actionBiplMemberApiMaster() {
+        $this->processMasterApi(TblMember::class, 'member_endpoint', 'farmerImport', 'memberCode', 'mppCode');
+    }
+
+    public function AuthenticateRequest($config){
+        $api = new WebApi();
+        $api->return_actual = true;
+        $api->authentication = [];
+        $api->serverUrl = $config['api_base_url'];
+        $api->apiurl = $config['auth_endpoint'];
+        $api->is_header_merge = false;
+        $authentication = $config['authentication']['user'];
+        $api->body = json_encode($authentication);
+        $result = $api->POSTDATA();
+        $response = !empty($result) ? json_decode($result) : [];
+        if(!empty($response->isSuccessful)){
+            $this->token = $response->data->token;
+            return true;
+        }
+        return false;
+    }
 }

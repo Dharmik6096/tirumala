@@ -376,7 +376,7 @@ $grid_option = [
         'upload-ftp-file' => function ($url, $model) {
             $id = $model->dcs_code;
             $type = 'DCS';
-            $class = $model->dpu_type == 91 ? '' : 'link-disable disabled';
+            $class = ($model->dpu_type == 91 || $model->dpu_type == 93) ? '' : 'link-disable disabled';
             $url = ['/organisation/tbl-dcs/upload-ftp-file', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload Rate/Name Files', 'class' => '' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a('<i class="fa fa-upload"></i>', $url, $options);

@@ -5,6 +5,7 @@ namespace app\modules\dcsoperation\models;
 use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -250,6 +251,52 @@ class TblPurchaseRate extends \app\models\ChildModel {
     public function getDcsPurchaseRateCode($code) {
         $data = $this->find()->where(['dcs_purchase_rate_code' => $code])->one();
         return $data;
+    }
+
+    public function getMasterRecord(){
+        $data = (new \yii\db\Query())
+                ->select([
+                    'companyCode' => new Expression("DISTINCT ISNULL(u.x_col1, '')"),
+                    'rateId' => 'rate.purchase_rate_code',
+                    'effectiveDate' => new Expression("CAST(rate.wef_date AS DATE)"),
+                    'effectiveShift' => new Expression("ISNULL(LEFT(shift.shift, 1), '')"),
+                    'shift' => new Expression("ISNULL(LEFT(app_shift.shift, 1), '')")
+                ])
+                ->from(['rate' => 'tbl_purchase_rate'])
+                ->innerJoin(['app' => 'tbl_purchase_rate_applicability'], 'app.purchase_rate_code = rate.purchase_rate_code')
+                ->innerJoin(['dcs' => 'tbl_dcs'], 'dcs.dcs_code = app.dcs_code AND dcs.dpu_type = 93')
+                ->innerJoin(['shift' => 'tbl_shift'], 'shift.id = rate.shift_id')
+                ->leftJoin(['app_shift' => 'tbl_shift'], 'app_shift.id = app.shift_applicability')
+                ->innerJoin(['u' => 'tbl_unions'], 'u.union_code = rate.union_code')
+                ->where(['OR', ['rate.data_post_status' => 0], ['rate.data_post_status' => ''], ['rate.data_post_status' => null]])
+                ->one();
+
+        if (!empty($data)) {
+            $rateDetails = $this->getDetails($data['rateId']);
+            $data['rateDetails'] = $rateDetails;
+        }
+        return $data;
+    }
+
+    public function getDetails($rateId) {
+        $data = (new \yii\db\Query())
+            ->select([
+                'fat' => new Expression("ISNULL(fat, '')"),
+                'snf' => new Expression("ISNULL(snf, '')"),
+                'rate' => new Expression("ISNULL(rtpl, 0)"),
+                'lr' => new Expression("0"),
+                'type' => new Expression("ISNULL(LEFT(type.animal_type_name, 1), '')"),
+            ])
+            ->from('tbl_purchase_rate_details as detail')
+            ->innerJoin('tbl_purchase_rate rate', 'rate.purchase_rate_code = detail.purchase_rate_code')
+            ->innerJoin('tbl_animal_type type', 'type.animal_type_code = detail.milk_type_code')
+            ->where(['detail.purchase_rate_code' => $rateId, 'detail.is_active' => 1])
+            ->all();
+        return $data;
+    }
+
+    public function updateStatus($updateData, $ids) {
+        return TblPurchaseRate::updateAll($updateData, ['purchase_rate_code' => $ids]);
     }
 
 }
