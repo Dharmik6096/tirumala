@@ -60,12 +60,12 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
 
         if (!empty($this->from_date)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'tbl_android_installation_details.created_at', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_android_installation_details.created_at', $from_date . ' 00:00:00']);
         }
 
         if (!empty($this->to_date)) {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'tbl_android_installation_details.created_at', $to_date]);
+            $query->andFilterWhere(['<=', 'tbl_android_installation_details.created_at', $to_date . ' 23:59:59']);
         }
 
         // grid filtering conditions
