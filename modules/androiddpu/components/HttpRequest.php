@@ -87,8 +87,37 @@ class HttpRequest extends \yii\base\Component {
         if (in_array($this->action_url, $this->is_free)) {
             return TRUE;
         } else if (!empty($this->request['token'])) {
+            // try redis cache first
+            $cacheKey = 'androiddpu:auth:' . md5($this->request['token'] . '|' . (!empty($this->request['device_id']) ? $this->request['device_id'] : '') . '|' . (!empty($this->request['organization_code']) ? $this->request['organization_code'] : '') . '|' . (!empty($this->request['organization_type']) ? $this->request['organization_type'] : ''));
+            try {
+                if (!empty(Yii::$app) && Yii::$app->has('redis')) {
+                    $redis = Yii::$app->get('redis');
+                    $cached = $redis->get($cacheKey);
+                    if ($cached !== null && $cached !== false) {
+                        if ((string)$cached === '1') {
+                            return TRUE;
+                        } else {
+                            $message[] = 'Authentication Failed.';
+                            Yii::$app->apiError->error($message, 'error');
+                            return FALSE;
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // ignore redis failures and fallback to DB
+            }
+
             $model = new TblAndroidInstallationDetails();
             if ($model->getActiveRecordCount($this->request) == 1) {
+                // cache positive auth for 4.17hr (15000 seconds)
+                try {
+                    if (!empty(Yii::$app) && Yii::$app->has('redis')) {
+                        $redis = Yii::$app->get('redis');
+                        $redis->setex($cacheKey, 15000, '1');
+                    }
+                } catch (\Exception $e) {
+                    // ignore redis failures
+                }
                 return TRUE;
             } else {
                 $message[] = 'Authentication Failed.';

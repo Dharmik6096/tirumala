@@ -105,6 +105,13 @@ $attribute = [
     ['attribute' => 'no_of_compartment', 'visible' => false],
     ['attribute' => 'vehicle_capacity', 'visible' => false],
     ['attribute' => 'remark'],
+    ['attribute' => 'force_close', 'label' => Yii::t('app', 'Is force Close?'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'force_close'),
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'force_close');
+        }
+    ],
+    ['attribute' => 'force_close_remarks'],
 ];
 
 $grid_option = [
@@ -200,47 +207,25 @@ $grid_option = [
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-
+<div id="CloseTrip"></div>
 <?php
 
 $script = "
 $(document).ready(function(){
-    $(document).on('click','.close-trip',function(e){
-    var id= $(this).attr('data-val');
-    var name = $(this).attr('data-name');
-    bootbox.confirm({
-        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to Close Trip \"'+name+'\" ?</span></div></div>',
-        buttons: {
-            'cancel': {
-                            label: 'Cancel',
-                            className: 'btn btn-danger'
-              },
-            'confirm': {
-                            label: 'Ok',
-                            className: 'btn btn-primary'
-             }
-        },
-        callback: function(result) {
-            if (result) {
-              $('#loader').show();
-                 $.ajax({
-                        type: 'get',
-                        url: '" . Url::to(['close-trip']) . "',
-                        data:{'id':id},
-                        success: function(data) {
-                            var obj1 = $.parseJSON(data);
-                            if (obj1.status == 'success')
-                            {
-                                $.pjax.reload({container: '#vehicle-trip-list'});
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                            }
-                            else if (obj1.status == 'error'){
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
-                            }
-                        }
-            });
-       }
-    }
+    $(document).on('click', '.close-trip', function(e){
+        e.preventDefault();
+        var id= $(this).attr('data-val');
+        $.ajax({
+            type: 'get',
+            url: '" . Url::to(['close-trip']) . "',
+            data: {'id': id},
+            success: function(data) {  
+                $('#CloseTrip').html(data);
+                $('#CloseTripModal').modal('toggle');  
+            },    
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+            }
         });
     });
  $(document).on('click','.inactive-trip',function(e){

@@ -53,7 +53,7 @@ class RestController extends ActiveController {
 
     public function beforeAction($action) {
         parent::beforeAction($action);
-        $request = new HttpRequest();
+        $request = Yii::$app->get('androidHttpRequest');
         $this->post_data = $request->ParseRequest();
         if ($this->post_data === FALSE) {
             $this->getError();
@@ -67,7 +67,7 @@ class RestController extends ActiveController {
             $this->getError();
         } else {
             //$result = parent::afterAction($action, $result);
-            $response = new HttpResponse();
+            $response = Yii::$app->get('androidHttpResponse');
             $response->apply_camel_case = $this->apply_camel_case;
             return $response->BindResponse($this->response);
         }
@@ -90,6 +90,7 @@ class RestController extends ActiveController {
             'data' => [],
         ];
         echo json_encode($error);
+        die;
     }
 
     public function getOrgDetail($type, $code, $is_string = TRUE) {

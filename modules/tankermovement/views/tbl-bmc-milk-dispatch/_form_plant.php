@@ -62,9 +62,15 @@ $form = ActiveForm::begin([
                     </div>
                 <?php } ?>
             <?php } else { ?>
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly); ?>
-                </div>
+                <div class="col-sm-2"> 
+                        <?php
+                            if ($tankerMovementWithTripSubStatus) {
+                                echo Yii::$app->dropdown->vehicleQaInspectionList($model, $form, 'tblbmcmilkdispatch-union_code', 'vehicle_code', TRUE, FALSE, '', FALSE, TRUE);
+                            } else {
+                                echo Yii::$app->dropdown->dropdown('vehicle_transpoter', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), $readonly);
+                            }
+                        ?>
+                    </div>
                 <div class="col-sm-2" id='transactionDate'>
                     <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
                 </div>
@@ -103,6 +109,9 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'total_vehicle_capacity')->textInput(['readonly' => true]) ?>
             </div>
         </div>
     </div>
@@ -220,7 +229,6 @@ var isTransactionFormLoad = false;
 var tankerMovementWithTripSubStatus = `$tankerMovementWithTripSubStatus`;
 var tripGenerateBtn = `$tripGenerateBtn`;
 var isSecondTransaction = `$readonly`;
-isTripTriggerChange = false;
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
     $('#is-last-destination-container').hide();
@@ -228,8 +236,6 @@ $(document).ready(function(){
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
         $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
-            if (isTripTriggerChange) return;
-            isTripTriggerChange = true;
             $('#addTripButtonDiv').hide();
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
             var plantCode = $('#tblbmcmilkdispatch-plant_code').val();
@@ -244,7 +250,6 @@ $(document).ready(function(){
                         var lastOptionValue = tripCodeOptions.last().val();
                         $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
                     }
-                    isTripTriggerChange = false;
                 }, 200);
             }
         });
@@ -324,6 +329,30 @@ $(document).ready(function(){
         var destType = $(this).val().toUpperCase();
         updateLastDestinationCheckbox(destType);
     });
+    $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+    function setVehicleCapacity(vehicleCode) {
+        if (setData(vehicleCode)) {
+            $.ajax({
+                type: 'get',
+                url: '" . Url::to(['total-vehicle-capacity']) . "',
+                data: {vehicle_code: vehicleCode},
+                success: function(data) {
+                    var res = JSON.parse(data);
+                    $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');
+                }
+            });
+        } else {
+            $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+        }
+    }
+    $(document).off('change', '#tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-vehicle_code', function () {
+        var vehicleCode = $(this).val();
+        setVehicleCapacity(vehicleCode);
+    });
+    if (isSecondTransaction) {
+        var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+        setVehicleCapacity(vehicleCode);
+    }
     if(!isSecondTransaction) {
         $(document).on('change', '#tblbmcmilkdispatch-plant_code, #tblbmcmilkdispatch-trip_code', function() {   
             var source_org_code = $('#tblbmcmilkdispatch-plant_code').val();

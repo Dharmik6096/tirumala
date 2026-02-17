@@ -347,6 +347,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Bonus Payment - Previous Data'), 'url' => ['/payment/tbl-bonus-payment-previous-data/index'], 'active' => ($cntrl == 'tbl-bonus-payment-previous-data' && $action == 'index')],
                     ['label' => Yii::t('app', 'Bonus Payment'), 'url' => ['/payment/tbl-bonus-payment/index'], 'active' => ($cntrl == 'tbl-bonus-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Party Payment'), 'url' => ['/payment/tbl-party-payment/index'], 'active' => ($cntrl == 'tbl-party-payment' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Excess Fat Snf Master'), 'url' => ['/payment/tbl-excess-fat-snf-master/index'], 'active' => ($cntrl == 'tbl-excess-fat-snf-master' && $action == 'index')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -1270,6 +1271,7 @@ echo GhostMenu::widget([
                             ]
                         ],
                             ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => User::canRoute(['/site/help-manual']) ? (($eiplCode == 'GYAN') ? TRUE : FALSE) : FALSE],
+                            ['label' => Yii::t('app', 'BIPL Smart Api Logs'), 'url' => ['/dcsoperation/tbl-bipl-smart/repush-bulk-data'], 'active' => ($cntrl == 'tbl-bipl-smart' && $action == 'repush-bulk-data')],
                             ['label' => Yii::t('app', 'Client Erp Api Logs'), 'url' => ['/clienterp/tbl-client-erp-api-log/index']],
                             ['label' => Yii::t('app', 'Request Data'), 'url' => ['/syncutility/tbl-force-sync-request/index']],
                             ['label' => Yii::t('app', 'Data Exchange Logs'), 'url' => ['/clienterp/tbl-data-exchange-log/index']],

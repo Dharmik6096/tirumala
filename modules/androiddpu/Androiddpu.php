@@ -5,6 +5,9 @@ namespace app\modules\androiddpu;
 /**
  * androiddpu module definition class
  */
+use app\modules\androiddpu\components\HttpRequest;
+use app\modules\androiddpu\components\HttpResponse;
+
 class Androiddpu extends \yii\base\Module {
 
     /**
@@ -35,6 +38,34 @@ class Androiddpu extends \yii\base\Module {
             ],
         ];
         // custom initialization code goes here
+    }
+
+    /**
+     * Module-scoped singletons for request/response helpers
+     */
+    protected $httpRequest;
+    protected $httpResponse;
+
+    public function getHttpRequest()
+    {
+        if (!empty(Yii::$app) && Yii::$app->has('androidHttpRequest')) {
+            return Yii::$app->get('androidHttpRequest');
+        }
+        if ($this->httpRequest === null) {
+            $this->httpRequest = new HttpRequest();
+        }
+        return $this->httpRequest;
+    }
+
+    public function getHttpResponse()
+    {
+        if (!empty(Yii::$app) && Yii::$app->has('androidHttpResponse')) {
+            return Yii::$app->get('androidHttpResponse');
+        }
+        if ($this->httpResponse === null) {
+            $this->httpResponse = new HttpResponse();
+        }
+        return $this->httpResponse;
     }
 
 }
