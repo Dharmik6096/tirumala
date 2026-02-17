@@ -562,6 +562,19 @@ class GeneralModel {
             } else {
                 return false;
             }
+        } catch (\Throwable $e) {
+            $transaction->rollback();
+            if (Yii::$app->request->isConsoleRequest) {
+                echo $e->getMessage() . "\n";
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $e->getMessage()]);
+            }
+            if ($returnException) {
+                return $e->getMessage();
+            } else {
+                return false;
+            }
         }
     }
 

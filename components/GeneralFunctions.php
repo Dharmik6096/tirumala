@@ -533,9 +533,9 @@ class GeneralFunctions extends Component {
 
     public function getforeignkeyWithArray($value, $field) {
         $returnValue = '';
-        if(!empty($value[0])){
-            foreach($value as $val){
-                $returnValue = !empty($returnValue) ? $returnValue.', '.$val->$field : $val->$field;
+        if (!empty($value[0])) {
+            foreach ($value as $val) {
+                $returnValue = !empty($returnValue) ? $returnValue . ', ' . $val->$field : $val->$field;
             }
         } else {
             $returnValue = !empty($value) ? $value->$field : '';
@@ -1404,8 +1404,9 @@ class GeneralFunctions extends Component {
         foreach ($model->attributes as $key => $a) {
             if (!empty($a)) {
                 $type = $scema->columns[$key]->type;
-                if ($type == 'datetime') {
-                    $a = Yii::$app->controls->save_datetime($a);
+                if ($type == 'datetime' || $type == 'date') {
+                    $format = ($type == 'date') ? 'php:Y-m-d' : 'php:Y-m-d H:i:s';
+                    $a = Yii::$app->controls->save_datetime($a, $format);
                 }
                 $model->{$key} = $a;
             }
