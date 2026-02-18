@@ -58,20 +58,21 @@ class TblProductRequisition extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['androidsync']],
-            [['product_requisition_code'], 'safe'],
-            [['product_requisition_code'], 'required', 'on' => ['androidsync']],
-            [['dcs_code'], 'required', 'when' => function ($model) {
+                [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['androidsync']],
+                [['product_requisition_code'], 'safe'],
+                [['product_requisition_code'], 'required', 'on' => ['androidsync']],
+                [['dcs_code'], 'required', 'when' => function ($model) {
                     return $model->vendor_type == 'DCS';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductrequisition-vendor_type').val() == 'DCS'; 
           }", 'except' => ['androidsync']],
-            [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['req_date', 'created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
-            [['description'], 'string', 'max' => 500],
-            [['req_time'], 'safe'],
-            [['req_time'], 'required', 'on' => ['create']],
+                [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['req_date', 'created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
+                [['description'], 'string', 'max' => 500],
+                [['req_time'], 'safe'],
+                [['req_time'], 'required', 'on' => ['create']],
+                [['req_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01')],
         ];
     }
 
