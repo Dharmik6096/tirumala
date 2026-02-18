@@ -81,6 +81,7 @@ echo GhostMenu::widget([
                     'template' => '<a class="dropdown-toggle" href="#">Accounting Master <b class="caret"></b></a>',
                     'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
+                            ['label' => Yii::t('app', 'Financial Year'), 'url' => ['/dcsaccounting/tbl-financial-year/index'], 'active' => ($cntrl == 'tbl-financial-year')],
                             ['label' => Yii::t('app', 'Tax Group'), 'url' => ['/dcsaccounting/tbl-tax-group/index'], 'active' => ($cntrl == 'tbl-tax-group')],
                             ['label' => Yii::t('app', 'Basic Tax'), 'url' => ['/dcsaccounting/tbl-basic-tax/index'], 'active' => ($cntrl == 'tbl-basic-tax')],
                             ['label' => Yii::t('app', 'Tax'), 'url' => ['/dcsaccounting/tbl-tax/index'], 'active' => ($cntrl == 'tbl-tax')],

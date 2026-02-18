@@ -64,7 +64,7 @@ class importData extends \yii\base\Module {
             'tax-group' => ['table_name' => 'tbl_tax_group', 'fields' => 'tax_group_name', 'default_fields' => 'is_active:1', 'increment' => 1],
             'tax' => ['table_name' => 'tbl_tax', 'fields' => 'tax_group_code,tax_code,tax_name', 'default_fields' => 'is_active:1'],
             'basic-tax' => ['table_name' => 'tbl_basic_tax', 'fields' => 'basic_tax_name', 'default_fields' => 'is_active:1', 'increment' => 1],
-            'financial-year' => ['table_name' => 'tbl_financial_year', 'fields' => 'starting_date,ending_date,code', 'default_fields' => 'is_active:1'],
+            'financial-year' => ['table_name' => 'tbl_financial_year', 'fields' => 'starting_date,ending_date,code', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
             'incometax-dep-per' => ['table_name' => 'tbl_asset_depreciation_incometax_act', 'fields' => 'percentage,type,asset_group_code,financial_year_code', 'default_fields' => 'is_active:1', 'increment' => 1],
             'rate-formula' => ['table_name' => 'tbl_formula', 'fields' => 'formula_code,formula_description,formula,wef_date,dcs_code,milk_type_code,rate_type_code,union_code', 'default_fields' => 'is_active:1'],
             'union-payment-cycle' => ['table_name' => 'tbl_union_payment_cycle', 'fields' => 'union_payment_cycle_code,from_date,from_shift,interval_value,is_billing,lock_billing_process,to_date,to_shift,union_code', 'default_fields' => 'is_active:1'],
