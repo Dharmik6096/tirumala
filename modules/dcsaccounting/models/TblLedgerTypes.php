@@ -41,8 +41,12 @@ class TblLedgerTypes extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'ledger_type_name', 'ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'local_name', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at'], 'safe'],
-                [['ledger_type_code', 'ledger_type_name', 'union_code'], 'required'],
+            [['union_code', 'ledger_type_name', 'ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'local_name', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at'], 'safe'],
+            [['ledger_type_name', 'union_code'], 'required'],
+            [['local_name'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+            [['ledger_type_name'], 'unique'],
         ];
     }
 
