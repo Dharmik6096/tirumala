@@ -2541,6 +2541,7 @@ class DropDown extends Component {
             'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
             'committee_type_code' => ['name' => 'committee_type_code', 'fields' => 'committee_type_code,committee_type_name', 'prompt' => 'Select Type', 'model' => 'TblCommitteeType'],
             'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
+            'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
             'Ledgers' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,tbl_ledgers.local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers', 'joinwith' => ['voucherTypesCode'], 'whereCondition' => ['tbl_voucher_types.is_active' => 1, 'tbl_voucher_types.voucher_type' => 1]],
         ];
         return $label[$l];

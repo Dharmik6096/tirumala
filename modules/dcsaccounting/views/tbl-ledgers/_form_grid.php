@@ -2,6 +2,7 @@
 
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\Url;
 ?>
 
 <?php
@@ -31,9 +32,9 @@ $attribute = [
         ['attribute' => 'ledger_group_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->ledgerGroupCode, 'ledger_group_name');
         },],
-    'ledger_code',
-    'ledger_name',
-    'local_name',
+        ['attribute' => 'ledger_code', 'visible' => FALSE],
+        ['attribute' => 'ledger_name'],
+        ['attribute' => 'local_name'],
         ['attribute' => 'has_sub_ledger',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_sub_ledger'),
         'value' => function ($model) {
@@ -48,6 +49,10 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'view' => TRUE,
+        'edit' => function ($url, $model) {
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', Url::to(['tbl-ledgers/update', 'id' => $model->ledger_code]), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+        },
+        'delete' => ['option' => 'ledger_name,ledger_code,/dcsaccounting/tbl-ledgers/delete'],
     ]
 ];
 
