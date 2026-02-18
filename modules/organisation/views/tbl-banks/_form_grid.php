@@ -33,6 +33,11 @@ $attribute = [
             return $model->is_alpha_acno_allow == 0 ? 'No' : 'Yes';
         },
         'filter' => Html::activeDropDownList($searchModel, 'is_alpha_acno_allow', ['' => 'Select', 1 => 'Yes', 0 => 'No'], ['class' => 'form-control'])],
+        ['attribute' => 'ledger_code',
+            'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->ledgerCode, 'ledger_name');
+            }, 'visible' => true, 'filter' => false
+        ],
 ];
 
 $grid_option = [

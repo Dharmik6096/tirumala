@@ -110,4 +110,8 @@ class TblLedgers extends \app\models\ChildModel {
         return $this->hasOne(TblLedgerGroups::className(), ['ledger_group_code' => 'ledger_group_code']);
     }
 
+    public function getVoucherTypesCode() {
+        return $this->hasOne(TblVoucherTypes::className(), ['ledger_code' => 'ledger_code']);
+    }
+
 }

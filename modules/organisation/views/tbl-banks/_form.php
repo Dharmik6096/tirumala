@@ -48,6 +48,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'checked_ac_no', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('Ledgers', $model, $form, '', $model->getAttributeLabel('ledger_code')); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= $form->field($model, 'nationalized_bank', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
