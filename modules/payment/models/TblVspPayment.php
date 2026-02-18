@@ -263,4 +263,26 @@ class TblVspPayment extends \app\models\ChildModel {
         return $isValid;
     }
 
+    public function getPaymentCycleApplicabilityForLock($payment_cycle_code, $bmc_code, $customer_type) {
+        try {
+            $applicability = TblPaymentCycleApplicability::find()
+                ->where([
+                    'payment_cycle_code' => $payment_cycle_code,
+                    'applicable_code' => $bmc_code,
+                    'applicable_type' => $customer_type,
+                    'applicable_for' => 'BMC'
+                ])
+                ->one();
+
+            if (!empty($applicability)) {
+                $applicability->process_lock_bmc = 1;
+                $applicability->scenario = 'processLock';
+                return $applicability;
+            }
+        } catch (\Exception $e) {
+            return null;
+        }
+        return null;
+    }
+
 }

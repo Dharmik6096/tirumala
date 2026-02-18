@@ -244,6 +244,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $save_model = [];
             $delete_model = [];
             $cnt = 0;
+            $updated_applicability = [];
             foreach ($adjust_id as $key => $value) {
                 $data = TblVspPayment::findOne($adjust_id[$key]);
                 if ($data->billing_type == 'remuneration') {
@@ -327,6 +328,16 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 $model->union_code = $data->union_code;
                 $model->billing_type = $data->billing_type;
                 $model->customer_type = $data->customer_type;
+                if ($processFlag == 'locked') {
+                    $unique_key = $data->payment_cycle_code . '_' . $data->bmc_code . '_' . $data->customer_type;
+                    if (!isset($updated_applicability[$unique_key])) {
+                        $applicabilityModel = $data->getPaymentCycleApplicabilityForLock($data->payment_cycle_code, $data->bmc_code, $data->customer_type);
+                        if (!empty($applicabilityModel)) {
+                            $save_model[] = $applicabilityModel;
+                        }
+                        $updated_applicability[$unique_key] = true;
+                    }
+                }
             }
             if ($model->billing_type == 'remuneration') {
                 $PaymentApp = TblRemunerationSummary::find()
