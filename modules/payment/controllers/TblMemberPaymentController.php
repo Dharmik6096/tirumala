@@ -326,6 +326,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
                 }
 
+                $updated_applicability = [];
                 foreach ($summaryModelData as $summaryData) {
                     $historyModel = new TblMemberPaymentSummaryAliasHistory();
                     Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
@@ -345,6 +346,17 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $save_model[] = $historyModel;
                     $save_model[] = $summaryData;
                     if ($processFlag == 'Lock') {
+                        $unique_key = $summaryData->payment_cycle_code . '_' . $summaryData->bmc_code;
+                        if (!isset($updated_applicability[$unique_key])) {
+                            $applicabilityModels = $summaryData->getPaymentCycleApplicabilityForMemberLock($summaryData->payment_cycle_code, $summaryData->bmc_code);
+                            if (!empty($applicabilityModels)) {
+                                foreach ($applicabilityModels as $appModel) {
+                                    $save_model[] = $appModel;
+                                }
+                            }
+                            $updated_applicability[$unique_key] = true;
+                        }
+
                         $old_stop_all = TblPaymentStop::find()
                                 ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER_PAYMENT', 'bmc_code' => $summaryData->bmc_code])
                                 ->all();

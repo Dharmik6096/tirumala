@@ -81,7 +81,7 @@ class TblPaymentCycleController extends ChildController {
 
             if ($this->model->validate()) {
                 $save_model = [];
-                for ($i = 0; $from_date < $to_date; $i++) {
+                for ($i = 0; $from_date <= $to_date; $i++) {
                     $shift_from_date = $from_date->format('Y-m-d');
                     $new_model = new ReflectionClass($this->model->className());
                     $model = $new_model->newInstanceArgs();
@@ -255,7 +255,7 @@ class TblPaymentCycleController extends ChildController {
                 $title = $model->data_lock_bmc == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
                 $url = $model->data_lock_bmc == 1 ? '/payment/tbl-payment-cycle/bmc-data-unlock' : '/payment/tbl-payment-cycle/bmc-data-lock';
                 $popupClass = ' disabled ';
-                if (User::canRoute($url) && $model->billing_lock_bmc == 0) {
+                if (User::canRoute($url) && $model->billing_lock_bmc == 0 && $model->process_lock_bmc == 0) {
                     $popupClass = ' generalGridConfirmationPopup ';
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->data_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' data for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
@@ -280,7 +280,7 @@ class TblPaymentCycleController extends ChildController {
                 $title = $model->sync_lock_bmc == 1 ? 'Sync Unlock - BMC' : 'Sync Lock - BMC';
                 $url = $model->data_lock_bmc == 1 ? '/payment/tbl-payment-cycle/bmc-sync-unlock' : '/payment/tbl-payment-cycle/bmc-sync-lock';
                 $popupClass = ' disabled ';
-                if (User::canRoute($url) && $model->billing_lock_bmc == 0) {
+                if (User::canRoute($url) && $model->billing_lock_bmc == 0 && $model->process_lock_bmc == 0) {
                     $popupClass = ' generalGridConfirmationPopup ';
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->sync_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' Sync for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
@@ -324,7 +324,7 @@ class TblPaymentCycleController extends ChildController {
                 $title = $model->data_lock_member == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
                 $url = $model->data_lock_member == 1 ? '/payment/tbl-payment-cycle/member-data-unlock' : '/payment/tbl-payment-cycle/member-data-lock';
                 $popupClass = ' disabled ';
-                if (User::canRoute($url) && $model->billing_lock_member == 0) {
+                if (User::canRoute($url) && $model->billing_lock_member == 0 && $model->process_lock_member == 0) {
                     $popupClass = ' generalGridConfirmationPopup ';
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->data_lock_member == 1 ? 'Unlock' : 'Lock') . ' data for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
@@ -349,7 +349,7 @@ class TblPaymentCycleController extends ChildController {
                 $title = $model->sync_lock_member == 1 ? 'Sync Unlock - Member' : 'Sync Lock - Member';
                 $url = $model->sync_lock_member == 1 ? '/payment/tbl-payment-cycle/member-sync-unlock' : '/payment/tbl-payment-cycle/member-sync-lock';
                 $popupClass = ' disabled ';
-                if (User::canRoute($url) && $model->billing_lock_member == 0) {
+                if (User::canRoute($url) && $model->billing_lock_member == 0 && $model->process_lock_member == 0) {
                     $popupClass = ' generalGridConfirmationPopup ';
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->sync_lock_member == 1 ? 'Unlock' : 'Lock') . ' Sync for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
