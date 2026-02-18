@@ -125,9 +125,9 @@ class TblPaymentCycleApplicabilitySearch extends TblPaymentCycleApplicability {
 
         if (!empty($this->check_for)) {
             if ($this->check_for == 'data_lock_member' || $this->check_for == 'sync_lock_member') {
-                $query->andFilterWhere([$this->check_for => $this->data_status, 'billing_lock_member' => 0, 'process_lock_member' => 0]);
+                $query->andFilterWhere([$this->check_for => $this->data_status, 'billing_lock_member' => 0, 'ISNULL(process_lock_member, 0)' => 0]);
             } else {
-                $query->andFilterWhere([$this->check_for => $this->data_status, 'billing_lock_bmc' => 0, 'process_lock_bmc' => 0]);
+                $query->andFilterWhere([$this->check_for => $this->data_status, 'billing_lock_bmc' => 0, 'ISNULL(process_lock_bmc, 0)' => 0]);
             }
         }
         if (!empty($this->from_date) && !empty($this->to_date)) {

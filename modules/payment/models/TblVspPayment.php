@@ -264,9 +264,6 @@ class TblVspPayment extends \app\models\ChildModel {
     }
 
     public function getPaymentCycleApplicabilityForLock($payment_cycle_code, $bmc_code, $customer_type) {
-        if (is_array($bmc_code)) {
-            $bmc_code = $bmc_code[0];
-        }
         try {
             $applicability = TblPaymentCycleApplicability::find()
                 ->where([

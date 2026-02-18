@@ -170,26 +170,19 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
 
     public function getPaymentCycleApplicabilityForMemberLock($payment_cycle_code, $bmc_code) {
         try {
-            $applicabilityCodes = TblMemberPaymentSummaryAlias::find()
-                ->select('payment_cycle_applicabilty_code')
-                ->distinct()
-                ->where([
-                    'bmc_code' => $bmc_code,
-                    'payment_cycle_code' => $payment_cycle_code
-                ])
-                ->column();
+            $applicabilityModels = TblPaymentCycleApplicability::find()
+            ->where([
+                'payment_cycle_code' => $payment_cycle_code,
+                'applicable_code' => $bmc_code,
+                'applicable_type' => 'DCS',
+            ])
+            ->all();
 
-            if (!empty($applicabilityCodes)) {
-                $applicabilityModels = TblPaymentCycleApplicability::find()
-                    ->where(['payment_cycle_applicabilty_code' => $applicabilityCodes])
-                    ->all();
-
-                foreach ($applicabilityModels as $model) {
-                    $model->process_lock_member = 1;
-                    $model->scenario = 'processLock';
-                }
-                return $applicabilityModels;
+            foreach ($applicabilityModels as $model) {
+                $model->process_lock_member = 1;
+                $model->scenario = 'processLock';
             }
+            return $applicabilityModels;
         } catch (\Exception $e) {
             return [];
         }
