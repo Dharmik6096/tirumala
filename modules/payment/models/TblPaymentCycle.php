@@ -83,6 +83,10 @@ class TblPaymentCycle extends \app\models\ChildModel {
                 $this->addError($attribute, Yii::t('app/validation', 'To Date Must be Greater Than From Date.'));
                 return false;
             }
+            if ($this->from_date == $this->to_date) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date and Shift cannot be the same as From Date and Shift.'));
+                return false;
+            }
         }
     }
 

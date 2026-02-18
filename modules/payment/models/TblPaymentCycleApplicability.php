@@ -54,11 +54,12 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['applicable_code', 'applicable_type'], 'required'],
-                [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
+                [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type', 'process_lock_bmc','process_lock_member'], 'safe'],
                 [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
                 [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
-                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false, 'except' => ['lockUnlock']], //Comment as Set Validation from DB Side: Hardik //-> 21/02/2023 uncoment for add range conflict check due to issue in credit check in product sale : Seema
+                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false, 'except' => ['lockUnlock', 'processLock']], //Comment as Set Validation from DB Side: Hardik //-> 21/02/2023 uncoment for add range conflict check due to issue in credit check in product sale : Seema
+                [['process_lock_bmc', 'process_lock_member'], 'default', 'value' => 0]
         ];
     }
 
@@ -87,6 +88,8 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'process_lock_bmc' => Yii::t('app', 'Process Lock BMC'),
+            'process_lock_member' => Yii::t('app', 'Process Lock Member'),
         ];
     }
 
