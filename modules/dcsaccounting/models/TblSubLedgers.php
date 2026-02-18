@@ -51,7 +51,7 @@ class TblSubLedgers extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['sub_ledger_name', 'sub_ledger_code', 'reference_code', 'originating_org_code', 'originating_org_type', 'type', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'created_at', 'updated_at'], 'safe'],
-                [['sub_ledger_code', 'sub_ledger_name'], 'required'],
+                [['sub_ledger_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 
