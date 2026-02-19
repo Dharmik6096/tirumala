@@ -102,7 +102,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-6">
-        <?= $form->field($model, 'message')->textarea(['maxlength' => 255]) ?>
+        <?= $form->field($model, 'message')->textarea(['maxlength' => 500]) ?>
     </div>
     <?php echo Html::hiddenInput('TblFtpTxnLog[file_name]', '', ['id' => 'file_name']); ?>
 
