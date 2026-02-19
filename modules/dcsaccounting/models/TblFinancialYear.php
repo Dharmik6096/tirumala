@@ -3,7 +3,10 @@
 namespace app\modules\dcsaccounting\models;
 
 use app\models\ChildModel;
+use app\modules\organisation\models\TblUnions;
+use app\modules\syncutility\models\TblSentbox;
 use Yii;
+use yii\base\UserException;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -164,6 +167,37 @@ class TblFinancialYear extends ChildModel {
             $this->code = trim($this->code);
             if (stripos($this->code, 'FY') !== 0) {
                 $this->code = 'FY' . $this->code;
+            }
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    public function afterDelete() {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
             }
         }
     }

@@ -7,6 +7,8 @@ use app\modules\geo\models\TblDistricts;
 use app\models\ChildModel;
 use app\modules\dcsaccounting\models\TblLedgers;
 use app\modules\organisation\models\TblBanksDistrictsMapping;
+use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_banks".
@@ -265,6 +267,37 @@ class TblBanks extends ChildModel {
             if (empty($ledger)) {
                 $this->addError($attribute, Yii::t('app/validation', 'Invalid Ledger Code. Only ledgers with voucher type "Bank" are allowed.'));
                 return false;
+            }
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    public function afterDelete() {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
             }
         }
     }
