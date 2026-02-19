@@ -46,7 +46,7 @@ class TblLedgersSearch extends TblLedgers {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_ledgers', 'tbl_ledgers', 'tbl_ledgers', 'tbl_ledgers');
+        $query->andFilterWhere(['tbl_ledgers.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         $query->joinWith(['ledgerGroupCode']);
 
         // grid filtering conditions

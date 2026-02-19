@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\dcsaccounting\models\TblLedgerMappingProductGroup;
+use app\modules\product\models\TblProductGroup;
 
 /**
  * TblLedgerMappingProductGroupSearch represents the model behind the search form about `app\modules\dcsaccounting\models\TblLedgerMappingProductGroup`.
@@ -57,6 +58,19 @@ class TblLedgerMappingProductGroupSearch extends TblLedgerMappingProductGroup {
                 ->andFilterWhere(['like', 'tbl_product_group.product_group_name', $this->product_group_code]);
 
         return $dataProvider;
+    }
+
+    public function mappingSearch($params) {
+        $query = TblProductGroup::find()
+                ->select(['tbl_product_group.union_code', 'tbl_product_group.product_group_code', 'tbl_product_group.product_group_name', 'tbl_ledger_mapping_product_group.ledger_sale_code', 'tbl_ledger_mapping_product_group.ledger_purchase_code', 'tbl_ledger_mapping_product_group.ledger_mapping_product_group_code'])
+                ->leftJoin('tbl_ledger_mapping_product_group', 'tbl_ledger_mapping_product_group.product_group_code = tbl_product_group.product_group_code');
+           
+        $query->andFilterWhere(['tbl_product_group.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        return new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
     }
 
 }
