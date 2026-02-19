@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_ledgers".
@@ -51,12 +52,12 @@ class TblLedgers extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ledger_name', 'ledger_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'has_sub_ledger', 'ledger_group_code', 'is_active', 'originating_type', 'created_at', 'updated_at', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['ledger_name', 'ledger_group_code', 'union_code'], 'required'],
-            [['local_name'], function ($attribute, $params) {
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ledger_name', 'ledger_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'has_sub_ledger', 'ledger_group_code', 'is_active', 'originating_type', 'created_at', 'updated_at', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['ledger_name', 'ledger_group_code', 'union_code'], 'required'],
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-            [['ledger_name'], 'unique', 'targetAttribute' => ['ledger_name', 'ledger_group_code'], 'message' => 'This name already exists in this group.'],
+                [['ledger_name'], 'unique', 'targetAttribute' => ['ledger_name', 'ledger_group_code'], 'message' => 'This name already exists in this group.'],
         ];
     }
 
@@ -152,6 +153,22 @@ class TblLedgers extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getLedgerList($union_code, $type) {
+        $ledgerData = $this->find()->alias('l')
+                ->innerJoin('tbl_ledger_groups lg', 'l.ledger_group_code = lg.ledger_group_code')
+                ->innerJoin('tbl_ledger_types lt', 'lg.ledger_type_code = lt.ledger_type_code')
+                ->where(['l.union_code' => $union_code])
+                ->andWhere(['l.is_active' => 1])
+                ->andWhere(['LOWER(lt.ledger_type_name)' => $type])
+                ->all();
+        if (!empty($ledgerData)) {
+            return ArrayHelper::map($ledgerData, 'ledger_code', function($model) {
+                        return $model->ledger_name;
+                    });
+        }
+        return [];
     }
 
 }

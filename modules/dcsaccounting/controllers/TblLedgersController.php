@@ -17,6 +17,8 @@ use app\modules\dcsaccounting\models\TblLedgerSubLedgersMappingSearch;
  */
 class TblLedgersController extends ChildController {
 
+    public $freeAccessActions = ['get-ledger-list'];
+
     /**
      * Lists all TblLedgers models.
      * @return mixed
@@ -120,6 +122,21 @@ class TblLedgersController extends ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionGetLedgerList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $this->model = new TblLedgers();
+                $data = $this->model->getLedgerList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+            }
+        }
+        return Json::encode(['output' => $out, 'selected' => '']);
     }
 
 }

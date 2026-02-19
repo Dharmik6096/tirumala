@@ -774,7 +774,12 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-chamber-list', Yii::t('app', 'Select Chamber'), $multiple, '', $readonly);
     }
-    
+
+    public function ledgerList($model, $form, $depends, $name = 'ledger_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsaccounting/tbl-ledgers/get-ledger-list', Yii::t('app', 'Select Ledger'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -2543,6 +2548,7 @@ class DropDown extends Component {
             'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
             'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
             'Ledgers' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,tbl_ledgers.local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers', 'joinwith' => ['voucherTypesCode'], 'whereCondition' => ['tbl_voucher_types.is_active' => 1, 'tbl_voucher_types.voucher_type' => 1]],
+            'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,tbl_ledgers.local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
         ];
         return $label[$l];
     }

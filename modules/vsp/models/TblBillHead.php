@@ -11,6 +11,7 @@ use app\modules\payment\models\TblPaymentCycle;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_bill_head".
@@ -31,7 +32,7 @@ use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
  */
 class TblBillHead extends \app\models\ChildModel {
 
-    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code, $from_date, $to_date;
+    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code, $from_date, $to_date, $ledger_code, $has_sub_ledger, $credit_debit;
 
     /**
      * @inheritdoc
@@ -207,6 +208,28 @@ class TblBillHead extends \app\models\ChildModel {
                         ->where(['union_code' => $searchData->union_code, 'bmc_code' => $searchData->bmc_code, 'applicable_code' => $code, 'applicable_for' => $searchData->customer_type, 'bill_head_for' => $searchData->bill_head_for])->all();
 
         return ArrayHelper::map($query, 'bill_head_code', 'bill_head_code');
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

@@ -17,7 +17,7 @@ class TblVoucherTypesSearch extends TblVoucherTypes {
      */
     public function rules() {
         return [
-                [['voucher_type_name', 'voucher_type_code', 'is_active', 'originating_type', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'created_at', 'updated_at'], 'safe'],
+                [['voucher_type_name', 'voucher_type_code', 'is_active', 'originating_type', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'created_at', 'updated_at', 'ledger_code', 'voucher_type', 'credit_debit'], 'safe'],
         ];
     }
 
@@ -48,16 +48,19 @@ class TblVoucherTypesSearch extends TblVoucherTypes {
         $this->load($params);
 
         Yii::$app->general->filterByOrg($query, $this);
-        $query->joinWith(['unionCode']);
+        $query->joinWith(['unionCode', 'ledgerCode']);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_voucher_types.voucher_type_code' => $this->voucher_type_code,
-            'tbl_voucher_types.is_active' => $this->is_active
+            'tbl_voucher_types.is_active' => $this->is_active,
+            'tbl_voucher_types.voucher_type' => $this->voucher_type,
+            'tbl_voucher_types.credit_debit' => $this->credit_debit
         ]);
 
         $query->andFilterWhere(['like', 'tbl_voucher_types.voucher_type_name', $this->voucher_type_name])
-                ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code]);
+                ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_ledgers.ledger_name', $this->ledger_code]);
 
 
         return $dataProvider;

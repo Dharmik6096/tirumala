@@ -17,7 +17,7 @@ class TblBillHeadSearch extends TblBillHead {
      */
     public function rules() {
         return [
-                [['bill_head_code', 'bill_head_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'general_formula_code', 'milk_type_code'], 'safe'],
+                [['bill_head_code', 'bill_head_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'general_formula_code', 'milk_type_code', 'ledger_code', 'has_sub_ledger', 'credit_debit'], 'safe'],
                 [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type'], 'integer'],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'default_bill_head_code', 'general_formula', 'sequence_no', 'bill_head_for'], 'safe'],
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code', 'has_slab', 'calculation_based_on', 'is_hold', 'payment_cycle_type'], 'safe'],
@@ -76,6 +76,30 @@ class TblBillHeadSearch extends TblBillHead {
 
 
         ;
+
+        return $dataProvider;
+    }
+
+    public function mappingSearch($params) {
+        $query = TblBillHead::find()->select(['tbl_bill_head.union_code', 'tbl_bill_head.bill_head_code', 'tbl_bill_head.bill_head_name', 'm.ledger_code', 'm.has_sub_ledger', 'm.credit_debit'])
+                ->leftJoin('tbl_ledger_mapping_bill_head m', 'm.bill_head_code = tbl_bill_head.bill_head_code');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query->asArray(),
+            'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        Yii::$app->general->filterByOrg($query, $this);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
+        $query->andWhere([
+            'tbl_bill_head.bill_head_for' => 'MEMBER',
+        ]);
 
         return $dataProvider;
     }

@@ -8,6 +8,9 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
+use app\modules\vsp\models\TblBillHead;
+use app\modules\vsp\models\TblVspBillHeadCriteria;
+use app\modules\dcsaccounting\models\TblLedgers;
 
 /**
  * This is the model class for table "tbl_ledger_mapping_bill_head".
@@ -113,11 +116,11 @@ class TblLedgerMappingBillHead extends \app\models\ChildModel {
     }
 
     public function getBillHeadCode() {
-        return $this->hasOne(TblMemberBillHead::className(), ['bill_head_code' => 'bill_head_code']);
+        return $this->hasOne(TblBillHead::className(), ['bill_head_code' => 'bill_head_code']);
     }
 
     public function getBillCriteriaCode() {
-        return $this->hasOne(TblMemberBillCriteria::className(), ['bill_criteria_code' => 'bill_criteria_code']);
+        return $this->hasOne(TblVspBillHeadCriteria::className(), ['vsp_criteria_code' => 'bill_criteria_code']);
     }
 
 }
