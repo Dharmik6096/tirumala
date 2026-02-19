@@ -49,7 +49,7 @@ class TblBillHead extends \app\models\ChildModel {
                 [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
                 [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
                 [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
-                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'milk_type_code'], 'safe'],
+                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'milk_type_code', 'ledger_code', 'has_sub_ledger', 'credit_debit'], 'safe'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_disburse_allowed'], 'default', 'value' => '1'],
                 [['is_default', 'has_slab', 'is_hold'], 'default', 'value' => '0'],

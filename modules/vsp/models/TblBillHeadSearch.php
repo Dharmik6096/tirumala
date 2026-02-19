@@ -80,28 +80,4 @@ class TblBillHeadSearch extends TblBillHead {
         return $dataProvider;
     }
 
-    public function mappingSearch($params) {
-        $query = TblBillHead::find()->select(['tbl_bill_head.union_code', 'tbl_bill_head.bill_head_code', 'tbl_bill_head.bill_head_name', 'm.ledger_code', 'm.has_sub_ledger', 'm.credit_debit'])
-                ->leftJoin('tbl_ledger_mapping_bill_head m', 'm.bill_head_code = tbl_bill_head.bill_head_code');
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query->asArray(),
-            'pagination' => false,
-        ]);
-
-        $this->load($params);
-
-        Yii::$app->general->filterByOrg($query, $this);
-
-        if (!$this->validate()) {
-            return $dataProvider;
-        }
-
-        $query->andWhere([
-            'tbl_bill_head.bill_head_for' => 'MEMBER',
-        ]);
-
-        return $dataProvider;
-    }
-
 }

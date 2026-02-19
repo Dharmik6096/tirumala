@@ -49,6 +49,11 @@ class TblLedgerMappingBillHeadSearch extends TblLedgerMappingBillHead {
         $this->load($params);
 
 //        Yii::$app->general->filterByOrg($query, $this, 'tbl_ledger_mapping_bill_head', 'tbl_ledger_mapping_bill_head', 'tbl_ledger_mapping_bill_head', 'tbl_ledger_mapping_bill_head');
+        $unions = Yii::$app->session->get('Unions');
+        if (!empty($unions)) {
+            $query->andFilterWhere(['tbl_ledger_mapping_bill_head.union_code' => explode(',', $unions)]);
+        }
+        
         $query->joinWith(['ledgerCode', 'billHeadCode', 'billCriteriaCode']);
 
 
@@ -68,15 +73,9 @@ class TblLedgerMappingBillHeadSearch extends TblLedgerMappingBillHead {
     }
 
     public function mappingSearch($params) {
-        $query = TblBillHead::find()
-                ->select([
-                    'tbl_bill_head.bill_head_code',
-                    'tbl_bill_head.bill_head_name',
-                    'tbl_ledger_mapping_bill_head.ledger_code',
-                    'tbl_ledger_mapping_bill_head.has_sub_ledger',
-                    'tbl_ledger_mapping_bill_head.credit_debit'
-                ])
-                ->leftJoin('tbl_ledger_mapping_bill_head', 'tbl_ledger_mapping_bill_head.bill_head_code = tbl_bill_head.bill_head_code');
+        $query = TblBillHead::find()->alias('bh')->select(['bh.bill_head_code', 'bh.bill_head_name', 'bh.union_code', 'lmbh.ledger_code', 'lmbh.has_sub_ledger', 'lmbh.credit_debit'])
+                ->leftJoin(['lmbh' => 'tbl_ledger_mapping_bill_head'], 'lmbh.bill_head_code = bh.bill_head_code')
+                ->where(['bh.bill_head_for' => 'MEMBER']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -85,13 +84,14 @@ class TblLedgerMappingBillHeadSearch extends TblLedgerMappingBillHead {
 
         $this->load($params);
 
-//        Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head', 'tbl_bill_head', 'tbl_bill_head', 'tbl_bill_head');
+        $unions = Yii::$app->session->get('Unions');
+        if (!empty($unions)) {
+            $query->andFilterWhere(['bh.union_code' => explode(',', $unions)]);
+        }
 
         if (!$this->validate()) {
             return $dataProvider;
         }
-
-        $query->andWhere(['tbl_bill_head.bill_head_for' => 'MEMBER']);
 
         return $dataProvider;
     }

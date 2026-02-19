@@ -2,8 +2,8 @@
 
 use yii\helpers\Html;
 use app\components\ActiveForm;
-use kartik\grid\GridView;
 use yii\web\View;
+use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Member Bill Head Mapping');
 ?>
@@ -62,9 +62,11 @@ $this->title = Yii::t('app', 'Member Bill Head Mapping');
 
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save('SAVE', $model, 'save'); ?>
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
+            <?php if (!empty($dataProvider->getModels())) { ?>
+                <?= Yii::$app->controls->save('SAVE', $model, 'save'); ?>
+            <?php }
+            ?>
+            <?= Html::a('cancel', Url::to(['index']), ['class' => 'btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>
         </div>
     </div>
 

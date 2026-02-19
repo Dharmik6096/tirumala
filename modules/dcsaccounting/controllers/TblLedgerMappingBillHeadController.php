@@ -32,58 +32,6 @@ class TblLedgerMappingBillHeadController extends ChildController {
         ]);
     }
 
-    public function actionCreates() {
-        $searchModel = new TblBillHeadSearch();
-        $model = new TblLedgerMappingBillHead();
-        $dataProvider = $searchModel->mappingSearch(Yii::$app->request->queryParams);
-
-        if (Yii::$app->request->post()) {
-            $save_model = [];
-            $historyModel = [];
-            $postData = Yii::$app->request->post()['TblLedgerMappingBillHead'];
-            foreach ($postData as $billHeadCode => $data) {
-                if (empty($data['ledger_code'])) {
-                    continue;
-                }
-                $mapping_model = TblLedgerMappingBillHead::find()->where(['bill_head_code' => $billHeadCode])->one();
-                if (empty($mapping_model)) {
-                    $mapping_model = new TblLedgerMappingBillHead();
-                    $mapping_model->bill_head_code = $billHeadCode;
-                } else {
-                    $mapingHistory = new TblLedgerMappingBillHeadHistory();
-                    Yii::$app->operation->history($mapping_model, $mapingHistory, 'UPDATE');
-                    $historyModel[] = $mapingHistory;
-                }
-
-                $mapping_model->has_sub_ledger = !empty($data['has_sub_ledger']) ? 1 : 0;
-                $mapping_model->credit_debit = $data['credit_debit'];
-                $mapping_model->ledger_code = $data['ledger_code'];
-
-                $billHead = TblBillHead::find()->where(['bill_head_code' => $billHeadCode])->one();
-                $mapping_model->union_code = $billHead->union_code;
-                $mapping_model->plant_code = $billHead->plant_code;
-                $mapping_model->mcc_plant_code = $billHead->mcc_plant_code;
-                $mapping_model->bmc_code = $billHead->bmc_code;
-                $mapping_model->dcs_code = $billHead->dcs_code;
-                $mapping_model->ledger_mapping_bill_head_code = Yii::$app->general->getCodeAutoIncrement($mapping_model);
-                $save_model[] = $mapping_model;
-            }
-            if (!empty($save_model)) {
-                $transaction = $this->generalModel->saveTransaction($save_model, $historyModel, ['Ledger Mapping Bill Head', 'edit']);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(Yii::$app->request->referrer);
-                }
-            }
-        }
-
-        $existingMappings = TblLedgerMappingBillHead::find()->indexBy('bill_head_code')->all();
-        return $this->render('mapping', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'model' => $mappingModel,
-        ]);
-    }
-
     public function actionCreate() {
         $searchModel = new TblLedgerMappingBillHeadSearch();
         $model = new TblLedgerMappingBillHead();
@@ -93,7 +41,7 @@ class TblLedgerMappingBillHeadController extends ChildController {
             $incCount = 0;
             $save_model = [];
             $historyModel = [];
-        
+
             $postData = Yii::$app->request->post()['TblBillHead'];
             foreach ($postData as $billHeadCode => $data) {
                 $mapping_model = TblLedgerMappingBillHead::find()->where(['bill_head_code' => $billHeadCode])->one();
