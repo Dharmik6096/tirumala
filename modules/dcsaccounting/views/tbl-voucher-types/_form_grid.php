@@ -10,8 +10,8 @@ use yii\helpers\Url;
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => false],
-        ['attribute' => 'voucher_type_code'],
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'voucher_type_code', 'visible' => false, 'filter' => false],
         ['attribute' => 'voucher_type_name'],
         ['attribute' => 'local_name', 'filter' => false],
         ['attribute' => 'ledger_code', 'value' => function($model) {

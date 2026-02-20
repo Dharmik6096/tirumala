@@ -1,6 +1,7 @@
 <?php
 
 use app\components\ActiveForm;
+use yii\helpers\Html;
 
 $form = ActiveForm::begin([
             'options' => [],
