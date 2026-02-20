@@ -4,19 +4,19 @@ use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false],
-    ['attribute' => 'ledger_type_code'],
-    ['attribute' => 'ledger_type_name'],
-    ['attribute' => 'local_name'],
-    ['attribute' => 'balance_sheet',
+        ['attribute' => 'ledger_type_code'],
+        ['attribute' => 'ledger_type_name'],
+        ['attribute' => 'local_name'],
+        ['attribute' => 'balance_sheet',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'balance_sheet'),
         'value' => function ($model) {
             $data = Yii::$app->dropdown->getRecords('boolean_value')['data'];
             return isset($data[$model->balance_sheet]) ? $data[$model->balance_sheet] : '';
         }],
-    ['attribute' => 'profit_loss',
+        ['attribute' => 'profit_loss',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'profit_loss'),
         'value' => function ($model) {
             $data = Yii::$app->dropdown->getRecords('boolean_value')['data'];
@@ -30,7 +30,7 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'edit' => function ($url, $model) {
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', Url::to(['tbl-ledger-types/update', 'id' => $model->ledger_type_code]), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-ledger-types/update', 'id' => $model->ledger_type_code]), ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
         },
         'delete' => ['option' => 'ledger_type_name,ledger_type_code,/dcsaccounting/tbl-ledger-types/delete'],
     ]

@@ -42,7 +42,7 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'edit' => function ($url, $model) {
-            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-financial-year/update', 'id' => $model->id]), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-financial-year/update', 'id' => $model->id]), ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
         },
     ]
 ];

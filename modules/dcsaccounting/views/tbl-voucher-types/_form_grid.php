@@ -35,7 +35,7 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'edit' => function ($url, $model) {
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', Url::to(['tbl-voucher-types/update', 'id' => $model->voucher_type_code]), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-voucher-types/update', 'id' => $model->voucher_type_code]), ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
         },
         'delete' => ['option' => 'voucher_type_name,voucher_type_code,tbl-voucher-types/delete'],
     ]

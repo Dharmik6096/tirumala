@@ -50,7 +50,7 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'edit' => function ($url, $model) {
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', Url::to(['tbl-ledgers/update', 'id' => $model->ledger_code]), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-ledgers/update', 'id' => $model->ledger_code]), ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
         },
         'delete' => ['option' => 'ledger_name,ledger_code,/dcsaccounting/tbl-ledgers/delete'],
     ]

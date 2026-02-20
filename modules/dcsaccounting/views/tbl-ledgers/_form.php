@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblledgers-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>
     </div>
     <div class="col-sm-2">
-         <?= Yii::$app->dropdown->dropdown('Ledger_groups', $model, $form, '', $model->getAttributeLabel('ledger_group_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('Ledger_groups', $model, $form, '', $model->getAttributeLabel('ledger_group_code')); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'ledger_name')->textInput(['maxlength' => true]); ?>
@@ -37,12 +37,12 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'has_sub_ledger', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'has_sub_ledger'); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
-     <div class="clearfix"></div>
+    <div class="clearfix"></div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>

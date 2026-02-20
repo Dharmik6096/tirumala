@@ -35,7 +35,7 @@ $readonly = $type == 'create' ? FALSE : TRUE;
         <?= Yii::$app->dropdown->dropdownStatic('credit_debit', $model, $form, '', $model->getAttributeLabel('credit_debit'), false, 'credit_debit'); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

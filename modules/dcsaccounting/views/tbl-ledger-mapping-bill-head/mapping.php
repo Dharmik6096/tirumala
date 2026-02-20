@@ -35,9 +35,8 @@ $this->title = Yii::t('app', 'Member Bill Head Mapping');
                 ['attribute' => 'has_sub_ledger', 'label' => Yii::t('app', 'Has Sub Ledger?'),
                 'format' => 'raw',
                 'value' => function ($model) use ($form) {
-                    return $form->field($model, "[$model->bill_head_code]has_sub_ledger", [
-                                'checkboxTemplate' => '<div class="mb0 center_text">{input}</div>{error}{hint}'
-                            ])->checkbox()->label(FALSE);
+                    $checkboxValue = (isset($model->has_sub_ledger) && $model->has_sub_ledger == 1) ? true : false;
+                    return $form->field($model, "[$model->bill_head_code]has_sub_ledger", ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}", 'options' => ['class' => 'mb0 center_text'],])->checkbox(['checked' => $checkboxValue, 'class' => '', 'label' => false]);
                 }, 'filter' => false
             ],
                 ['attribute' => 'credit_debit', 'label' => Yii::t('app', 'Credit/Debit'),
