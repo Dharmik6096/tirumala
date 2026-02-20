@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Financial Year');
+$this->title = Yii::$app->label->title('create', 'Voucher Type');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

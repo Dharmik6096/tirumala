@@ -48,6 +48,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'checked_ac_no'); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('Ledgers', $model, $form, '', $model->getAttributeLabel('ledger_code')); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'nationalized_bank'); ?>

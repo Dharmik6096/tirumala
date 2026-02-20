@@ -5,7 +5,10 @@ namespace app\modules\organisation\models;
 use Yii;
 use app\modules\geo\models\TblDistricts;
 use app\models\ChildModel;
+use app\modules\dcsaccounting\models\TblLedgers;
 use app\modules\organisation\models\TblBanksDistrictsMapping;
+use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_banks".
@@ -45,7 +48,7 @@ class TblBanks extends ChildModel {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'ledger_code'], 'safe'],
                 [['bank_name', 'ac_no_length', 'checked_ac_no'], 'required'],
                 [['bank_name'], 'getBankCode', 'on' => 'importCsv'],
                 [['bank_code'], 'required', 'except' => 'importCsv'],
@@ -72,6 +75,7 @@ class TblBanks extends ChildModel {
                 [['is_alpha_acno_allow'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'boolean_value');
                 }, 'on' => 'importCsv'],
+                [['ledger_code'], 'validateLedgerVoucherType', 'on' => 'importCsv'],
         ];
     }
 
@@ -145,6 +149,7 @@ class TblBanks extends ChildModel {
             'short_name' => Yii::t('app', 'Short Name'),
             'local_short_name' => Yii::t('app', 'Local Short Name'),
             'is_alpha_acno_allow' => Yii::t('app', 'Allow Alpha A/C no.'),
+            'ledger_code' => Yii::t('app', 'Ledger'),
         ];
     }
 
@@ -250,6 +255,51 @@ class TblBanks extends ChildModel {
             $out .= $row->districtCode->district_name . ', ';
         }
         return $out;
+    }
+
+    public function getLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'ledger_code']);
+    }
+
+    public function validateLedgerVoucherType($attribute, $params) {
+        if (!empty($this->$attribute)) {
+            $ledger = TblLedgers::find()->joinWith(['voucherTypesCode'])->where(['tbl_ledgers.is_active' => 1, 'tbl_voucher_types.is_active' => 1, 'tbl_voucher_types.voucher_type' => 1, 'tbl_ledgers.ledger_code' => $this->$attribute])->one();
+            if (empty($ledger)) {
+                $this->addError($attribute, Yii::t('app/validation', 'Invalid Ledger Code. Only ledgers with voucher type "Bank" are allowed.'));
+                return false;
+            }
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    public function afterDelete() {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
     }
 
 }

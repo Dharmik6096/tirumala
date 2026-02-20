@@ -17,16 +17,16 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'filter' => false],
-        ['attribute' => 'dcs_code', 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
+        ['attribute' => 'dcs_code', 'filter' => false, 'visible' => FALSE],
         ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-        }, 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Society Name'),
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'ledger_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->ledgerCode, 'ledger_name');
         }],
@@ -35,13 +35,13 @@ $attribute = [
         }],
         ['attribute' => 'bill_criteria_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->billCriteriaCode, 'criteria');
-        }],
+        }, 'visible' => FALSE],
         ['attribute' => 'type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('type', $searchModel, 'type'),
         'value' => function ($model) {
             $data = Yii::$app->dropdown->getRecords('type')['data'];
             return !empty($data[$model->type]) ? $data[$model->type] : '';
-        }],
+        }, 'visible' => FALSE],
         ['attribute' => 'has_sub_ledger',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_sub_ledger'),
         'value' => function ($model) {

@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Financial Year');
+$this->title = Yii::$app->label->title('create', 'Ledger Types');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -7,7 +7,7 @@ $this->title = Yii::$app->label->title('create', 'Financial Year');
         <?=
         $this->render('_form', [
             'model' => $model,
-            'type' => 'edit'
+            'type' => 'create'
         ])
         ?>
     </div>

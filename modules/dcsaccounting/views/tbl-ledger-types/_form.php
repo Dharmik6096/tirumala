@@ -1,7 +1,6 @@
 <?php
 
 use app\components\ActiveForm;
-use yii\widgets\MaskedInput;
 
 $form = ActiveForm::begin([
             'options' => [],
@@ -14,13 +13,19 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">
-        <?= $form->field($model, 'code')->widget(MaskedInput::className(), ['mask' => '9999-99']); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'starting_date', '', FALSE, false, FALSE, true); ?>
+        <?= $form->field($model, 'ledger_type_name')->textInput(['maxlength' => true]); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'ending_date', '', FALSE, false, FALSE, true); ?>
+        <?= $form->field($model, 'local_name')->textInput() ?>
+    </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'balance_sheet', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'profit_loss', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
