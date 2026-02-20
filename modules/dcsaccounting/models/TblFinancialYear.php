@@ -177,7 +177,7 @@ class TblFinancialYear extends ChildModel {
             foreach ($unions as $union) {
                 $union_code = $union->union_code;
                 $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
+                $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
                 $sentbox = new TblSentbox();
                 $sentbox->source_org_id = $union_code;
                 if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
