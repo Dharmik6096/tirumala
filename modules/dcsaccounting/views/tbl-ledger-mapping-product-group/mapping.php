@@ -13,34 +13,35 @@ $this->title = Yii::t('app', 'Ledger Mapping Product Group');
     </div>
     <?php
     $form = ActiveForm::begin([
-        'id' => 'product-group-mapping-form',
-        'enableAjaxValidation' => false,
+                'id' => 'product-group-mapping-form',
+                'enableAjaxValidation' => false,
     ]);
     ?>
 
     <div class="no-effect table_form">
         <?php
         $attribute = [
-            ['attribute' => 'product_group_code', 'label' => Yii::t('app', 'Product Group'), 'value' => function ($model) {
-                echo Html::activeHiddenInput($model, "tblLedgerMappingProductGroup[$model->product_group_code][union_code]", ['value' => $model->union_code]);
-                return $model->product_group_name;
-            }],
-            [
+                ['attribute' => 'product_group_code', 'label' => Yii::t('app', 'Product Group'), 'format' => 'raw', 'value' => function ($model) {
+                    echo Html::hiddenInput("tblLedgerMappingProductGroup[$model->product_group_code][union_code]", $model->union_code, ['id' => 'union_code_' . $model->product_group_code]);
+                    return $model->product_group_name;
+                }],
+                [
                 'attribute' => 'ledger_sale_code',
                 'label' => Yii::t('app', 'Ledger (Sale)'),
                 'format' => 'raw',
                 'value' => function ($model) use ($form) {
-
-                    return Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-3', FALSE, false, "tblLedgerMappingProductGroup[$model->product_group_code][ledger_sale_code]");
+                    echo Html::hiddenInput("ledger_type_sale[$model->product_group_code]", 'sale', ['id' => 'ledger_type_sale_' . $model->product_group_code]);
+                    return Yii::$app->dropdown->ledgerList($model, $form, 'union_code_' . $model->product_group_code . ',ledger_type_sale_' . $model->product_group_code, 'ledger_sale_code', false, false, false, true, "tblLedgerMappingProductGroup[$model->product_group_code][ledger_sale_code]");
                 },
                 'filter' => false
             ],
-            [
+                [
                 'attribute' => 'ledger_purchase_code',
                 'label' => Yii::t('app', 'Ledger (Purchase)'),
                 'format' => 'raw',
                 'value' => function ($model) use ($form) {
-                    return Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-3', FALSE, false, "tblLedgerMappingProductGroup[$model->product_group_code][ledger_purchase_code]");
+                    echo Html::hiddenInput("ledger_type_purchase[$model->product_group_code]", 'purchase', ['id' => 'ledger_type_purchase_' . $model->product_group_code]);
+                    return Yii::$app->dropdown->ledgerList($model, $form, 'union_code_' . $model->product_group_code . ',ledger_type_purchase_' . $model->product_group_code, 'ledger_purchase_code', false, false, false, true, "tblLedgerMappingProductGroup[$model->product_group_code][ledger_purchase_code]");
                 },
                 'filter' => false
             ],
