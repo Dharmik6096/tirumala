@@ -82,7 +82,7 @@ class TblGateEntryController extends ChildController {
             }
             if ($this->model->validate()) {
                 $actual_arrival_time = date("H:i", strtotime($this->model->actual_arrival_time));
-                $define_arrival_time = date("H:i", strtotime('+' . (empty($this->model->grace_time) ? 0 : (int) $this->model->grace_time) . ' minutes', strtotime($this->model->define_arrival_time)));
+                $define_arrival_time = !empty($this->model->define_arrival_time) ? date("H:i", strtotime('+' . (empty($this->model->grace_time) ? 0 : (int) $this->model->grace_time) . ' minutes', strtotime($this->model->define_arrival_time))) : $actual_arrival_time;
                 $late_by_time = (strtotime($actual_arrival_time) - strtotime($define_arrival_time)) / 60;
                 $this->model->late_by_time = ($late_by_time > 0) ? $late_by_time : 0;
                 if (in_array($client_code, ['UMANG', 'MOTHER'])) {
