@@ -53,6 +53,8 @@ use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use yii\base\UserException;
 use app\modules\details\models\TblContactDetails;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -141,7 +143,7 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'receipt_scan_copy'], 'safe'],
                 [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
@@ -213,7 +215,7 @@ class TblMemberProvisional extends ChildModel {
                 [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'when' => function($attribute, $params) {
                     return ($this->chackExistRecord($params));
-                }, 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate', 'create_animal', 'update_provisional_member']],
+                }, 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate', 'create_animal', 'update_provisional_member', 'approval_member_detail']],
                 [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
                 [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from', 'employee_code', 'employee_name', 'region_code'], 'safe'],
@@ -235,7 +237,7 @@ class TblMemberProvisional extends ChildModel {
                     return ($model->is_verify == 1);
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblmemberprovisional-is_verify').prop('checked') == true;
-                }", 'on' => ['createProvisionalMember']],
+                }", 'on' => ['createProvisionalMember', 'approval_bank_detail']],
                 [['adhar_no'], 'required', 'when' => function ($model) {
                     return ($model->is_aadhar_verify == 1);
                 }, 'whenClient' => "function (attribute, value) { 
@@ -256,9 +258,9 @@ class TblMemberProvisional extends ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#tblmemberprovisional-bank_account_no').val() != '';
                 }", 'except' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
-                [['mobile_no'], 'validateMobileNo', 'on' => ['createProvisionalMember', 'update_provisional_member']],
-                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createProvisionalMember', 'update_provisional_member']],
-                [['adhar_no'], 'validateAdharNo', 'on' => ['createProvisionalMember', 'update_provisional_member']],
+                [['mobile_no'], 'validateMobileNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_address_detail']],
+                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_bank_detail']],
+                [['adhar_no'], 'validateAdharNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_adhar_detail']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -492,6 +494,14 @@ class TblMemberProvisional extends ChildModel {
 
     public function getTblDcsBmc() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function getMembers($dcs_code, $as_array = false) {
@@ -808,6 +818,10 @@ class TblMemberProvisional extends ChildModel {
 
     public function getShareCode() {
         return $this->hasOne(TblMemberProvisionalShareDetails::className(), ['provisional_member_code' => 'provisional_member_code']);
+    }
+
+    public function getFamilyDetail() {
+        return $this->hasOne(TblMemberProvisionalFamilyDetails::className(), ['provisional_member_code' => 'provisional_member_code'])->onCondition(['is_nominee' => 1]);
     }
 
     public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {

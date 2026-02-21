@@ -6481,3 +6481,24 @@ select:focus > option:checked {
     touch-action: none;
     -ms-touch-action: none;
 }
+
+/*Tabs Styling */
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    background-color: rgb(0, 163, 222) !important;
+    color: #fff !important;
+}
+.nav-pills > li > a {
+    border-radius: 4px !important;
+    margin-right: 5px !important;
+
+}
+.nav-pills > li > a:hover {
+    background-color: rgba(0, 163, 222, 0.1);
+}
+
+.tab-header-line > ul {
+    border-bottom: 1px solid #18abe1;
+}
+.tab-header-line .tab-content {
+    border-top: none !important;
+}
