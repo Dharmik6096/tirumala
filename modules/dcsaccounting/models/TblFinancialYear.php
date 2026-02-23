@@ -41,17 +41,17 @@ class TblFinancialYear extends ChildModel {
      */
     public function rules() {
         return [
-            [['code', 'created_at', 'created_by', 'ending_date', 'is_active', 'starting_date', 'updated_at', 'updated_by'], 'safe'],
-            [['ending_date', 'starting_date', 'code'], 'required'],
-            [['ending_date', 'starting_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['ending_date', 'starting_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['ending_date', 'starting_date'], 'convertDate', 'on' => ['importCsv']],
-            [['code'], 'unique'],
-            [['code'], 'codeValidate'],
-            [['ending_date', 'starting_date'], 'customValidate'],
-            [['ending_date'], 'rangeValidate'],
-            [['starting_date'], 'dateValidate'],
-            [['code'], 'string', 'max' => 15],
+                [['code', 'created_at', 'created_by', 'ending_date', 'is_active', 'starting_date', 'updated_at', 'updated_by'], 'safe'],
+                [['ending_date', 'starting_date', 'code'], 'required'],
+                [['ending_date', 'starting_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['ending_date', 'starting_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['ending_date', 'starting_date'], 'convertDate', 'on' => ['importCsv']],
+                [['code'], 'unique'],
+                [['code'], 'codeValidate'],
+                [['ending_date', 'starting_date'], 'customValidate'],
+                [['ending_date'], 'rangeValidate'],
+                [['starting_date'], 'dateValidate'],
+                [['code'], 'string', 'max' => 15],
         ];
     }
 
@@ -176,7 +176,7 @@ class TblFinancialYear extends ChildModel {
             $unions = TblUnions::findAll(['is_active' => 1]);
             foreach ($unions as $union) {
                 $union_code = $union->union_code;
-                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
                 $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
                 $sentbox = new TblSentbox();
                 $sentbox->source_org_id = $union_code;
@@ -192,7 +192,7 @@ class TblFinancialYear extends ChildModel {
             $unions = TblUnions::findAll(['is_active' => 1]);
             foreach ($unions as $union) {
                 $union_code = $union->union_code;
-                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
                 $sentbox = new TblSentbox();
                 $sentbox->source_org_id = $union_code;
                 if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {

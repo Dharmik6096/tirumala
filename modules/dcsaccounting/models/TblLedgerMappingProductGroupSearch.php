@@ -70,12 +70,14 @@ class TblLedgerMappingProductGroupSearch extends TblLedgerMappingProductGroup {
                 ->select(['tbl_product_group.union_code', 'tbl_product_group.product_group_code', 'tbl_product_group.product_group_name', 'tbl_ledger_mapping_product_group.ledger_sale_code', 'tbl_ledger_mapping_product_group.ledger_purchase_code', 'tbl_ledger_mapping_product_group.ledger_mapping_product_group_code'])
                 ->leftJoin('tbl_ledger_mapping_product_group', 'tbl_ledger_mapping_product_group.product_group_code = tbl_product_group.product_group_code');
 
-        $query->andFilterWhere(['tbl_product_group.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        $unions = Yii::$app->session->get('Unions');
+        if (!empty($unions)) {
+            $query->andFilterWhere(['tbl_product_group.union_code' => explode(',', $unions)]);
+        }
         return new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
         ]);
-
     }
 
 }

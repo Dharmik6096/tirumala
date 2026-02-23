@@ -75,7 +75,7 @@ class TblBanks extends ChildModel {
                 [['is_alpha_acno_allow'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'boolean_value');
                 }, 'on' => 'importCsv'],
-                [['ledger_code'], 'validateLedgerVoucherType', 'on' => 'importCsv'],
+                [['ledger_code'], 'validateLedgerType', 'on' => 'importCsv'],
         ];
     }
 
@@ -261,9 +261,14 @@ class TblBanks extends ChildModel {
         return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'ledger_code']);
     }
 
-    public function validateLedgerVoucherType($attribute, $params) {
+    public function validateLedgerType($attribute, $params) {
         if (!empty($this->$attribute)) {
-            $ledger = TblLedgers::find()->joinWith(['voucherTypesCode'])->where(['tbl_ledgers.is_active' => 1, 'tbl_voucher_types.is_active' => 1, 'tbl_voucher_types.voucher_type' => 1, 'tbl_ledgers.ledger_code' => $this->$attribute])->one();
+            $ledger = TblLedgers::find()->alias('l')
+                    ->innerJoin('tbl_ledger_groups lg', 'l.ledger_group_code = lg.ledger_group_code')
+                    ->innerJoin('tbl_ledger_types lt', 'lg.ledger_type_code = lt.ledger_type_code')
+                    ->andWhere(['l.is_active' => 1])
+                    ->andWhere(['LOWER(lt.ledger_type_name)' => 'bank'])
+                    ->one();
             if (empty($ledger)) {
                 $this->addError($attribute, Yii::t('app/validation', 'Invalid Ledger Code. Only ledgers with voucher type "Bank" are allowed.'));
                 return false;
@@ -276,7 +281,7 @@ class TblBanks extends ChildModel {
             $unions = TblUnions::findAll(['is_active' => 1]);
             foreach ($unions as $union) {
                 $union_code = $union->union_code;
-                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
                 $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
                 $sentbox = new TblSentbox();
                 $sentbox->source_org_id = $union_code;
@@ -292,7 +297,7 @@ class TblBanks extends ChildModel {
             $unions = TblUnions::findAll(['is_active' => 1]);
             foreach ($unions as $union) {
                 $union_code = $union->union_code;
-                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code, '', FALSE, 2);
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
                 $sentbox = new TblSentbox();
                 $sentbox->source_org_id = $union_code;
                 if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
