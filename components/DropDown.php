@@ -998,18 +998,17 @@ class DropDown extends Component {
         $tablename = $model->tablename();
         $where = [];
         if ($model->hasAttribute('is_active')) {
-            $where[$tablename . '.is_active'] = 1;
+            $where['is_active'] = 1;
         }
+// if (isset($labelData['whereCondition'])) {
+//     $where = array_merge($labelData['whereCondition'], $where);
+// }
         $whereCondition = [];
         if (isset($labelData['whereCondition'])) {
             foreach ($labelData['whereCondition'] as $key => $value) {
-                if (strpos($key, '.') !== false) {
-                    $whereCondition[$key] = $value;
-                } else {
                     $whereCondition[$tablename . '.' . $key] = $value;
                 }
             }
-        }
         if (isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])) {
             foreach ($labelData['rlsWhereCondition'] as $key => $value) {
                 $whereCondition[$key] = $value;
@@ -1023,6 +1022,9 @@ class DropDown extends Component {
         } else {
             $select_fields[] = $tablename . '.' . $fields[1];
         }
+
+// $select_fields[] = $fields[0];
+// $select_fields[] = $fields[1];
 
         if (!empty($fields[2])) {
             array_push($select_fields, $fields[2]);
@@ -1062,13 +1064,11 @@ class DropDown extends Component {
         }
 
         return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
-                    $fields[2] = isset($fields[2]) ? substr(strrchr($fields[2], "."), 1) ?: $fields[2] : '';
                     if (!empty($fields[2]) && !empty($array[$fields[2]]))
                         $value = $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
                     else
                         $value = $array[$fields[1]];
 
-                    $fields[3] = isset($fields[3]) ? substr(strrchr($fields[3], "."), 1) ?: $fields[3] : '';
                     if (!empty($fields[3]) && !empty($array[$fields[3]]))
                         $value = $value . ' - ' . $array[$fields[3]];
                     return $value;
@@ -2547,8 +2547,7 @@ class DropDown extends Component {
             'committee_type_code' => ['name' => 'committee_type_code', 'fields' => 'committee_type_code,committee_type_name', 'prompt' => 'Select Type', 'model' => 'TblCommitteeType'],
             'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
             'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
-            'Ledgers' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,tbl_ledgers.local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers', 'joinwith' => ['voucherTypesCode'], 'whereCondition' => ['tbl_voucher_types.is_active' => 1, 'tbl_voucher_types.voucher_type' => 1]],
-            'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,tbl_ledgers.local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
+            'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
         ];
         return $label[$l];
     }
