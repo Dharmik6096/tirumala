@@ -245,8 +245,10 @@ $this->render('approval_view_tabs', [
                             <?php
                             echo Html::hiddenInput('reroute_remarks', '', ['id' => 'reroute_remarks']);
                             echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
-                            echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
 
+                            if ($isLastStep) {
+                                echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                            }
                             $btnLabel = $isLastStep ? 'save' : 'Save & Next';
                             echo Yii::$app->controls->save($btnLabel, $processModel);
                             ?>

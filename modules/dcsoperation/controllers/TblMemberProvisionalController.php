@@ -1904,8 +1904,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $histories = [$historyModel];
             $models = [$memberModel];
 
-            $this->setAnimalDetails($postData['TblMemberProvisionalAnimalDetails'], $models, $animalModel);
-
+            if (isset($postData['TblMemberProvisionalAnimalDetails'])) {
+                $this->setAnimalDetails($postData['TblMemberProvisionalAnimalDetails'], $models, $animalModel);
+            }
             $member_animal_model = new TblMemberProvisionalAnimalDetails();
             if (!$member_animal_model->validate() || !$memberModel->validate()) {
                 return ['status' => 'error', 'errors' => \app\components\ActiveForm::validate($memberModel, $member_animal_model)];
@@ -1957,6 +1958,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
         $memberModel->provisional_status = 'Reroute';
         $memberModel->remarks = $remarks;
+        $memberModel->scenario = 'MemberReroute';
         $saveModel[] = $memberModel;
 
         $workflowRequired = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'workflow_require', 'PORTAL');

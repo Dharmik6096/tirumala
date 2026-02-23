@@ -122,10 +122,11 @@ $this->render('approval_tabs', [
         <?php } ?>
         <div class="row theme_border_left theme_border_right theme_border_bottom">
             <div class="col-md-12 padding_10_0">
-                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
-                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
-                </div>
+
                 <?php if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-bank-detail')) { ?>
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
+                        <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
+                    </div>
                     <div class="col-sm-4 text-center">
                         <?= Yii::t('app', 'Pan Card :') ?><br>
                         <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard'], 'image') ?>
@@ -139,6 +140,9 @@ $this->render('approval_tabs', [
                         <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['bankPassbook'], 'image') ?>
                     </div>
                 <?php } else if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-fee-detail')) { ?>
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
+                        <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
+                    </div>
                     <div class="col-sm-4 text-center">
                         <?= Yii::t('app', 'Receipt Copy :') ?><br>
                         <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['receiptCopy'], 'image') ?>
@@ -171,10 +175,11 @@ $this->render('approval_tabs', [
                 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                     <div class="form-group">
                         <?php
-                        echo $form->field($model, 'remarks')->hiddenInput(['id' => 'reroute_remarks'])->label(false);
+                        echo Html::hiddenInput('reroute_remarks', '', ['id' => 'reroute_remarks']);
                         echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
-                        echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
-
+                        if ($isLastStep) {
+                            echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                        }
                         $btnLabel = $isLastStep ? 'save' : 'Save & Next';
                         echo Yii::$app->controls->save($btnLabel, $processModel);
                         ?>

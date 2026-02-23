@@ -37,21 +37,6 @@ $this->render('approval_tabs', [
                 </div>
             </div>
         </div>
-        <div class="row theme_border_left theme_border_right theme_border_bottom">
-            <div class="col-md-12 padding_10_0">
-                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
-                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <?= Yii::t('app', 'Nominee Address Proof :') ?><br>
-                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProof'], 'image') ?>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <?= Yii::t('app', 'Nominee Address Back Proof :') ?><br>
-                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProofback'], 'image') ?>
-                </div>
-            </div>
-        </div>
         <?php $form = ActiveForm::begin(); ?>
         <div class="row">           
             <div class="col-sm-12 margin-top-10">
@@ -81,8 +66,9 @@ $this->render('approval_tabs', [
                         <?php
                         echo Html::hiddenInput('reroute_remarks', '', ['id' => 'reroute_remarks']);
                         echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
-                        echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
-
+                        if ($isLastStep) {
+                            echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                        }
                         $btnLabel = $isLastStep ? 'save' : 'Save & Next';
                         echo Yii::$app->controls->save($btnLabel, $processModel);
 

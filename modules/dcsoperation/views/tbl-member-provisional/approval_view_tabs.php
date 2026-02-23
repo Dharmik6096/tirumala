@@ -55,5 +55,5 @@ $(document).on('click', '.re-route', function() {
     $('#reroute_remarks').closest('form').submit();
 });
 ";
-$this->registerJs($script, View::POS_END, 'reroute_patch_view');
+$this->registerJs($script, View::POS_END, 'reroute_view');
 ?>
