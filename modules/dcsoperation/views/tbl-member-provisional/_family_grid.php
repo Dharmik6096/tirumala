@@ -24,7 +24,9 @@ $attribute = [
             return ($model->is_nominee == 1) ? 'Yes' : 'No';
         }, 'filter' => false],
         ['attribute' => 'nominee_address', 'filter' => false],
+        ['attribute' => 'local_nominee_address', 'filter' => false],
         ['attribute' => 'guardian_name', 'filter' => false],
+        ['attribute' => 'local_guardian_name', 'filter' => false],
         ['attribute' => 'remarks', 'filter' => false],
 ];
 
