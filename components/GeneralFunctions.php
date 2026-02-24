@@ -2781,7 +2781,7 @@ class GeneralFunctions extends Component {
         return !empty($data) ? $data : '';
     }
 
-    public function getDisplayDocumentLink($module_code, $module_name, $doc_key) {
+    public function getDisplayDocumentLink($module_code, $module_name, $doc_key, $type = 'link') {
         $attchmentModel = new \app\modules\document\models\TblAttachment();
 
         $records = $attchmentModel->find()
@@ -2795,7 +2795,11 @@ class GeneralFunctions extends Component {
             if ($links != '') {
                 $class = 'icon-set-right';
             }
-            $links .= ' ' . Html::a('<i class="fas fa-image"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
+            if ($type == 'image') {
+                $links .= ' ' . Html::img($record['attachment'], ['class' => 'img-responsive img-thumbnail', 'style' => 'height: 100px; width: auto; cursor: pointer;', 'onclick' => 'window.open("' . $record['attachment'] . '", "_blank")']);
+            } else {
+                $links .= ' ' . Html::a('<i class="fas fa-image"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
+            }
         }
         return $links;
     }

@@ -6285,3 +6285,23 @@ div#dashboardFarmerPopup {
 .well.box-well .sortable li:focus, .sortable li:hover {
     background-color: #0d6efd;
 }
+/*Tabs Styling */
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    background-color: rgb(0, 163, 222) !important;
+    color: #fff !important;
+}
+.nav-pills > li > a {
+    border-radius: 4px !important;
+    margin-right: 5px !important;
+
+}
+.nav-pills > li > a:hover {
+    background-color: rgb(0, 163, 222);
+}
+
+.tab-header-line > ul {
+    border-bottom: 1px solid #18abe1;
+}
+.tab-header-line .tab-content {
+    border-top: none !important;
+}

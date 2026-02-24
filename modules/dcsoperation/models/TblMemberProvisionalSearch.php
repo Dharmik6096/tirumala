@@ -21,7 +21,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
      */
     public function rules() {
         return [
-                [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status', 'remarks', 'land_class', 'bank_name', 'branch_name', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'approved_at', 'from_date', 'to_date', 'approved_status', 'employee_code', 'employee_name', 'region_code', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'witness_name', 'place', 'payment_type', 'recipt_ref_no', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'sap_status'], 'safe'],
+                [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status', 'remarks', 'land_class', 'bank_name', 'branch_name', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'approved_at', 'from_date', 'to_date', 'approved_status', 'employee_code', 'employee_name', 'region_code', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'witness_name', 'place', 'payment_type', 'recipt_ref_no', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'sap_status', 'receipt_scan_copy'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'as_on_date'], 'required', 'on' => ['export_search']],
                 [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => ['bulk_approval']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'sap_status'], 'required', 'on' => ['sapFtpUpload']],
@@ -101,7 +101,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $query->andFilterWhere(['between', 'tbl_member_provisional.created_at', date('Y-m-d', strtotime($from_date)) . ' 00:00:00.000', date('Y-m-d', strtotime($to_date)) . ' 23:59:59.000']);
         }
 
-        Yii::$app->general->filterByOrg($query, $this);
+//        Yii::$app->general->filterByOrg($query, $this);
 
         if ($date_search) {
             $query->andWhere([
@@ -146,7 +146,8 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_member_provisional.application_no', $this->application_no])
                 ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional_share_details.ref_no', $this->recipt_ref_no])
-                ->andFilterWhere(['like', 'tbl_member_provisional_share_details.mode_of_payment', $this->payment_type]);
+                ->andFilterWhere(['like', 'tbl_member_provisional_share_details.mode_of_payment', $this->payment_type])
+                ->andFilterWhere(['like', 'tbl_member_provisional.receipt_scan_copy', $this->receipt_scan_copy]);
         $query->andWhere(['IS NOT', 'tbl_member_provisional.provisional_status', NULL]);
         $query->orderBy(['tbl_member_provisional.created_at' => SORT_DESC]);
         return $dataProvider;
