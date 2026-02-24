@@ -139,6 +139,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                     'columns' => [
                             [
                             'attribute' => 'nominee_name',
+                            'value' => !empty($model->nominee_name) ? $model->nominee_name : Yii::$app->general->getforeignkey($model->familyDetail, 'family_member_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
@@ -193,7 +194,7 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
                     'columns' => [
                             [
                             'attribute' => 'nominee_relation',
-                            'value' => !empty($model->relationship) ? $model->relationship->relationship : '',
+                            'value' => !empty($model->relationship) ? $model->relationship->relationship : Yii::$app->general->getmultiforeignkey($model->familyDetail, ['relationship'], 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [

@@ -34,3 +34,7 @@ $grid_option = [
 
 Yii::$app->grid->bind($shareDataProvider, $shareMemberModel, $grid_option);
 ?>
+<?php
+
+$script = '$(".kv-panel-before").hide();';
+$this->registerJs($script, View::POS_END, 'member-share-list');
