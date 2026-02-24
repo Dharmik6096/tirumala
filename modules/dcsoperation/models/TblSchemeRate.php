@@ -56,13 +56,13 @@ class TblSchemeRate extends \app\models\ChildModel {
                 [['from_shift'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['from_shift' => 'id'], 'on' => 'importCsv'],
                 [['to_shift'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['to_shift' => 'id'], 'on' => 'importCsv'],
 //                [['rate_class'], 'exist', 'skipOnError' => true, 'targetClass' => TblRateClass::className(), 'targetAttribute' => ['rate_class' => 'rate_class_code'], 'on' => 'importCsv'],
-                [['is_mcc_wise_rate'], function ($attribute, $params) {
+            [['is_mcc_wise_rate'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => 'importCsv'],
 //                [['rate_class'], function ($attribute, $params) {
 //                    Yii::$app->general->validateGlobalData($this, $attribute, 'rate_class');
 //                }, 'on' => 'importCsv'],
-                [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['from_date'], 'convertDate', 'on' => ['importCsv']],
                 [['to_date'], 'convertDateDotTo', 'on' => ['importCsv']],
@@ -80,6 +80,7 @@ class TblSchemeRate extends \app\models\ChildModel {
             [['is_mcc_wise_rate'], 'default', 'value' => 0],
                 [['rate_class'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
+                [['to_date'], 'validateToDate'],
         ];
     }
 
@@ -235,6 +236,15 @@ class TblSchemeRate extends \app\models\ChildModel {
                 ->andWhere(['<', 'cast(to_date as date)', $date])
                 ->limit($limit)
                 ->all();
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            if ($this->to_date < $this->from_date) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            }
+        }
     }
 
 }
