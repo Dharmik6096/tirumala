@@ -116,10 +116,6 @@ class TblLedgers extends \app\models\ChildModel {
         return $this->hasOne(TblLedgerGroups::className(), ['ledger_group_code' => 'ledger_group_code']);
     }
 
-    public function getVoucherTypesCode() {
-        return $this->hasOne(TblVoucherTypes::className(), ['ledger_code' => 'ledger_code']);
-    }
-
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
@@ -156,13 +152,15 @@ class TblLedgers extends \app\models\ChildModel {
     }
 
     public function getLedgerList($union_code, $type) {
-        $ledgerData = $this->find()->alias('l')
+        $query = $this->find()->alias('l')
                 ->innerJoin('tbl_ledger_groups lg', 'l.ledger_group_code = lg.ledger_group_code')
-                ->innerJoin('tbl_ledger_types lt', 'lg.ledger_type_code = lt.ledger_type_code')
-                ->where(['l.union_code' => $union_code])
-                ->andWhere(['l.is_active' => 1])
-                ->andWhere(['LOWER(lt.ledger_type_name)' => $type])
-                ->all();
+                ->innerJoin('tbl_ledger_types lt', 'lg.ledger_type_code = lt.ledger_type_code');
+        if ($union_code != 'bank') {
+            $query->where(['l.union_code' => $union_code]);
+        }
+        $query->andWhere(['l.is_active' => 1])
+                ->andWhere(['LOWER(lt.ledger_type_name)' => $type]);
+        $ledgerData = $query->all();
         if (!empty($ledgerData)) {
             return ArrayHelper::map($ledgerData, 'ledger_code', function($model) {
                         return $model->ledger_name;
