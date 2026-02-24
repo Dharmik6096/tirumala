@@ -62,6 +62,7 @@ $this->render('approval_tabs', [
                     <div class="col-sm-2 icon-set">
                         <?= $form->field($model, 'pan_no')->textInput() ?>
                     </div>
+                    <div class="clearfix"></div>
                     <div class="col-sm-2 icon-set">
                         <?= $form->field($model, 'voter_id')->textInput() ?>
                     </div>
@@ -69,9 +70,8 @@ $this->render('approval_tabs', [
                         <?= $form->field($model, 'annual_income')->textInput() ?>
                     </div>
                     <div class="col-sm-2 mt10">
-                        <?= $form->field($model, 'is_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_verify'); ?>
                     </div>
-
                 </div>
             </div>
         <?php } ?>
@@ -178,7 +178,7 @@ $this->render('approval_tabs', [
                         echo Html::hiddenInput('reroute_remarks', '', ['id' => 'reroute_remarks']);
                         echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
                         if ($isLastStep) {
-                            echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                            echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut reroute btn-login me-2', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]);
                         }
                         $btnLabel = $isLastStep ? 'save' : 'Save & Next';
                         echo Yii::$app->controls->save($btnLabel, $processModel);
@@ -188,7 +188,7 @@ $this->render('approval_tabs', [
                         $prevStep = Yii::$app->controller->getPreviousStepUrl($currentStep, $processModel->process_approval_code);
                         if ($prevStep) {
                             ?>
-                            <a href="<?= Url::to(['/dcsoperation/tbl-member-provisional/' . $prevStep[0], 'id' => $prevStep['id']]) ?>" class="btn btn-default">Previous</a>
+                            <a href="<?= Url::to(['/dcsoperation/tbl-member-provisional/' . $prevStep[0], 'id' => $prevStep['id']]) ?>" class="btn btn-default btn-login">Previous</a>
                         <?php } ?>
                     </div>  
                 </div>

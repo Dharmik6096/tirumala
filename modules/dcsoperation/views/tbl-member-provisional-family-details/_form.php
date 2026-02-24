@@ -21,7 +21,7 @@ echo $form->errorSummary($memberFamilyDetail);
                 ?>
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <a class="pull-right" data-toggle="collapse" href="#familyDetailsCollapse">
+                        <a class="pull-right" data-bs-toggle="collapse" href="#familyDetailsCollapse">
                             <i id="collapse" class="fa fa-chevron-up"></i>
                         </a>
                         <?= Yii::t('app', 'Family Details') ?>
