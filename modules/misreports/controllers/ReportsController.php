@@ -2225,7 +2225,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VehicleStatusReport';
         return $this->actionIndex();
     }
-    
+
     public function actionTpCostSummaryNewFormat() {
         $this->report = 'TpCostSummaryNewFormat';
         return $this->actionIndex();
@@ -2235,17 +2235,17 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberPaymentShortageRecovery';
         return $this->actionIndex();
     }
-    
+
     public function actionInwardBillSummary() {
         $this->report = 'InwardBillSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionPaymentAdviceInwardSummary() {
         $this->report = 'PaymentAdviceInwardSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMemberDailyCollectionSecond() {
         $this->report = 'MemberPassbookSecond';
         if (Yii::$app->request->queryParams) {
@@ -3174,6 +3174,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_pm_advance',
                 'scenario' => 'AdvancePm',
                 'title' => 'PM Advance',
+                'bkg_export' => TRUE,
             ],
             'CcMilkPayment' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
