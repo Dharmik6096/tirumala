@@ -1129,4 +1129,8 @@ class DefaultController extends \app\controllers\ChildController {
         return $label[$l];
     }
 
+    public function actionMisLiveReportGeneration() {
+        
+    }
+
 }
