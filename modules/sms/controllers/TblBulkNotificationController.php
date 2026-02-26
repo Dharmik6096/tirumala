@@ -385,7 +385,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $appModel->with_wef_date = FALSE;
             $appModel->with_applicable_code = true;
         } else {
-            if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'MEMBER', 'DCS'])) {
+            if (in_array(strtolower($model->login_type), ['farmer', 'member']) || (in_array(strtolower($model->login_type), ['vsp', 'dcs']) && strtolower($model->department == 'vsp'))) {
                 $value['DCS'] = 'VLCC';
             } else {
                 $value['USER'] = 'USER';
