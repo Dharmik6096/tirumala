@@ -48,7 +48,7 @@ class TblBanks extends ChildModel {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'ledger_code'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'ledger_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['bank_name', 'ac_no_length', 'checked_ac_no'], 'required'],
                 [['bank_name'], 'getBankCode', 'on' => 'importCsv'],
                 [['bank_code'], 'required', 'except' => 'importCsv'],

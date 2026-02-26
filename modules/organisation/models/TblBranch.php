@@ -67,7 +67,7 @@ class TblBranch extends ChildModel {
     public function rules() {
         $main_rules = [
                 [['bank_code', 'branch_name', 'ifsc', 'address'], 'required'],
-                [['created_at', 'updated_at', 'district_code', 'state_code', 'union_code', 'local_address', 'valid_from', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['created_at', 'updated_at', 'district_code', 'state_code', 'union_code', 'local_address', 'valid_from', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['is_active'], 'safe'],
                 [['branch_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
 //            [['ifsc'], 'unique', 'message' => Yii::t('app/validation', 'This {attribute} has already been taken')],
