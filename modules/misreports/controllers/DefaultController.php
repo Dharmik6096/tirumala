@@ -37,6 +37,9 @@ class DefaultController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
+        if (isset($this->data['bkg_export']) && (!isset($this->data['output_type']) && !User::canRoute('misreports/default/mis-live-report-generation'))) {
+            $this->data['output_type'] = $model->output_type = 'BACKGROUND';
+        }
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
             if (empty($this->output)) {
@@ -387,6 +390,19 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapReportExport() {
+        $this->report = 'VmReportSapExport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
+                $this->report = 'WqReportSapExport';
+            } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
+                $this->report = 'SdReportSapExport';
+            }
+        }
+
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -444,7 +460,11 @@ class DefaultController extends \app\controllers\ChildController {
         }
         if ($validateReport) {
             $sp_name = $this->data['sp_name'];
-            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            if ($model->output_type != 'BACKGROUND') {
+                $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            } else {
+                $output = $this->RegisterReportRequest('mis', $this->data, $controls);
+            }
             $this->output = $output;
 
             if (!empty($this->data['sp_name2'])) {
@@ -479,7 +499,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
 
             $fileArray = [];
-            if (!empty($output)) {
+            if ($model->output_type != 'BACKGROUND' && !empty($output)) {
                 $attr = '';
                 $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
                 foreach ($output[0] as $att => $value) {
@@ -1077,6 +1097,33 @@ class DefaultController extends \app\controllers\ChildController {
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
                 'multiArray' => ['mcc_code', 'bmc_code'],
+            ],
+            'VmReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_VMSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP VM Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'WqReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_WQSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP WQ Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'SdReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_SDSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP SD Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];
