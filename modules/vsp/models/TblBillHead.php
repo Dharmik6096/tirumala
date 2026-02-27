@@ -67,6 +67,7 @@ class TblBillHead extends \app\models\ChildModel {
 //                }, 'whenClient' => "function (attribute, value) { 
 //              return $('#tblbillhead-bill_head_for').val()!='MEMBER'; 
 //          }", 'on' => ['dcsWiseHead']],
+                [['is_reserved'], 'default', 'value' => '0'],
         ];
     }
 
