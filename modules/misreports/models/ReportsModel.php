@@ -67,7 +67,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['BmcCollectionData', 'VendorPayment', 'VspTransitRecovery', 'MilkDispatchList', 'MilkRejectList', 'CmpReport', 'PaymentCycleReport', 'FarmerMilkBillConsolidatedSummary']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MilkCollectionData', 'FileGenerateStatus', 'QualityCollectionReport']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'report_collection_type', 'type_wise_report'], 'required', 'on' => ['MilkAndBmcCollectionMonthlyComparision']],
-                [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['WeightCollectionList', 'MilkCollectionAudit', 'ProcMisLotWiseDetails', 'ComparisonReport', 'YearlyFarmerCollectionReport']],
+                [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['WeightCollectionList', 'MilkCollectionAudit', 'ProcMisLotWiseDetails', 'ComparisonReport', 'YearlyFarmerCollectionReport', 'VlccCommission']],
                 [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['DcsCollDateShiftSummary', 'DcsCollDateShiftSummaryCommon']],
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'route_type_trans'], 'required', 'on' => ['BmcCollectionShiftReport', 'BmcCollectionShiftReportCommon']],
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['VendorWiseSummary', 'BmcWiseSummary']],

@@ -17,7 +17,7 @@ class TblBranchSearch extends TblBranch {
      */
     public function rules() {
         return [
-                [['branch_code', 'address', 'branch_name', 'district_code', 'created_at', 'ifsc', 'pincode', 'updated_at', 'bank_code', 'created_by', 'sub_district_code', 'updated_by', 'village_code', 'valid_from', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['branch_code', 'address', 'branch_name', 'district_code', 'created_at', 'ifsc', 'pincode', 'updated_at', 'bank_code', 'created_by', 'sub_district_code', 'updated_by', 'village_code', 'valid_from', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['is_active'], 'integer'],
         ];
     }

@@ -41,7 +41,7 @@ class TblLedgerMappingProductGroupController extends ChildController {
             $incCount = 0;
             $save_model = [];
             $historyModel = [];
-        
+
             $post = Yii::$app->request->post();
             $postData = isset($post['TblProductGroup']['tblLedgerMappingProductGroup']) ? $post['TblProductGroup']['tblLedgerMappingProductGroup'] : [];
             if (!empty($postData)) {
@@ -49,7 +49,7 @@ class TblLedgerMappingProductGroupController extends ChildController {
                     $query = TblLedgerMappingProductGroup::find()->where(['product_group_code' => $productGroupCode]);
                     Yii::$app->general->filterByOrg($query, $model);
                     $mapping_model = $query->one();
-                    
+
                     if (!empty($mapping_model)) {
                         $isChanged = ($mapping_model->ledger_sale_code != $data['ledger_sale_code'] || $mapping_model->ledger_purchase_code != $data['ledger_purchase_code']);
 
@@ -63,11 +63,13 @@ class TblLedgerMappingProductGroupController extends ChildController {
                         $mapping_model->product_group_code = $productGroupCode;
                         $incCount++;
                         $mapping_model->ledger_mapping_product_group_code = Yii::$app->general->getCodeAutoIncrement($mapping_model, $incCount);
-                        $mapping_model->union_code = $data['union_code'];
+                        if (isset($post['tblLedgerMappingProductGroup'][$productGroupCode]['union_code'])) {
+                            $mapping_model->union_code = $post['tblLedgerMappingProductGroup'][$productGroupCode]['union_code'];
+                        }
                     }
 
-                    $mapping_model->ledger_sale_code = $data['ledger_sale_code'];
-                    $mapping_model->ledger_purchase_code = $data['ledger_purchase_code'];
+                    $mapping_model->ledger_sale_code = $data['ledger_sale_code'] ? $data['ledger_sale_code'] : '';
+                    $mapping_model->ledger_purchase_code = $data['ledger_purchase_code'] ? $data['ledger_purchase_code'] : '';
 
                     $save_model[] = $mapping_model;
                 }
@@ -87,7 +89,6 @@ class TblLedgerMappingProductGroupController extends ChildController {
                     'model' => $model
         ]);
     }
-
 
     /**
      * Finds the TblLedgerMappingProductGroup model based on its primary key value.
