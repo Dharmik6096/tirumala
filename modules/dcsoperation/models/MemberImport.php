@@ -73,6 +73,7 @@ class MemberImport extends TblMember {
                 [['religion_code'], 'in', 'range' => [1, 2, 3, 4, 5, 6], 'skipOnEmpty' => TRUE],
                 [['animal_type_code'], 'in', 'range' => [1, 2, 3], 'skipOnEmpty' => TRUE],
                 [['nominee_relation'], 'in', 'range' => [1, 2, 3, 4, 5, 6, 7, 8], 'skipOnEmpty' => TRUE],
+                [['dcs_code'], 'setBankDetail', 'on' => ['importCsv']],
                 [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
@@ -85,7 +86,6 @@ class MemberImport extends TblMember {
             [['pan_no'], 'unique', 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
                 [['adhar_no'], 'unique', 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
                 [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
-                [['dcs_code'], 'setBankDetail', 'on' => ['importCsv']],
                 [['rate_class'], 'default', 'value' => '0'],
                 [['dcs_code'], 'setVerified', 'on' => ['importCsv']],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
