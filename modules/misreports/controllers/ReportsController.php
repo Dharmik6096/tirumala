@@ -2272,6 +2272,19 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapReportExport() {
+        $this->report = 'VmReportSapExport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'WqReportSapExport';
+            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SdReportSapExport';
+            }
+        }
+
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5011,6 +5024,32 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'VlccCommission',
                 'title' => '517 - VlCC Commission',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
+            ],    
+            'VmReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_VMSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP VM Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'WqReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_WQSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP WQ Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'SdReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_SDSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP SD Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
                 'bkg_export' => TRUE
             ],
         ];
