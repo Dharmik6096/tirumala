@@ -222,8 +222,8 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
+        if (ob_get_contents()) ob_end_clean();
         $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
-        ob_end_clean();
         $objWriter->save('php://output');
         exit();
     }
