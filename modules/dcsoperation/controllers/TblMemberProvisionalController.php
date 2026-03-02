@@ -1393,7 +1393,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionStartApproval($id) {
+    public function actionEditApproval($id) {
         return $this->startFlow($id, false);
     }
 

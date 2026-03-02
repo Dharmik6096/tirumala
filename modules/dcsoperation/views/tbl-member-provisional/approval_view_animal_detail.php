@@ -109,6 +109,15 @@ $this->render('approval_view_tabs', [
                             ],
                         ],
                     ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'member_class',
+                                'value' => isset($model->member_class) ? Yii::$app->dropdown->getRecords('member_class')['data'][$model->member_class] : '',
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                 ];
                 echo DetailView::widget([
                     'model' => $model,

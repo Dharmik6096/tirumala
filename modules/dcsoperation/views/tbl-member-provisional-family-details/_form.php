@@ -131,22 +131,26 @@ echo $form->errorSummary($memberFamilyDetail);
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<?php if ($tabview) { ?>
+<?php
+if ($tabview) {
+    $previews = '';
+    $nAddressProof = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProof'], 'image');
+    $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Nominee Address Proof') . '</span>' . (trim($nAddressProof) != '' ? $nAddressProof : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+    $nAddressProofback = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProofback'], 'image');
+    $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Nominee Address Proof Back') . '</span>' . (trim($nAddressProofback) != '' ? $nAddressProofback : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+    ?>
     <div class="row theme_border_left theme_border_right theme_border_bottom">
         <div class="col-md-12 padding_10_0">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
             </div>
-            <div class="col-sm-4 text-center">
-                <?= Yii::t('app', 'Nominee Address Proof :') ?><br>
-                <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProof'], 'image') ?>
-            </div>
-            <div class="col-sm-4 text-center">
-                <?= Yii::t('app', 'Nominee Address Proof Back :') ?><br>
-                <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProofback'], 'image') ?>
+            <div class="doc-preview-container">
+                <?= $previews ?>
             </div>
         </div>
     </div>
+
 <?php } ?>
 <div id="familyDetailsgrid" class="col-sm-12">
     <div class="form-grid rebind_grid hide-grid-settings collapse_grid">
