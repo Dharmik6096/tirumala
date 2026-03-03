@@ -444,7 +444,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         if ($validateReport) {
             $sp_name = $this->data['sp_name'];
-            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+                $output = \Yii::$app->general->getSpData($sp_name, $controls);
             $this->output = $output;
 
             if (!empty($this->data['sp_name2'])) {
@@ -1082,4 +1082,4 @@ class DefaultController extends \app\controllers\ChildController {
         return $label[$l];
     }
 
-}
+    }
