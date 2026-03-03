@@ -168,9 +168,9 @@ $grid_option = [
                 $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
                 if ($config == 1) {
                     $class = (!$pending_approval) ? 'link-disable' : '';
-                    $icon = '<i class="fa fa-check-square-o"></i>';
+                    $icon = '<i class="fa fa-check-square"></i>';
                     $url = ['/dcsoperation/tbl-member-provisional/view-approval', 'id' => $model->process_approval_code];
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With View', 'class' => '' . $class];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With View', 'class' => '' . $class];
                     return Html::a($icon, $url, $options);
                 }
             }
@@ -182,9 +182,9 @@ $grid_option = [
                 $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
                 if ($config == 1) {
                     $class = (!$pending_approval) ? 'link-disable' : '';
-                    $icon = '<i class="fa fa-pencil-square-o"></i>';
+                    $icon = '<i class="fa fa-pen-square"></i>';
                     $url = ['/dcsoperation/tbl-member-provisional/edit-approval', 'id' => $model->process_approval_code];
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With Edit', 'class' => '' . $class];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With Edit', 'class' => '' . $class];
                     return Html::a($icon, $url, $options);
                 }
             }
@@ -217,14 +217,14 @@ $grid_option = [
                     if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approve-member')) {
                         $icon = '<i class="fa fa-check"></i>';
                         $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve Member'];
                         return Html::a($icon, $url, $options);
                     }
                     return '';
                 } else {
                     $icon = '<i class="fa fa-eye"></i>';
                     $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Provisional Member View'];
                     return Html::a($icon, $url, $options);
                 }
             } else {

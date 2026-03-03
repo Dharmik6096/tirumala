@@ -3,11 +3,11 @@
 use yii\web\View;
 use yii\web\JqueryAsset;
 
-$this->registerCssFile(Yii::getAlias('@web') . '/themes/pcdf/assets/css/viewer.min.css', [
+$this->registerCssFile(Yii::getAlias('@web') . '/themes/emilk/assets/css/viewer.min.css', [
     'depends' => [JqueryAsset::class],
 ]);
 
-$this->registerJsFile(Yii::getAlias('@web') . '/themes/pcdf/assets/js/viewer.min.js', [
+$this->registerJsFile(Yii::getAlias('@web') . '/themes/emilk/assets/js/viewer.min.js', [
     'depends' => [JqueryAsset::class],
     'position' => View::POS_END,
 ]);
