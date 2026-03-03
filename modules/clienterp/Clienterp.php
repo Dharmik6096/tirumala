@@ -34,6 +34,9 @@ class Clienterp extends \yii\base\Module {
             'nddb' => [
                 'class' => 'app\modules\clienterp\nddb\Nddb',
             ],
+            'tally' => [
+                'class' => 'app\modules\clienterp\tally\Tally',
+            ],
         ];
     }
 
