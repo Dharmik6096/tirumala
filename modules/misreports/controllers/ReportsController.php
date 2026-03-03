@@ -2225,7 +2225,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VehicleStatusReport';
         return $this->actionIndex();
     }
-    
+
     public function actionTpCostSummaryNewFormat() {
         $this->report = 'TpCostSummaryNewFormat';
         return $this->actionIndex();
@@ -2235,17 +2235,17 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberPaymentShortageRecovery';
         return $this->actionIndex();
     }
-    
+
     public function actionInwardBillSummary() {
         $this->report = 'InwardBillSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionPaymentAdviceInwardSummary() {
         $this->report = 'PaymentAdviceInwardSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMemberDailyCollectionSecond() {
         $this->report = 'MemberPassbookSecond';
         if (Yii::$app->request->queryParams) {
@@ -2259,6 +2259,19 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'MemberConsolidatedWithBankSecond';
             }
         }
+        return $this->actionIndex();
+    }
+
+    public function actionSapReportExport() {
+        $this->report = 'VmReportSapExport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'WqReportSapExport';
+            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SdReportSapExport';
+            }
+        }
+
         return $this->actionIndex();
     }
 
@@ -3174,6 +3187,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_pm_advance',
                 'scenario' => 'AdvancePm',
                 'title' => 'PM Advance',
+                'bkg_export' => TRUE,
             ],
             'CcMilkPayment' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -4984,6 +4998,33 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'to_decrypt' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
+                'bkg_export' => TRUE
+            ],
+            'VmReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_VMSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP VM Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'WqReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_WQSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP WQ Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'SdReportSapExport' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_SDSAPReport',
+                'scenario' => 'SapReportExport',
+                'title' => 'SAP SD Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'multiArray' => ['mcc_code', 'bmc_code'],
                 'bkg_export' => TRUE
             ],
         ];
