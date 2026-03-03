@@ -163,26 +163,32 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'approve_view' => function($url, $model) use ($pending_approval) {
-            $unionCode = !empty($model->union_code) ? $model->union_code : ($model->dcsCode->union_code ?? '');
-            $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
-            if ($config == 1) {
-                $class = (!$pending_approval) ? 'link-disable' : '';
-                $icon = '<i class="fa fa-check"></i>';
-                $url = ['/dcsoperation/tbl-member-provisional/view-approval', 'id' => $model->process_approval_code];
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional', 'class' => '' . $class];
-                return Html::a($icon, $url, $options);
+            if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/view-approval')) {
+                $unionCode = !empty($model->union_code) ? $model->union_code : ($model->dcsCode->union_code ?? '');
+                $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
+                if ($config == 1) {
+                    $class = (!$pending_approval) ? 'link-disable' : '';
+                    $icon = '<i class="fa fa-check-square-o"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/view-approval', 'id' => $model->process_approval_code];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With View', 'class' => '' . $class];
+                    return Html::a($icon, $url, $options);
+                }
             }
+            return '';
         },
         'approve' => function($url, $model) use ($pending_approval) {
-            $unionCode = !empty($model->union_code) ? $model->union_code : ($model->dcsCode->union_code ?? '');
-            $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
-            if ($config == 1) {
-                $class = (!$pending_approval) ? 'link-disable' : '';
-                $icon = '<i class="fa fa-check"></i>';
-                $url = ['/dcsoperation/tbl-member-provisional/start-approval', 'id' => $model->process_approval_code];
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional', 'class' => '' . $class];
-                return Html::a($icon, $url, $options);
+            if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/edit-approval')) {
+                $unionCode = !empty($model->union_code) ? $model->union_code : ($model->dcsCode->union_code ?? '');
+                $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
+                if ($config == 1) {
+                    $class = (!$pending_approval) ? 'link-disable' : '';
+                    $icon = '<i class="fa fa-pencil-square-o"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/edit-approval', 'id' => $model->process_approval_code];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With Edit', 'class' => '' . $class];
+                    return Html::a($icon, $url, $options);
+                }
             }
+            return '';
         },
         'update' => function ($url, $model)use ($pending_approval) {
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 0) {
@@ -205,17 +211,22 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'views' => function($url, $model) use ($pending_approval) {
-            if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1) {
-                $icon = '<i class="fa fa-eye"></i>';
-                $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
-                $title = 'Provisional Member View';
+            $config = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL');
+            if ($config == 1) {
                 if ($pending_approval) {
-                    $icon = '<i class="fa fa-check"></i>';
-                    $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
-                    $title = 'Approve Member';
+                    if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approve-member')) {
+                        $icon = '<i class="fa fa-check"></i>';
+                        $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                        return Html::a($icon, $url, $options);
+                    }
+                    return '';
+                } else {
+                    $icon = '<i class="fa fa-eye"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
+                    return Html::a($icon, $url, $options);
                 }
-                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title];
-                return Html::a($icon, $url, $options);
             } else {
                 $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Provisional Member View'];
                 return Html::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code], $options);

@@ -2796,7 +2796,7 @@ class GeneralFunctions extends Component {
                 $class = 'icon-set-right';
             }
             if ($type == 'image') {
-                $links .= ' ' . Html::img($record['attachment'], ['class' => 'img-responsive img-thumbnail', 'style' => 'height: 100px; width: auto; cursor: pointer;', 'onclick' => 'window.open("' . $record['attachment'] . '", "_blank")']);
+                $links .= ' ' . Html::img($record['attachment'], ['class' => 'img-responsive img-thumbnail image-preview-click', 'style' => 'height: 100px; width: auto; cursor: pointer;', 'data-src' => $record['attachment']]);
             } else {
                 $links .= ' ' . Html::a('<i class="fas fa-image"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
             }
