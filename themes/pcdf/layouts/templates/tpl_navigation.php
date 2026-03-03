@@ -779,6 +779,7 @@ echo GhostMenu::widget([
                             ['label' => '514 -' . Yii::t('app', 'Handling & Storage Charges(chiller) Summary'), 'url' => ['/misreports/reports/chiller-cost-summary']],
                             ['label' => '515 -' . Yii::t('app', 'Payment Cycle Report'), 'url' => ['/misreports/reports/payment-cycle-report']],
                             ['label' => '516 -' . Yii::t('app', 'Purchase Summary'), 'url' => ['/jasperreports/default/day-wise-summary']],
+                            ['label' => '517 -' . Yii::t('app', 'VLCC commission'), 'url' => ['/misreports/reports/vlcc-commission']],
                     ]
                 ],
                     [

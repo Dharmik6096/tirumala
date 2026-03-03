@@ -323,9 +323,9 @@ class CustomValidation extends Component {
                         return $('#tblbulknotification-notification_type').val() == '1' || $('#tblbulknotification-notification_type').val() == '4' ;
                         }"],
                         [['department'], 'required', 'when' => function ($model) {
-                            return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL';
+                            return $model->notification_type == '1' && strtoupper($model->login_type) != 'ALL' && strtoupper($model->login_type) != 'MEMBER';
                         }, 'whenClient' => "function (attribute, value) {
-                                return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL';
+                                return $('#tblbulknotification-notification_type').val() == '1' &&  $('#tblbulknotification-login_type').val() == 'ALL' && $('#tblbulknotification-login_type').val() == 'MEMBER';
                         }"],
                         [['from_date', 'to_date'], 'required', 'when' => function ($model) {
                             return !empty($model->auto_scrolling);

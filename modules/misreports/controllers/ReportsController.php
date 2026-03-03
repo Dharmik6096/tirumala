@@ -2261,6 +2261,16 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+    
+    public function actionVlccCommission() {
+        $this->report = 'VlccCommission';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'CommissionReportSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
 
     public function actionSapReportExport() {
         $this->report = 'VmReportSapExport';
@@ -5000,6 +5010,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
                 'bkg_export' => TRUE
             ],
+            'VlccCommission' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_commission_detail_report',
+                'scenario' => 'VlccCommission',
+                'title' => '517 - VlCC Commission',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
+                'bkg_export' => TRUE
+            ],
+            'CommissionReportSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_commission_report_summary',
+                'scenario' => 'VlccCommission',
+                'title' => '517 - VlCC Commission',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
+            ],    
             'VmReportSapExport' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_VMSAPReport',

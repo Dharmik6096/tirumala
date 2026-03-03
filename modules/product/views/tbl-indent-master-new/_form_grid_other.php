@@ -24,28 +24,33 @@ $attribute = [
         }, 'visible' => FALSE, 'filter' => false],
         ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
-        }, 'filter' => FALSE],
-        ['attribute' => 'bmc_code', 'value' => function($model) {
+        }, 'filter' => TRUE],
+        ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'filter' => FALSE],
+        }, 'filter' => TRUE],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-        }, 'filter' => false],
-        ['attribute' => 'dcs_code', 'value' => function($model) {
+        }, 'filter' => TRUE],
+        ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'filter' => false],
-        ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
+        }, 'filter' => TRUE],
+        ['attribute' => 'member_name', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'visible' => TRUE, 'filter' => false],
+        }, 'visible' => TRUE, 'filter' => TRUE],
         ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code Ex'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
-        }, 'visible' => TRUE, 'filter' => false],
+        }, 'visible' => TRUE, 'filter' => TRUE],
+                
+        ['attribute' => 'sap_farmer_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'sap_farmer_code');
+        }, 'visible' => TRUE, 'filter' => TRUE],
+                
         ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Customer') . ' Ref Code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerCode, 'ref_code');
-        }, 'visible' => TRUE, 'filter' => false],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Customer'), 'value' => function($model) {
+        }, 'visible' => TRUE, 'filter' => TRUE],
+        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Customer'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerCode, 'customer_name');
-        }, 'visible' => TRUE, 'filter' => false],
+        }, 'visible' => TRUE, 'filter' => TRUE],
         ['attribute' => 'warehouse_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->warehouseCode, 'store_location_name');
         }, 'filter' => false],
