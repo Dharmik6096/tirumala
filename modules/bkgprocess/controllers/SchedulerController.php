@@ -1194,7 +1194,7 @@ class SchedulerController extends ChildController {
                         $folder = \Yii::$app->params['sap_data_files'] . 'vendor-data/';
                         $path = str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder);
                         if (\Yii::$app->general->checkDirectory($path)) {
-                            $objPHPExcel = new PHPExcel();
+                            $objPHPExcel = new Spreadsheet();
                             $sheet = $objPHPExcel->getActiveSheet();
                             $header = array_keys($output[0]);
                             $sheet->fromArray($header, NULL, 'A1');
@@ -1210,7 +1210,7 @@ class SchedulerController extends ChildController {
                             }
 
                             $filePath = $path . $fileName;
-                            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+                            $objWriter = IOFactory::createWriter($objPHPExcel, 'Xls');
                             $objWriter->save($filePath);
 
                             $nextDate = date("Y-m-d H:i:s", strtotime("+{$value->interval} minutes"));
@@ -1340,7 +1340,7 @@ class SchedulerController extends ChildController {
                     $collectedData = [];
                     $tokensByType = ['DCS' => [], 'Farmer' => [], 'Dairy Farm' => []];
 
-                    $objPHPExcel = \PHPExcel_IOFactory::load($filePath);
+                    $objPHPExcel = IOFactory::load($filePath);
                     $sheet = $objPHPExcel->getActiveSheet();
                     $maxRow = $sheet->getHighestRow();
                     $maxCol = $sheet->getHighestDataColumn();
