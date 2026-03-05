@@ -1394,6 +1394,7 @@ class SchedulerController extends ChildController {
                                     break;
                                 case 'Dairy Farm':
                                     $historyModel = new TblCustomerMasterProvisionalHistory();
+                                    $model->scenario = 'post_sap_data';
                                     break;
                             }
                             if ($historyModel) {
