@@ -1190,7 +1190,7 @@ class SchedulerController extends ChildController {
                             $name = 'Farmer_';
                         }
                         $fileName = $name . date('YmdHis') . '.xls';
-                        $folder = \Yii::$app->params['FTPVendorDirPath'] . 'vendor-data/';
+                        $folder = \Yii::$app->params['sap_data_files'] . 'vendor-data/';
                         $path = str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder);
                         if (\Yii::$app->general->checkDirectory($path)) {
                             $objPHPExcel = new PHPExcel();
@@ -1277,7 +1277,7 @@ class SchedulerController extends ChildController {
 
                             $ftp->ftp_path = $ftpData->ftp_path . $subFolder;
 
-                            $folder = \Yii::$app->params['FTPVendorDirPath'] . $subFolder;
+                            $folder = \Yii::$app->params['sap_data_files'] . $subFolder;
                             $localPath = rtrim(str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder), '/') . '/';
 
                             if (!\Yii::$app->general->checkDirectory($localPath) || empty($files)) {
@@ -1318,7 +1318,7 @@ class SchedulerController extends ChildController {
         $custCtrl = new TblCustomerMasterProvisionalController('customer-provisional', \Yii::$app->getModule('organisation'));
 
         foreach ($subFolders as $subFolder) {
-            $folder = \Yii::$app->params['FTPVendorDirPath'] . $subFolder;
+            $folder = \Yii::$app->params['sap_data_files'] . $subFolder;
             $localPath = rtrim(str_replace(['\\', '//'], '/', \Yii::getAlias('@webroot') . '/' . $folder), '/') . '/';
             $archivePath = $localPath . 'Archive/';
             \Yii::$app->general->checkDirectory($archivePath);

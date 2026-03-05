@@ -51,7 +51,6 @@ $eipl_params = [
     'payment_xml_upload' => '/web/uploads/payment_xml_upload/',
     'software_complaint_dir_path' => 'web/uploads/software-complaint-docs/',
     'data_exchange_url' => 'http://www.w3.org/2003/05/soap-envelope',
-    'FTPVendorDirPath' => '/web/sap_file_upload/',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */
 
