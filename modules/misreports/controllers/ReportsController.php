@@ -2261,7 +2261,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionVlccCommission() {
         $this->report = 'VlccCommission';
         if (Yii::$app->request->queryParams) {
@@ -5024,7 +5024,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'VlccCommission',
                 'title' => '517 - VlCC Commission',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
-            ],    
+                'bkg_export' => TRUE
+            ],
             'VmReportSapExport' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_VMSAPReport',

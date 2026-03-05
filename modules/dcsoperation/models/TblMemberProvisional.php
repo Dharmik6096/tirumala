@@ -1058,8 +1058,10 @@ class TblMemberProvisional extends ChildModel {
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
                     ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'member_code', $this->member_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
@@ -1090,8 +1092,10 @@ class TblMemberProvisional extends ChildModel {
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
                     ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'member_code', $this->member_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
@@ -1122,8 +1126,10 @@ class TblMemberProvisional extends ChildModel {
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['adhar_no' => $this->$attribute], ['adhar_no' => $encryptedAdharNo]])
                     ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'member_code', $this->member_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
