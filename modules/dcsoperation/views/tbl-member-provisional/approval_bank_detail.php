@@ -104,52 +104,54 @@ $this->render('approval_tabs', [
 
         <?php if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-mismatch-detail')) { ?>
             <?php
-            $documentCheck = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['DeclarationAttachment'], 'image');
+            $declarationAttachment = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['DeclarationAttachment'], 'image');
+            $documentCheck = '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Declaration Attachment') . '</span>' . (trim($declarationAttachment) != '' ? $declarationAttachment : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
             ?>
             <div class="row theme_border_left theme_border_right theme_border_bottom">
                 <div class="col-md-12 padding_10_0">
                     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin-bottom-10">
                         <h4 class="theme-box-heading"><?= Yii::t('app', 'Name Mismatch Declaration') ?></h4>
                     </div>
-                    <?php if ($documentCheck) { ?>
-                        <div class="col-sm-4 text-center">
-                            <?= Yii::t('app', 'Declaration Attachment :') ?><br>
-                            <?= $documentCheck ?>
-                        </div>
+                    <div class="doc-preview-container">
+                        <?= $documentCheck ?>
                     </div>
                 </div>
-            <?php } ?>
+            </div>
         <?php } ?>
-        <div class="row theme_border_left theme_border_right theme_border_bottom">
-            <div class="col-md-12 padding_10_0">
+        <?php
+        $previews = '';
+        $showPreviews = false;
+        if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-bank-detail')) {
+            $showPreviews = true;
+            $panCard = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard'], 'image');
+            $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Pan Card') . '</span>' . (trim($panCard) != '' ? $panCard : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
 
-                <?php if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-bank-detail')) { ?>
-                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
+            $voterID = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['voterID'], 'image');
+            $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Voter ID') . '</span>' . (trim($voterID) != '' ? $voterID : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+            $bankPassbook = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['bankPassbook'], 'image');
+            $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Bank Passbook') . '</span>' . (trim($bankPassbook) != '' ? $bankPassbook : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+        }
+
+        if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-fee-detail')) {
+            $showPreviews = true;
+            $receiptCopy = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['receiptCopy'], 'image');
+            $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Receipt Copy') . '</span>' . (trim($receiptCopy) != '' ? $receiptCopy : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+        }
+
+        if ($showPreviews) {
+            ?>
+            <div class="row theme_border_left theme_border_right theme_border_bottom">
+                <div class="col-md-12 padding_10_0">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin-bottom-10">
                         <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
                     </div>
-                    <div class="col-sm-4 text-center">
-                        <?= Yii::t('app', 'Pan Card :') ?><br>
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['panCard'], 'image') ?>
-                    </div>
-                    <div class="col-sm-4 text-center">
-                        <?= Yii::t('app', 'Voter ID :') ?><br>
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['voterID'], 'image') ?>
-                    </div>
-                    <div class="col-sm-4 text-center">
-                        <?= Yii::t('app', 'Bank Passbook :') ?><br>
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['bankPassbook'], 'image') ?>
-                    </div>
-                <?php } else if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-fee-detail')) { ?>
-                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
-                        <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
-                    </div>
-                    <div class="col-sm-4 text-center">
-                        <?= Yii::t('app', 'Receipt Copy :') ?><br>
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['receiptCopy'], 'image') ?>
+                    <div class="doc-preview-container">
+                        <?= $previews ?>
                     </div>
                 </div>
-            <?php } ?>
-        </div>
+            </div>
+        <?php } ?>
         <div class="row">           
             <div class="col-sm-12 margin-top-10">
                 <?php if ($isLastStep) { ?>

@@ -6499,3 +6499,94 @@ select:focus > option:checked {
 .tab-header-line .tab-content {
     border-top: none !important;
 }
+
+.provisional-viewer .viewer-toolbar > ul {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    border-radius: 30px !important;
+    padding: 10px 20px !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important;
+}
+.provisional-viewer .viewer-toolbar > ul > li {
+    margin: 5px !important;
+}
+.provisional-viewer .viewer-toolbar {
+    bottom: 15% !important;
+}
+.provisional-viewer .viewer-footer {
+    bottom: 5% !important;
+}
+.doc-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+    background: #fdfdfd;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.doc-preview-card {
+    flex: 1 0 calc(25% - 15px);
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+.doc-preview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: #00A3DE;
+}
+.doc-preview-header {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 11px;
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.no-attachment {
+    background: #f9f9f9;
+    color: #999;
+    font-size: 11px;
+    border: 1px dashed #ddd;
+    border-radius: 6px;
+    font-style: italic;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+.doc-preview-card img {
+    border-radius: 4px;
+    transition: opacity 0.3s;
+    max-height: 150px;
+    width: auto;
+    margin: 0 auto;
+    object-fit: contain;
+}
+.doc-preview-card img:hover {
+    opacity: 0.85;
+}
+@media (max-width: 1200px) {
+    .doc-preview-card { flex: 1 0 calc(33.33% - 15px); }
+}
+@media (max-width: 768px) {
+    .doc-preview-card { flex: 1 0 calc(50% - 15px); }
+}
+@media (max-width: 480px) {
+    .doc-preview-card { flex: 1 0 100%; }
+    .doc-preview-container { gap: 10px; padding: 10px; }
+}
+

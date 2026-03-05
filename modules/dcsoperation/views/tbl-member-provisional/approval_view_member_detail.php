@@ -155,18 +155,21 @@ $this->render('approval_view_tabs', [
             ?>
         </div>
 
+        <?php
+        $previews = '';
+        $applicantPhoto = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['applicantPhoto'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Applicant Photo') . '</span>' . (trim($applicantPhoto) != '' ? $applicantPhoto : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+        $signature = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signatureOfApplicant'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Signature of Witness') . '</span>' . (trim($signature) != '' ? $signature : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+        ?>
         <div class="row theme_border_left theme_border_right theme_border_bottom">
             <div class="col-md-12 padding_10_0">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
                     <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
                 </div>
-                <div class="col-sm-4 text-center">
-                    <?= Yii::t('app', 'Member Photo :') ?><br>
-                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['member_photo'], 'image') ?>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <?= Yii::t('app', 'Signature Photo :') ?><br>
-                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signature_photo'], 'image') ?>
+                <div class="doc-preview-container">
+                    <?= $previews ?>
                 </div>
             </div>
         </div>

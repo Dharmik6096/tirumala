@@ -149,7 +149,7 @@ $this->render('approval_view_tabs', [
                             ],
                                 [
                                 'attribute' => 'email_relation',
-                                'value' => Yii::$app->general->getforeignkey($model->relationship, 'relationship'),
+                                'value' => Yii::$app->general->getforeignkey($model->emailRelationship, 'relationship'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -185,32 +185,28 @@ $this->render('approval_view_tabs', [
             </div>
         <?php } ?>
 
+        <?php
+        $previews = '';
+        if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-view-address-detail')) {
+            $currentAddressProof = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['currentAddressProof'], 'image');
+            $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Current Address Proof') . '</span>' . (trim($currentAddressProof) != '' ? $currentAddressProof : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+            $otherIdProof = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['otherIdProof'], 'image');
+            $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Other ID Proof') . '</span>' . (trim($otherIdProof) != '' ? $otherIdProof : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+        }
+        $aadharCard = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Aadharcard Front Photo') . '</span>' . (trim($aadharCard) != '' ? $aadharCard : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+        $aadharCardBack = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCardBack'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Aadharcard Back Photo') . '</span>' . (trim($aadharCardBack) != '' ? $aadharCardBack : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+        ?>
         <div class="row theme_border_left theme_border_right theme_border_bottom">
             <div class="col-md-12 padding_10_0">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
                     <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
                 </div>
-                <?php if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-view-address-detail')) { ?>
-                    <div class="col-sm-3 text-center">
-                        <?= Yii::t('app', 'Current Address Proof :') ?>
-                        <br>
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['currentAddressProof'], 'image') ?>
-                    </div>
-                    <div class="col-sm-3 text-center">
-                        <?= Yii::t('app', 'Other ID Proof :') ?>
-                        <br>
-                        <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['otherIdProof'], 'image') ?>
-                    </div>
-                <?php } ?>
-                <div class="col-sm-3 text-center">
-                    <?= Yii::t('app', 'Aadharcard Front Photo :') ?>
-                    <br>
-                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard'], 'image') ?>
-                </div>
-                <div class="col-sm-3 text-center">
-                    <?= Yii::t('app', 'Aadharcard Back Photo :') ?>
-                    <br>
-                    <?= Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCardBack'], 'image') ?>
+                <div class="doc-preview-container">
+                    <?= $previews ?>
                 </div>
             </div>
         </div>
