@@ -811,8 +811,9 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {
-        $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
-        $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
+        $unionCode = !empty(Yii::$app->session->get('Unions')) ? Yii::$app->session->get('Unions') : $model->union_code;
+        $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($unionCode, 'member_creation_pending_for_sap_approval', 'PORTAL');
+        $config = Yii::$app->general->getUnionConfiguration($unionCode, 'allow_member_other_detail', 'PORTAL');
         $model->member_status = 1;
         $all_doc = [];
         $memberdoc = [];

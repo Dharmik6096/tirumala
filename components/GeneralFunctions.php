@@ -1727,12 +1727,29 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getKeyPattern($table_name) {
-        return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
+    public function getKeyPattern($table_name, $union_code = null) {
+
+        if (isset(Yii::$app->user) && !Yii::$app->user->isGuest) {
+            return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
+        }
+
+        static $localCache = [];
+        $cacheKey = $table_name . ($union_code ? '_' . $union_code : '');
+        if (array_key_exists($cacheKey, $localCache)) {
+            return $localCache[$cacheKey];
+        }
+
+        $query = TblKeyPattern::find()->where(['pattern_for' => $table_name]);
+        if (!empty($union_code)) {
+            $query->andWhere(['union_code' => $union_code]);
+        }
+        $localCache[$cacheKey] = $query->one();
+        return $localCache[$cacheKey];
     }
 
     public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '', $conacte = true) {
-        $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name);
+        $union_code = !empty($model->union_code) ? $model->union_code : NULL;
+        $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name, $union_code);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
             $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
