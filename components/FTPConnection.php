@@ -317,6 +317,57 @@ class FTPConnection extends Component {
         }
     }
 
+    public function RenameFile($old_path, $new_path) {
+        if ($this->ftp_type == 'SELF') {
+            return $this->LocalRename($old_path, $new_path);
+        }
+        $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
+        if ($conn) {
+            return ($this->ftp_type == 'FTP') ? $this->FTPRename($old_path, $new_path) : $this->SFTPRename($old_path, $new_path);
+        } else {
+            return FALSE;
+        }
+    }
+
+    private function FTPRename($old_path, $new_path) {
+        try {
+            if (!$this->ConnectServer()) {
+                return FALSE;
+            }
+            if (ftp_rename($this->connection, $old_path, $new_path)) {
+                ($this->conn_close) ? ftp_close($this->connection) : '';
+                return TRUE;
+            }
+            ($this->conn_close) ? ftp_close($this->connection) : '';
+            return FALSE;
+        } catch (\ErrorException $e) {
+            ($this->conn_close) ? ftp_close($this->connection) : '';
+            return false;
+        }
+    }
+
+    private function SFTPRename($old_path, $new_path) {
+        try {
+            if ($this->connection->rename($old_path, $new_path)) {
+                return TRUE;
+            }
+            return FALSE;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    private function LocalRename($old_path, $new_path) {
+        try {
+            if (rename($old_path, $new_path)) {
+                return TRUE;
+            }
+            return FALSE;
+        } catch (\ErrorException $e) {
+            return false;
+        }
+    }
+
     public function DeleteFile() {
         if ($this->ftp_type == 'SELF') {
             return $this->LocalDeleteFile();
