@@ -112,6 +112,9 @@ $this->render('approval_tabs', [
                     <div class="col-sm-2 number-validate">
                         <?= $form->field($model, 'annual_milk_pour')->textInput() ?>
                     </div>
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, '', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
+                    </div>
                 </div>
             </div>
         <?php } ?>

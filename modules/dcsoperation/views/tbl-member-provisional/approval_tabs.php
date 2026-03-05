@@ -57,3 +57,5 @@ $(document).on('click', '.re-route', function() {
 ";
 $this->registerJs($script, View::POS_END, 'approval-tabs-reroute');
 ?>
+
+<?= $this->render('_image_viewer') ?>

@@ -354,7 +354,8 @@ class TblMemberProvisional extends ChildModel {
             'payment_type' => Yii::t('app', 'Mode Of Payment'),
             'route_code' => Yii::t('app', 'Route'),
             'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
-            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
+            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name'),
+            'receipt_scan_copy' => Yii::t('app', 'Fee Receipt Number'),
         ];
     }
 
@@ -502,6 +503,10 @@ class TblMemberProvisional extends ChildModel {
 
     public function getMccCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getEmailRelationship() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'email_relation']);
     }
 
     public function getMembers($dcs_code, $as_array = false) {
