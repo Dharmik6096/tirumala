@@ -49,3 +49,4 @@ config/env.php
 web/uploads/banner_upload/**
 web/export_report/**
 SAPFILES/**
+web/sap_file_upload/**
