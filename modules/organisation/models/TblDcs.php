@@ -682,9 +682,9 @@ class TblDcs extends ChildModel {
             $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
         }
 
-        if ($unionCode !== '')
+        if (!empty($unionCode))
             $query->andWhere(['union_code' => explode(',', $unionCode)]);
-        if (Yii::$app->session->get('Dcs') !== '') {
+        if (!empty(Yii::$app->session->get('Dcs'))) {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
         return $query->all();
