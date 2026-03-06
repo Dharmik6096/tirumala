@@ -26,12 +26,16 @@ class FTPConnection extends Component {
     public function ConnectServer() {
         if ($this->ftp_type == 'SELF') {
             return TRUE;
+        } else if ($this->ftp_type == 'AWS') {
+            return $this->AWS();
         }
         return ($this->ftp_type == 'FTP') ? $this->FTP() : $this->SFTP();
     }
 
     public function CloseConnection() {
         if ($this->ftp_type == 'SELF') {
+            return TRUE;
+        } else if ($this->ftp_type == 'AWS') {
             return TRUE;
         }
         return ($this->ftp_type == 'FTP') ? $this->FTPClose() : $this->SFTPClose();
@@ -84,6 +88,9 @@ class FTPConnection extends Component {
             }
             $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
             if ($conn) {
+                if ($this->ftp_type == 'AWS') {
+                    return $this->AWSUpload();
+                }
                 return ($this->ftp_type == 'FTP') ? $this->FTPUpload() : $this->SFTPUpload();
             } else {
                 return FALSE;
@@ -441,6 +448,42 @@ class FTPConnection extends Component {
             ($this->conn_close) ? ftp_close($this->connection) : '';
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => \Yii::t('app', 'Error while Get Contents from FTP.')]);
+            return false;
+        }
+    }
+
+    private function AWS() {
+        try {
+            Yii::$app->set('fs', [
+                'class' => 'creocoder\flysystem\AwsS3Filesystem',
+                'key' => $this->ftp_username,
+                'secret' => $this->ftp_password,
+                'bucket' => $this->ftp_host,
+                'region' => $this->ftp_port, // New Region
+                    /* 'http' => [
+                      'curl' => [
+                      CURLOPT_SSL_VERIFYPEER => false, // Set to true in production
+                      CURLOPT_SSL_VERIFYHOST => false, // Set to true in production
+                      ],
+                      ], */
+            ]);
+            return TRUE;
+        } catch (\Exception $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Invalid AWS Credential.')]);
+            return false;
+        }
+    }
+
+    private function AWSUpload() {
+        try {
+            $file_stream = fopen($this->local_path . $this->file_name, 'r+');
+            Yii::$app->fs->writeStream($this->ftp_path . $this->file_name, $file_stream);
+            fclose($file_stream);
+            return TRUE;
+        } catch (\ErrorException $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while file copy.')]);
             return false;
         }
     }
