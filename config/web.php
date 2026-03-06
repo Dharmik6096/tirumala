@@ -293,6 +293,10 @@ if (!empty($params['redis'])) {
     ];
     $config['components']['redis'] = $params ['redis'];
 }
+if (!empty($params['fs'])) {
+ $config['components']['fs'] = $params ['fs'];
+}
+
 if (YII_ENV_DEV) {
 // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';

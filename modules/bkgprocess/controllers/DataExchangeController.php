@@ -34,6 +34,19 @@ class DataExchangeController extends ChildController {
         ];
     }
 
+public function actionAwsTest(){
+    try{
+        $filePath = \Yii::getAlias('@webroot/asmita.txt');
+        $stream = fopen($filePath, 'r+');
+        Yii::$app->fs->writeStream('asmita2.txt', $stream);
+        fclose($stream);
+       var_dump('file uploaded in s3');
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+        }
+        die;
+}
+
     public function actionDataExchange() {
         $configModel = new TblDataExchangeConfig();
         $data = $configModel->getDataExchangeConfig();
