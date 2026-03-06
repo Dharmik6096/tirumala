@@ -1193,7 +1193,7 @@ class SchedulerController extends ChildController {
                         $folder = \Yii::$app->params['sap_data_files'] . 'vendor-data/';
                         $path = str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder);
                         if (\Yii::$app->general->checkDirectory($path)) {
-                            $objPHPExcel = new PHPExcel();
+                            $objPHPExcel = new Spreadsheet();
                             $sheet = $objPHPExcel->getActiveSheet();
                             $header = array_keys($output[0]);
                             $sheet->fromArray($header, NULL, 'A1');
@@ -1209,7 +1209,7 @@ class SchedulerController extends ChildController {
                             }
 
                             $filePath = $path . $fileName;
-                            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+                            $objWriter = IOFactory::createWriter($objPHPExcel, 'Xls');
                             $objWriter->save($filePath);
 
                             $nextDate = date("Y-m-d H:i:s", strtotime("+{$value->interval} minutes"));
@@ -1221,7 +1221,7 @@ class SchedulerController extends ChildController {
                             $logData->union_code = $value->union_code;
                             $logData->module_code = $value->union_code;
 
-                            $res = $ftp_model->saveLogData($logData, $path, $fileName, count($output), false, 'vendor-data', false, false, 'union', false, []);
+                            $res = $ftp_model->saveLogData($logData, $path, $fileName, count($output), false, 'vendor-data/', false, false, 'AWS', false, []);
                             if ($res && !empty($update_ids)) {
                                 $model->updateAll(['data_post_status' => 2, 'response_datetime' => date('Y-m-d H:i:s'), 'resp_desc' => $fileName], ['in', $modelKey, $update_ids]);
                             } else {
@@ -1239,74 +1239,55 @@ class SchedulerController extends ChildController {
     }
 
     public function actionDownloadAcknowledgeFiles() {
-        $configs = TblDataExchangeConfig::find()->select(['union_code'])->where(['api_type' => 'XLS'])->distinct()->all();
-        if (!empty($configs)) {
-            $connection = null;
-            foreach ($configs as $config) {
-                $ftpDetail = new TblFtpDetail();
-                $ftpDetail->ftp_connection_code = $config->union_code . '_union';
-                $ftpData = $ftpDetail->getData();
+        $config = TblDataExchangeConfig::find()->select(['union_code'])->where(['api_type' => 'AWS'])->distinct()->one();
+        if (!empty($config)) {
+            $ftpDetail = new TblFtpDetail();
+            $ftpDetail->ftp_connection_code = $config->union_code . '_AWS';
+            $ftpData = $ftpDetail->getData();
 
-                if (!$ftpData) {
-                    continue;
-                }
-                $ftp = new FTPConnection();
-                if ($connection) {
-                    $ftp->CloseConnection();
-                }
-                $ftp->ftp_type = $ftpData->ftp_type;
-                $ftp->ftp_host = $ftpData->ftp_host;
-                $ftp->ftp_username = $ftpData->ftp_username;
-                $ftp->ftp_password = $ftpData->ftp_password;
-                $ftp->ftp_port = $ftpData->ftp_port;
-                $ftp->isPassiveFtp = (!empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active') ? false : true;
-                $ftp->conn_close = FALSE;
-                $ftp->conn_init = FALSE;
-                $ftp->make_dir = FALSE;
-                
-                try {
-                    $connection = $ftp->ConnectServer();
-                    if ($connection) {
-                        $ftpFolders = ['Success/', 'Error/'];
-                        foreach ($ftpFolders as $subFolder) {
-                            $ftp->ftp_path = $ftpData->ftp_path . $subFolder;
-                            $files = $ftp->ListFile();
+            $ftp = new FTPConnection();
 
-                            $ftp->ftp_path = $ftpData->ftp_path . $subFolder . 'Archive';
-                            $ftp->CreateDirectory();
+            $ftp->ftp_type = $ftpData->ftp_type;
+            $ftp->ftp_host = $ftpData->ftp_host;
+            $ftp->ftp_username = $ftpData->ftp_username;
+            $ftp->ftp_password = $ftpData->ftp_password;
+            $ftp->ftp_port = $ftpData->ftp_port;
+            $ftp->isPassiveFtp = (!empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active') ? false : true;
+            $ftp->conn_close = FALSE;
+            $ftp->conn_init = FALSE;
+            $ftp->make_dir = FALSE;
 
-                            $ftp->ftp_path = $ftpData->ftp_path . $subFolder;
+            try {
+                $ftpFolders = ['Success/', 'Error/'];
+                foreach ($ftpFolders as $subFolder) {
+                    $ftp->ftp_path = $subFolder;
+                    $files = $ftp->ListFile();
 
-                            $folder = \Yii::$app->params['sap_data_files'] . $subFolder;
-                            $localPath = rtrim(str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder), '/') . '/';
+                    $folder = \Yii::$app->params['sap_data_files'] . $subFolder;
+                    $localPath = rtrim(str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder), '/') . '/';
 
-                            if (!\Yii::$app->general->checkDirectory($localPath) || empty($files)) {
-                                continue;
-                            }
+                    if (!\Yii::$app->general->checkDirectory($localPath) || empty($files)) {
+                        continue;
+                    }
 
-                            foreach ($files as $file) {
-                                if ($file == '.' || $file == '..' || empty($file) || strpos($file, '~$') === 0) {
-                                    continue;
-                                }
-                                if (strpos($file, '.xls') !== false || strpos($file, '.xlsx') !== false) {
-                                    $ftp->file_name = $file;
-                                    $ftp->local_path = $localPath;
-                                    if ($ftp->DownloadFile()) {
-                                        $ftp->RenameFile($subFolder . $file, $subFolder . 'Archive/' . $file);
-                                    } else {
-                                        \Yii::error('[DownloadAcknowledge] Failed to download file: ' . $file . ' from ' . $subFolder, __METHOD__);
-                                    }
-                                }
+                    foreach ($files as $file) {
+                        if ($file == '.' || $file == '..' || empty($file) || strpos($file, '~$') === 0) {
+                            continue;
+                        }
+                        if (strpos($file, '.xls') !== false || strpos($file, '.xlsx') !== false) {
+                            $ftp->file_name = $file;
+                            $ftp->local_path = $localPath;
+                            $ftp->ftp_path = $subFolder;
+                            if ($ftp->DownloadFile()) {
+                                $ftp->RenameFile($subFolder . $file, $subFolder . 'Archive/' . $file);
+                            } else {
+                                \Yii::error('[DownloadAcknowledge] Failed to download file: ' . $file . ' from ' . $subFolder, __METHOD__);
                             }
                         }
                     }
-                } catch (\Throwable $ex) {
-                    \Yii::error('[DownloadAcknowledge] Error: ' . $ex->getMessage() . ' | Union: ' . $config->union_code, __METHOD__);
-                } finally {
-                    if (!empty($ftp->connection)) {
-                        $ftp->CloseConnection();
-                    }
                 }
+            } catch (\Throwable $ex) {
+                \Yii::error('[DownloadAcknowledge] Error: ' . $ex->getMessage(), __METHOD__);
             }
         }
     }
@@ -1339,7 +1320,7 @@ class SchedulerController extends ChildController {
                     $collectedData = [];
                     $tokensByType = ['DCS' => [], 'Farmer' => [], 'Dairy Farm' => []];
 
-                    $objPHPExcel = \PHPExcel_IOFactory::load($filePath);
+                    $objPHPExcel = IOFactory::load($filePath);
                     $sheet = $objPHPExcel->getActiveSheet();
                     $maxRow = $sheet->getHighestRow();
                     $maxCol = $sheet->getHighestDataColumn();

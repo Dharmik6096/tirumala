@@ -26,12 +26,16 @@ class FTPConnection extends Component {
     public function ConnectServer() {
         if ($this->ftp_type == 'SELF') {
             return TRUE;
+        } else if ($this->ftp_type == 'AWS') {
+            return $this->AWS();
         }
         return ($this->ftp_type == 'FTP') ? $this->FTP() : $this->SFTP();
     }
 
     public function CloseConnection() {
         if ($this->ftp_type == 'SELF') {
+            return TRUE;
+        } else if ($this->ftp_type == 'AWS') {
             return TRUE;
         }
         return ($this->ftp_type == 'FTP') ? $this->FTPClose() : $this->SFTPClose();
@@ -84,6 +88,9 @@ class FTPConnection extends Component {
             }
             $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
             if ($conn) {
+                if ($this->ftp_type == 'AWS') {
+                    return $this->AWSUpload();
+                }
                 return ($this->ftp_type == 'FTP') ? $this->FTPUpload() : $this->SFTPUpload();
             } else {
                 return FALSE;
@@ -143,6 +150,9 @@ class FTPConnection extends Component {
             return $this->LocalDownload();
         }
         if ($this->ConnectServer()) {
+            if ($this->ftp_type == 'AWS') {
+                return $this->AWSDownload();
+            }
             return ($this->ftp_type == 'FTP') ? $this->FTPDownload() : $this->SFTPDownload();
         } else {
             return FALSE;
@@ -198,6 +208,9 @@ class FTPConnection extends Component {
             return $this->LocalListFile();
         }
         if ($this->ConnectServer()) {
+            if ($this->ftp_type == 'AWS') {
+                return $this->AWSListFile();
+            }
             return ($this->ftp_type == 'FTP') ? $this->FTPListFile() : $this->SFTPListFile();
         } else {
             return FALSE;
@@ -319,6 +332,9 @@ class FTPConnection extends Component {
         }
         $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
         if ($conn) {
+            if ($this->ftp_type == 'AWS') {
+                return $this->AWSRename($old_path, $new_path);
+            }
             return ($this->ftp_type == 'FTP') ? $this->FTPRename($old_path, $new_path) : $this->SFTPRename($old_path, $new_path);
         } else {
             return FALSE;
@@ -370,6 +386,9 @@ class FTPConnection extends Component {
         }
         $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
         if ($conn) {
+            if ($this->ftp_type == 'AWS') {
+                return $this->AWSDeleteFile();
+            }
             return ($this->ftp_type == 'FTP') ? $this->FTPDeleteFile() : $this->SFTPDeleteFile();
         } else {
             return FALSE;
@@ -441,6 +460,83 @@ class FTPConnection extends Component {
         }
     }
 
+    private function AWS() {
+        try {
+            Yii::$app->set('fs', [
+                'class' => 'creocoder\flysystem\AwsS3Filesystem',
+                'key' => $this->ftp_username,
+                'secret' => $this->ftp_password,
+                'bucket' => $this->ftp_host,
+                'region' => $this->ftp_port, // New Region
+                    /* 'http' => [
+                      'curl' => [
+                      CURLOPT_SSL_VERIFYPEER => false, // Set to true in production
+                      CURLOPT_SSL_VERIFYHOST => false, // Set to true in production
+                      ],
+                      ], */
+            ]);
+            return TRUE;
+        } catch (\Exception $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Invalid AWS Credential.')]);
+            return false;
+        }
+    }
+
+    private function AWSUpload() {
+        try {
+            $file_stream = fopen($this->local_path . $this->file_name, 'r+');
+            Yii::$app->fs->writeStream($this->ftp_path . $this->file_name, $file_stream);
+            fclose($file_stream);
+            return TRUE;
+        } catch (\Exception $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while file copy.')]);
+            return false;
+        }
+    }
+
+    private function AWSDownload() {
+        try {
+            $contents = Yii::$app->fs->read($this->ftp_path . $this->file_name);
+            file_put_contents($this->local_path . $this->file_name, $contents);
+            return TRUE;
+        } catch (\Exception $e) {
+            return FALSE;
+        }
+    }
+
+    private function AWSListFile() {
+        try {
+            $files = array();
+            $list = Yii::$app->fs->listContents($this->ftp_path);
+            foreach ($list as $object) {
+                if ($object['type'] == 'file') {
+                    $files[] = $object['basename'];
+                }
+            }
+            return $files;
+        } catch (\Exception $e) {
+            return FALSE;
+        }
+    }
+
+    private function AWSRename($old_path, $new_path) {
+        try {
+            return Yii::$app->fs->rename($old_path, $new_path);
+        } catch (\Exception $e) {
+            return FALSE;
+        }
+    }
+
+    private function AWSDeleteFile() {
+        try {
+            return Yii::$app->fs->delete($this->ftp_path . $this->file_name);
+        } catch (\Exception $e) {
+            return FALSE;
+        }
+    }
+
 }
 
-?> 
+?>
