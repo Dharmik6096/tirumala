@@ -177,7 +177,7 @@ class TblDcs extends ChildModel {
             // [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
             [['allow_multi_family_member', /* 'destination_type', */], 'integer', 'except' => ['routeMapping']],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
-            [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date', 'type_of_dcs'], 'safe'],
+            [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date', 'type_of_dcs', 'sim_network', 'sim_no'], 'safe'],
                 [['fssi_expiry_date'], 'required', 'when' => function ($model) {
                     return !empty($model->fssi);
                 }, 'whenClient' => "function (attribute, value) {return $('#tbldcs-fssi').val() !== '';
@@ -195,7 +195,7 @@ class TblDcs extends ChildModel {
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['ifsc', 'pan_no'], 'trim'],
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
-            [['mobile_no'], function ($attribute, $params) {
+            [['mobile_no', 'sim_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
                 [['gst_no'], function ($attribute, $params) {
@@ -319,7 +319,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'machine_owned_type');
                 }, 'on' => ['importCsv']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number'],
+                [['ts_code_m', 'ts_code_e', 'sim_no'], 'number'],
                 [['is_bmc'], 'unique', 'targetAttribute' => ['is_bmc', 'bmc_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                     return $model->is_bmc && $model->isAttributeChanged('is_bmc', FALSE);
                 }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
@@ -337,7 +337,10 @@ class TblDcs extends ChildModel {
                     }
                 }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
                 [['is_security_cheque'], 'default', 'value' => 0],
-                [['dcs_code'], 'resetDefaultValue']
+                [['dcs_code'], 'resetDefaultValue'],
+                [['sim_network'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'sim_network');
+                }, 'on' => 'importCsv'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -462,6 +465,8 @@ class TblDcs extends ChildModel {
             'security_return_amt' => Yii::t('app', 'Security Return Amount'),
             'security_return_mode' => Yii::t('app', 'Security Return Mode'),
             'type_of_dcs' => Yii::t('app', 'Type Of DCS'),
+            'sim_network' => Yii::t('app', 'Sim Network'),
+            'sim_no' => Yii::t('app', 'Sim No'),
         ];
     }
 
