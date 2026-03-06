@@ -7,6 +7,7 @@
 
 namespace yii\redis;
 
+use Yii;
 use yii\db\Exception;
 use yii\di\Instance;
 
@@ -100,7 +101,7 @@ use yii\di\Instance;
 class Cache extends \yii\caching\Cache
 {
     /**
-     * @var ConnectionInterface|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].
+     * @var Connection|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].
      * This can also be an array that is used to create a redis [[Connection]] instance in case you do not want do configure
      * redis connection as an application component.
      * After the Cache object is created, if you want to change this property, you should only assign it
@@ -138,7 +139,7 @@ class Cache extends \yii\caching\Cache
      * should be enabled, or false if it should be disabled.
      * @since 2.0.11
      */
-    public $forceClusterMode = false;
+    public $forceClusterMode;
     /**
      * @var bool whether redis [[Connection::$database|database]] is shared and can contain other data than cache.
      * Setting this to `true` will change [[flush()]] behavior - instead of using [`FLUSHDB`](https://redis.io/commands/flushdb)
@@ -150,7 +151,7 @@ class Cache extends \yii\caching\Cache
     public $shareDatabase = false;
 
     /**
-     * @var ConnectionInterface currently active connection.
+     * @var Connection currently active connection.
      */
     private $_replica;
     /**
@@ -171,7 +172,7 @@ class Cache extends \yii\caching\Cache
     public function init()
     {
         parent::init();
-        $this->redis = Instance::ensure($this->redis, ConnectionInterface::class);
+        $this->redis = Instance::ensure($this->redis, Connection::className());
     }
 
     /**
@@ -370,13 +371,12 @@ class Cache extends \yii\caching\Cache
      * It will return the current Replica Redis [[Connection]], and fall back to default [[redis]] [[Connection]]
      * defined in this instance. Only used in getValue() and getValues().
      * @since 2.0.8
-     * @return array|string|ConnectionInterface
+     * @return array|string|Connection
      * @throws \yii\base\InvalidConfigException
      */
     protected function getReplica()
     {
-        // @NOTE Predis uses its own implementation of balancing
-        if ($this->enableReplicas === false || $this->redis instanceof \yii\redis\Predis\PredisConnection) {
+        if ($this->enableReplicas === false) {
             return $this->redis;
         }
 

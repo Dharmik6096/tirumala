@@ -50,7 +50,9 @@
         "kartik-v/yii2-editable": "^1.8",
         "spanjeta/yii2-backup": "*",
         "2amigos/yii2-multi-select-widget": "*",
-        "php-amqplib/php-amqplib": "^2.10"
+        "php-amqplib/php-amqplib": "^2.10",
+        "creocoder/yii2-flysystem": "^1.2",
+        "league/flysystem-aws-s3-v3": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
