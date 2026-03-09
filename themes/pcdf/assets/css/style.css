@@ -6481,3 +6481,7 @@ select:focus > option:checked {
     touch-action: none;
     -ms-touch-action: none;
 }
+
+.mt5 {
+    margin-top: 5px !important;
+}
