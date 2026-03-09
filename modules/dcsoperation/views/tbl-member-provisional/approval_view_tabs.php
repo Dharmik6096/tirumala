@@ -57,3 +57,5 @@ $(document).on('click', '.re-route', function() {
 ";
 $this->registerJs($script, View::POS_END, 'reroute_view');
 ?>
+
+<?= $this->render('_image_viewer') ?>
