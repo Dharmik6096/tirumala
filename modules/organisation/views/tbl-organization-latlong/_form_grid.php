@@ -9,7 +9,11 @@ $attribute = [
         return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
     }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     ['attribute' => 'customer_type'],
-    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function ($model) {
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Customer Code'), 'filter' => true, 'visible' => true],
+    ['attribute' => 'ref_code', 'value' => function ($model) {
+        return Yii::$app->general->getField($model, $model->customer_type, 'ref_code');
+    }, 'filter' => true, 'visible' => true],
+    ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function ($model) {
         return Yii::$app->general->getField($model, $model->customer_type);
     }],
     ['attribute' => 'lat_long'],

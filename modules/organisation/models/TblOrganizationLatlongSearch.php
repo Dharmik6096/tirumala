@@ -2,7 +2,6 @@
 
 namespace app\modules\organisation\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\organisation\models\TblOrganizationLatlong;
@@ -12,6 +11,8 @@ use app\modules\organisation\models\TblOrganizationLatlong;
  */
 class TblOrganizationLatlongSearch extends TblOrganizationLatlong
 {
+    public $ref_code, $customer_name;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class TblOrganizationLatlongSearch extends TblOrganizationLatlong
     {
         return [
             [['organization_latlong_code', 'is_active', 'originating_type'], 'integer'],
-            [['union_code', 'customer_type', 'customer_code', 'lat_long', 'address', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code'], 'safe'],
+            [['union_code', 'customer_type', 'customer_code', 'lat_long', 'address', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code', 'ref_code', 'customer_name'], 'safe'],
         ];
     }
 
@@ -60,13 +61,21 @@ class TblOrganizationLatlongSearch extends TblOrganizationLatlong
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'organization_latlong_code' => $this->organization_latlong_code,
-            'is_active' => $this->is_active,
+            'tbl_organization_latlong.organization_latlong_code' => $this->organization_latlong_code,
+            'tbl_organization_latlong.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'customer_type', $this->customer_type])
-            ->andFilterWhere(['like', 'customer_code', $this->customer_code])
-            ->andFilterWhere(['like', 'lat_long', $this->lat_long]);
+        $query->andFilterWhere(['like', 'tbl_organization_latlong.customer_type', $this->customer_type])
+            ->andFilterWhere(['like', 'tbl_organization_latlong.customer_code', $this->customer_code])
+            ->andFilterWhere(['like', 'tbl_organization_latlong.lat_long', $this->lat_long]);
+
+        if (!empty($this->ref_code)) {
+            $query->andWhere(['or', ['like', 'tbl_organization_latlong.customer_code', $this->ref_code], ['like', 'tbl_dcs.ref_code', $this->ref_code], ['like', 'tbl_bmc.ref_code', $this->ref_code], ['like', 'tbl_plant.ref_code', $this->ref_code], ['like', 'tbl_mcc_plant.ref_code', $this->ref_code], ['like', 'tbl_customer_master.ref_code', $this->ref_code]]);
+        }
+
+        if (!empty($this->customer_name)) {
+            $query->andWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_bmc.bmc_name', $this->customer_name], ['like', 'tbl_plant.name', $this->customer_name], ['like', 'tbl_mcc_plant.name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'user.name', $this->customer_name]]);
+        }
 
         return $dataProvider;
     }
