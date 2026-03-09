@@ -48,7 +48,7 @@ use yii\web\View;
     <div class="col-sm-2 secondary">
         <?= Yii::$app->dropdown->datewise_transporter_list($model, $form, 'tbltransporterpaymentsearch-union_code,tbltransporterpaymentsearch-from_date,tbltransporterpaymentsearch-to_date', 'secondory_transporter_code', $model->getAttributeLabel('transporter_code'), FALSE, '', FALSE, TRUE); ?>
     </div>
-    <div class="col-sm-1 mt23">
+    <div class="col-sm-1 mt18">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
     <?php ActiveForm::end(); ?>
