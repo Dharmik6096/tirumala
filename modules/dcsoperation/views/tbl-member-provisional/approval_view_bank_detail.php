@@ -80,13 +80,9 @@ $this->render('approval_view_tabs', [
                         [
                         'columns' => [
                                 [
-                                'attribute' => 'receipt_scan_copy',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                                [
                                 'attribute' => 'is_verify',
                                 'value' => ($model->is_verify == 0) ? 'Pending' : ($model->is_verify == 1 ? 'Verify' : ''),
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -147,7 +143,12 @@ $this->render('approval_view_tabs', [
                         'columns' => [
                                 [
                                 'attribute' => 'bank_name',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'receipt_scan_copy',
+                                'label' => 'Fee Receipt Number',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
