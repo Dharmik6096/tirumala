@@ -103,7 +103,7 @@ if (Yii::$app->session->hasFlash('success')) {
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="login-content text-justify">
-                                        <?php $image_path = Yii::$app->request->baseUrl . '/../themes/pcdf/assets/cargill/images/'; ?>
+                                        <?php $image_path = Yii::$app->request->baseUrl . '/themes/emilk/assets/cargill/images/'; ?>
                                         <div class="col-sm-12">
                                             <?= Html::img($image_path . 'about.jpg', ['class' => 'img-responsive']); ?>
                                             <br>
