@@ -229,7 +229,7 @@ class TblMemberProvisional extends ChildModel {
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
-                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument', 'MemberReroute']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument', 'MemberReroute', 'Reroute']],
                 [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['createProvisionalMember']],
@@ -261,6 +261,7 @@ class TblMemberProvisional extends ChildModel {
                 [['mobile_no'], 'validateMobileNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_address_detail']],
                 [['bank_account_no'], 'validateBankAccNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_bank_detail']],
                 [['adhar_no'], 'validateAdharNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_adhar_detail']],
+                [['remarks'], 'required', 'message' => 'Reroute Remarks cannot be blank.', 'on' => ['Reroute']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

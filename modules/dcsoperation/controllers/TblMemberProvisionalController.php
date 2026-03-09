@@ -476,7 +476,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
     public function actionApproveMember($id, $isTabApproval = 0) {
         $model = TblProcessApproval::findOne($id);
-        $model->scenario = 'approve';
+        $aproveStatus = Yii::$app->request->post('TblProcessApproval')['status'] ?? '';
+        $model->scenario = ($isTabApproval == 1 && $aproveStatus == 2) ? 'approvalTabWise' : 'approve';
         $model_save = [];
         $deleteModel = [];
         $member_error = '';
@@ -574,9 +575,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             }
         }
         if ($isTabApproval == 1) {
-            if (empty($model->status)) {
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => 'Status is required for approval.']);
+            $errors = [];
+            foreach ($model->getErrors() as $attrErrors) {
+                foreach ($attrErrors as $error) {
+                    $errors[] = $error;
+                }
             }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => implode('<br/>', $errors)]);
             return $this->redirect(Yii::$app->request->referrer);
         }
         return $this->render('approve_member', [
@@ -1958,9 +1963,18 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
         $memberModel->provisional_status = 'Reroute';
         $memberModel->remarks = $remarks;
-        $memberModel->scenario = 'MemberReroute';
+        $memberModel->scenario = 'Reroute';
         $saveModel[] = $memberModel;
-
+        if (!$memberModel->validate()) {
+            $errors = [];
+            foreach ($memberModel->getErrors() as $attrErrors) {
+                foreach ($attrErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => implode('<br/>', $errors)]);
+            return false;
+        }
         $workflowRequired = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'workflow_require', 'PORTAL');
         if ($workflowRequired == 1) {
             $approvals = TblProcessApproval::find()->where(['process_code' => $memberModel->provisional_member_code])->all();
