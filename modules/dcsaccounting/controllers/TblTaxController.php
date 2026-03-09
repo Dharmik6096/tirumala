@@ -16,6 +16,9 @@ use app\modules\dcsaccounting\models\TblTaxDepends;
 use app\modules\dcsaccounting\models\TblTaxDependsHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\dcsaccounting\models\TblLedgerMappingTaxDetailSearch;
+use app\modules\dcsaccounting\models\TblLedgerMappingTaxDetail;
+use app\modules\dcsaccounting\models\TblLedgerMappingTaxDetailHistory;
 
 /**
  * TblTaxController implements the CRUD actions for TblTax model.
@@ -192,6 +195,64 @@ class TblTaxController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionTaxLedgerMapping($id) {
+        $searchModel = new TblLedgerMappingTaxDetailSearch();
+        $model = new TblLedgerMappingTaxDetail();
+        $dataProvider = $searchModel->mappingSearch(Yii::$app->request->queryParams, $id);
+
+        if (Yii::$app->request->post()) {
+            $incCount = 0;
+            $save_model = [];
+            $historyModel = [];
+            $postData = Yii::$app->request->post()['TblTaxDetail'];
+
+            foreach ($postData as $taxDetailCode => $data) {
+
+                $mapping_model = TblLedgerMappingTaxDetail::find()->where(['tax_detail_code' => $taxDetailCode])->one();
+                $isChange = false;
+
+                if ($mapping_model) {
+                    if ($mapping_model->ledger_code != $data['ledger_code']) {
+                        $isChange = true;
+                    }
+                } else {
+                    if (!empty($data['ledger_code'])) {
+                        $mapping_model = new TblLedgerMappingTaxDetail();
+                        $incCount++;
+                        $mapping_model->ledger_mapping_tax_detail_code = Yii::$app->general->getCodeAutoIncrement($mapping_model, $incCount);
+                        $mapping_model->tax_detail_code = $taxDetailCode;
+                        $mapping_model->union_code = $data['union_code'];
+                    }
+                }
+
+                if ($mapping_model && ($mapping_model->isNewRecord || $isChange)) {
+                    if ($isChange) {
+                        $mapingHistory = new TblLedgerMappingTaxDetailHistory();
+                        Yii::$app->operation->history($mapping_model, $mapingHistory, 'UPDATE');
+                        $historyModel[] = $mapingHistory;
+                    }
+                    $mapping_model->ledger_code = $data['ledger_code'];
+                    $save_model[] = $mapping_model;
+                }
+            }
+            if (!empty($save_model)) {
+                $transaction = $this->generalModel->saveTransaction($save_model, $historyModel, ['Tax Detail Ledger Mapping', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            } else {
+                Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'No changes detected. Please update at least one ledger mapping before saving.']);
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        }
+
+        return $this->render('mapping', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'model' => $model,
+        ]);
     }
 
 }
