@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property string $union_code
  * @property integer $is_active
  */
-class TblCustomerType extends \yii\db\ActiveRecord {
+class TblCustomerType extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
