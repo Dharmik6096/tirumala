@@ -93,7 +93,6 @@ class TblMemberProvisionalShareDetails extends ChildModel {
 
     public function getMemberShare() {
         return $this->find()->where(['provisional_member_code' => $this->provisional_member_code])->one();
-        return $this->find()->where(['provisional_member_code' => $this->provisional_member_code])->one();
     }
 
     public function getShareData($pro_member_code) {

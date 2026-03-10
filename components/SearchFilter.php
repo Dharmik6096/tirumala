@@ -574,9 +574,6 @@ class SearchFilter {
             'TblProductDispatchTransactionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'dispatch_center_code', 'from_date', 'to_date'],
             ],
-            'TblLedgersSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
-            ],
             'TblSubLedgersSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
@@ -605,13 +602,13 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
             'TblLedgerMappingProductGroupSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+                'filter' => ['f_union_code'],
             ],
             'TblLedgerMappingEventSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
             'TblLedgerMappingBillHeadSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+                'filter' => ['f_union_code'],
             ],
             'TblLedgerOpeningBalanceSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
@@ -714,6 +711,15 @@ class SearchFilter {
             ],
             'TblExcessFatSnfMasterSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+            ],
+            'TblVoucherTypesSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblLedgerTypesSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblLedgersSearch' => [
+                'filter' => ['f_union_code'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

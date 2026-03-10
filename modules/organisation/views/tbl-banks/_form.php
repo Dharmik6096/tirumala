@@ -48,6 +48,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'checked_ac_no', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
     </div>
+    <div class="col-sm-2">
+        <?php echo Html::hiddenInput('ledger_type', 'bank', ['id' => 'ledger_type']); ?>
+        <?php echo Html::hiddenInput('union_code', 'bank', ['id' => 'union_code']); ?>
+        <?= Yii::$app->dropdown->ledgerList($model, $form, 'union_code,ledger_type', 'ledger_code', $model->getAttributeLabel('ledger_code'), false); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= $form->field($model, 'nationalized_bank', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>

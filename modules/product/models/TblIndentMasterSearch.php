@@ -13,14 +13,14 @@ use yii\data\ArrayDataProvider;
  */
 class TblIndentMasterSearch extends TblIndentMaster {
 
-    public $from_date, $to_date, $product_group_code, $group_by, $payment_cycle_code;
+    public $from_date, $to_date, $product_group_code, $group_by, $payment_cycle_code, $bmc_name, $dcs_name, $member_name, $customer_name, $sap_farmer_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close'], 'safe'],
+            [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close', 'bmc_name', 'dcs_name', 'member_name', 'customer_name', 'sap_farmer_code'], 'safe'],
             [['qty'], 'number'],
             [['originating_type'], 'integer'],
             [['indent_type', 'warehouse_code', 'product_group_code'], 'safe'],
@@ -55,7 +55,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $query->joinWith(['memberCode', 'productCode']);
+        $query->joinWith(['memberCode', 'productCode', 'dcsCode', 'bmcCode', 'customerCode']);
         $this->load($params);
 
         if (!$this->validate()) {
@@ -77,7 +77,9 @@ class TblIndentMasterSearch extends TblIndentMaster {
         }
 
         $query->andFilterWhere(['like', 'indent_code', $this->indent_code])
-                ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])
+                ->andFilterWhere(['like', 'tbl_member.ex_member_code', $this->member_code])
+                ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_name])
+                ->andFilterWhere(['like', 'tbl_member.sap_farmer_code', $this->sap_farmer_code])
                 ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code])
                 ->andFilterWhere(['like', 'qty', $this->qty])
                 ->andFilterWhere(['like', 'status', $this->status])
@@ -86,6 +88,12 @@ class TblIndentMasterSearch extends TblIndentMaster {
                 ->andFilterWhere(['like', 'approve_qty', $this->approve_qty])
                 ->andFilterWhere(['like', 'rejected_qty', $this->rejected_qty])
                 ->andFilterWhere(['like', 'dispatch_qty', $this->dispatch_qty])
+                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_name])
+                ->andFilterWhere(['like', 'tbl_customer_master.ref_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_customer_master.customer_name', $this->customer_name])
                 ->andFilterWhere(['like', 'status_remarks', $this->status_remarks]);
 
         return $dataProvider;

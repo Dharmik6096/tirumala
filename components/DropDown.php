@@ -774,7 +774,12 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-chamber-list', Yii::t('app', 'Select Chamber'), $multiple, '', $readonly);
     }
-    
+
+    public function ledgerList($model, $form, $depends, $name = 'ledger_code', $islable = false, $multiple = false, $readonly = false, $is_return = false, $input_name = '') {
+        $this->setClass($form, $name);
+        return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsaccounting/tbl-ledgers/get-ledger-list', Yii::t('app', 'Select Ledger'), $multiple, '', $readonly, '', true, '', $is_return, $input_name);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1001,9 +1006,9 @@ class DropDown extends Component {
         $whereCondition = [];
         if (isset($labelData['whereCondition'])) {
             foreach ($labelData['whereCondition'] as $key => $value) {
-                $whereCondition[$tablename . '.' . $key] = $value;
+                    $whereCondition[$tablename . '.' . $key] = $value;
+                }
             }
-        }
         if (isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])) {
             foreach ($labelData['rlsWhereCondition'] as $key => $value) {
                 $whereCondition[$key] = $value;
@@ -2540,6 +2545,9 @@ class DropDown extends Component {
             'caseType' => ['name' => 'case_type_id', 'fields' => 'case_type_id,case_type_name,', 'prompt' => Yii::t('app', 'Select Case Type'), 'model' => 'TblCaseType', 'depend' => 'union_code'],
             'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
             'committee_type_code' => ['name' => 'committee_type_code', 'fields' => 'committee_type_code,committee_type_name', 'prompt' => 'Select Type', 'model' => 'TblCommitteeType'],
+            'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
+            'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
+            'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
         ];
         return $label[$l];
     }
