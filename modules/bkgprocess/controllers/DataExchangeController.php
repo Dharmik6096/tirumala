@@ -34,6 +34,41 @@ class DataExchangeController extends ChildController {
         ];
     }
 
+    public function actionAwsTest() {
+        try {
+            $ftp = new \app\components\FTPConnection();
+            $ftp->ftp_type = 'AWS';
+            $ftp->ftp_host = 'dodla-procurement';
+            $ftp->ftp_username = 'AKIAVZ733KEHHNTDNS5I';
+            $ftp->ftp_password = 'HWD8nN9H06tOmIycYS9qleVfoWyhtAy9b8qbXW5D';
+            $ftp->ftp_port = 'ap-south-1';
+            $ftp->conn_init = FALSE;
+            $ftp->conn_close = FALSE;
+            $ftp->make_dir = FALSE;
+            $ftp->isPassiveFtp = !empty($row->ftp_mode) && $row->ftp_mode == 'active' ? false : true;
+            $connection = $ftp->ConnectServer();
+            if ($connection) {
+                $file_name = 'aws-test.txt';
+                $ftp_path = explode('/', $file_name);
+                unset($ftp_path[count($ftp_path) - 1]);
+                $ftp_path = implode('/', $ftp_path);
+                $local_path = explode('/', '/app/SAPFILES/upload/' . $file_name);
+                unset($local_path[count($local_path) - 1]);
+                $local_path = implode('/', $local_path);
+                $ftp->ftp_path = $ftp_path . '/';
+                $ftp->local_path = $local_path . '/';
+                $ftp->file_name = $file_name;
+                if ($ftp->UploadFile()) {
+                    echo 'done';
+                } else {
+                    echo 'error';
+                }
+            }
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+        }
+    }
+
     public function actionDataExchange() {
         $configModel = new TblDataExchangeConfig();
         $data = $configModel->getDataExchangeConfig();
