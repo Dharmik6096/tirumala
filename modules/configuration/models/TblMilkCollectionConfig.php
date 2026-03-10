@@ -152,7 +152,10 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
     }
 
     public function getData() {
-        return $this->find()->where(['union_code' => $this->union_code])->one();
+        $cacheKey = 'milk_config_' . $this->union_code;
+        return Yii::$app->cache->getOrSet($cacheKey, function () {
+            return $this->find()->where(['union_code' => $this->union_code])->one();
+        }, 3600);
     }
 
     public function configMilkCollection($attribute, $params) {

@@ -28,14 +28,15 @@ class HttpRequest extends \yii\base\Component {
 
     public function ParseRequest() {
         $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
-        $post_data = Json::decode(Yii::$app->request->getRawBody());
+        $request = Yii::$app->request->getBodyParams();
+
         if (Yii::$app->request->isGet) {
-            $post_data = Yii::$app->request->get();
+            $request = Yii::$app->request->get();
         }
-        if (empty($post_data)) {
-            $post_data = !empty(Yii::$app->request->post()['requestData']) ? Json::decode(Yii::$app->request->post()['requestData']) : [];
+        if (empty($request)) {
+            $request = !empty(Yii::$app->request->post()['requestData']) ? Json::decode(Yii::$app->request->post()['requestData']) : [];
         }
-        $request = $this->camelCaseToUnderscore($post_data);
+       // $request = $this->camelCaseToUnderscore($post_data);
 //        $request['dcs_code'] = $request['identity_code'];
         if (!empty($request['type']) && in_array($request['type'], [5])) {
             $this->action_url = $request['svc'];
@@ -52,24 +53,6 @@ class HttpRequest extends \yii\base\Component {
         return FALSE;
     }
 
-    public function &camelCaseToUnderscore(&$post_data) {
-        if (is_array($post_data)) {
-            $post_data = array_combine(array_map(function($str) {
-                        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
-                    }, array_keys($post_data)), array_values($post_data));
-            foreach ($post_data as $key => $val) {
-                if (is_array($post_data[$key])) {
-                    $arr1 = array_combine(array_map(function($str) {
-                                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
-                            }, array_keys($post_data[$key])), array_values($post_data[$key]));
-                    $post_data[$key] = $arr1;
-                    $this->camelCaseToUnderscore($post_data[$key]);
-                }
-            }
-            return $post_data;
-        }
-        return $post_data;
-    }
 
     private function setRequestLog() {
         $log = new TblApiRequestLog();

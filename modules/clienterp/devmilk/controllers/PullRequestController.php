@@ -8,6 +8,14 @@ class PullRequestController extends PullMasterController {
 
     public function actionBmcCollection() {
         $request = Yii::$app->request->getRawBody();
+        $rateKey = 'limit_' . Yii::$app->request->userIP;
+        $count = Yii::$app->cache->get($rateKey) ?: 0;
+        if ($count >= 5) {
+            $this->response->setStatusCode(429);
+            $this->response->setMessage(['Too many requests.']);
+            return $this->response;
+        }
+        Yii::$app->cache->set($rateKey, $count + 1, 60);
         if (!empty($request) && !empty($request['bmc_code']) && !empty($request['date']) && !empty(!empty($request['shift']))) {
             try {
                 $sp_param = [];
@@ -15,7 +23,7 @@ class PullRequestController extends PullMasterController {
                 $sp_param[] = $request['date'];
                 $sp_param[] = $request['shift'];
                 $sp_name = 'clienterp_devmilk_pull_bmc_collection';
-         
+
                 $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $this->response->setData($response, FALSE);
             } catch (\Throwable $ex) {
@@ -26,7 +34,6 @@ class PullRequestController extends PullMasterController {
             $this->response->setStatusCode($this->eiplResponseCode->validationFail);
             $this->response->setMessage(['Required Parameter Missing.']);
         }
-
         return $this->response;
     }
 

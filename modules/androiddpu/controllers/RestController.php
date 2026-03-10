@@ -93,7 +93,7 @@ class RestController extends ActiveController {
         die;
     }
 
-    public function getOrgDetail($type, $code, $is_string = TRUE) {
+    /*public function getOrgDetail($type, $code, $is_string = TRUE) {
         $dcs_code = [];
         $bmc_code = [];
         $mcc_plant_code = [];
@@ -178,6 +178,102 @@ class RestController extends ActiveController {
             $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
         }
         return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data, 'applicability_type' => $applicability_type, 'eipl_code' => $eipl_code];
+    }*/
+    public function getOrgDetail($type, $code, $is_string = TRUE) {
+        $cacheKey = "org_detail_{$type}_{$code}_" . ($is_string ? 'string' : 'array');
+        return Yii::$app->cache->getOrSet($cacheKey, function () use ($type, $code, $is_string) {
+            $dcs_code = [];
+            $bmc_code = [];
+            $mcc_plant_code = [];
+            $plant_code = [];
+            $union_code = '';
+            $eipl_code = '';
+            $model_data = [];
+            $applicability_type = 0;
+
+            if ($type == 'VLC') {
+                $model = new TblDcs();
+                $model->dcs_code = $code;
+                $dcs_code[] = $code;
+                $model_data = $model->getData();
+                if (!empty($model_data)) {
+                    $union_code = $model_data->union_code;
+                    $bmc_code[] = $model_data->bmc_code;
+                    $mcc_plant_code[] = $model_data->mcc_plant_code;
+                    $plant_code[] = $model_data->plant_code;
+                    $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
+                }
+                $applicability_type = 2;
+            } else if ($type == 'BMC') {
+                $model = new TblDcsBmc();
+                $model->bmc_code = $code;
+                $model_data = $model->singleBmcData();
+                if (!empty($model_data)) {
+                    $union_code = $model_data->union_code;
+                    $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                    $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlant->tblMccPlantGroup, 'p_mcc_plant_code');
+                    $mcc_plant_code[] = $model_data->mcc_plant_code;
+                    $bmc_code = ArrayHelper::getColumn($model_data->tblBmcGroup, 'p_bmc_code');
+                    $bmc_code[] = $model_data->bmc_code;
+                    $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
+                    foreach ($model_data->tblBmcGroup as $bmc) {
+                        $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
+                    }
+                    $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
+                }
+                $applicability_type = 1;
+            } else if ($type == 'MCC') {
+                $model = new TblMccPlant();
+                $model->mcc_plant_code = $code;
+                $model_data = $model->getData();
+                if (!empty($model_data)) {
+                    $union_code = $model_data->union_code;
+                    $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                    $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlantGroup, 'p_mcc_plant_code');
+                    $mcc_plant_code[] = $model_data->mcc_plant_code;
+                    $bmc_code = ArrayHelper::getColumn($model_data->bmcCodes, 'bmc_code');
+                    $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
+                    foreach ($model_data->tblMccPlantGroup as $mcc) {
+                        $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
+                        $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
+                    }
+                    $eipl_code = Yii::$app->general->getforeignkey($model_data->unionCode, 'eipl_code');
+                }
+                $applicability_type = 1;
+            } else if ($type == 'ROUTE') {
+                $model = new TblDcs();
+                $model->route_code = $code;
+                $model_data = $model->getRouteDcs($code);
+                $dcs_code = ArrayHelper::getColumn($model_data, 'dcs_code');
+            } else if ($type == 'PLANT') {
+                $model = new TblPlant();
+                $model->plant_code = $code;
+                $model_data = $model->getData();
+                if (!empty($model_data)) {
+                    $union_code = $model_data->union_code;
+                    $plant_code[] = $model_data->plant_code;
+                }
+                $applicability_type = 3;
+            }
+
+            if ($is_string) {
+                $dcs_code = !empty($dcs_code) ? "'" . implode("','", array_filter(array_unique($dcs_code))) . "'" : '';
+                $bmc_code = !empty($bmc_code) ? "'" . implode("','", array_filter(array_unique($bmc_code))) . "'" : '';
+                $mcc_plant_code = !empty($mcc_plant_code) ? "'" . implode("','", array_filter(array_unique($mcc_plant_code))) . "'" : '';
+                $plant_code = !empty($plant_code) ? "'" . implode("','", array_filter(array_unique($plant_code))) . "'" : '';
+            }
+
+            return [
+                'dcs_code' => $dcs_code,
+                'bmc_code' => $bmc_code,
+                'mcc_plant_code' => $mcc_plant_code,
+                'plant_code' => $plant_code,
+                'union_code' => $union_code,
+                'model_data' => $model_data,
+                'applicability_type' => $applicability_type,
+                'eipl_code' => $eipl_code
+            ];
+        }, 3600);
     }
 
 }

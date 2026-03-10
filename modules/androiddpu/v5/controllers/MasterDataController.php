@@ -2,6 +2,7 @@
 
 namespace app\modules\androiddpu\v5\controllers;
 
+use app\modules\androiddpu\jobs\InboxJob;
 use Yii;
 use app\modules\syncutility\models\TblInbox;
 use app\modules\androiddpu\components\HttpRequest;
@@ -10,40 +11,65 @@ use app\modules\syncutility\models\TblSentboxDesktop;
 class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController {
 
     public function actionInbox() {
-        $res_data = [];
-        $message = 'Unable to save!';
+        $content = $this->post_data['content'] ?? [];
         $success_id = [];
         $error_id = [];
-        $data = $this->post_data;
-        if (!empty($data['content'])) {
-            foreach ($data['content'] as $transaction_data) {
-                if (!empty($transaction_data['uuid'])) {
-                    $request = Yii::$app->get('androidHttpRequest');
-                    $transaction_data = $request->camelCaseToUnderscore($transaction_data);
-                    $model = new TblInbox();
-                    $model->setAttributes($transaction_data);
-                    $model->sync_timestamp = date('Y-m-d H:i:s');
-                    // $model->posting_timestamp = date('Y-m-d H:i:s');
-                    $transaction = $this->generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
-                    if ($transaction == 'customRedirect') {
-                        $message = 'Successfully Saved!';
-                        $success_id[] = $transaction_data['uuid'];
-                    } else {
-                        $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
-                        if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
-                            $success_id[] = $transaction_data['uuid'];
-                        } else {
-                            $error_id[] = $transaction_data['uuid'];
-                        }
-                    }
+        $messages = [];
+
+        if (empty($content) || !is_array($content)) {
+            $this->response['message'] = 'No content provided';
+            $this->response['data'] = ['success_id' => '', 'error_id' => ''];
+            return $this->response;
+        }
+
+        foreach ($content as $transaction_data) {
+            if (empty($transaction_data)) continue;
+
+            $uuid = $transaction_data['uuid'] ?? null;
+            if (!isset($transaction_data['json_text']) || !is_string($transaction_data['json_text'])){
+                $messages[] = "Unable to save!";
+                if ($uuid) {
+                    $error_id[] = $uuid;
+                    continue;
                 }
+            }
+
+            if (empty($uuid)) {
+                $error_id[] = 'missing_uuid';
+                continue;
+            }
+
+            $exists = TblInbox::find()->where(['uuid' => $uuid])->exists();
+            if ($exists) {
+                $messages[] = "Unable to save!";
+                $success_id[] = $uuid;
+                continue;
+            }
+
+            try {
+                Yii::$app->queue->push(new InboxJob([
+                    'transaction_data' => $transaction_data
+                ]));
+                $success_id[] = $uuid;
+            } catch (\Exception $e) {
+                Yii::error("Queue Push Failed: " . $e->getMessage());
+                $error_id[] = $uuid;
             }
         }
 
-        $res_data['success_id'] = implode(',', $success_id);
-        $res_data['error_id'] = implode(',', $error_id);
-        $this->response['message'] = [$message];
-        $this->response['data'] = $res_data;
+        if (empty($error_id)) {
+            $this->response['message'] = 'Successfully Queued!';
+        } elseif (empty($success_id)) {
+            $this->response['message'] = 'Queue Failed: ' . implode('; ', $messages);
+        } else {
+            $this->response['message'] = 'Partially Queued. Some errors occurred.';
+        }
+
+        $this->response['data'] = [
+            'success_id' => implode(',', $success_id),
+            'error_id' => implode(',', $error_id)
+        ];
+
         return $this->response;
     }
 

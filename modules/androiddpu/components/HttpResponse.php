@@ -17,8 +17,8 @@ class HttpResponse extends \yii\base\Component {
 
     public function BindResponse($response) {
         if (!empty($response['data'])) {
-            $this->response['data'] = ($this->apply_camel_case) ? $this->underscoreToCamelCase($response['data']) : $response['data'];
-            $this->response['error']['message'] = !empty($response['error']['message']) ? $response['error']['message'] : $response['message'];
+            $this->response['data'] = $response['data'];
+            $this->response['error']['message'] = !empty($response['error']['message']) ? $response['error']['message'] : ($response['message'] ?? []);
         } else {
             $parsed_url = parse_url($_SERVER['REQUEST_URI']);
             $endpoint = basename($parsed_url['path']);
@@ -29,25 +29,6 @@ class HttpResponse extends \yii\base\Component {
         $this->response['status'] = !empty($response['status']) ? $response['status'] : 'success';
         $this->response['error']['code'] = !empty($response['error']['code']) ? $response['error']['code'] : Yii::$app->response->statusCode;
         return $this->response;
-    }
-
-    public function &underscoreToCamelCase(&$res_data) {
-        if (is_array($res_data)) {
-            $res_data = array_combine(array_map(function($str) {
-                        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $str))));
-                    }, array_keys($res_data)), array_values($res_data));
-            foreach ($res_data as $key => $val) {
-                if (is_array($res_data[$key])) {
-                    $arr1 = array_combine(array_map(function($str) {
-                                return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $str))));
-                            }, array_keys($res_data[$key])), array_values($res_data[$key]));
-                    $res_data[$key] = $arr1;
-                    $this->underscoreToCamelCase($res_data[$key]);
-                }
-            }
-            return $res_data;
-        }
-        return $res_data;
     }
 
     public function getResponseType($endpoint){

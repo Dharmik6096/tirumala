@@ -526,12 +526,29 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                             }
                             $MappedMilkType = $model_data->tblDcsMilkType;
                             $collectionIncentive = $model_data->collectionIncentive;
-                            $output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'DCS', $org_code]);
+                            $spCacheKey = "sp_device_config_{$model_data->union_code}_DCS_{$org_code}";
+
+                            $output = \Yii::$app->cache->getOrSet($spCacheKey, function () use ($model_data, $org_code) {
+                                return \Yii::$app->general->getSpData('portal_sp_device_config', [
+                                    $model_data->union_code,
+                                    'DCS',
+                                    $org_code
+                                ]);
+                            }, 3600);
+                            //$output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'DCS', $org_code]); //cache
                         } else if ($org_type == 'BMC') {
                             $detailType = 'bmc';
                             $MappedMilkType = $model_data->tblBmcMilkType;
                             $collectionIncentive = [];
-                            $output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'BMC', $org_code]);
+                            $spCacheKey = "sp_device_config_{$model_data->union_code}_BMC_{$org_code}";
+                            $output = \Yii::$app->cache->getOrSet($spCacheKey, function () use ($model_data, $org_code) {
+                                return \Yii::$app->general->getSpData('portal_sp_device_config', [
+                                    $model_data->union_code,
+                                    'BMC',
+                                    $org_code
+                                ]);
+                            }, 3600);
+                            // $output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'BMC', $org_code]);
                             $dcs = TblDcs::find()->where(['bmc_code' => $model_data->bmc_code, 'is_bmc' => 1, 'is_name_request' => 1])->one();
                             $res_data['memberDownload'] = !empty($dcs) ? (bool) $dcs->is_name_request : FALSE;
                         } else if ($org_type == 'MCC') {
@@ -633,6 +650,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                         $qualityParamConfig['snf'] = $snf;
                         $qualityParamConfig['clr'] = $clr;
                         $res_data['collectionConfig']['qualityParam'] = $qualityParamConfig;
+
                         $model = new TblUnionConfigResult();
                         $model->union_code = $model_data->union_code;
                         $model->config_for = $org_type;
@@ -671,12 +689,25 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                                 $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
                             }
                         }
-
-                        $shiftTimigData = Yii::$app->general->getSpData('sp_app_amcs_v2_collection_shift_time', [$org_type, $org_code]);
+                        $shiftCacheKey = "shift_timing_{$org_type}_{$org_code}";
+                        $shiftTimigData = Yii::$app->cache->getOrSet($shiftCacheKey, function () use ($org_type, $org_code) {
+                            return Yii::$app->general->getSpData('sp_app_amcs_v2_collection_shift_time', [
+                                $org_type,
+                                $org_code
+                            ]);
+                        }, 3600);
+                       // $shiftTimigData = Yii::$app->general->getSpData('sp_app_amcs_v2_collection_shift_time', [$org_type, $org_code]); //cache
                         if (!empty($shiftTimigData)) {
                             $res_data['shift_timing'] = $shiftTimigData;
                         }
-                        $shiftTimeExceedData = Yii::$app->general->getSpData('sp_app_amcs_v4_collection_shift_time_exceed', [$org_type, $org_code]);
+                        $exceedCacheKey = "shift_exceed_{$org_type}_{$org_code}";
+                        $shiftTimeExceedData = Yii::$app->cache->getOrSet($exceedCacheKey, function () use ($org_type, $org_code) {
+                            return Yii::$app->general->getSpData('sp_app_amcs_v4_collection_shift_time_exceed', [
+                                $org_type,
+                                $org_code
+                            ]);
+                        }, 3600);
+                        //$shiftTimeExceedData = Yii::$app->general->getSpData('sp_app_amcs_v4_collection_shift_time_exceed', [$org_type, $org_code]); //cache
                         if (!empty($shiftTimeExceedData)) {
                             $res_data['shift_time_exceed'] = $shiftTimeExceedData;
                         }
