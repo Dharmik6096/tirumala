@@ -84,14 +84,11 @@ class TblUnionConfigResult extends \app\models\ChildModel {
     }
 
     public function getConfigList() {
-        $cacheKey = "union_config_list_. $this->union_code .'_'. $this->config_for";
-        return \Yii::$app->cache->getOrSet($cacheKey, function () {
-            return $this->find()->select(['tbl_union_config_result.config_key', 'tbl_union_config_result.config_result_key', 'tbl_union_config_result.config_for'])
-                ->join('INNER JOIN', 'tbl_config', 'tbl_config.config_code=tbl_union_config_result.config_code')
-                ->where(['tbl_union_config_result.union_code' => $this->union_code, 'tbl_config.config_for' => $this->config_for])
-                ->asArray()
-                ->all();
-        }, 3600);
+        return $this->find()->select(['tbl_union_config_result.config_key', 'tbl_union_config_result.config_result_key', 'tbl_union_config_result.config_for'])
+            ->join('INNER JOIN', 'tbl_config', 'tbl_config.config_code=tbl_union_config_result.config_code')
+            ->where(['tbl_union_config_result.union_code' => $this->union_code, 'tbl_config.config_for' => $this->config_for])
+            ->asArray()
+            ->all();
     }
 
     public function getConfigResultCode() {

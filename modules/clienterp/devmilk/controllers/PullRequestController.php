@@ -8,14 +8,6 @@ class PullRequestController extends PullMasterController {
 
     public function actionBmcCollection() {
         $request = Yii::$app->request->getRawBody();
-        $rateKey = 'limit_' . Yii::$app->request->userIP;
-        $count = Yii::$app->cache->get($rateKey) ?: 0;
-        if ($count >= 5) {
-            $this->response->setStatusCode(429);
-            $this->response->setMessage(['Too many requests.']);
-            return $this->response;
-        }
-        Yii::$app->cache->set($rateKey, $count + 1, 60);
         if (!empty($request) && !empty($request['bmc_code']) && !empty($request['date']) && !empty(!empty($request['shift']))) {
             try {
                 $sp_param = [];

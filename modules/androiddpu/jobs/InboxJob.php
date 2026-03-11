@@ -1,7 +1,8 @@
 <?php
 namespace app\modules\androiddpu\jobs;
 
-use Yii;
+use app\models\GeneralModel;
+use Exception;
 use yii\base\BaseObject;
 use yii\queue\JobInterface;
 use app\modules\syncutility\models\TblInbox;
@@ -9,6 +10,7 @@ use app\modules\syncutility\models\TblInbox;
 class InboxJob extends BaseObject implements JobInterface
 {
     public $transaction_data;
+    public $sync_timestamp;
 
     /**
      * @param \yii\queue\Queue $queue
@@ -16,45 +18,25 @@ class InboxJob extends BaseObject implements JobInterface
      */
     public function execute($queue)
     {
-        $uuid = $this->transaction_data['uuid'] ?? null;
-        if (!$uuid) return true;
+        try {
+            if (!empty($this->transaction_data['uuid'])) {
+                $model = new TblInbox();
+                $model->setAttributes($this->transaction_data);
+                $model->sync_timestamp = $this->sync_timestamp;
 
-        $model = new TblInbox();
-        $model->setAttributes($this->transaction_data);
-        $model->sync_timestamp = date('Y-m-d H:i:s');
+                $generalModel = new \app\models\GeneralModel();
+                $transaction = $generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
 
-        $generalModel = new \app\models\GeneralModel();
-        $transaction = $generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
-
-        if ($transaction !== 'customRedirect') {
-            $errorData = (string)$transaction;
-            if (str_contains(strtolower($errorData), 'duplicate key') || str_contains(strtolower($errorData), 'primary key')) {
-                return true;
+                if ($transaction !== 'customRedirect') {
+                    $errorData = (string)$transaction;
+                    if (str_contains(strtolower($errorData), 'duplicate key') || str_contains(strtolower($errorData), 'primary key')) {
+                        return true;
+                    }
+                    throw new \Exception("Database Error in Queue: " . $errorData);
+                }
             }
-            throw new \Exception("Database Error in Queue: " . $errorData);
+        } catch (\Exception $e) {
+            throw $e;
         }
-
-        return true;
     }
-
-    /*public function execute($queue) {
-        $data = $this->transaction_data;
-        $uuid = $data['uuid'] ?? null;
-        if (!$uuid) {
-            return;
-        }
-
-        $model = new TblInbox();
-        $model->setAttributes($data);
-        $model->sync_timestamp = date('Y-m-d H:i:s');
-
-        $generalModel = new \app\models\GeneralModel();
-        $result = $generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
-        if ($result !== 'customRedirect') {
-            $error = (string)$result;
-            if (stripos($error, 'duplicate key') === false) {
-                throw new \Exception("DB Error: " . $error);
-            }
-        }
-    }*/
 }
