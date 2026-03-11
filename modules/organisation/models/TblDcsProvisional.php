@@ -198,7 +198,7 @@ class TblDcsProvisional extends ChildModel {
                 [['status'], 'default', 'value' => 'Pending'],
                 [['dpu_type'], 'default', 'value' => 8],
                 [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'pincode', 'firstname', 'mobile_no', 'is_dispatch_mandate'], 'required'],
-                [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['uploadDoc']],
+                [['union_code', 'dcs_name', 'bmc_code', 'ref_code'], 'required', 'except' => ['uploadDoc']],
                 [['dcs_short_name'], 'required', 'except' => ['uploadDoc']],
                 [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
                 [['milk_type_code'], 'required', 'on' => ['importCsv']],
