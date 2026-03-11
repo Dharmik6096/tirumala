@@ -49,6 +49,7 @@ class TblProcessApproval extends \app\models\ChildModel {
                 [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks', 'department'], 'safe'],
                 [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'status_date', 'status_by'], 'safe'],
                 [['status'], 'required', 'on' => 'approve'],
+                [['status', 'remarks'], 'required', 'on' => 'approvalTabWise'],
         ];
     }
 
@@ -134,7 +135,7 @@ class TblProcessApproval extends \app\models\ChildModel {
                 )
                 ->where([
             'or',
-                ['and',['app.login_type' => $login_type], ['app.department' => $department]],
+                ['and', ['app.login_type' => $login_type], ['app.department' => $department]],
                 ['app.user_code' => \Yii::$app->user->identity->user_code]
         ]);
         if ($status == 2) {
