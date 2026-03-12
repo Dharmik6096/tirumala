@@ -800,6 +800,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
                                             ['label' => Yii::t('app', 'Format 4'), 'url' => ['/jasperreports/default/vsp-payment-nawasa']],
                                             ['label' => Yii::t('app', 'BMC Milk Payment Voucher'), 'url' => ['/jasperreports/default/bmc-milk-payment-voucher']],
+                                            ['label' => Yii::t('app', 'VLCC Commission Bill'), 'url' => ['/jasperreports/default/vendor-commission-payment']],
                                     ]
                                 ],
                                     [
