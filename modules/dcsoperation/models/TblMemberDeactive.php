@@ -48,27 +48,31 @@ class TblMemberDeactive extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['member_deactive_code'], 'required', 'except' => ['importCsv']],
-            [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'wef_date', 'is_active'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date'], 'required', 'except' => ['importCsv']],
-            [['dcs_code', 'member', 'wef_date', 'is_active'], 'required', 'on' => ['importCsv']],
-            [['is_active'], 'boolean', 'on' => ['importCsv']],
-            [['to_date'], 'required', 'on' => ['activeMember']],
-            [['member'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['from_date'], 'validateFromDate', 'except' => ['activeMember', 'importCsv']],
-            [['to_date'], 'validateToRange', 'on' => ['activeMember']],
-            [['to_date'], 'validateToRange', 'on' => ['importCsv'], 'when' => function($model) {
+                [['member_deactive_code'], 'required', 'except' => ['importCsv']],
+                [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'wef_date', 'is_active'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date'], 'required', 'except' => ['importCsv']],
+                [['dcs_code', 'member', 'wef_date', 'is_active'], 'required', 'on' => ['importCsv']],
+                [['is_active'], 'boolean', 'on' => ['importCsv']],
+                [['to_date'], 'required', 'on' => ['activeMember']],
+                [['member'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['from_date'], 'validateFromDate', 'except' => ['activeMember', 'importCsv']],
+                [['to_date'], 'validateToRange', 'on' => ['activeMember']],
+                [['to_date'], 'validateToRange', 'on' => ['importCsv'], 'when' => function($model) {
                     return ($this->is_active == 1) ? true : false;
                 }],
-            [['from_date'], 'validateFromDate', 'on' => ['importCsv'], 'when' => function($model) {
+                [['from_date'], 'validateFromDate', 'on' => ['importCsv'], 'when' => function($model) {
                     return ($this->is_active == 0) ? true : false;
                 }],
-            [['data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'member'], 'safe'],
+                [['data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'member'], 'safe'],
+                [['to_date'], 'validateDuplicateOnActivate', 'on' => ['activeMember']],
+                [['to_date'], 'validateDuplicateOnActivate', 'on' => ['importCsv'], 'when' => function($model) {
+                    return ($this->is_active == 1) ? true : false;
+                }],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberDeactive', $this->form_validation_type);
         $rules = array_merge($main_rules, $client_rules);
@@ -266,6 +270,48 @@ class TblMemberDeactive extends \app\models\ChildModel {
                 $vcgMrgMemberModel->save();
             }
         }
+    }
+
+    public function validateDuplicateOnActivate($attribute, $params) {
+        if (!empty($this->member_code)) {
+
+            $memberMobileNo = Yii::$app->general->getforeignkey($this->memberCode, 'mobile_no');
+            $memberAdharNo = Yii::$app->general->getforeignkey($this->memberCode, 'adhar_no');
+            $memberBankAccNo = Yii::$app->general->getforeignkey($this->memberCode, 'bank_account_no');
+
+            if (!empty($memberMobileNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveMember($memberMobileNo, 'mobile_no', $this->member_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Mobile No already exists in Active Member: ' . $duplicate->member_code . ' - ' . $duplicate->member_name));
+                    return false;
+                }
+            }
+
+            if (!empty($memberAdharNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveMember($memberAdharNo, 'adhar_no', $this->member_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Adhar No already exists in Active Member: ' . $duplicate->member_code . ' - ' . $duplicate->member_name));
+                    return false;
+                }
+            }
+
+            if (!empty($memberBankAccNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveMember($memberBankAccNo, 'bank_account_no', $this->member_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Bank Account No already exists in Active Member: ' . $duplicate->member_code . ' - ' . $duplicate->member_name));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function checkDuplicateInActiveMember($value, $fieldName, $memberCode) {
+        if (!empty($value)) {
+            $encryptedValue = Yii::$app->general->encryptData($value);
+
+            return TblMember::find()->where(['is_active' => 1])
+                            ->andWhere(['<>', 'member_code', $memberCode])
+                            ->andWhere(['or', [$fieldName => $value], [$fieldName => $encryptedValue]])
+                            ->one();
+        }
+        return null;
     }
 
 }
