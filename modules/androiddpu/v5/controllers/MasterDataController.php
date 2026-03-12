@@ -3,38 +3,74 @@
 namespace app\modules\androiddpu\v5\controllers;
 
 use app\modules\androiddpu\jobs\InboxJob;
+use Exception;
 use Yii;
 use app\modules\syncutility\models\TblInbox;
 use app\modules\androiddpu\components\HttpRequest;
 use app\modules\syncutility\models\TblSentboxDesktop;
 
-class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController {
+class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController
+{
 
-    public function actionInbox() {
+    public function actionInbox()
+    {
         $res_data = [];
         $message = 'Unable to save!';
         $success_id = [];
         $error_id = [];
         $data = $this->post_data;
 
+        $hasQueue = false;
+        if (Yii::$app->has('queue')) {
+            try {
+                $queue = Yii::$app->queue;
+                $method = new \ReflectionMethod(get_class($queue), 'open');
+                $method->setAccessible(true);
+                $method->invoke($queue);
+                $hasQueue = true;
+            } catch (\Exception $e) {
+                $hasQueue = false;
+            }
+        }
         if (!empty($data['content'])) {
             foreach ($data['content'] as $transaction_data) {
                 if (!empty($transaction_data['uuid'])) {
                     $sync_timestamp = date('Y-m-d H:i:s');
-                    try {
-                        $jobId = Yii::$app->queue->push(new \app\modules\androiddpu\jobs\InboxJob([
-                            'transaction_data' => $transaction_data,
-                            'sync_timestamp' => $sync_timestamp,
-                        ]));
+                    if ($hasQueue) {
+                        try {
+                            $jobId = Yii::$app->queue->push(new InboxJob([
+                                'transaction_data' => $transaction_data,
+                                'sync_timestamp' => $sync_timestamp,
+                            ]));
 
-                        if ($jobId) {
+                            if ($jobId) {
+                                $message = 'Successfully Saved!';
+                                $success_id[] = $transaction_data['uuid'];
+                            } else {
+                                $error_id[] = $transaction_data['uuid'];
+                            }
+                        } catch (Exception $e) {
+                            $error_id[] = $transaction_data['uuid'];
+                        }
+                    } else {
+                        $request = Yii::$app->get('androidHttpRequest');
+                        $model = new TblInbox();
+                        $model->setAttributes($transaction_data);
+                        $model->sync_timestamp = date('Y-m-d H:i:s');
+                        // $model->posting_timestamp = date('Y-m-d H:i:s');
+                        $transaction = $this->generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
+                        if ($transaction == 'customRedirect') {
                             $message = 'Successfully Saved!';
                             $success_id[] = $transaction_data['uuid'];
                         } else {
-                            $error_id[] = $transaction_data['uuid'];
+                            $errorData = !empty($transaction) ? (string)$transaction : 'error_occured';
+                            if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
+                                $success_id[] = $transaction_data['uuid'];
+                            } else {
+                                $error_id[] = $transaction_data['uuid'];
+                            }
                         }
-                    } catch (\Exception $e) {
-                        $error_id[] = $transaction_data['uuid'];
+
                     }
                 }
             }
@@ -48,7 +84,8 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
     }
 
 
-    public function actionSentboxDesktop() {
+    public function actionSentboxDesktop()
+    {
         $res_data = [];
         $data = $this->post_data;
         $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
@@ -63,7 +100,8 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         return $this->response;
     }
 
-    public function actionSentboxCountDesktop() {
+    public function actionSentboxCountDesktop()
+    {
         $response = [];
         $data = $this->post_data;
         $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
@@ -78,7 +116,8 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         return $this->response;
     }
 
-    public function actionAcknowledgementDesktop() {
+    public function actionAcknowledgementDesktop()
+    {
         $res_data = [];
         $res_data['message'] = 'Sentbox Not Updated.';
         $data = $this->post_data;
