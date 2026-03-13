@@ -1202,12 +1202,19 @@ class SchedulerController extends ChildController {
 
                             $rowIdx = 2;
                             foreach ($output as $line) {
-                                $processedLine = array_map(function($val, $key) use ($decriptFields) {
-                                    return (in_array($key, $decriptFields) && !empty($val))
-                                        ? \Yii::$app->general->decryptData($val)
-                                        : $val;
-                                }, $line, array_keys($line));
-                                $sheet->fromArray($processedLine, NULL, 'A' . $rowIdx++);
+                                $colIdx = 1;
+                                foreach ($line as $key => $val) {
+                                    if (in_array($key, $decriptFields) && !empty($val) && $val != 'NA') {
+                                        $val = \Yii::$app->general->decryptData($val);
+                                    }
+                                    if (is_numeric($val) && preg_match('/^([0-9]+)$/', $val) && strlen($val) > 10) {
+                                        $sheet->setCellValueExplicitByColumnAndRow($colIdx, $rowIdx, $val, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                                    } else {
+                                        $sheet->setCellValueByColumnAndRow($colIdx, $rowIdx, $val);
+                                    }
+                                    $colIdx++;
+                                }
+                                $rowIdx++;
                             }
 
                             $filePath = $path . $fileName;
