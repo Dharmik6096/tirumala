@@ -226,6 +226,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('type_of_dcs', $model, $form, 'form-group', $model->getAttributeLabel('type_of_dcs'), false, 'type_of_dcs', false); ?>
     </div>
+    <div class="col-sm-2">  
+        <?= $form->field($model, 'sim_no')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('sim_network', $model, $form, '', TRUE, false, 'sim_network', false); ?>    
+    </div>
 </div>
 <div class="col-md-12 padding_10_0 theme-box">
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">

@@ -270,6 +270,8 @@ $attribute = [
         ['attribute' => 'type_of_dcs', 'value' => function($model) {
             return isset($model->type_of_dcs) ? Yii::$app->dropdown->getRecords('type_of_dcs')['data'][$model->type_of_dcs] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('type_of_dcs', $searchModel, 'type_of_dcs'), 'visible' => FALSE],
+        ['attribute' => 'sim_network', 'visible' => false, 'filter' => false],
+        ['attribute' => 'sim_no', 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [
