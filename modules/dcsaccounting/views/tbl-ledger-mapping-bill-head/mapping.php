@@ -59,7 +59,7 @@ $this->title = Yii::t('app', 'Member Bill Head Mapping');
         ?>
     </div>
 
-    <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-4 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php if (!empty($dataProvider->getModels())) { ?>
                 <?= Yii::$app->controls->save('SAVE', $model, 'save'); ?>

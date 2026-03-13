@@ -40,9 +40,8 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                 'format' => 'raw',
                 'value' => function ($model) use ($form) {
                     if ($model->sub_ledger_credit == 1) {
-                        return $form->field($model, "[$model->event_code]credit_sub_ledger", [
-                                    'checkboxTemplate' => '<div class="mb0 center_text">{input}</div>{error}{hint}'
-                                ])->checkbox()->label(FALSE);
+                        $checkboxValue = (isset($model->credit_sub_ledger) && $model->credit_sub_ledger == 1) ? true : false;
+                        return $form->field($model, "[$model->event_code]credit_sub_ledger", ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}", 'options' => ['class' => 'mb0 center_text'],])->checkbox(['checked' => $checkboxValue, 'class' => '', 'label' => false]);
                     }
                     return '<span class="text-muted">N/A</span>';
                 }, 'filter' => false
@@ -60,9 +59,8 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                 'format' => 'raw',
                 'value' => function ($model) use ($form) {
                     if ($model->sub_ledger_debit == 1) {
-                        return $form->field($model, "[$model->event_code]debit_sub_ledger", [
-                                    'checkboxTemplate' => '<div class="mb0 center_text">{input}</div>{error}{hint}'
-                                ])->checkbox()->label(FALSE);
+                        $checkboxValue = (isset($model->debit_sub_ledger) && $model->debit_sub_ledger == 1) ? true : false;
+                        return $form->field($model, "[$model->event_code]debit_sub_ledger", ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}", 'options' => ['class' => 'mb0 center_text'],])->checkbox(['checked' => $checkboxValue, 'class' => '', 'label' => false]);
                     }
                     return '<span class="text-muted">N/A</span>';
                 }, 'filter' => false
