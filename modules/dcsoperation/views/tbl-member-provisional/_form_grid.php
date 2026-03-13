@@ -48,7 +48,9 @@ $attribute = [
         ['attribute' => 'father_name', 'value' => 'father_name', 'visible' => false],
         ['attribute' => 'local_father_name', 'value' => 'local_father_name', 'filter' => false, 'visible' => false],
         ['attribute' => 'local_surname', 'value' => 'local_surname', 'filter' => false, 'visible' => false],
-        ['attribute' => 'nominee_name', 'value' => 'nominee_name', 'visible' => false, 'filter' => false,],
+        ['attribute' => 'nominee_name', 'value' => function ($model) {
+            return !empty($model->nominee_name) ? $model->nominee_name : Yii::$app->general->getforeignkey($model->familyDetail, 'family_member_name');
+        }, 'visible' => true, 'filter' => false],
         ['attribute' => 'local_nominee_name', 'value' => 'local_nominee_name', 'visible' => false, 'filter' => false,],
         ['attribute' => 'dob', 'visible' => false, 'filter' => false],
         ['attribute' => 'bloodgroup_code', 'value' => 'bloodGroupCode.blood_group', 'visible' => false, 'filter' => false],
@@ -56,7 +58,9 @@ $attribute = [
         ['attribute' => 'qualification_code', 'value' => 'qualificationCode.qualification_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'caste_category_code', 'value' => 'casteCategoryCode.caste_category_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'religion_code', 'value' => 'religionCode.religion', 'visible' => false, 'filter' => false],
-        ['attribute' => 'nominee_relation', 'value' => 'relationship.relationship', 'visible' => false, 'filter' => false],
+        ['attribute' => 'nominee_relation', 'value' => function ($model) {
+            return !empty($model->nominee_relation) ? Yii::$app->general->getforeignkey($model->relationship, 'relationship') : Yii::$app->general->getmultiforeignkey($model->familyDetail, ['relationship'], 'relationship');
+        }, 'visible' => true, 'filter' => false],
         ['attribute' => 'voter_id', 'visible' => false, 'filter' => false],
         ['attribute' => 'animal_type_code', 'value' => 'animalTypeCode.animal_type_name', 'visible' => false, 'filter' => false],
         ['attribute' => 'no_of_buffalo', 'visible' => false, 'filter' => false],
@@ -149,6 +153,7 @@ $attribute = [
             return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => FALSE, 'visible' => false],
         ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'receipt_scan_copy', 'visible' => false],
 ];
 $gridId = 'member-grid';
 $grid_option = [
@@ -156,6 +161,34 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
+        'approve_view' => function($url, $model) use ($pending_approval) {
+            if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/view-approval')) {
+                $unionCode = !empty($model->union_code) ? $model->union_code : ($model->dcsCode->union_code ?? '');
+                $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
+                if ($config == 1) {
+                    $class = (!$pending_approval) ? 'link-disable' : '';
+                    $icon = '<i class="fa fa-check-square-o"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/view-approval', 'id' => $model->process_approval_code];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With View', 'class' => '' . $class];
+                    return Html::a($icon, $url, $options);
+                }
+            }
+            return '';
+        },
+        'approve' => function($url, $model) use ($pending_approval) {
+            if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/edit-approval')) {
+                $unionCode = !empty($model->union_code) ? $model->union_code : ($model->dcsCode->union_code ?? '');
+                $config = Yii::$app->general->getUnionConfiguration($unionCode, 'workflow_require', 'PORTAL');
+                if ($config == 1) {
+                    $class = (!$pending_approval) ? 'link-disable' : '';
+                    $icon = '<i class="fa fa-pencil-square-o"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/edit-approval', 'id' => $model->process_approval_code];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve ' . Yii::t('yii', 'Member') . ' Provisional With Edit', 'class' => '' . $class];
+                    return Html::a($icon, $url, $options);
+                }
+            }
+            return '';
+        },
         'update' => function ($url, $model)use ($pending_approval) {
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 0) {
                 $name = $model->member_name;
@@ -173,17 +206,22 @@ $grid_option = [
             }
         },
         'views' => function($url, $model) use ($pending_approval) {
-            if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1) {
-                $icon = '<i class="fa fa-eye"></i>';
-                $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
-                $title = 'Provisional Member View';
+            $config = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL');
+            if ($config == 1) {
                 if ($pending_approval) {
-                    $icon = '<i class="fa fa-check"></i>';
-                    $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
-                    $title = 'Approve Member';
+                    if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approve-member')) {
+                        $icon = '<i class="fa fa-check"></i>';
+                        $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                        return Html::a($icon, $url, $options);
+                    }
+                    return '';
+                } else {
+                    $icon = '<i class="fa fa-eye"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
+                    return Html::a($icon, $url, $options);
                 }
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title];
-                return Html::a($icon, $url, $options);
             } else {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
                 return Html::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code], $options);

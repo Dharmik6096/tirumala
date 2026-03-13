@@ -15,10 +15,13 @@ use yii\web\View;
     $form = ActiveForm::begin([
         'action' => ['disburse-payment'],
         'method' => 'get',
-        'id' => 'search-disburse-payment'
+        'id' => 'search-disburse-payment',
+        'options' => [
+            'class' => 'row'
+        ]
     ]); ?>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); ?>
+    <div class="col-sm-2 mt5">
+        <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, '', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); ?>
     </div> 
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
@@ -45,7 +48,7 @@ use yii\web\View;
     <div class="col-sm-2 secondary">
         <?= Yii::$app->dropdown->datewise_transporter_list($model, $form, 'tbltransporterpaymentsearch-union_code,tbltransporterpaymentsearch-from_date,tbltransporterpaymentsearch-to_date', 'secondory_transporter_code', $model->getAttributeLabel('transporter_code'), FALSE, '', FALSE, TRUE); ?>
     </div>
-    <div class="col-sm-2 mt23">
+    <div class="col-sm-1 mt23">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
     <?php ActiveForm::end(); ?>

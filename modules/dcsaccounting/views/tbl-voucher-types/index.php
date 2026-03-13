@@ -1,5 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Voucher Type'));
+$this->params['menu'][] = Yii::$app->controls->add('Voucher Type');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

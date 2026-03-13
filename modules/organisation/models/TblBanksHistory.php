@@ -40,8 +40,8 @@ class TblBanksHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'old_bank_code'], 'safe'],
-                [['ac_no_length', 'checked_ac_no', 'nationalized_bank', 'bank_code', 'bank_name', 'local_name', 'is_alpha_acno_allow', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'old_bank_code', 'ledger_code'], 'safe'],
+                [['ac_no_length', 'checked_ac_no', 'nationalized_bank', 'bank_code', 'bank_name', 'local_name', 'is_alpha_acno_allow', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

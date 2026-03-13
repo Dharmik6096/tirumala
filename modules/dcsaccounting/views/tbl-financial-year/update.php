@@ -1,22 +1,14 @@
 <?php
-
-use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\dcsaccounting\models\TblSubLedger */
-
-
+$this->title = Yii::$app->label->title('create', 'Financial Year');
 ?>
-<div class="tbl-sub-ledger-update">
-    <div class="panel panel-main">
-        <div class="panel-heading"><?= Yii::t('app', 'Financial Year') ?></div>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
         <?=
         $this->render('_form', [
             'model' => $model,
             'type' => 'edit'
         ])
         ?>
-
     </div>
 </div>
