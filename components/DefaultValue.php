@@ -38,6 +38,9 @@ class DefaultValue extends Component {
                 'TblMemberRateRepushLogSearch' => [
                     'dpu_type' => 91,
                 ],
+                'TblVehicleTrip' => [
+                    'is_auto_trip' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -63,6 +66,16 @@ class DefaultValue extends Component {
             'COMFED' => [
                 'TblMember' => [
                     'animal_type_code' => 3,
+                ],
+            ],
+            'CARGILL' => [
+                'TblVehicleTrip' => [
+                    'is_auto_trip' => 0,
+                ],
+            ],
+            'KOTMALE' => [
+                'TblVehicleTrip' => [
+                    'is_auto_trip' => 0,
                 ],
             ],
         ];

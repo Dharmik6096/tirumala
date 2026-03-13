@@ -16,6 +16,7 @@ use app\modules\document\models\TblAttachment;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
+use app\modules\organisation\models\TblCustomerDeactive;
 
 /**
  * This is the model class for table "tbl_customer_master_provisional".
@@ -336,12 +337,15 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
         if (!empty($mobile)) {
             $encryptedMobile = Yii::$app->general->encryptData($mobile);
 
-            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name'])->where(['is_active' => 1])
+            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name', 'customer_type'])->where(['is_active' => 1])
                     ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
                     ->one();
             if ($existsInCustomer) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ' , ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomer->customer_code, TblCustomerDeactive::class, 'customer_code', $existsInCustomer->customer_type);
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ' , ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
@@ -373,8 +377,11 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                             ->asArray()->one();
 
             if ($existsInCustomerBank) {
-                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Customer') . ' Bank Detail - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomerBank['module_code'] . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomerBank['customer_name']));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomerBank['module_code'], TblCustomerDeactive::class, 'customer_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Customer') . ' Bank Detail - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomerBank['module_code'] . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomerBank['customer_name']));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
@@ -397,12 +404,15 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
         if (!empty($adharNo)) {
             $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
 
-            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name'])->where(['is_active' => 1])
+            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name', 'customer_type'])->where(['is_active' => 1])
                     ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
                     ->one();
             if ($existsInCustomer) {
-                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomer->customer_code, TblCustomerDeactive::class, 'customer_code', $existsInCustomer->customer_type);
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
+                    return false;
+                }
             }
         }
     }

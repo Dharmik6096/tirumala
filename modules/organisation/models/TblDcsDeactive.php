@@ -44,22 +44,23 @@ class TblDcsDeactive extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['from_date'], 'convertDate', 'on' => ['importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['from_date'], 'convertDate', 'on' => ['importCsv']],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date'], 'required', 'except' => ['importCsv']],
-            [['bmc_code', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
-            [['to_date'], 'required', 'on' => ['activeDCS']],
-            [['from_date'], 'validateFromDate', 'except' => ['activeDCS']],
-            [['to_date'], 'validateToRange', 'on' => ['activeDCS']],
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date'], 'required', 'except' => ['importCsv']],
+                [['bmc_code', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
+                [['to_date'], 'required', 'on' => ['activeDCS']],
+                [['from_date'], 'validateFromDate', 'except' => ['activeDCS']],
+                [['to_date'], 'validateToRange', 'on' => ['activeDCS']],
+                [['to_date'], 'validateDuplicateOnActivate', 'on' => ['activeDCS']],
         ];
     }
 
@@ -227,6 +228,48 @@ class TblDcsDeactive extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
         }
+    }
+
+    public function validateDuplicateOnActivate($attribute, $params) {
+        if (!empty($this->dcs_code)) {
+
+            $dcsMobileNo = Yii::$app->general->getforeignkey($this->dcsCode, 'mobile_no');
+            $dcsAdharNo = Yii::$app->general->getforeignkey($this->dcsCode, 'aadhaar_no');
+            $dcsBankAccNo = Yii::$app->general->getforeignkey($this->dcsCode, 'bank_account_no');
+
+            if (!empty($dcsMobileNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveDcs($dcsMobileNo, 'mobile_no', $this->dcs_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Mobile No already exists in Active DCS: ' . $duplicate->dcs_code . ' - ' . $duplicate->dcs_name));
+                    return false;
+                }
+            }
+
+            if (!empty($dcsAdharNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveDcs($dcsAdharNo, 'aadhaar_no', $this->dcs_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Aadhaar No already exists in Active DCS: ' . $duplicate->dcs_code . ' - ' . $duplicate->dcs_name));
+                    return false;
+                }
+            }
+
+            if (!empty($dcsBankAccNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveDcs($dcsBankAccNo, 'bank_account_no', $this->dcs_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Bank Account No already exists in Active DCS: ' . $duplicate->dcs_code . ' - ' . $duplicate->dcs_name));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function checkDuplicateInActiveDcs($value, $fieldName, $dcsCode) {
+        if (!empty($value)) {
+            $encryptedValue = Yii::$app->general->encryptData($value);
+
+            return TblDcs::find()->where(['is_active' => 1])
+                            ->andWhere(['<>', 'dcs_code', $dcsCode])
+                            ->andWhere(['or', [$fieldName => $value], [$fieldName => $encryptedValue]])
+                            ->one();
+        }
+        return null;
     }
 
 }
