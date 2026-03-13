@@ -135,26 +135,49 @@ $this->title = 'Voucher Detail View';
 
         <div class="col-md-6 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading">Voucher Transactions</h4>
+                <h4 class="theme-box-heading">Credit Voucher Transactions</h4>
             </div>
             <div class="clearfix"></div>
             <div class="form-grid">
                 <?=
                 $this->render('../tbl-voucher-transaction/_form_grid', [
                     'model' => $model,
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
+                    'dataProvider' => $creditDataProvider,
+                    'searchModel' => $creditSearchModel,
+                    'grid_id' => 'credit-voucher-transaction-list',
                 ])
                 ?>
             </div>
         </div>
         <div class="col-md-6 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading">Voucher Sub Ledger</h4>
+                <h4 class="theme-box-heading">Debit Voucher Transactions</h4>
             </div>
             <div class="clearfix"></div>
-            <div id="voucher-subledger-list" class="form-grid">
+            <div class="form-grid">
+                <?=
+                $this->render('../tbl-voucher-transaction/_form_grid', [
+                    'model' => $model,
+                    'dataProvider' => $debitDataProvider,
+                    'searchModel' => $debitSearchModel,
+                ])
+                ?>
+            </div>
+        </div>
 
+        <div class="col-sm-12 transaction_section">
+            <div class="modal modal-default fade" id="voucher-subledger-modal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Voucher Sub Ledger</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div id="voucher-subledger-modal-content"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -164,9 +187,9 @@ $this->title = 'Voucher Detail View';
 <?php
 $script = "$(document).ready(function(){
     $(document).on('click','.view-sub-ledger',function(e){
-    var id= $(this).attr('data-val');
-    console.log(id);
-  ViewSubLedger(id);
+        e.preventDefault();
+        var id= $(this).attr('data-val');
+        ViewSubLedger(id);
     });
     function ViewSubLedger(code){
         if(code != ''){         
@@ -179,7 +202,8 @@ $script = "$(document).ready(function(){
                 $('#pageloader').show();
                 },
                 success: function(data) {
-                  $('#voucher-subledger-list').html(data);
+                  $('#voucher-subledger-modal-content').html(data);
+                  $('#voucher-subledger-modal').modal('show');
                    $('#loadercontent').hide();
                    $('#pageloader').hide();                                                                  
                 },
