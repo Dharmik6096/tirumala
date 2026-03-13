@@ -17,16 +17,16 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'filter' => false],
-        ['attribute' => 'dcs_code', 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
+        ['attribute' => 'dcs_code', 'filter' => false, 'visible' => FALSE],
         ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-        }, 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Society Name'),
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
     'event_code_default',
         ['attribute' => 'event_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->eventCode, 'event_name');

@@ -2599,6 +2599,7 @@ class DropDown extends Component {
             'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
             'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
             'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
+            'voucher_types' => ['name' => 'voucher_type_code', 'fields' => 'voucher_type_code,voucher_type_name,local_name', 'prompt' => 'Select Voucher Types', 'model' => 'TblVoucherTypes'],
         ];
         return $label[$l];
     }

@@ -45,6 +45,9 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->depend_dropdown('depend_tax_code', $model, $form, 'tblproduct-union_code', 'form-group col-sm-2', $model->getAttributeLabel('tax_code'), 'tax_code'); ?>
         <?php // Yii::$app->dropdown->dropdown('tax_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
     </div>  
+    <div class="col-sm-2">
+        <?php Yii::$app->dropdown->depend_dropdown('depend_tax_code', $model, $form, 'tblproduct-union_code', 'form-group col-sm-2', $model->getAttributeLabel('other_state_tax_code'), 'other_state_tax_code'); ?>
+    </div>  
     <?php
     $class = $disableDpuProduct ? ' disabledDiv ' : '';
     ?>
@@ -70,18 +73,40 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_indent'); ?>
     </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
-    </div>  
     <div class="col-sm-2">
         <?= $form->field($model, 'item_code')->textInput() ?>
     </div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'min_stock')->textInput() ?>
     </div>
+    <div class="col-sm-1 mt15">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_milk'); ?>
+    </div>
+    <div class="col-sm-2 hide-fields">
+        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type'), false, 'milk_type'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?php echo Html::hiddenInput('ledger_type', 'purchase', ['id' => 'ledger_type']); ?>
+        <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,ledger_type', 'purchase_ledger', $model->getAttributeLabel('purchase_ledger'), false); ?>
+    </div>
+    <div class="col-sm-2 mb15">
+        <?php echo Html::hiddenInput('sale_ledger_type', 'sale', ['id' => 'sale_ledger_type']); ?>
+        <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,sale_ledger_type', 'sale_ledger', $model->getAttributeLabel('sale_ledger'), false); ?>
+    </div>
+    <div class="col-sm-2 mb15">
+        <?php echo Html::hiddenInput('stock_ledger_type', 'stock', ['id' => 'stock_ledger_type']); ?>
+        <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,stock_ledger_type', 'stock_ledger', $model->getAttributeLabel('stock_ledger'), false); ?>
+    </div>
+    <div class="col-sm-2 hide-fields">
+        <?php echo Html::hiddenInput('local_sale_ledger_type', 'sale', ['id' => 'local_sale_ledger_type']); ?>
+        <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,local_sale_ledger_type', 'local_sale_ledger', $model->getAttributeLabel('local_sale_ledger'), false); ?>
+    </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'product_desc')->textarea() ?>
     </div>
+    <div class="col-sm-2 mt15">
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+    </div>  
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -102,6 +127,24 @@ $script = "
             $('#tblproduct-dpu_product_code').prop('readonly', false);
         } else {
             $('#tblproduct-dpu_product_code').prop('readonly', true);
+        }
+    });
+    
+    $(document).ready(function() {
+        $('.hide-fields').hide(); 
+        hideShowFields();
+        
+        $('#tblproduct-is_milk').on('change', function() {
+            hideShowFields();
+        });
+
+        function hideShowFields() {
+            if($('#tblproduct-is_milk').is(':checked')) {
+                $('.hide-fields').show();
+            } else {
+                $('.hide-fields').hide(); 
+                $('.hide-fields select').val('').trigger('change');
+            }
         }
     });
 ";

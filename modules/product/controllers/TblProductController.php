@@ -78,6 +78,10 @@ class TblProductController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->product_name = ucwords($this->model->product_name);
+            if (empty($this->model->is_milk) || $this->model->is_milk == 0) {
+                $this->model->milk_type = NULL;
+                $this->model->local_sale_ledger = NULL;
+            }
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
