@@ -3133,4 +3133,17 @@ class GeneralFunctions extends Component {
         return (string) $newId;
     }
 
+    public function getDeactivateRecords($code, $modelClass, $columnName, $type = '') {
+        $date = date('Y-m-d');
+
+        $query = $modelClass::find()
+                ->where(['<=', 'from_date', $date])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]])
+                ->andWhere([$columnName => $code]);
+        if (!empty($type)) {
+            $query->andWhere(['customer_type' => $type]);
+        }
+        return $query->one();
+    }
+
 }

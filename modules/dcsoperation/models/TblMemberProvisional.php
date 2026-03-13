@@ -55,6 +55,7 @@ use yii\base\UserException;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\dcsoperation\models\TblMemberDeactive;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -831,7 +832,7 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {
-        if(!empty(Yii::$app->session->get('Unions'))){
+        if (!empty(Yii::$app->session->get('Unions'))) {
             $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
             $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
         } else {
@@ -1071,8 +1072,12 @@ class TblMemberProvisional extends ChildModel {
             }
             $existsInMember = $existsInMember->one();
             if ($existsInMember) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInMember->member_code, TblMemberDeactive::class, 'member_code');
+
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Active Member - ') . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name);
+                    return false;
+                }
             }
         }
     }
@@ -1110,8 +1115,11 @@ class TblMemberProvisional extends ChildModel {
             $existsInMember = $existsInMember->one();
 
             if ($existsInMember) {
-                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInMember->member_code, TblMemberDeactive::class, 'member_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
@@ -1144,8 +1152,12 @@ class TblMemberProvisional extends ChildModel {
             $existsInMember = $existsInMember->one();
 
             if ($existsInMember) {
-                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInMember->member_code, TblMemberDeactive::class, 'member_code');
+
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])

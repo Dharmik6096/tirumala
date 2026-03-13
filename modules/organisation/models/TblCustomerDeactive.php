@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\details\models\TblBankDetails;
 
 /**
  * This is the model class for table "tbl_customer_deactive".
@@ -51,29 +52,30 @@ class TblCustomerDeactive extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required', 'except' => ['importCsv']],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime', 'customer_deactive_code'], 'safe'],
-            [['remarks'], 'string'],
-            [['originating_type', 'data_post_status'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required', 'except' => ['importCsv']],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime', 'customer_deactive_code'], 'safe'],
+                [['remarks'], 'string'],
+                [['originating_type', 'data_post_status'], 'integer'],
 //            [['customer_deactive_code', 'bmc_code'], 'string', 'max' => 12],
             [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['customer_code', 'customer_type'], 'string', 'max' => 20],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['resp_status', 'resp_desc'], 'string', 'max' => 255],
-            [['to_date'], 'required', 'on' => ['activeCustomer']],
-            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['from_date'], 'convertDate', 'on' => ['importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
+                [['customer_code', 'customer_type'], 'string', 'max' => 20],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['resp_status', 'resp_desc'], 'string', 'max' => 255],
+                [['to_date'], 'required', 'on' => ['activeCustomer']],
+                [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['from_date'], 'convertDate', 'on' => ['importCsv']],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['bmc_code', 'customer_code', 'from_date'], 'required', 'on' => ['importCsv']],
-            [['from_date'], 'validateFromDate', 'except' => ['activeCustomer']],
-            [['to_date'], 'validateToRange', 'on' => ['activeCustomer']]
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['bmc_code', 'customer_code', 'from_date'], 'required', 'on' => ['importCsv']],
+                [['from_date'], 'validateFromDate', 'except' => ['activeCustomer']],
+                [['to_date'], 'validateToRange', 'on' => ['activeCustomer']],
+                [['to_date'], 'validateDuplicateOnActivate', 'on' => ['activeCustomer']],
         ];
     }
 
@@ -243,7 +245,7 @@ class TblCustomerDeactive extends \app\models\ChildModel {
             $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
         }
     }
-    
+
     public function getDeactiveCustomer($type, $dateFilter) {
         $checkdate = date('Y-m-d', strtotime($dateFilter));
         $deactivateList = $this->find()
@@ -252,6 +254,60 @@ class TblCustomerDeactive extends \app\models\ChildModel {
                 ->andWhere('((:checkdate between cast(from_date as date) and coalesce(cast(to_date as date), \'9999-12-31\')))', [':checkdate' => $checkdate])
                 ->column();
         return $deactivateList;
+    }
+
+    public function validateDuplicateOnActivate($attribute, $params) {
+        if (!empty($this->customer_code)) {
+
+            $customerMobileNo = Yii::$app->general->getforeignkey($this->customerCode, 'mobile_no');
+            $customerAdharNo = Yii::$app->general->getforeignkey($this->customerCode, 'aadhaar_no');
+            $customerBankAccNo = Yii::$app->general->getmultiforeignkey($this->customerCode, ['defaultBankDetail'], 'bank_account_no');
+
+            if (!empty($customerMobileNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveCustomer($customerMobileNo, 'mobile_no', $this->customer_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Mobile No already exists in Active Customer Master: ' . $duplicate->customer_code . ' - ' . $duplicate->customer_name));
+                    return false;
+                }
+            }
+
+            if (!empty($customerAdharNo)) {
+                if ($duplicate = $this->checkDuplicateInActiveCustomer($customerAdharNo, 'aadhaar_no', $this->customer_code)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Adhar No already exists in Active Customer Master: ' . $duplicate->customer_code . ' - ' . $duplicate->customer_name));
+                    return false;
+                }
+            }
+
+            if (!empty($customerBankAccNo)) {
+                $encryptedBankAccNo = Yii::$app->general->encryptData($customerBankAccNo);
+
+                $existsInCustomerBank = TblBankDetails::find()
+                                ->select(['tbl_bank_details.module_code', 'cus.customer_name'])
+                                ->leftJoin('tbl_customer_master cus', 'cus.customer_code = tbl_bank_details.module_code')
+                                ->where(['tbl_bank_details.is_active' => 1])
+                                ->andWhere(['tbl_bank_details.module_name' => 'customer'])
+                                ->andWhere(['tbl_bank_details.is_default' => 1])
+                                ->andWhere(['<>', 'tbl_bank_details.module_code', $this->customer_code])
+                                ->andWhere(['or', ['tbl_bank_details.bank_account_no' => $customerBankAccNo], ['tbl_bank_details.bank_account_no' => $encryptedBankAccNo]])
+                                ->asArray()->one();
+
+                if ($existsInCustomerBank) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Cannot activate. Bank Account No already exists in Customer Bank Detail - Code : ' . $existsInCustomerBank['module_code'] . ', Name : ' . $existsInCustomerBank['customer_name']));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function checkDuplicateInActiveCustomer($value, $fieldName, $customerCode) {
+        if (!empty($value)) {
+            $encryptedValue = Yii::$app->general->encryptData($value);
+
+            return TblCustomerMaster::find()->where(['is_active' => 1])
+                            ->andWhere(['<>', 'customer_code', $customerCode])
+                            ->andWhere(['or', [$fieldName => $value], [$fieldName => $encryptedValue]])
+                            ->one();
+        }
+        return null;
     }
 
 }

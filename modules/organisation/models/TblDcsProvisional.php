@@ -24,6 +24,7 @@ use app\modules\document\models\TblAttachment;
 use yii\db\Expression;
 use app\modules\general\models\TblProcessApproval;
 use yii\helpers\Html;
+use app\modules\organisation\models\TblDcsDeactive;
 
 /**
  * This is the model class for table "tbl_dcs_provisional".
@@ -659,8 +660,11 @@ class TblDcsProvisional extends ChildModel {
                     ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
                     ->one();
             if ($existsInDcs) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
@@ -687,8 +691,11 @@ class TblDcsProvisional extends ChildModel {
                     ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
                     ->one();
             if ($existsInDcs) {
-                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
@@ -715,8 +722,11 @@ class TblDcsProvisional extends ChildModel {
                     ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
                     ->one();
             if ($existsInDcs) {
-                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                    return false;
+                }
             }
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
