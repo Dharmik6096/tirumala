@@ -13,6 +13,7 @@ $this->title = 'Process for Payment Disburse';
     <?php
     $renderedCodes = [];
     $form = ActiveForm::begin([
+        'id' => 'transpoter-payment-form',
         'method' => 'post'
     ]);
     ?>
@@ -151,7 +152,7 @@ $script = '
             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
             return false;
         } else {
-            $("form#w1").submit();
+            $("form#transpoter-payment-form").submit();
         }
     });
     ';
