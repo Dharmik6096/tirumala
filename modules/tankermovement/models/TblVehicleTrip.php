@@ -10,8 +10,6 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlantConversionVendorMapping;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
-use app\modules\syncutility\models\TblSentbox;
-use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_vehicle_trip".
@@ -58,17 +56,17 @@ class TblVehicleTrip extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip', 'chekinout']],
-                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'no_of_compartment', 'vehicle_capacity', 'remark', 'force_close', 'force_close_remarks'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime', 'is_not_actual_plant'], 'safe'],
-                [['trip_status'], 'default', 'value' => 'generated'],
-                [['trip_for'], 'default', 'value' => 'bmcdispatch'],
-                [['trip_mode'], 'default', 'value' => 'online'],
-                [['is_active'], 'default', 'value' => 1],
-                [['is_auto_trip'], 'default', 'value' => 0],
-                [['is_check_in'], 'default', 'value' => 0],
-                [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
-                [['force_close_remarks'], 'string', 'max' => 100],
+            [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip', 'chekinout']],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'no_of_compartment', 'vehicle_capacity', 'remark', 'force_close', 'force_close_remarks'], 'safe'],
+            [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime', 'is_not_actual_plant'], 'safe'],
+            [['trip_status'], 'default', 'value' => 'generated'],
+            [['trip_for'], 'default', 'value' => 'bmcdispatch'],
+            [['trip_mode'], 'default', 'value' => 'online'],
+            [['is_active'], 'default', 'value' => 1],
+            [['is_auto_trip'], 'default', 'value' => 0],
+            [['is_check_in'], 'default', 'value' => 0],
+            [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
+            [['force_close_remarks'], 'string', 'max' => 100],
         ];
     }
 
@@ -151,20 +149,22 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $model = $this->find()->where(['vehicle_code' => $this->vehicle_code])
                 ->andWhere(['!=', 'trip_status', 'closed'])
                 ->andWhere(['is_active' => 1])
-                ->andWhere(['transaction_date' => $this->transaction_date])
-                ->orderBy(['transaction_date' => SORT_ASC, 'created_at' => SORT_ASC])
+                ->orderBy(['transaction_date' => SORT_DESC, 'created_at' => SORT_DESC])
                 ->one();
-        $same_day_trip_count = $this->find()->where(['vehicle_code' => $this->vehicle_code])
-                        ->andWhere(['!=', 'trip_status', 'closed'])
-                        ->andWhere(['is_active' => 1])
-                        ->andWhere(['transaction_date' => $this->transaction_date])->count();
+        $same_day_trip_count = 0;
+        if (!empty($model)) {
+            $same_day_trip_count = $this->find()->where(['vehicle_code' => $this->vehicle_code])
+                            ->andWhere(['!=', 'trip_status', 'closed'])
+                            ->andWhere(['is_active' => 1])
+                            ->andWhere(['transaction_date' => $model->transaction_date])->count();
+        }
         if (!empty($model) && (($this->trip_mode != 'offline') || ($same_day_trip_count > 1))) {
             $api_res = TRUE;
             if ($model->trip_status == 'generated') {
                 $inspection = TRUE;
             }
             $last_trip_date = $model->transaction_date;
-            if ($last_trip_date != $this->transaction_date) {
+            if ($last_trip_date != $this->transaction_date && ($this->trip_mode != 'online')) {
                 $validate = FALSE;
                 $this->addError('vehicle_code', Yii::t('app', 'First need to close Trip No. ' . $model->trip_code));
             } else if ($model->trip_status == 'tankerfull') {
@@ -518,4 +518,5 @@ class TblVehicleTrip extends \app\models\ChildModel {
             ->all();
         return !empty($plantCodeArray) ? array_column($plantCodeArray, 'plant_code') : [];
     }
+
 }

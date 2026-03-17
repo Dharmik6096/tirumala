@@ -90,6 +90,9 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         $tripArray['dispatchFromCode'] = $dispatchFromCode;
                         $tripArray['lotQltyValidate'] = $milkVehicleEntryQltyData['lotQltyValidate'];
                         $tripArray['lotQltyData'] = $milkVehicleEntryQltyData['lotQltyData'];
+                        $bmcDispatch = new TblBmcMilkDispatchTxn();
+                        $bmcDispatch->trip_code = $trip_code;
+                        $tripArray['dispatchDetail'] = $bmcDispatch->getLastDispatchDetailChamberWise();
                         $tripData[] = $tripArray;
                     }
                     $res_data = $tripData;
