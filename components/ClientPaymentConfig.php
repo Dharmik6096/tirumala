@@ -211,6 +211,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,bmc_code,customer_type,from_datetime,from_shift,to_datetime,to_shift,user_code',
                     'sp_name' => 'sp_vendor_hold_release_payment_process_itc',
                 ],
+                'bonus_payment' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_process_ITC',
+                ],
             ],
             'SAUMYA' => [
                 'vsp_payment' => [

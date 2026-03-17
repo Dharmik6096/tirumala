@@ -99,7 +99,8 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
             return $dataProvider;
         }
 
-        $query->joinWith(['toStoreLocCode', 'toStoreLocCode.plantCode', 'toStoreLocCode.bmcCode', 'toStoreLocCode.dcsCode', 'assetDetail', 'assetCode', 'assetDetail.manufacturerCode', 'fromStoreLocCode as fromStoreLocCode', 'assetClusterVendorInfo']);
+        $query->joinWith(['unionCode', 'toStoreLocCode', 'toStoreLocCode.plantCode', 'toStoreLocCode.bmcCode', 'toStoreLocCode.dcsCode', 'assetDetail', 'assetCode', 'assetDetail.manufacturerCode', 'fromStoreLocCode as fromStoreLocCode']);
+        $query->leftJoin('tbl_asset_cluster_vendor_info', 'tbl_asset_cluster_vendor_info.asset_code = tbl_asset_transaction.asset_code  AND tbl_asset_cluster_vendor_info.serial_number = tbl_asset_transaction.serial_number');
         if (!empty($this->purchase_date))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_asset_detail.purchase_date, 126)', date('Y-m-d', strtotime($this->purchase_date))]);
         if (!empty($this->put_to_use_date))
