@@ -195,7 +195,7 @@ class TblDcs extends ChildModel {
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['ifsc', 'pan_no'], 'trim'],
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
-            [['mobile_no', 'sim_no'], function ($attribute, $params) {
+            [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
                 [['gst_no'], function ($attribute, $params) {
