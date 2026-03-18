@@ -89,52 +89,65 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                     [
                     'columns' => [
                             [
+                            'attribute' => 'other_state_tax_code',
+                            'value' => Yii::$app->general->getforeignkey($model->stateTaxCode, 'tax_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
                             'attribute' => 'ref_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'is_dpu_product',
                             'value' => isset($model->is_dpu_product) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_dpu_product] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'dpu_product_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'is_inhouse',
                             'value' => isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inhouse] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'is_inclusive_tax',
                             'value' => isset($model->is_inclusive_tax) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inclusive_tax] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'is_saleable',
                             'value' => isset($model->is_saleable) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_saleable] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'is_indent',
                             'value' => isset($model->is_indent) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_indent] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'local_name',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'product_desc',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -142,11 +155,26 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                     [
                     'columns' => [
                             [
-                            'attribute' => 'product_desc',
+                            'attribute' => 'item_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [
-                            'attribute' => 'item_code',
+                            'attribute' => 'purchase_ledger',
+                            'value' => Yii::$app->general->getforeignkey($model->purchaseLedgerCode, 'ledger_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'sale_ledger',
+                            'value' => Yii::$app->general->getforeignkey($model->saleLedgerCode, 'ledger_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'stock_ledger',
+                            'value' => Yii::$app->general->getforeignkey($model->stockLedgerCode, 'ledger_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -168,52 +196,29 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                     [
                     'columns' => [
                             [
-                            'attribute' => 'purchase_ledger',
-                            'value' => Yii::$app->general->getforeignkey($model->purchaseLedgerCode, 'ledger_name'),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                            [
-                            'attribute' => 'sale_ledger',
-                            'value' => Yii::$app->general->getforeignkey($model->saleLedgerCode, 'ledger_name'),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ],
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'stock_ledger',
-                            'value' => Yii::$app->general->getforeignkey($model->stockLedgerCode, 'ledger_name'),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                            [
                             'attribute' => 'local_sale_ledger',
                             'value' => Yii::$app->general->getforeignkey($model->localSaleLedgerCode, 'ledger_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                            [
+                            'attribute' => 'coupon_ledger',
+                            'value' => Yii::$app->general->getforeignkey($model->couponLedgerCode, 'ledger_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                     ],
                 ],
                     [
                     'columns' => [
-                            [
-                            'attribute' => 'other_state_tax_code',
-                            'value' => Yii::$app->general->getforeignkey($model->stateTaxCode, 'tax_name'),
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
                             [
                             'attribute' => 'min_stock',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',
                             'value' => GeneralFunctions::getRecordStatus($model->is_active),
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],

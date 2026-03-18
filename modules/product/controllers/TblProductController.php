@@ -81,6 +81,7 @@ class TblProductController extends \app\controllers\ChildController {
             if (empty($this->model->is_milk) || $this->model->is_milk == 0) {
                 $this->model->milk_type = NULL;
                 $this->model->local_sale_ledger = NULL;
+                $this->model->coupon_ledger = NULL;
             }
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product', 'edit']);
             if ($transaction == 'customRedirect') {

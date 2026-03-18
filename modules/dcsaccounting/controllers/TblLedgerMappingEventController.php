@@ -54,7 +54,7 @@ class TblLedgerMappingEventController extends ChildController {
             $save_model = [];
             $historyModel = [];
             $postData = Yii::$app->request->post()['TblEvent'];
-
+            $allErrors = [];
             foreach ($postData as $eventCode => $data) {
                 $mapping_model = TblLedgerMappingEvent::find()->where(['event_code' => $eventCode])->one();
                 $isChanged = false;
@@ -64,16 +64,22 @@ class TblLedgerMappingEventController extends ChildController {
                 $newDebitLedger = $data['debit_ledger_code'] ?? '';
                 $newDebitSub = !empty($data['debit_sub_ledger']) ? 1 : 0;
                 $newVoucherType = $data['voucher_type_code'] ?? '';
+                $newVoucherNarration = $data['voucher_narration'] ?? '';
+                $newVoucherTxnCreditNarration = $data['voucher_txn_credit_narration'] ?? '';
+                $newVoucherTxnDebitNarration = $data['voucher_txn_debit_narration'] ?? '';
+                $newVoucherNarrationLocal = $data['voucher_narration_local'] ?? '';
+                $newVoucherTxnCreditNarrationLocal = $data['voucher_txn_credit_narration_local'] ?? '';
+                $newVoucherTxnDebitNarrationLocal = $data['voucher_txn_debit_narration_local'] ?? '';
 
                 if (!empty($mapping_model)) {
-                    if ($mapping_model->credit_ledger_code != $newCreditLedger || $mapping_model->credit_sub_ledger != $newCreditSub || $mapping_model->debit_ledger_code != $newDebitLedger || $mapping_model->debit_sub_ledger != $newDebitSub || $mapping_model->voucher_type_code != $newVoucherType) {
+                    if ($mapping_model->credit_ledger_code != $newCreditLedger || $mapping_model->credit_sub_ledger != $newCreditSub || $mapping_model->debit_ledger_code != $newDebitLedger || $mapping_model->debit_sub_ledger != $newDebitSub || $mapping_model->voucher_type_code != $newVoucherType || $mapping_model->voucher_narration != $newVoucherNarration || $mapping_model->voucher_txn_credit_narration != $newVoucherTxnCreditNarration || $mapping_model->voucher_txn_debit_narration != $newVoucherTxnDebitNarration || $mapping_model->voucher_narration_local != $newVoucherNarrationLocal || $mapping_model->voucher_txn_credit_narration_local != $newVoucherTxnCreditNarrationLocal || $mapping_model->voucher_txn_debit_narration_local != $newVoucherTxnDebitNarrationLocal) {
                         $isChanged = true;
                         $mapingHistory = new TblLedgerMappingEventHistory();
                         Yii::$app->operation->history($mapping_model, $mapingHistory, 'UPDATE');
                         $historyModel[] = $mapingHistory;
                     }
                 } else {
-                    if ((isset($data['credit_ledger_code']) && $data['credit_ledger_code'] != '') || (isset($data['debit_ledger_code']) && $data['debit_ledger_code'] != '') || $newCreditSub == 1 || $newDebitSub == 1 || (isset($data['voucher_type_code']) && $data['voucher_type_code'] != '')) {
+                    if ((isset($data['credit_ledger_code']) && $data['credit_ledger_code'] != '') || (isset($data['debit_ledger_code']) && $data['debit_ledger_code'] != '') || $newCreditSub == 1 || $newDebitSub == 1 || (isset($data['voucher_type_code']) && $data['voucher_type_code'] != '') || $newVoucherNarration != '' || $newVoucherTxnCreditNarration != '' || $newVoucherTxnDebitNarration != '' || $newVoucherNarrationLocal != '' || $newVoucherTxnCreditNarrationLocal != '' || $newVoucherTxnDebitNarrationLocal != '') {
                         $mapping_model = new TblLedgerMappingEvent();
                         $mapping_model->event_code = $eventCode;
                         $mapping_model->event_code_default = !empty($data['event_code_default']) ? $data['event_code_default'] : '';
@@ -89,13 +95,30 @@ class TblLedgerMappingEventController extends ChildController {
                     $mapping_model->debit_ledger_code = $newDebitLedger;
                     $mapping_model->debit_sub_ledger = $newDebitSub;
                     $mapping_model->voucher_type_code = $newVoucherType;
-                    $save_model[] = $mapping_model;
+                    $mapping_model->voucher_narration = $newVoucherNarration;
+                    $mapping_model->voucher_txn_credit_narration = $newVoucherTxnCreditNarration;
+                    $mapping_model->voucher_txn_debit_narration = $newVoucherTxnDebitNarration;
+                    $mapping_model->voucher_narration_local = $newVoucherNarrationLocal;
+                    $mapping_model->voucher_txn_credit_narration_local = $newVoucherTxnCreditNarrationLocal;
+                    $mapping_model->voucher_txn_debit_narration_local = $newVoucherTxnDebitNarrationLocal;
+
+                    if ($mapping_model->validate()) {
+                        $save_model[] = $mapping_model;
+                    } else {
+                        foreach ($mapping_model->getErrors() as $field => $messages) {
+                            $allErrors[] = implode(', ', $messages);
+                        }
+                    }
                 }
+            }
+            if (!empty($allErrors)) {
+                Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => implode('<br/>', $allErrors)]);
+                return $this->redirect(Yii::$app->request->referrer);
             }
             if (!empty($save_model)) {
                 $transaction = $this->generalModel->saveTransaction($save_model, $historyModel, ['Ledger Mapping Event', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
+                    return $this->redirect(['create']);
                 }
             } else {
                 Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'No changes detected. Please update at least one mapping before saving.']);

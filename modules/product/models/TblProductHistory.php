@@ -36,7 +36,7 @@ class TblProductHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['product_code', 'product_group_code', 'is_active', 'product_name', 'product_desc', 'created_by', 'operation_type', 'updated_by', 'local_name', 'created_at', 'history_created_at', 'updated_at', 'union_code', 'unit_code'], 'safe'],
-                [['is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'item_code', 'is_milk', 'milk_type', 'purchase_ledger', 'sale_ledger', 'stock_ledger', 'local_sale_ledger', 'other_state_tax_code'], 'safe'],
+                [['is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'item_code', 'is_milk', 'milk_type', 'purchase_ledger', 'sale_ledger', 'stock_ledger', 'local_sale_ledger', 'other_state_tax_code', 'coupon_ledger'], 'safe'],
         ];
     }
 
