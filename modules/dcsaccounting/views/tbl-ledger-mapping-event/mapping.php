@@ -36,8 +36,7 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                         $out .= Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-12', FALSE, false, "[$model->event_code]credit_ledger_code");
                     }
                     if ($model->sub_ledger_credit == 1) {
-                        $checkboxValue = (isset($model->credit_sub_ledger) && $model->credit_sub_ledger == 1) ? true : false;
-                        $out .= $form->field($model, "[$model->event_code]credit_sub_ledger", ['checkHorizontalTemplate' => "<div class='checkbox'>{input} Sub Ledger?</div>{error}{hint}", 'options' => ['class' => 'mb0'],])->checkbox(['checked' => $checkboxValue, 'label' => false]);
+                        $out .= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'credit_sub_ledger', 'checkbox_padding_0', true, '', $model->event_code);
                     }
                     return ($out ?: '<span class="text-muted">N/A</span>');
                 }
@@ -48,8 +47,7 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                         $out .= Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-12', FALSE, false, "[$model->event_code]debit_ledger_code");
                     }
                     if ($model->sub_ledger_debit == 1) {
-                        $checkboxValue = (isset($model->debit_sub_ledger) && $model->debit_sub_ledger == 1) ? true : false;
-                        $out .= $form->field($model, "[$model->event_code]debit_sub_ledger", ['checkHorizontalTemplate' => "<div class='checkbox'>{input} Sub Ledger?</div>{error}{hint}", 'options' => ['class' => 'mb0'],])->checkbox(['checked' => $checkboxValue, 'label' => false]);
+                        $out .= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'debit_sub_ledger', 'checkbox_padding_0', true, '', $model->event_code);
                     }
                     return ($out ?: '<span class="text-muted">N/A</span>');
                 }
@@ -83,7 +81,7 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
         ?>
     </div>
 
-    <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-4 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php if (!empty($dataProvider->getModels())) { ?>
                 <?= Yii::$app->controls->save('SAVE', $model, 'save'); ?>
