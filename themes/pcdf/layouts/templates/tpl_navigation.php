@@ -84,7 +84,7 @@ echo GhostMenu::widget([
 //                            ['label' => Yii::t('app', 'Voucher Type Ledger Config'), 'url' => ['/dcsaccounting/tbl-voucher-type-ledger-config/index'], 'active' => ($cntrl == 'tbl-voucher-type-ledger-config')],
 //                            ['label' => Yii::t('app', 'Ledger Mapping TaxDetail'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-tax-detail/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-tax-detail')],
                         ['label' => Yii::t('app', 'Ledger Mapping ProductGroup'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-product-group/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-product-group')],
-                            ['label' => Yii::t('app', 'Ledger Mapping Event'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-event/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-event')],
+                            ['label' => Yii::t('app', 'Ledger Mapping Event'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-event/create'], 'active' => ($cntrl == 'tbl-ledger-mapping-event')],
                             ['label' => Yii::t('app', 'Ledger Mapping BillHead'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-bill-head/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-bill-head')],
 //                            ['label' => Yii::t('app', 'Ledger Opening Balance'), 'url' => ['/dcsaccounting/tbl-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-ledger-opening-balance')],
 //                            ['label' => Yii::t('app', 'SubLedger Opening Balance'), 'url' => ['/dcsaccounting/tbl-sub-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-sub-ledger-opening-balance')],

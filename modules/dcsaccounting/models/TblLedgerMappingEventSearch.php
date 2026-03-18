@@ -18,7 +18,7 @@ class TblLedgerMappingEventSearch extends TblLedgerMappingEvent {
      */
     public function rules() {
         return [
-                [['ledger_mapping_event_code', 'credit_sub_ledger', 'debit_sub_ledger', 'event_code', 'event_code_default', 'voucher_type_code', 'originating_type', 'credit_ledger_code', 'debit_ledger_code', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['ledger_mapping_event_code', 'credit_sub_ledger', 'debit_sub_ledger', 'event_code', 'event_code_default', 'voucher_type_code', 'originating_type', 'credit_ledger_code', 'debit_ledger_code', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'voucher_narration', 'voucher_txn_credit_narration', 'voucher_txn_debit_narration', 'voucher_narration_local', 'voucher_txn_credit_narration_local', 'voucher_txn_debit_narration_local'], 'safe'],
         ];
     }
 
@@ -72,7 +72,7 @@ class TblLedgerMappingEventSearch extends TblLedgerMappingEvent {
     }
 
     public function mappingSearch($params) {
-        $query = TblEvent::find()->alias('e')->select(['e.event_code', 'e.event_code_default', 'e.event_name', 'e.union_code', 'e.ledger_credit', 'e.ledger_debit', 'e.sub_ledger_credit', 'e.sub_ledger_debit', 'lme.credit_ledger_code', 'lme.credit_sub_ledger', 'lme.debit_ledger_code', 'lme.debit_sub_ledger', 'lme.voucher_type_code'])
+        $query = TblEvent::find()->alias('e')->select(['e.event_code', 'e.event_code_default', 'e.event_name', 'e.union_code', 'e.ledger_credit', 'e.ledger_debit', 'e.sub_ledger_credit', 'e.sub_ledger_debit', 'lme.credit_ledger_code', 'lme.credit_sub_ledger', 'lme.debit_ledger_code', 'lme.debit_sub_ledger', 'lme.voucher_type_code', 'lme.voucher_narration', 'lme.voucher_txn_credit_narration', 'lme.voucher_txn_debit_narration', 'lme.voucher_narration_local', 'lme.voucher_txn_credit_narration_local', 'lme.voucher_txn_debit_narration_local'])
                 ->leftJoin(['lme' => 'tbl_ledger_mapping_event'], 'lme.event_code = e.event_code');
 
         $dataProvider = new ActiveDataProvider([

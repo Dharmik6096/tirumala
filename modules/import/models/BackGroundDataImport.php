@@ -15,7 +15,7 @@ class BackGroundDataImport extends Model {
     public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks, $sap_batch_no, $rate_wharehouse;
     public $shift_applicability, $amount, $allotted_share, $proposed_share, $total_share, $share_amount, $till_date, $folio_no, $member_vendor_code, $from_date, $to_date, $total_qty, $pouring_days, $avg_fat, $avg_snf, $milk_amount, $bonus_criteria, $incentive_amount, $special_code;
     public $asset_code, $serial_number, $cluster_email, $cluster_mobile, $vendor_email, $vendor_mobile;
-    public $product_mrp, $distributor_landing_rate, $sachiv_price, $member_price, $aadesh_master_code, $other_state_tax_code, $is_milk, $milk_type, $purchase_ledger, $sale_ledger, $stock_ledger, $local_sale_ledger;
+    public $product_mrp, $distributor_landing_rate, $sachiv_price, $member_price, $aadesh_master_code, $other_state_tax_code, $is_milk, $milk_type, $purchase_ledger, $sale_ledger, $stock_ledger, $local_sale_ledger,$coupon_ledger;
 
     function __construct() {
         

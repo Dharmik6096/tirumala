@@ -50,6 +50,9 @@ $attribute = [
         ['attribute' => 'tax_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taxCode, 'tax_name');
         }, 'visible' => true,],
+        ['attribute' => 'other_state_tax_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->stateTaxCode, 'tax_name');
+        }, 'visible' => true],
         [
         'attribute' => 'is_inhouse', 'visible' => false,
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_inhouse'),
@@ -90,14 +93,6 @@ $attribute = [
         ['attribute' => 'dpu_product_code', 'visible' => false],
         ['attribute' => 'item_code', 'filter' => false, 'visible' => false],
         ['attribute' => 'min_stock', 'filter' => false, 'visible' => false],
-        ['attribute' => 'is_milk',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_milk'),
-        'value' => function($model) {
-            return isset($model->is_milk) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_milk] : '';
-        }],
-        ['attribute' => 'milk_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
-        }, 'vAlign' => 'middle', 'filter' => Html::activeDropDownList($searchModel, 'milk_type', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
         ['attribute' => 'purchase_ledger', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->purchaseLedgerCode, 'ledger_name');
         }],
@@ -107,12 +102,20 @@ $attribute = [
         ['attribute' => 'stock_ledger', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->stockLedgerCode, 'ledger_name');
         }],
+        ['attribute' => 'is_milk',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_milk'),
+        'value' => function($model) {
+            return isset($model->is_milk) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_milk] : '';
+        }],
+        ['attribute' => 'milk_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
+        }, 'vAlign' => 'middle', 'filter' => Html::activeDropDownList($searchModel, 'milk_type', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
         ['attribute' => 'local_sale_ledger', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->localSaleLedgerCode, 'ledger_name');
         }],
-        ['attribute' => 'other_state_tax_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->stateTaxCode, 'tax_name');
-        }, 'visible' => true],
+        ['attribute' => 'coupon_ledger', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->couponLedgerCode, 'ledger_name');
+        }],
 ];
 
 $grid_option = [

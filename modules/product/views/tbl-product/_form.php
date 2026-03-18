@@ -79,29 +79,33 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'min_stock')->textInput() ?>
     </div>
-    <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_milk', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-    </div>
-    <div class="col-sm-2 hide-fields">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type'), false, 'milk_type'); ?>
-    </div>
     <div class="col-sm-2">
         <?php echo Html::hiddenInput('ledger_type', 'purchase', ['id' => 'ledger_type']); ?>
         <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,ledger_type', 'purchase_ledger', $model->getAttributeLabel('purchase_ledger'), false); ?>
     </div>
-    <div class="col-sm-2 mb15">
+    <div class="col-sm-2">
         <?php echo Html::hiddenInput('sale_ledger_type', 'sale', ['id' => 'sale_ledger_type']); ?>
         <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,sale_ledger_type', 'sale_ledger', $model->getAttributeLabel('sale_ledger'), false); ?>
     </div>
-    <div class="col-sm-2 mb15">
+    <div class="col-sm-2">
         <?php echo Html::hiddenInput('stock_ledger_type', 'stock', ['id' => 'stock_ledger_type']); ?>
         <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,stock_ledger_type', 'stock_ledger', $model->getAttributeLabel('stock_ledger'), false); ?>
+    </div>
+    <div class="col-sm-1 mt15">
+        <?= $form->field($model, 'is_milk', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-2 hide-fields">
+        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type'), false, 'milk_type'); ?>
     </div>
     <div class="col-sm-2 hide-fields">
         <?php echo Html::hiddenInput('local_sale_ledger_type', 'sale', ['id' => 'local_sale_ledger_type']); ?>
         <?= Yii::$app->dropdown->ledgerList($model, $form, 'tblproduct-union_code,local_sale_ledger_type', 'local_sale_ledger', $model->getAttributeLabel('local_sale_ledger'), false); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 hide-fields">
+        <?= Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, '', $model->getAttributeLabel('coupon_ledger'), false, 'coupon_ledger'); ?>
+    </div>
+    <div class="col-sm-2 mb15">
         <?= $form->field($model, 'product_desc')->textarea() ?>
     </div>
     <div class="col-sm-2 mt15">

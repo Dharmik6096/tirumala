@@ -16,63 +16,61 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
     $form = ActiveForm::begin([
                 'id' => 'ledger-mapping-event-form',
                 'enableAjaxValidation' => false,
+                'options' => [
+                    'class' => 'alignment_mapping'
+                ],
     ]);
     ?>
 
-    <div class="no-effect table_form">
+    <div class="no-effect">
         <?php
         $attribute = [
-                ['attribute' => 'event_code', 'label' => Yii::t('app', 'Event'), 'value' => function($model) {
+                ['attribute' => 'event_code', 'label' => Yii::t('app', 'Event'), 'vAlign' => 'top', 'value' => function ($model) {
                     echo Html::activeHiddenInput($model, "[$model->event_code]union_code", ['value' => $model->union_code]);
                     echo Html::activeHiddenInput($model, "[$model->event_code]event_code_default", ['value' => $model->event_code_default]);
                     return $model->event_name;
                 }, 'filter' => false],
-                ['attribute' => 'credit_ledger_code', 'label' => Yii::t('app', ' Credit Ledger'),
-                'format' => 'raw',
-                'value' => function ($model) use ($form) {
+                ['label' => Yii::t('app', 'Credit / Sub Ledger?'), 'vAlign' => 'top', 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    $out = "";
                     if ($model->ledger_credit == 1) {
-                        return Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-3', FALSE, false, "[$model->event_code]credit_ledger_code");
+                        $out .= Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-12', FALSE, false, "[$model->event_code]credit_ledger_code");
                     }
-                    return '<span class="text-muted">N/A</span>';
-                }, 'filter' => false
-            ],
-                ['attribute' => 'credit_sub_ledger', 'label' => Yii::t('app', 'Credit Sub Ledger?'),
-                'format' => 'raw',
-                'value' => function ($model) use ($form) {
                     if ($model->sub_ledger_credit == 1) {
-                        return $form->field($model, "[$model->event_code]credit_sub_ledger", [
-                                    'checkboxTemplate' => '<div class="mb0 center_text">{input}</div>{error}{hint}'
+                        $out .= $form->field($model, "[$model->event_code]credit_sub_ledger", [
+                                    'checkboxTemplate' => '<div class="mb0">{input} Sub Ledger?</div>{error}{hint}'
                                 ])->checkbox()->label(FALSE);
                     }
-                    return '<span class="text-muted">N/A</span>';
-                }, 'filter' => false
+                    return ($out ?: '<span class="text-muted">N/A</span>');
+                }
             ],
-                ['attribute' => 'debit_ledger_code', 'label' => Yii::t('app', ' Debit Ledger'),
-                'format' => 'raw',
-                'value' => function ($model) use ($form) {
+                ['label' => Yii::t('app', 'Debit / Sub Ledger?'), 'vAlign' => 'top', 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    $out = "";
                     if ($model->ledger_debit == 1) {
-                        return Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-3', FALSE, false, "[$model->event_code]debit_ledger_code");
+                        $out .= Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-12', FALSE, false, "[$model->event_code]debit_ledger_code");
                     }
-                    return '<span class="text-muted">N/A</span>';
-                }, 'filter' => false
-            ],
-                ['attribute' => 'debit_sub_ledger', 'label' => Yii::t('app', 'Debit Sub Ledger?'),
-                'format' => 'raw',
-                'value' => function ($model) use ($form) {
                     if ($model->sub_ledger_debit == 1) {
-                        return $form->field($model, "[$model->event_code]debit_sub_ledger", [
-                                    'checkboxTemplate' => '<div class="mb0 center_text">{input}</div>{error}{hint}'
+                        $out .= $form->field($model, "[$model->event_code]debit_sub_ledger", [
+                                    'checkboxTemplate' => '<div class="mb0">{input} Sub Ledger?</div>{error}{hint}'
                                 ])->checkbox()->label(FALSE);
                     }
-                    return '<span class="text-muted">N/A</span>';
-                }, 'filter' => false
+                    return ($out ?: '<span class="text-muted">N/A</span>');
+                }
             ],
-                ['attribute' => 'voucher_type_code', 'label' => Yii::t('app', 'voucher Type'),
-                'format' => 'raw',
-                'value' => function ($model) use ($form) {
-                    return Yii::$app->dropdown->dropdown('voucher_types', $model, $form, 'col-sm-3', FALSE, false, "[$model->event_code]voucher_type_code");
-                },
-                'filter' => false
+                ['attribute' => 'voucher_type_code', 'label' => Yii::t('app', 'Voucher Type'), 'vAlign' => 'top', 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    return Yii::$app->dropdown->dropdown('voucher_types', $model, $form, 'col-sm-12', FALSE, false, "[$model->event_code]voucher_type_code");
+                }
+            ],
+                ['label' => Yii::t('app', 'Voucher Narration'), 'vAlign' => 'top', 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    return $form->field($model, "[$model->event_code]voucher_narration")->textInput(['placeholder' => 'General Narration'])->label(false) .
+                            $form->field($model, "[$model->event_code]voucher_txn_credit_narration")->textInput(['placeholder' => 'Credit Narration'])->label(false) .
+                            $form->field($model, "[$model->event_code]voucher_txn_debit_narration")->textInput(['placeholder' => 'Debit Narration'])->label(false);
+                }
+            ],
+                ['label' => Yii::t('app', 'Voucher Narration Local'), 'vAlign' => 'top', 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    return $form->field($model, "[$model->event_code]voucher_narration_local")->textInput(['placeholder' => 'Local Narration'])->label(false) .
+                            $form->field($model, "[$model->event_code]voucher_txn_credit_narration_local")->textInput(['placeholder' => 'Credit Local'])->label(false) .
+                            $form->field($model, "[$model->event_code]voucher_txn_debit_narration_local")->textInput(['placeholder' => 'Debit Local'])->label(false);
+                }
             ],
         ];
 
@@ -93,7 +91,6 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                 <?= Yii::$app->controls->save('SAVE', $model, 'save'); ?>
             <?php }
             ?>
-            <?= Html::a('cancel', Url::to(['index']), ['class' => 'btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>
         </div>
     </div>
 

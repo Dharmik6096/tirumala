@@ -6595,3 +6595,7 @@ select:focus > option:checked {
 .mt5 {
     margin-top: 5px !important;
 }
+
+.alignment_mapping .table>tbody>tr>td {
+    vertical-align: top !important;
+}
