@@ -37,7 +37,7 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                     }
                     if ($model->sub_ledger_credit == 1) {
                         $out .= $form->field($model, "[$model->event_code]credit_sub_ledger", [
-                                    'checkboxTemplate' => '<div class="mb0">{input} Sub Ledger?</div>{error}{hint}'
+                                    'checkboxTemplate' => '<div class="mb0">{input} Credit Sub ledger ?</div>{error}{hint}'
                                 ])->checkbox()->label(FALSE);
                     }
                     return ($out ?: '<span class="text-muted">N/A</span>');
@@ -50,7 +50,7 @@ $this->title = Yii::t('app', 'Ledger Mapping Event');
                     }
                     if ($model->sub_ledger_debit == 1) {
                         $out .= $form->field($model, "[$model->event_code]debit_sub_ledger", [
-                                    'checkboxTemplate' => '<div class="mb0">{input} Sub Ledger?</div>{error}{hint}'
+                                    'checkboxTemplate' => '<div class="mb0">{input} Debit Sub Ledger ?</div>{error}{hint}'
                                 ])->checkbox()->label(FALSE);
                     }
                     return ($out ?: '<span class="text-muted">N/A</span>');
