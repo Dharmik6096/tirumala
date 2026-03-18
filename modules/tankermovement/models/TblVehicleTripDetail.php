@@ -231,9 +231,13 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $subStatus = $trip_process == 'cleaning_inspection' ? 'cleaning_pending' : 'qa_pending';
             $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => $subStatus]);
         } else if ($trip_process == 'milk_entry_qlty_merge') {
-            $plants = empty($plants) ? (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL) : $plants;
-            $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => 'cleaning_pending']);
             $query->andWhere(['BETWEEN', 'vt.transaction_date', date('Y-m-d', strtotime('-2 days')), date('Y-m-d')]);
+            if (!empty($plants)) { //AMCS Req. for GetQltyTripList
+                $query->andWhere(['vt.trip_status' => ['open', 'tankerfull', 'closed'], 'vt.trip_sub_status' => ['plant_lot_pending', 'cleaning_pending']]);
+            } else {
+                $query->andWhere(['vt.trip_status' => 'closed', 'vt.trip_sub_status' => 'cleaning_pending']);
+            }
+            $plants = empty($plants) ? (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL) : $plants;
             if (!empty($plants)) {
                 $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
             }
@@ -332,7 +336,7 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $model->out_remarks = $remarks;
             $trip->trip_sub_status = 'gate_out';
             $visibility_status = (empty($model->arrival_time) || $model->sequence_no == 1) ? 1 : 0;
-            if(empty($model->arrival_time)){
+            if (empty($model->arrival_time)) {
                 $model->arrival_time = date('Y-m-d H:i:s', strtotime($model->departure_time) - 1);
             }
         }
