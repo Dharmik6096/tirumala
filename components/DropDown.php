@@ -1925,7 +1925,7 @@ class DropDown extends Component {
             'asset_detail_status' => [
                 'name' => 'current_status',
                 'prompt' => Yii::t('app', 'Select Asset Detail Status'),
-                'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped')],
+                'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped'), '4' => Yii::t('app', 'Working'), '5' => Yii::t('app', 'Under Maintenance'), '6' => Yii::t('app', 'Stuck'), '7' => Yii::t('app', 'In store'), '8' => Yii::t('app', 'MCC Store')],
             ],
             'complain_for' => [
                 'name' => 'complain_for',
