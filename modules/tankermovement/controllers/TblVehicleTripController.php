@@ -219,7 +219,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             }
         }
         if (empty($bmc_array)) {
-            $this->model->is_auto_trip = 1;
+            Yii::$app->default->getDefaults($this->model);
         }
         if (empty($bmc_array)) {
             $bmcModel = new TblDcsBmc();
