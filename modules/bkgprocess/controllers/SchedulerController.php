@@ -1191,7 +1191,7 @@ class SchedulerController extends ChildController {
                         } else if($value->tbl_name == 'TblMemberProvisional'){
                             $name = 'Farmer_';
                         }
-                        $fileName = $name . date('YmdHis') . '.xls';
+                        $fileName = $name . date('YmdHis') . '.xlsx';
                         $folder = \Yii::$app->params['sap_data_files'] . 'vendor-data/';
                         $path = str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder);
                         if (\Yii::$app->general->checkDirectory($path)) {
@@ -1218,7 +1218,7 @@ class SchedulerController extends ChildController {
                             }
 
                             $filePath = $path . $fileName;
-                            $objWriter = IOFactory::createWriter($objPHPExcel, 'Xls');
+                            $objWriter = IOFactory::createWriter($objPHPExcel, 'Xlsx');
                             $objWriter->save($filePath);
 
                             $nextDate = date("Y-m-d H:i:s", strtotime("+{$value->interval} minutes"));
