@@ -92,7 +92,7 @@ class TblEvent extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'credit_sub_ledger' => Yii::t('app', 'Credit Sub ledger ?'),
-            'debit_sub_ledger' => Yii::t('app', ' Debit Sub ledger ?'),
+            'debit_sub_ledger' => Yii::t('app', 'Debit Sub ledger ?'),
         ];
     }
 
