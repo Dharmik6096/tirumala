@@ -121,7 +121,7 @@ $this->render('approval_view_tabs', [
                     [
                     'columns' => [
                             [
-                            'attribute' => 'member_type',
+                            'attribute' => 'member_type_code',
                             'value' => Yii::$app->general->getforeignkey($model->memberTypeCode, 'member_type_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],

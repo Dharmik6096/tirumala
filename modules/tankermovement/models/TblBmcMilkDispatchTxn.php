@@ -335,7 +335,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
         foreach ($compartmentCapacities as $compartment) {
             $compartmentNo = $compartment['compartment_no'];
             $result[$compartmentNo] = [
-                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? $chamberWiseQty[$compartmentNo] : 0,
+                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? (float)$chamberWiseQty[$compartmentNo] : 0,
                 'capacity' => $compartment['capacity']
             ];
         }
