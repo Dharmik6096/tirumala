@@ -223,13 +223,13 @@ class TblMedicineStock extends ChildModel {
                 ->andWhere(['in', 'tbl_user_organization_mapping.organization_type', $type])
                 ->andWhere(['tbl_user_organization_mapping.organization_code' => $code])
                 ->andWhere(['u.is_active' => 1])
-                ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->select(['u.id', 'u.mobile_no', 'u.name', 'u.employee_id'])
                 ->distinct()
                 ->all();
 
         $user = ArrayHelper::map($userData, 'id', function ($data) {
                     $extras = array_filter([$data['mobile_no'] ?? null]);
-                    return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
+                    return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '') . (!empty($data->employee_id) ? ' - ' . $data->employee_id : '');
                 });
 
         return $user;
@@ -238,7 +238,7 @@ class TblMedicineStock extends ChildModel {
     public function getAllUserList($unionCode) {
         $userData = User::find()
                 ->alias('u')
-                ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->select(['u.id', 'u.mobile_no', 'u.name', 'u.employee_id'])
                 ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
                 ->leftJoin('tbl_unions', 'tbl_unions.union_code = tbl_user_organization_mapping.organization_code')
                 ->leftJoin('tbl_dcs', 'tbl_dcs.dcs_code = tbl_user_organization_mapping.organization_code')
@@ -251,7 +251,7 @@ class TblMedicineStock extends ChildModel {
 
         $user = ArrayHelper::map($userData, 'id', function ($data) {
                     $extras = array_filter([$data['mobile_no'] ?? null]);
-                    return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
+                    return $data['name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '') . (!empty($data->employee_id) ? ' - ' . $data->employee_id : '');
                 });
 
         return $user;

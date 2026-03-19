@@ -104,7 +104,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
     public function getUserList() {
         $data = $this->find()->where(['portal_type' => 'portal', 'is_active' => 1])->all();
         $list = ArrayHelper::map($data, 'user_code', function($array, $key) {
-                    return $array['name'] . '-' . $array['department'];
+                    return $array['name'] . '-' . $array['department'] . (!empty($array['employee_id']) ? ' - ' . $array['employee_id'] : '');
                 });
         return $list;
     }
@@ -138,7 +138,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
                         ->andWhere(['NOT IN', 'u.login_type', ['vsp', 'farmer', '']])->all();
 
         $user = ArrayHelper::map($userData, 'id', function($data) {
-                    return $data->name . ' (' . $data->mobile_no . '-' . $data->login_type . ')';
+                    return $data->name . ' (' . $data->mobile_no . '-' . $data->login_type . ')' . (!empty($data->employee_id) ? ' - ' . $data->employee_id : '');
                 });
         return $user;
     }
@@ -183,7 +183,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
         $userData = $this->find()
                 ->alias('u')
                 ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
-                ->select(['u.id', 'u.mobile_no', 'u.name'])
+                ->select(['u.id', 'u.mobile_no', 'u.name', 'u.employee_id'])
                 ->distinct()
                 ->orWhere(['AND', ['tbl_user_organization_mapping.organization_code' => $values], ['tbl_user_organization_mapping.organization_type' => 'DCS']])
                 ->orWhere(['AND', ['tbl_user_organization_mapping.organization_code' => $bmccode], ['tbl_user_organization_mapping.organization_type' => 'BMC']])
@@ -192,7 +192,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
 
         $user = ArrayHelper::map($userData, 'id', function($data) {
                     $mobileNo = !empty($data->mobile_no) ? $data->mobile_no : '';
-                    return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '');
+                    return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '') . (!empty($data->employee_id) ? ' - ' . $data->employee_id : '');
                 });
 
         return $user;
@@ -202,7 +202,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
         $userData = $this->find()->where(['portal_type' => 'portal', 'is_active' => 1])->all();
         $user = ArrayHelper::map($userData, 'id', function($data) {
                     $mobileNo = !empty($data->mobile_no) ? $data->mobile_no : '';
-                    return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '');
+                    return $data->name . ($mobileNo !== '' ? ' (' . $mobileNo . ')' : '') . (!empty($data->employee_id) ? ' - ' . $data->employee_id : '');
                 });
 
         return $user;
