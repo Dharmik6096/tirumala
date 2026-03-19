@@ -149,22 +149,32 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $model = $this->find()->where(['vehicle_code' => $this->vehicle_code])
                 ->andWhere(['!=', 'trip_status', 'closed'])
                 ->andWhere(['is_active' => 1])
-                ->orderBy(['transaction_date' => SORT_DESC, 'created_at' => SORT_DESC])
+                ->andWhere(['transaction_date' => $this->transaction_date])
+                ->orderBy(['transaction_date' => SORT_ASC, 'created_at' => SORT_ASC])
                 ->one();
-        $same_day_trip_count = 0;
-        if (!empty($model)) {
-            $same_day_trip_count = $this->find()->where(['vehicle_code' => $this->vehicle_code])
-                            ->andWhere(['!=', 'trip_status', 'closed'])
-                            ->andWhere(['is_active' => 1])
-                            ->andWhere(['transaction_date' => $model->transaction_date])->count();
+        if (empty($model) && $this->trip_mode == 'online') {
+            $model = $this->find()->where(['vehicle_code' => $this->vehicle_code])
+                    ->andWhere(['!=', 'trip_status', 'closed'])
+                    ->andWhere(['is_active' => 1])
+                    ->andWhere(['<=', 'CAST(transaction_date as date)', $this->transaction_date])
+                    ->orderBy(['transaction_date' => SORT_DESC, 'created_at' => SORT_DESC])
+                    ->one();
+            if (!empty($model)){
+                $this->transaction_date = $model->transaction_date;
+            }
         }
+        $same_day_trip_count = $this->find()->where(['vehicle_code' => $this->vehicle_code])
+                        ->andWhere(['!=', 'trip_status', 'closed'])
+                        ->andWhere(['is_active' => 1])
+                        ->andWhere(['transaction_date' => $this->transaction_date])->count();
+
         if (!empty($model) && (($this->trip_mode != 'offline') || ($same_day_trip_count > 1))) {
             $api_res = TRUE;
             if ($model->trip_status == 'generated') {
                 $inspection = TRUE;
             }
             $last_trip_date = $model->transaction_date;
-            if ($last_trip_date != $this->transaction_date && ($this->trip_mode != 'online')) {
+            if ($last_trip_date != $this->transaction_date) {
                 $validate = FALSE;
                 $this->addError('vehicle_code', Yii::t('app', 'First need to close Trip No. ' . $model->trip_code));
             } else if ($model->trip_status == 'tankerfull') {
