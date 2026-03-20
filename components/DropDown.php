@@ -1006,9 +1006,9 @@ class DropDown extends Component {
         $whereCondition = [];
         if (isset($labelData['whereCondition'])) {
             foreach ($labelData['whereCondition'] as $key => $value) {
-                    $whereCondition[$tablename . '.' . $key] = $value;
-                }
+                $whereCondition[$tablename . '.' . $key] = $value;
             }
+        }
         if (isset($labelData['rlsWhereCondition']) && !empty($labelData['applyRls'])) {
             foreach ($labelData['rlsWhereCondition'] as $key => $value) {
                 $whereCondition[$key] = $value;
@@ -2390,6 +2390,11 @@ class DropDown extends Component {
                 'name' => 'sim_network',
                 'prompt' => Yii::t('app', 'Select Sim'),
                 'data' => ['Jio' => Yii::t('app', 'Jio'), 'Airtel' => Yii::t('app', 'Airtel'), 'BSNL' => Yii::t('app', 'BSNL'), 'VI' => Yii::t('app', 'VI'), 'MTNL' => Yii::t('app', 'MTNL')],
+            ],
+            'p_product_type' => [
+                'name' => 'p_product_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['Milk' => Yii::t('app', 'Milk'), 'Material' => Yii::t('app', 'Material')],
             ],
         ];
         return $records[$l];
