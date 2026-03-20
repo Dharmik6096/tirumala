@@ -2285,6 +2285,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionUnifiedWeighmentReport() {
+        $this->report = 'UnifiedWeighmentReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionDpuRateComparision() {
+        $this->report = 'DpuRateComparision';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5051,6 +5061,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'SAP SD Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE
+            ],
+            'UnifiedWeighmentReport' => [
+                'param' => 'union_code,plant_code,from_date:string,to_date:string,p_product_type:static:p_product_type',
+                'sp_name' => 'sp_mis_Unified_Weighment_Report',
+                'scenario' => 'UnifiedWeighmentReport',
+                'title' => 'Weighment Report',
+                'bkg_export' => TRUE
+            ],
+            'DpuRateComparision' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'MIS_SP_DPU_rate_Comparision',
+                'scenario' => 'DpuRateComparision',
+                'title' => 'DPU Rate Comparision',
                 'bkg_export' => TRUE
             ],
         ];
