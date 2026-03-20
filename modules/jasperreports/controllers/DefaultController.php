@@ -593,6 +593,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'VendorCommissionPayment';
         return $this->actionIndex();
     }
+    
+    public function actionWeighSlip() {
+        $this->report = 'WeighSlip';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -1401,6 +1406,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VendorCommissionPayment',
                 'scenario' => 'VendorCommissionPayment',
                 'title' => 'VLCC Commission Bill',
+                'bkg_export' => TRUE,
+            ],
+            'WeighSlip' => [
+                'param' => 'p_union_code,p_plant_code,p_from_date:string,p_to_date:string,p_product_type',
+                'path' => 'vsp/WeighSlip',
+                'scenario' => 'WeighSlip',
+                'title' => 'Weighment Slip',
                 'bkg_export' => TRUE,
             ],
         ];

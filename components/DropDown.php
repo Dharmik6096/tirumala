@@ -2437,6 +2437,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Sim'),
                 'data' => ['Jio' => Yii::t('app', 'Jio'), 'Airtel' => Yii::t('app', 'Airtel'), 'BSNL' => Yii::t('app', 'BSNL'), 'VI' => Yii::t('app', 'VI'), 'MTNL' => Yii::t('app', 'MTNL')],
             ],
+            'p_product_type' => [
+                'name' => 'p_product_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['Milk' => Yii::t('app', 'Milk'), 'Material' => Yii::t('app', 'Material')],
+            ],
         ];
         return $records[$l];
     }
