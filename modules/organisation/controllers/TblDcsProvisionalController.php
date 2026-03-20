@@ -95,6 +95,7 @@ class TblDcsProvisionalController extends ChildController {
         $this->viewFile = 'create';
         $this->model->scenario = 'createDcs';
         $this->model->district_code = Yii::$app->session->get('Districts');
+        $this->model->registration_date = date('Y-m-d');
         $this->model->valid_from = date('Y-m-d');
         $this->showIsBMC = $is_bmc == 1 ? true : false;
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
