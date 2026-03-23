@@ -41,7 +41,7 @@ class TblVoucherTypes extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['voucher_type_name', 'voucher_type_code', 'union_code', 'is_active', 'originating_type', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'created_at', 'updated_at', 'ledger_code', 'voucher_type', 'credit_debit'], 'safe'],
+                [['voucher_type_name', 'voucher_type_code', 'union_code', 'is_active', 'originating_type', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'created_at', 'updated_at', 'ledger_code', 'voucher_type', 'credit_debit', 'ref_code'], 'safe'],
                 [['voucher_type_name', 'union_code'], 'required'],
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
@@ -58,6 +58,9 @@ class TblVoucherTypes extends \app\models\ChildModel {
                     var voucherType = $('#tblvouchertypes-voucher_type').val();
                     return voucherType !== '' && (voucherType == 0 || voucherType == 1);
                 }"],
+                [['ref_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
@@ -86,6 +89,7 @@ class TblVoucherTypes extends \app\models\ChildModel {
             'ledger_code' => Yii::t('app', 'Ledger'),
             'voucher_type' => Yii::t('app', 'Voucher Type'),
             'credit_debit' => Yii::t('app', 'Credit/Debit'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 

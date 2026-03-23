@@ -24,6 +24,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'ref_code')->textInput() ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>

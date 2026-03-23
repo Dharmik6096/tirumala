@@ -18,7 +18,7 @@ class TblTaxSearch extends TblTax {
     public function rules() {
         return [
                 [['tax_code', 'tax_group_code', 'is_active', 'originating_type'], 'integer'],
-                [['tax_name', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['tax_name', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
         ];
     }
 
@@ -65,7 +65,8 @@ class TblTaxSearch extends TblTax {
         $query->andFilterWhere(['like', 'tbl_tax.tax_code', $this->tax_code])
                 ->andFilterWhere(['like', 'tbl_tax.tax_name', $this->tax_name])
                 ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
-                ->andFilterWhere(['like', 'tbl_tax_group.tax_group_name', $this->tax_group_code]);
+                ->andFilterWhere(['like', 'tbl_tax_group.tax_group_name', $this->tax_group_code])
+                ->andFilterWhere(['like', 'tbl_tax.ref_code', $this->ref_code]);
 
         return $dataProvider;
     }

@@ -42,12 +42,15 @@ class TblLedgerTypes extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'ledger_type_name', 'ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'local_name', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at'], 'safe'],
+                [['union_code', 'ledger_type_name', 'ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'local_name', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at', 'ref_code'], 'safe'],
                 [['ledger_type_name', 'union_code'], 'required'],
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
                 [['ledger_type_name'], 'unique'],
+                [['ref_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
@@ -75,6 +78,7 @@ class TblLedgerTypes extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 

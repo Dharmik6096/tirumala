@@ -17,7 +17,7 @@ class TblLedgerGroupsSearch extends TblLedgerGroups {
      */
     public function rules() {
         return [
-                [['ledger_group_code', 'ledger_type_code', 'is_active', 'originating_type', 'ledger_group_name', 'union_code', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['ledger_group_code', 'ledger_type_code', 'is_active', 'originating_type', 'ledger_group_name', 'union_code', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
         ];
     }
 
@@ -58,7 +58,8 @@ class TblLedgerGroupsSearch extends TblLedgerGroups {
 
         $query->andFilterWhere(['like', 'tbl_ledger_groups.ledger_group_name', $this->ledger_group_name])
                 ->andFilterWhere(['like', 'tbl_ledger_types.ledger_type_name', $this->ledger_type_code])
-                ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code]);
+                ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_ledger_groups.ref_code', $this->ref_code]);
 
         return $dataProvider;
     }

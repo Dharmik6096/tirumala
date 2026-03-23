@@ -21,6 +21,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'ref_code')->textInput() ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'balance_sheet', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
