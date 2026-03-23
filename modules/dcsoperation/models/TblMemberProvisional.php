@@ -1086,8 +1086,8 @@ class TblMemberProvisional extends ChildModel {
         if (!empty($this->$attribute)) {
             $encryptedMobile = Yii::$app->general->encryptData($this->$attribute);
             $existsInProvisional = $this->find()->where(['is_active' => 1])
-                    ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
-                    ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
+                    ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]]);
+
             if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
             } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
@@ -1096,8 +1096,13 @@ class TblMemberProvisional extends ChildModel {
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInProvisional->member_code, TblMemberDeactive::class, 'member_code');
+                $currentStatus = strtolower($existsInProvisional->provisional_status);
+                $excludeStatuses = (!empty($isDeactive)) ? ['approve', 'reject'] : ['reject'];
+                if (!in_array($currentStatus, $excludeStatuses)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                    return false;
+                }
             }
         }
     }
@@ -1123,8 +1128,8 @@ class TblMemberProvisional extends ChildModel {
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
-                    ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
-                    ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
+                    ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]]);
+
             if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
             } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
@@ -1133,8 +1138,13 @@ class TblMemberProvisional extends ChildModel {
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInProvisional->member_code, TblMemberDeactive::class, 'member_code');
+                $currentStatus = strtolower($existsInProvisional->provisional_status);
+                $excludeStatuses = (!empty($isDeactive)) ? ['approve', 'reject'] : ['reject'];
+                if (!in_array($currentStatus, $excludeStatuses)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                    return false;
+                }
             }
         }
     }
@@ -1161,8 +1171,8 @@ class TblMemberProvisional extends ChildModel {
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
-                    ->andWhere(['or', ['adhar_no' => $this->$attribute], ['adhar_no' => $encryptedAdharNo]])
-                    ->andWhere(['not in', 'lower(provisional_status)', ['reject']]);
+                    ->andWhere(['or', ['adhar_no' => $this->$attribute], ['adhar_no' => $encryptedAdharNo]]);
+
             if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
                 $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
             } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
@@ -1171,8 +1181,13 @@ class TblMemberProvisional extends ChildModel {
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInProvisional->member_code, TblMemberDeactive::class, 'member_code');
+                $currentStatus = strtolower($existsInProvisional->provisional_status);
+                $excludeStatuses = (!empty($isDeactive)) ? ['approve', 'reject'] : ['reject'];
+                if (!in_array($currentStatus, $excludeStatuses)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                    return false;
+                }
             }
         }
     }

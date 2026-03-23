@@ -1293,7 +1293,7 @@ class SchedulerController extends ChildController {
                                 $ftp->RenameFile($subFolder . $file, $subFolder . 'Archive/' . $file);
                                 if (!$existingLog) {
                                     $ftpLog = new TblFtpTxnLog();
-                                    $ftpLog->txn_type    = 'EIPL';
+                                    $ftpLog->txn_type    = 'AWS';
                                     $ftpLog->union_code  = $config->union_code;
                                     $ftpLog->module_name = 'Provisional';
                                     $ftpLog->module_code = $config->union_code;
@@ -1331,7 +1331,7 @@ class SchedulerController extends ChildController {
         $custCtrl = new TblCustomerMasterProvisionalController('customer-provisional', \Yii::$app->getModule('organisation'));
 
         $pendingLogs = TblFtpTxnLog::find()
-            ->where(['ftp_type' => 'AWS', 'file_status' => 0, 'status' => 0])
+            ->where(['ftp_type' => 'AWS', 'txn_type' => 'AWS', 'file_status' => 0, 'status' => 0])
             ->all();
 
         if (empty($pendingLogs)) {
@@ -1365,7 +1365,7 @@ class SchedulerController extends ChildController {
 
             try {
                 $headerMap = [];
-                $lookup = ['everesttoken' => 'token', 'type' => 'type', 'vendorcode' => 'vendor', 'message' => 'message'];
+                $lookup = ['col:token' => 'token', 'col:type' => 'type', 'col:vendor' => 'vendor', 'col:message' => 'message'];
                 $collectedData = [];
                 $tokensByType = ['DCS' => [], 'Farmer' => [], 'Dairy Farm' => []];
 
@@ -1432,7 +1432,8 @@ class SchedulerController extends ChildController {
                             Yii::$app->operation->history($model, $historyModel, UPDATE);
                         }
                         $model->data_post_status = 3;
-                        $model->resp_desc = $row['message'];
+                        $model->resp_status = $fileName;
+                        $model->response_msg = $row['message'];
                         $processed = $this->generalModel->saveTransaction($historyModel ? [$model, $historyModel] : [$model], ['Acknowledgement Error', 'edit']);
                     } else {
                         switch ($row['type']) {
@@ -1447,6 +1448,8 @@ class SchedulerController extends ChildController {
                                 $model->vendor = $model->vendor_code;
                                 $model->dcs_status = 1;
                                 $model->sap_vendor_code = $row['vendor'];
+                                $model->resp_status = $fileName;
+                                $model->response_msg = $row['message'];
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
@@ -1475,6 +1478,8 @@ class SchedulerController extends ChildController {
                                 $historyModel = new TblMemberProvisionalHistory();
                                 Yii::$app->operation->history($model, $historyModel, UPDATE);
                                 $model->vendor_code = $row['vendor'];
+                                $model->resp_status = $fileName;
+                                $model->response_msg = $row['message'];
                                 $modelSave = [$historyModel];
                                 $deleteModelList = [];
                                 $unlink_files = [];
@@ -1497,6 +1502,8 @@ class SchedulerController extends ChildController {
                                 Yii::$app->operation->history($model, $historyModel, UPDATE);
                                 $model->customer_status = 1;
                                 $model->sap_vendor_code = $row['vendor'];
+                                $model->resp_status = $fileName;
+                                $model->response_msg = $row['message'];
                                 $saveArr = [$model, $historyModel];
                                 $all_doc = [];
                                 $customerdoc = [];
@@ -1541,6 +1548,11 @@ class SchedulerController extends ChildController {
                 }
             } catch (\Exception $ex) {
                 $allRowProcessed = false;
+                if(!empty($collectedData)){
+                    $ftpLog->total_count   = count($collectedData);
+                    $ftpLog->success_count = $successCount;
+                    $ftpLog->error_count   = $ftpLog->total_count - $successCount;
+                }
                 $ftpLog->status = 3;
                 $ftpLog->save(FALSE);
                 \Yii::error('[ProcessAcknowledge] File: ' . $fileName . ' | Error: ' . $ex->getMessage() . ' | Line: ' . $ex->getLine(), __METHOD__);

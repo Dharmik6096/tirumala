@@ -639,6 +639,7 @@ echo GhostMenu::widget([
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill 2'), 'url' => ['/misreports/reports/farmer-payment-wise-milk-wise']],
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill Register With Summary'), 'url' => ['/misreports/reports/farmer-milk-bill-consolidated-summary']],
                                     ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
+                                    ['label' => '121 -' . Yii::t('app', 'DPU Rate Comparision'), 'url' => ['/misreports/reports/dpu-rate-comparision']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',
@@ -1087,6 +1088,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Comparison Report'), 'url' => ['/misreports/reports/comparison-report']],
                             ['label' => Yii::t('app', 'Complete Trip Details'), 'url' => ['/jasperreports/default/complete-trip']],
                             ['label' => Yii::t('app', 'Vehicle Status Report'), 'url' => ['/misreports/reports/vehicle-status-report']],
+                            ['label' => Yii::t('app', 'Weighment Slip'), 'url' => ['/jasperreports/default/weigh-slip']],
+                            ['label' => Yii::t('app', 'Weighment Report'), 'url' => ['/misreports/reports/unified-weighment-report']],
                     ]
                 ],
                     [
