@@ -148,6 +148,7 @@ $this->render('approval_view_tabs', [
                                 [
                                 'attribute' => 'receipt_scan_copy',
                                 'label' => 'Fee Receipt Number',
+                                'value' => isset($model->receipt_scan_copy) ? $model->receipt_scan_copy : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
