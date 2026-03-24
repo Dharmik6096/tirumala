@@ -15,7 +15,7 @@ class PullRequestController extends PullMasterController {
                 $sp_param[] = $request['date'];
                 $sp_param[] = $request['shift'];
                 $sp_name = 'clienterp_devmilk_pull_bmc_collection';
-         
+
                 $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $this->response->setData($response, FALSE);
             } catch (\Throwable $ex) {
@@ -26,7 +26,6 @@ class PullRequestController extends PullMasterController {
             $this->response->setStatusCode($this->eiplResponseCode->validationFail);
             $this->response->setMessage(['Required Parameter Missing.']);
         }
-
         return $this->response;
     }
 

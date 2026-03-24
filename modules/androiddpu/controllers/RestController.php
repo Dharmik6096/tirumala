@@ -92,7 +92,6 @@ class RestController extends ActiveController {
         echo json_encode($error);
         die;
     }
-
     public function getOrgDetail($type, $code, $is_string = TRUE) {
         $dcs_code = [];
         $bmc_code = [];
@@ -179,5 +178,4 @@ class RestController extends ActiveController {
         }
         return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data, 'applicability_type' => $applicability_type, 'eipl_code' => $eipl_code];
     }
-
 }
