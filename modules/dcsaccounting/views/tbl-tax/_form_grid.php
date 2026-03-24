@@ -17,6 +17,7 @@ $attribute = [
         ['attribute' => 'tax_group_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taxGroupCode, 'tax_group_name');
         }, 'visible' => true,],
+        ['attribute' => 'ref_code'],
 ];
 
 $grid_option = [

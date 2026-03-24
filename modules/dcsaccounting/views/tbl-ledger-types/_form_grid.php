@@ -22,6 +22,7 @@ $attribute = [
             $data = Yii::$app->dropdown->getRecords('boolean_value')['data'];
             return isset($data[$model->profit_loss]) ? $data[$model->profit_loss] : '';
         }],
+        ['attribute' => 'ref_code'],
 ];
 
 $grid_option = [

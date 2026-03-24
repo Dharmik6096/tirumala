@@ -13,6 +13,7 @@ $attribute = [
         ['attribute' => 'ledger_group_code', 'visible' => false, 'filter' => false],
         ['attribute' => 'ledger_group_name'],
         ['attribute' => 'local_name'],
+        ['attribute' => 'ref_code'],
 ];
 
 $grid_option = [

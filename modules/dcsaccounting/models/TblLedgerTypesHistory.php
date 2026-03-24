@@ -44,7 +44,7 @@ class TblLedgerTypesHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['union_code', 'ledger_type_name', 'ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'created_at', 'updated_at'], 'safe'],
+                [['union_code', 'ledger_type_name', 'ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'created_at', 'updated_at', 'ref_code'], 'safe'],
         ];
     }
 

@@ -52,12 +52,15 @@ class TblLedgers extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ledger_name', 'ledger_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'has_sub_ledger', 'ledger_group_code', 'is_active', 'originating_type', 'created_at', 'updated_at', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'ledger_name', 'ledger_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'has_sub_ledger', 'ledger_group_code', 'is_active', 'originating_type', 'created_at', 'updated_at', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
                 [['ledger_name', 'ledger_group_code', 'union_code'], 'required'],
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
                 [['ledger_name'], 'unique', 'targetAttribute' => ['ledger_name', 'ledger_group_code'], 'message' => 'This name already exists in this group.'],
+                [['ref_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
@@ -89,6 +92,7 @@ class TblLedgers extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 

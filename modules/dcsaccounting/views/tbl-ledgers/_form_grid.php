@@ -35,6 +35,7 @@ $attribute = [
         ['attribute' => 'ledger_code', 'visible' => FALSE],
         ['attribute' => 'ledger_name'],
         ['attribute' => 'local_name'],
+        ['attribute' => 'ref_code'],
         ['attribute' => 'has_sub_ledger',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_sub_ledger'),
         'value' => function ($model) {
