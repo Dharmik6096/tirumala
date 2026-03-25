@@ -1400,17 +1400,17 @@ class CustomValidation extends Component {
                 ],
                 'BackGroundDataImport' => [
                     'default' => [
-                            [['purchase_ledger', 'sale_ledger'], 'required'],
+                            [['purchase_ledger', 'sale_ledger'], 'required', 'on' => ['product_master']],
                             [['milk_type', 'local_sale_ledger', 'coupon_ledger'], 'required', 'when' => function($model) {
                                 return $model->is_milk == 1;
                             }, 'whenClient' => "function (attribute, value) {
                                     return $('#tblproduct-is_milk').prop('checked') == true;
-                            }"],
+                            }", 'on' => ['product_master']],
                             [['stock_ledger'], 'required', 'when' => function($model) {
                                 return $model->is_milk == 0 || empty($model->is_milk);
                             }, 'whenClient' => "function (attribute, value) {
                                     return $('#tblproduct-is_milk').prop('checked') == false;
-                            }"],
+                            }", 'on' => ['product_master']],
                     ],
                 ],
             ],
