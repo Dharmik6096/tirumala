@@ -1,6 +1,8 @@
 <?php
+
 namespace PhpAmqpLib\Wire\IO;
 
+use PhpAmqpLib\Connection\AMQPConnectionConfig;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use PhpAmqpLib\Exception\AMQPIOException;
 use PhpAmqpLib\Exception\AMQPSocketException;
@@ -10,7 +12,7 @@ use PhpAmqpLib\Helper\SocketConstants;
 
 class SocketIO extends AbstractIO
 {
-    /** @var resource */
+    /** @var null|resource|\Socket */
     private $sock;
 
     /**
@@ -20,13 +22,22 @@ class SocketIO extends AbstractIO
      * @param bool $keepalive
      * @param int|float|null $write_timeout if null defaults to read timeout
      * @param int $heartbeat how often to send heartbeat. 0 means off
+     * @param null|AMQPConnectionConfig $config
      */
-    public function __construct($host, $port, $read_timeout = 3, $keepalive = false, $write_timeout = null, $heartbeat = 0)
-    {
-        $this->host = $host;
+    public function __construct(
+        $host,
+        $port,
+        $read_timeout = 3,
+        $keepalive = false,
+        $write_timeout = null,
+        $heartbeat = 0,
+        ?AMQPConnectionConfig $config = null
+    ) {
+        $this->config = $config;
+        $this->host = str_replace(['[', ']'], '', $host);
         $this->port = $port;
-        $this->read_timeout = $read_timeout;
-        $this->write_timeout = $write_timeout ?: $read_timeout;
+        $this->read_timeout = (float)$read_timeout;
+        $this->write_timeout = (float)($write_timeout ?: $read_timeout);
         $this->heartbeat = $heartbeat;
         $this->initial_heartbeat = $heartbeat;
         $this->keepalive = $keepalive;
@@ -49,19 +60,21 @@ class SocketIO extends AbstractIO
      */
     public function connect()
     {
-        $this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $this->sock = socket_create(!$this->isIpv6() ? AF_INET : AF_INET6, SOCK_STREAM, SOL_TCP);
 
         list($sec, $uSec) = MiscHelper::splitSecondsMicroseconds($this->write_timeout);
         socket_set_option($this->sock, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $sec, 'usec' => $uSec));
         list($sec, $uSec) = MiscHelper::splitSecondsMicroseconds($this->read_timeout);
         socket_set_option($this->sock, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $sec, 'usec' => $uSec));
 
-        $this->set_error_handler();
+        $this->setErrorHandler();
         try {
             $connected = socket_connect($this->sock, $this->host, $this->port);
-            $this->cleanup_error_handler();
+            $this->throwOnError();
         } catch (\ErrorException $e) {
             $connected = false;
+        } finally {
+            $this->restoreErrorHandler();
         }
         if (!$connected) {
             $errno = socket_last_error($this->sock);
@@ -75,6 +88,9 @@ class SocketIO extends AbstractIO
 
         socket_set_block($this->sock);
         socket_set_option($this->sock, SOL_TCP, TCP_NODELAY, 1);
+        if ($this->config && $this->config->getSendBufferSize() > 0) {
+            socket_set_option($this->sock, SOL_SOCKET, SO_SNDBUF, $this->config->getSendBufferSize());
+        }
 
         if ($this->keepalive) {
             $this->enable_keepalive();
@@ -84,7 +100,8 @@ class SocketIO extends AbstractIO
     }
 
     /**
-     * @inheritdoc
+     * @deprecated
+     * @return null|resource|\Socket
      */
     public function getSocket()
     {
@@ -135,7 +152,7 @@ class SocketIO extends AbstractIO
             $data .= $buffer;
         }
 
-        if (mb_strlen($data, 'ASCII') != $len) {
+        if (mb_strlen($data, 'ASCII') !== $len) {
             throw new AMQPIOException(sprintf(
                 'Error reading data. Received %s instead of expected %s bytes',
                 mb_strlen($data, 'ASCII'),
@@ -153,24 +170,29 @@ class SocketIO extends AbstractIO
      */
     public function write($data)
     {
+        // Null sockets are invalid, throw exception
+        if (is_null($this->sock)) {
+            throw new AMQPSocketException(sprintf(
+                'Socket was null! Last SocketError was: %s',
+                socket_strerror(socket_last_error())
+            ));
+        }
+
+        $this->checkBrokerHeartbeat();
+
         $written = 0;
         $len = mb_strlen($data, 'ASCII');
         $write_start = microtime(true);
 
         while ($written < $len) {
-            // Null sockets are invalid, throw exception
-            if (is_null($this->sock)) {
-                throw new AMQPSocketException(sprintf(
-                    'Socket was null! Last SocketError was: %s',
-                    socket_strerror(socket_last_error())
-                ));
-            }
-
-            $this->set_error_handler();
+            $this->setErrorHandler();
             try {
-                $buffer = mb_substr($data, $written, self::BUFFER_SIZE, 'ASCII');
-                $result = socket_write($this->sock, $buffer, self::BUFFER_SIZE);
-                $this->cleanup_error_handler();
+                $result = 0;
+                if ($this->select_write()) {
+                    $buffer = mb_substr($data, $written, self::BUFFER_SIZE, 'ASCII');
+                    $result = socket_write($this->sock, $buffer);
+                }
+                $this->throwOnError();
             } catch (\ErrorException $e) {
                 $code = socket_last_error($this->sock);
                 $constants = SocketConstants::getInstance();
@@ -191,6 +213,8 @@ class SocketIO extends AbstractIO
                             socket_strerror($code)
                         ), $code, $e);
                 }
+            } finally {
+                $this->restoreErrorHandler();
             }
 
             if ($result === false) {
@@ -208,7 +232,6 @@ class SocketIO extends AbstractIO
                 if (($now - $write_start) > $this->write_timeout) {
                     throw AMQPTimeoutException::writeTimeout($this->write_timeout);
                 }
-                $this->select_write();
             }
         }
     }
@@ -219,19 +242,24 @@ class SocketIO extends AbstractIO
     public function close()
     {
         $this->disableHeartbeat();
-        if (is_resource($this->sock)) {
+        if (is_resource($this->sock) || is_a($this->sock, \Socket::class)) {
             socket_close($this->sock);
         }
         $this->sock = null;
-        $this->last_read = null;
-        $this->last_write = null;
+        $this->last_read = 0;
+        $this->last_write = 0;
     }
 
     /**
      * @inheritdoc
      */
-    protected function do_select($sec, $usec)
+    protected function do_select(?int $sec, int $usec)
     {
+        if (!is_resource($this->sock) && !is_a($this->sock, \Socket::class)) {
+            $this->sock = null;
+            throw new AMQPConnectionClosedException('Broken pipe or closed connection', 0);
+        }
+
         $read = array($this->sock);
         $write = null;
         $except = null;
@@ -253,7 +281,7 @@ class SocketIO extends AbstractIO
     /**
      * @throws \PhpAmqpLib\Exception\AMQPIOException
      */
-    protected function enable_keepalive()
+    protected function enable_keepalive(): void
     {
         if (!defined('SOL_SOCKET') || !defined('SO_KEEPALIVE')) {
             throw new AMQPIOException('Can not enable keepalive: SOL_SOCKET or SO_KEEPALIVE is not defined');
@@ -265,7 +293,7 @@ class SocketIO extends AbstractIO
     /**
      * @inheritdoc
      */
-    public function error_handler($errno, $errstr, $errfile, $errline, $errcontext = null)
+    public function error_handler($errno, $errstr, $errfile, $errline): void
     {
         $constants = SocketConstants::getInstance();
         // socket_select warning that it has been interrupted by a signal - EINTR
@@ -274,15 +302,26 @@ class SocketIO extends AbstractIO
             return;
         }
 
-        parent::error_handler($errno, $errstr, $errfile, $errline, $errcontext);
+        parent::error_handler($errno, $errstr, $errfile, $errline);
     }
 
     /**
      * @inheritdoc
      */
-    protected function set_error_handler()
+    protected function setErrorHandler(): void
     {
-        parent::set_error_handler();
+        parent::setErrorHandler();
         socket_clear_error($this->sock);
+    }
+
+    private function isIpv6(): bool
+    {
+        $ipv6 = filter_var($this->host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+
+        if ($ipv6 !== false || checkdnsrr($this->host, 'AAAA')) {
+            return true;
+        }
+
+        return false;
     }
 }

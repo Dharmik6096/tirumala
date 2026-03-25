@@ -1,4 +1,5 @@
 <?php
+
 namespace PhpAmqpLib\Connection;
 
 use PhpAmqpLib\Wire\IO\SocketIO;
@@ -13,13 +14,14 @@ class AMQPSocketConnection extends AbstractConnection
      * @param string $vhost
      * @param bool $insist
      * @param string $login_method
-     * @param null $login_response
+     * @param null $login_response @deprecated
      * @param string $locale
-     * @param float $read_timeout
+     * @param int|float $read_timeout
      * @param bool $keepalive
      * @param int $write_timeout
      * @param int $heartbeat
      * @param float $channel_rpc_timeout
+     * @param AMQPConnectionConfig|null $config
      * @throws \Exception
      */
     public function __construct(
@@ -36,13 +38,14 @@ class AMQPSocketConnection extends AbstractConnection
         $keepalive = false,
         $write_timeout = 3,
         $heartbeat = 0,
-        $channel_rpc_timeout = 0.0
+        $channel_rpc_timeout = 0.0,
+        ?AMQPConnectionConfig $config = null
     ) {
         if ($channel_rpc_timeout > $read_timeout) {
             throw new \InvalidArgumentException('channel RPC timeout must not be greater than I/O read timeout');
         }
 
-        $io = new SocketIO($host, $port, $read_timeout, $keepalive, $write_timeout, $heartbeat);
+        $io = new SocketIO($host, $port, $read_timeout, $keepalive, $write_timeout, $heartbeat, $config);
 
         parent::__construct(
             $user,
@@ -55,15 +58,21 @@ class AMQPSocketConnection extends AbstractConnection
             $io,
             $heartbeat,
             max($read_timeout, $write_timeout),
-            $channel_rpc_timeout
+            $channel_rpc_timeout,
+            $config
         );
     }
 
-    protected static function try_create_connection($host, $port, $user, $password, $vhost, $options){
+    /**
+     * @deprecated Use AmqpConnectionFactory
+     * @throws \Exception
+     */
+    protected static function try_create_connection($host, $port, $user, $password, $vhost, $options)
+    {
         $insist = isset($options['insist']) ?
                         $options['insist'] : false;
         $login_method = isset($options['login_method']) ?
-                              $options['login_method'] :'AMQPLAIN';
+                              $options['login_method'] : 'AMQPLAIN';
         $login_response = isset($options['login_response']) ?
                                 $options['login_response'] : null;
         $locale = isset($options['locale']) ?
@@ -76,18 +85,23 @@ class AMQPSocketConnection extends AbstractConnection
                                $options['write_timeout'] : 3;
         $heartbeat = isset($options['heartbeat']) ?
                            $options['heartbeat'] : 0;
-        return new static($host,
-                          $port,
-                          $user,
-                          $password,
-                          $vhost,
-                          $insist,
-                          $login_method,
-                          $login_response,
-                          $locale,
-                          $read_timeout,
-                          $keepalive,
-                          $write_timeout,
-                          $heartbeat);
+        $channel_rpc_timeout = isset($options['channel_rpc_timeout']) ?
+                                    $options['channel_rpc_timeout'] : 0.0;
+        return new static(
+            $host,
+            $port,
+            $user,
+            $password,
+            $vhost,
+            $insist,
+            $login_method,
+            $login_response,
+            $locale,
+            $read_timeout,
+            $keepalive,
+            $write_timeout,
+            $heartbeat,
+            $channel_rpc_timeout
+        );
     }
 }
