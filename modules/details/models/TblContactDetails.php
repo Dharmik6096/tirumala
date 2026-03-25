@@ -239,11 +239,8 @@ class TblContactDetails extends \app\models\ChildModel {
         }
     }
 
-    public static function updateContactDetails($code, $mobile_no, &$mapList) {
-        $activeContacts = self::find()
-            ->where(['module_name' => 'society', 'module_code' => $code, 'is_active' => 1])
-            ->indexBy('mobile_no')
-            ->all();
+    public static function updateContactDetails($code, $mobile_no, $module_name, &$mapList) {
+        $activeContacts = self::find()->where(['module_name' => $module_name, 'module_code' => $code, 'is_active' => 1])->indexBy('mobile_no')->all();
 
         $currentDefaultContact = false;
         foreach ($activeContacts as $c) {

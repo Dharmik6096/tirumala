@@ -430,8 +430,8 @@ class TblDcsProvisionalController extends ChildController {
             $this->model->scenario = 'createDcs';
             $mapList = [];
             if ($dcsProvisional->provisional_from == 'mobile_update') {
-                $this->bankDetails = TblBankDetails::updateBankDetails($dcsProvisional->dcs_code, $dcsProvisional->bank_account_no, $mapList);
-                $this->contactDetails = TblContactDetails::updateContactDetails($dcsProvisional->dcs_code, $dcsProvisional->mobile_no, $mapList);
+                $this->bankDetails = TblBankDetails::updateBankDetails($dcsProvisional->dcs_code, $dcsProvisional->bank_account_no, 'society', $mapList);
+                $this->contactDetails = TblContactDetails::updateContactDetails($dcsProvisional->dcs_code, $dcsProvisional->mobile_no, 'society', $mapList);
             } else {
                 $this->bankDetails = new TblBankDetails();
                 $this->contactDetails = new TblContactDetails();

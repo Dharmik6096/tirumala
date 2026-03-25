@@ -171,11 +171,8 @@ class TblBankDetails extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'module_code']);
     }
 
-    public static function updateBankDetails($code, $bank_account_no, &$mapList) {
-        $activeBanks = self::find()
-            ->where(['module_name' => 'society', 'module_code' => $code, 'is_active' => 1])
-            ->indexBy('bank_account_no')
-            ->all();
+    public static function updateBankDetails($code, $bank_account_no, $module_name, &$mapList) {
+        $activeBanks = self::find()->where(['module_name' => $module_name, 'module_code' => $code, 'is_active' => 1])->indexBy('bank_account_no')->all();
 
         $currentDefaultBank = false;
         foreach ($activeBanks as $b) {
