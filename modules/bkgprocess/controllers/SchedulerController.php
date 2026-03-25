@@ -60,13 +60,13 @@ use app\modules\organisation\models\TblDcsProvisionalHistory;
 use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
 use app\modules\organisation\models\TblCustomerMasterProvisionalHistory;
 use app\modules\email\models\TblMailFrequency;
+use app\modules\sms\models\TblAlertTemplate;
 
 class SchedulerController extends ChildController {
 
     public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files', 'provisional-data-exchange', 'download-acknowledge-files','process-acknowledge-files', 'email-module-alert'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
-    public $attachment_mail_folder = '/web/alert-mail-data/';
 
     public function init() {
         parent::init();
@@ -501,7 +501,7 @@ class SchedulerController extends ChildController {
             $filePath = $path . $fileName;
             $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
             $objWriter->save($filePath);
-            return $absoluteBaseUrl . $folder . $fileName;
+            return $filePath;
         }
     }
 
@@ -1631,20 +1631,16 @@ class SchedulerController extends ChildController {
                         $file_name = "";
                         $file_path = "";
                         $this->setHtmlContentReport($htmlContent, $message, $file_name, $file_path, $mailDetail, $data, $j);
-                        $from = $apiMasterData->url;
                         $to = $keyValue;
-                        $cc = '';
                         $j++;
+                        $templateModel = new TblAlertTemplate();
+                        $templateData = $templateModel->getTemplateData('portal_auto_email_alert', 'EMAIL', $apiMasterData->union_code);
                         if (!empty($file_name)) {
-                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $message, $htmlContent, FALSE, $file_name, $file_path);
-                            if ($send) {
-                                
-                            }
                             $notificationModel = new TblAlertNotification();
                             $notificationModel->receiver_type = 'EMAIL';
-                            $notificationModel->message = $htmlContent;
+                            $notificationModel->message = !empty($templateData->message) ? $templateData->message : $htmlContent;
                             $notificationModel->header_info = $message;
-                            $notificationModel->send_status = 1;
+                            $notificationModel->send_status = 0;
                             $notificationModel->content_id = $apiMasterData->api_master_id;
                             $notificationModel->module_type = "Mail Alert";
                             $notificationModel->entry_datetime = date('Y-m-d H:i:s');
@@ -1652,7 +1648,7 @@ class SchedulerController extends ChildController {
                             $notificationModel->receiver_detail = $to;
                             $notificationModel->filename = $file_name;
                             $notificationModel->file_path = $file_path;
-                            
+                            $notificationModel->has_attachment = 2;
                             $notificationModel->save();
                         }
                     }
@@ -1675,7 +1671,7 @@ class SchedulerController extends ChildController {
         if (!empty($result) && $report_type == 'excel') {
             $datetime = date('dmYhis') . $j;
             $fileName = str_replace(' ', '_', $data['report_name']) . '-' . $datetime . '.xls';
-            $file_path = $this->CreateFile($fileName, $result, $this->attachment_mail_folder);
+            $file_path = $this->CreateFile($fileName, $result);
         }
     }
 }
