@@ -186,7 +186,7 @@ class TblDcsProvisional extends ChildModel {
         $main_rules = [
                 [['milk_type', 'milk_type_auto', 'auto_member_create', 'detail_code', 'is_default', 'latitude', 'longitude', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name', 'same_milk_type', 'diff_milk_type'], 'safe'],
                 [['status', 'dcs_code', 'milk_type_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type', 'effective_date', 'registration_date', 'valid_from', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'DPUVersionNo', 'morning_kms', 'evening_kms', 'cheque_amount', 'address', 'dcs_name', 'gender_code', 'cheque_bank', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
-                [['bank_account_no', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'upi_no', 'ccenter_code', 'center_code', 'vendor_code', 'sap_center_code', 'rate_chart_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'dob', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['bank_account_no', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'upi_no', 'ccenter_code', 'center_code', 'vendor_code', 'sap_center_code', 'rate_chart_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'dob', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'provisional_from', 'is_aadhar_verify', 'is_bank_verify', 'is_approved', 'approved_at', 'approved_by'], 'safe'],
                 [['contact_person', 'dcs_short_name', 'beneficiary_name', 'punch_line', 'department', 'firstname', 'lastname', 'surname', 'password', 'gender', 'account_type', 'cheque_number', 'dcs_code_ex', 'route_code', 'old_route_code', 'cutoff', 'lower_milk_type', 'cutoff_val', 'destination_code', 'branch_code', 'email', 'pincode', 'village_code', 'mcc_plant_code', 'plant_code', 'old_mcc_plant_code', 'registration_code', 'service_tax', 'tin_no', 'gst_no', 'fssi', 'fssi_expiry_date'], 'safe'],
                 [['fssi_expiry_date'], 'required', 'when' => function ($model) {
                     return !empty($model->fssi);
@@ -194,7 +194,7 @@ class TblDcsProvisional extends ChildModel {
             }"],
                 [['bank_code', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'block_code', 'local_name', 'local_short_name', 'local_contact_person', 'logo_path', 'secretory_info', 'bank_name', 'branch_name', 'local_address', 'bmc_code', 'old_bmc_code', 'local_firstname', 'local_lastname', 'local_surname', 'ref_code', 'originating_org_code', 'originating_org_type', 'data_post_id', 'sap_vendor_code', 'voter_id', 'created_by', 'updated_by', 'ref_code'], 'safe'],
                 [['street1', 'street2'], 'safe'],
-                [['is_security_cheque'], 'default', 'value' => 0],
+                [['is_security_cheque','is_approved'], 'default', 'value' => 0],
                 [['mfile_digit'], 'default', 'value' => 4],
                 [['status'], 'default', 'value' => 'Pending'],
                 [['dpu_type'], 'default', 'value' => 8],
@@ -277,6 +277,16 @@ class TblDcsProvisional extends ChildModel {
                 ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 [['credit_sale_allow', 'is_chiller'], 'default', 'value' => 0],
                 [['default_milk_type'], 'default', 'value' => 8],
+                [['bank_account_no', 'bank_code', 'branch_code', 'ifsc'], 'required', 'when' => function ($model) {
+                    return ($model->is_bank_verify == 1);
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#tbldcsprovisional-is_bank_verify').prop('checked') == true;
+                }", 'on' => ['createDcs']],
+                [['aadhaar_no'], 'required', 'when' => function ($model) {
+                    return ($model->is_aadhar_verify == 1);
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#tbldcsprovisional-is_aadhar_verify').prop('checked') == true;
+                }", 'on' => ['createDcs']],
                 [['voter_id'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'beforeDocUpload']],
@@ -302,6 +312,7 @@ class TblDcsProvisional extends ChildModel {
                 [['aadhaar_no'], 'validateAdharNo', 'on' => ['createDcs', 'updateDcs', 'beforeDocUpload']],
                 [['mobile_no'], 'validateMobileNo', 'on' => ['createDcs', 'updateDcs']],
                 [['bank_account_no'], 'validateBankAccNo', 'on' => ['createDcs', 'updateDcs']],
+                [['is_bank_verify', 'is_aadhar_verify'], 'default', 'value' => '0'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -444,6 +455,12 @@ class TblDcsProvisional extends ChildModel {
             'security_return_amt' => Yii::t('app', 'Security Return Amount'),
             'security_return_mode' => Yii::t('app', 'Security Return Mode'),
             'cheque_bank' => Yii::t('app', 'Cheque Bank'),
+            'provisional_from' => Yii::t('app', 'Provisional From'),
+            'is_aadhar_verify' => Yii::t('app', 'Is Aadhar Verify'),
+            'is_bank_verify' => Yii::t('app', 'Is Bank Verify'),
+            'is_approved' => Yii::t('app', 'Approval Status'),
+            'approved_at' => Yii::t('app', 'Approve Date'),
+            'approved_by' => Yii::t('app', 'Approved By'),
         ];
     }
 
@@ -657,8 +674,11 @@ class TblDcsProvisional extends ChildModel {
         if (!empty($mobile)) {
             $encryptedMobile = Yii::$app->general->encryptData($mobile);
             $existsInDcs = TblDcs::find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
-                    ->one();
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
+            if (!empty($this->dcs_code)) {
+                $existsInDcs->andWhere(['<>', 'dcs_code', $this->dcs_code]);
+            }
+            $existsInDcs = $existsInDcs->one();
             if ($existsInDcs) {
                 $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
                 if (empty($isDeactive)) {
@@ -670,7 +690,7 @@ class TblDcsProvisional extends ChildModel {
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
                     ->andWhere(['not in', 'lower(status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!empty($this->dcs_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
@@ -688,8 +708,11 @@ class TblDcsProvisional extends ChildModel {
         if (!empty($bankAccNo)) {
             $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
             $existsInDcs = TblDcs::find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
-                    ->one();
+                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]]);
+            if (!empty($this->dcs_code)) {
+                $existsInDcs->andWhere(['<>', 'dcs_code', $this->dcs_code]);
+            }
+            $existsInDcs = $existsInDcs->one();
             if ($existsInDcs) {
                 $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
                 if (empty($isDeactive)) {
@@ -701,7 +724,7 @@ class TblDcsProvisional extends ChildModel {
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
                     ->andWhere(['not in', 'lower(status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!empty($this->dcs_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
@@ -719,8 +742,11 @@ class TblDcsProvisional extends ChildModel {
         if (!empty($adharNo)) {
             $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
             $existsInDcs = TblDcs::find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
-                    ->one();
+                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]]);
+            if (!empty($this->dcs_code)) {
+                $existsInDcs->andWhere(['<>', 'dcs_code', $this->dcs_code]);
+            }
+            $existsInDcs = $existsInDcs->one();
             if ($existsInDcs) {
                 $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
                 if (empty($isDeactive)) {
@@ -731,7 +757,7 @@ class TblDcsProvisional extends ChildModel {
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
                     ->andWhere(['not in', 'lower(status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!empty($this->dcs_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
             }
             $existsInProvisional = $existsInProvisional->one();

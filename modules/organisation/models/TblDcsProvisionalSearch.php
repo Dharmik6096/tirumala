@@ -21,7 +21,7 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
      */
     public function rules() {
         return [
-            [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type', 'customer_type', 'is_chiller', 'status', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
+            [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type', 'customer_type', 'is_chiller', 'status', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name', 'provisional_from', 'is_approved', 'approved_at', 'approved_by', 'is_bank_verify', 'is_aadhar_verify'], 'safe'],
             [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code'], 'integer'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
             [['dcs_code_ex', 'ref_code', 'aadhaar_no', 'ts_code_m', 'ts_code_e'], 'safe'],
@@ -130,7 +130,8 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
                 ->andFilterWhere(['like', 'tbl_dcs_provisional.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_dcs_provisional.aadhaar_no', $this->aadhaar_no])
                 ->andFilterWhere(['like', 'tbl_dcs_provisional.ts_code_m', $this->ts_code_m])
-                ->andFilterWhere(['like', 'tbl_dcs_provisional.ts_code_e', $this->ts_code_e]);
+                ->andFilterWhere(['like', 'tbl_dcs_provisional.ts_code_e', $this->ts_code_e])
+                ->andFilterWhere(['like', 'tbl_dcs_provisional.provisional_from', $this->provisional_from]);
 
         return $dataProvider;
     }
