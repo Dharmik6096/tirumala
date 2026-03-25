@@ -18,7 +18,6 @@ use app\modules\globalmaster\models\TblCasteCategory;
 use app\modules\general\models\TblBloodgroup;
 use app\modules\general\models\TblGender;
 use app\modules\general\models\TblReligion;
-use app\modules\dcsoperation\models\TblMemberDownload;
 use app\modules\general\models\TblRelationship;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
@@ -30,6 +29,8 @@ use app\modules\geo\models\TblRegion;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblMemberSpecialCode;
+use app\modules\organisation\models\TblFederations;
+use yii\base\UserException;
 use yii\db\Expression;
 
 /**
@@ -147,13 +148,13 @@ class TblMember extends ChildModel {
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
-                [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->is_active;
-                }, 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
                 [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'member_detail', 'specialCodeImportCsv']],
-            /*    [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+                /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+                    return $this->is_active;
+                }, 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
+                [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }], */
 //                ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -516,7 +517,7 @@ class TblMember extends ChildModel {
 //        $model->is_download = 1;
 //        $model->upload_datetime = date('Y-m-d H:i:s');
 //        $model->save();
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
