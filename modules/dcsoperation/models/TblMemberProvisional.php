@@ -27,7 +27,6 @@ use app\modules\document\models\TblAttachment;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblApprovalStagesDetail;
-use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use yii\web\UploadedFile;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\geo\models\TblRegion;
@@ -35,7 +34,6 @@ use app\modules\dcsoperation\models\TblMemberProvisionalShareDetails;
 use app\modules\collection\models\TblProvisionalMilkCollection;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\dcsoperation\models\TblMemberHistory;
-use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
 use app\modules\collection\models\TblMilkCollection;
 use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
 use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails;
@@ -52,7 +50,6 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use yii\base\UserException;
-use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\dcsoperation\models\TblMemberDeactive;
@@ -179,10 +176,10 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
                     return ($this->chackExistRecord($params) && $this->is_active);
                 }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
+                /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
                     return ($this->chackExistRecord($params) && $this->is_active);
                 }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-            /*    [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+               [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }],
               [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -597,7 +594,7 @@ class TblMemberProvisional extends ChildModel {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {
