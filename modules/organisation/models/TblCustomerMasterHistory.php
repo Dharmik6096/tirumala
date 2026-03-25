@@ -56,7 +56,7 @@ class TblCustomerMasterHistory extends \yii\db\ActiveRecord {
         return [
                 [['customer_code', 'customer_code_ex', 'sap_vendor_code', 'ts_code_m', 'ts_code_e', 'pan_no'], 'safe'],
                 [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['is_active', 'originating_type'], 'safe'],
+                [['is_active', 'originating_type', 'is_aadhar_verify'], 'safe'],
                 [['created_at', 'updated_at', 'history_created_at', 'route_code'], 'safe'],
                 [['ref_code', 'vendor_code', 'auto_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'aadhaar_no'], 'safe'],
                 [['bmc_code', 'mcc_plant_code', 'plant_code', 'morning_kms', 'evening_kms', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'dcs_code', 'ccenter_code', 'mobile_no', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code'], 'safe'],

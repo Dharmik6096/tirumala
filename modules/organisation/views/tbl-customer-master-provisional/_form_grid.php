@@ -2,76 +2,74 @@
 
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
-use yii\helpers\Url;
-use yii\web\View;
 
 ?>
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'value' => function($model) {
+    ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'plant_code', 'value' => function($model) {
+    ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'filter' => FALSE],
-        ['attribute' => 'bmc_code', 'value' => function($model) {
+    ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => FALSE],
-        ['attribute' => 'route_code', 'filter' => false, 'label' => Yii::t('app', 'Route Code')],
-        ['attribute' => 'route_code', 'value' => function($model) {
+    ['attribute' => 'route_code', 'filter' => false, 'label' => Yii::t('app', 'Route Code')],
+    ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
         }, 'filter' => FALSE],
-        ['attribute' => 'route_code', 'value' => function($model) {
+    ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
         }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
-        ['attribute' => 'customer_type', 'value' => function($model) {
+    ['attribute' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         }, 'filter' => Yii::$app->dropdown->dropdownfilter('customer_type', $searchModel, 'customer_type', Yii::t('app', 'Select'))],
-        ['attribute' => 'customer_code'],
-        ['attribute' => 'customer_code_ex'],
-        ['attribute' => 'ref_code'],
-        ['attribute' => 'customer_name'],
-        ['attribute' => 'local_name', 'filter' => FALSE],
-        [
+    ['attribute' => 'customer_code'],
+    ['attribute' => 'customer_code_ex'],
+    ['attribute' => 'ref_code'],
+    ['attribute' => 'customer_name'],
+    ['attribute' => 'local_name', 'filter' => FALSE],
+    [
         'attribute' => 'gst_no',
         'headerOptions' => ['class' => 'hidden-for-specific-client'],
         'contentOptions' => ['class' => 'hidden-for-specific-client'],
         'filterOptions' => ['class' => 'hidden-for-specific-client'],
     ],
-        [
+    [
         'attribute' => 'customer_category',
         'headerOptions' => ['class' => 'd-none-for-specific-client'],
         'contentOptions' => ['class' => 'd-none-for-specific-client'],
         'filterOptions' => ['class' => 'd-none-for-specific-client'],
     ],
-        ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
-        ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,
+    ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
             isset($detail->firstname) ? $detail = $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : $detail = '';
             return $detail;
         }
     ],
-        ['label' => 'Email', 'visible' => false, 'filter' => false,
+    ['label' => 'Email', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
             isset($detail->email) ? $detail = $detail->email : $detail = '';
             return $detail;
         }
     ],
-        ['label' => 'Department', 'visible' => false, 'filter' => false,
+    ['label' => 'Department', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
             isset($detail->department) ? $detail = $detail->department : $detail = '';
             return $detail;
         }
     ],
-// Bank Detail
+    // Bank Detail
     ['label' => 'Bank', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
@@ -79,50 +77,65 @@ $attribute = [
             return $detail;
         }
     ],
-        ['label' => 'Branch', 'visible' => false, 'filter' => false,
+    ['label' => 'Branch', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
             isset($detail->branchCode) ? $detail = $detail->branchCode->branch_name : $detail = '';
             return $detail;
         }
     ],
-        ['label' => 'Bank Account No', 'visible' => false, 'filter' => false,
+    ['label' => 'Bank Account No', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
             isset($detail->bank_account_no) ? $detail = $detail->bank_account_no : $detail = '';
             return $detail;
         }
     ],
-        ['label' => 'IFSC', 'visible' => false, 'filter' => false,
+    ['label' => 'IFSC', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
             isset($detail->ifsc) ? $detail = $detail->ifsc : $detail = '';
             return $detail;
         }
     ],
-        ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'ts_code_m', 'visible' => FALSE],
-        ['attribute' => 'ts_code_e', 'visible' => FALSE],
-        ['attribute' => 'status',
+    ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'is_bank_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_bank_verify');
+        }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'is_aadhar_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_aadhar_verify');
+        }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'ts_code_m', 'visible' => FALSE],
+    ['attribute' => 'ts_code_e', 'visible' => FALSE],
+    ['attribute' => 'status',
         'filter' => (!$pending_approval) ? Yii::$app->dropdown->dropdownfilterStatic('provisional_status', $searchModel, 'status') : false,
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('provisional_status')['data'][$model->status] : '';
         }],
-        ['attribute' => 'data_post_status',
+    ['attribute' => 'is_approved', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_approved');
+        }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'provisional_from', 'visible' => true, 'filter' => true],
+    ['attribute' => 'approved_at', 'filter' => true,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->approved_at);
+        }, 'visible' => false, 'filter' => false
+    ],
+    ['attribute' => 'data_post_status',
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
         }, 'filter' => false, 'visible' => false],
-        ['attribute' => 'picked_datetime',
+    ['attribute' => 'picked_datetime',
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => FALSE, 'visible' => false],
-        ['attribute' => 'response_datetime',
+    ['attribute' => 'response_datetime',
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => FALSE, 'visible' => false],
-        ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
-        ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
 ];
 $gridId = 'customer-master-list';
 $grid_option = [

@@ -23,7 +23,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
     public function rules() {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'customer_code', 'customer_code_ex', 'customer_name', 'customer_type', 'sap_code', 'refference_code', 'address', 'local_name', 'local_address', 'gst_no', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'ccenter_code', 'ref_code', 'old_bmc_code', 'old_mcc_plant_code', 'old_route_code', 'vendor_code', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'sap_vendor_code', 'customer_category', 'distance_from_mcc', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'contact_person', 'email', 'mobile_no', 'local_contact_person', 'department', 'firstname', 'lastname', 'surname', 'local_firstname', 'local_lastname', 'local_surname', 'status', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'morning_kms', 'evening_kms', 'customer_provisional_code', 'auto_code', 'data_post_status', 'animal_type_code', 'originating_type'], 'safe'],
-                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'from_date', 'to_date', 'table_name', 'report_type'], 'safe'],
+                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'from_date', 'to_date', 'table_name', 'report_type', 'is_aadhar_verify', 'is_bank_verify', 'provisional_from', 'is_approved', 'approved_at', 'approved_by'], 'safe'],
                 [['from_date', 'to_date'], 'required', 'on' => 'ApprovedAttachmentDetails'],
                 [['from_date',], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
@@ -145,6 +145,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                 ->andFilterWhere(['like', 'local_lastname', $this->local_lastname])
                 ->andFilterWhere(['like', 'local_surname', $this->local_surname])
                 ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'provisional_from', $this->provisional_from])
                 ->andFilterWhere(['like', 'x_col1', $this->x_col1])
                 ->andFilterWhere(['like', 'x_col2', $this->x_col2])
                 ->andFilterWhere(['like', 'x_col3', $this->x_col3])
