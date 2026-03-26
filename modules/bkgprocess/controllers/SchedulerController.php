@@ -478,13 +478,6 @@ class SchedulerController extends ChildController {
             $absoluteBaseUrl = Url::base(true);
             $objPHPExcel = new PHPExcel();
             $sheet = $objPHPExcel->getActiveSheet();
-            if (!empty($output)) {
-                for ($i = 0; $i < count($output); $i++) {
-                    if (isset($output[$i]['email'])) {
-                        unset($output[$i]['email']);
-                    }
-                }
-            }
             $sheet->fromArray(
                     $column_header, // The data to set
                     NULL, // Array values with this value will not be set
@@ -500,7 +493,7 @@ class SchedulerController extends ChildController {
             $filePath = $path . $fileName;
             $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $objWriter->save($filePath);
-            return $filePath;
+            return $absoluteBaseUrl . $folder . $fileName;
         }
     }
 
@@ -1615,6 +1608,7 @@ class SchedulerController extends ChildController {
                     $i = 0;
                     foreach ($result as $mailData) {
                         $key = $mailData['email'];
+                        unset($mailData['email']);
                         if (!empty($mailArray[$key])) {
                             $mailArray[$key][] = $mailData;
                         } else {
