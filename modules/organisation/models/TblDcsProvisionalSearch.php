@@ -91,6 +91,7 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
             'tbl_dcs_provisional.is_chiller' => $this->is_chiller,
             'tbl_dcs_provisional.x_col2' => $this->x_col2,
             'tbl_dcs_provisional.status' => $this->status,
+            'tbl_dcs_provisional.data_post_status' => $this->data_post_status,
         ]);
 
         if (!empty($this->registration_date))

@@ -17,12 +17,12 @@ $attribute = [
     }, 'filter' => FALSE],
     ['attribute' => 'route_code', 'filter' => false, 'label' => Yii::t('app', 'Route Code')],
     ['attribute' => 'route_code', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+        return Yii::$app->general->getforeignkey($model->routeMapping, 'route_name');
     }, 'filter' => FALSE],
     ['attribute' => 'route_code', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+        return Yii::$app->general->getforeignkey($model->routeMapping, 'ref_code');
     }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
-    ['attribute' => 'customer_name'],
+    ['attribute' => 'dcs_name'],
     ['attribute' => 'district_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->districtCode, 'district_name');
     }, 'filter' => FALSE],
@@ -74,15 +74,15 @@ $attribute = [
     ],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-$gridId = 'sap-customer-master-list';
+$gridId = 'sap-dcs-provisional-list';
 $grid_option = [
     'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
         'update' => function ($url, $model) {
-            $url = ['/organisation/tbl-customer-master-provisional/update-sap-error-data', 'id' => $model->customer_provisional_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
+            $url = ['/organisation/tbl-dcs-provisional/update-sap-error-data', 'id' => $model->dcs_provisional_code];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->dcs_provisional_code, 'data-name' => $model->dcs_name]);
         }
     ]
 ];

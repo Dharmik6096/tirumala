@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
         </div>
         <div class="col-sm-4 ">
-            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
+            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type')); ?>
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');

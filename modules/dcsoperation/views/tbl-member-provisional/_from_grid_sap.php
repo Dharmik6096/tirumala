@@ -10,19 +10,19 @@ $attribute = [
         return Yii::$app->general->getforeignkey($model->plantCode, 'name');
     }, 'filter' => FALSE, 'visible' => FALSE],
     ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        return Yii::$app->general->getforeignkey($model->mccCode, 'name');
     }, 'filter' => FALSE],
     ['attribute' => 'bmc_code', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        return Yii::$app->general->getforeignkey($model->tblDcsBmc, 'bmc_name');
     }, 'filter' => FALSE],
     ['attribute' => 'route_code', 'filter' => false, 'label' => Yii::t('app', 'Route Code')],
     ['attribute' => 'route_code', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+        return Yii::$app->general->getforeignkey($model->routeMapping, 'route_name');
     }, 'filter' => FALSE],
     ['attribute' => 'route_code', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+        return Yii::$app->general->getforeignkey($model->routeMapping, 'ref_code');
     }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
-    ['attribute' => 'customer_name'],
+    ['attribute' => 'dcs_name'],
     ['attribute' => 'district_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->districtCode, 'district_name');
     }, 'filter' => FALSE],
@@ -43,7 +43,7 @@ $attribute = [
     ['attribute' => 'bank_account_no', 'label' => 'Bank Account No', 'filter' => false],
     ['attribute' => 'ifsc', 'label' => 'IFSC', 'filter' => false],
     ['label' => 'Employee', 'value' => function ($model) {
-        return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        return Yii::$app->general->getforeignkey($model->userName, 'name');
     }, 'filter' => FALSE],
     ['label' => 'Start Date', 'attribute' => 'created_at', 'value' => function ($model) {
         return $model->created_at ? date('d-m-Y', strtotime($model->created_at)) : 'NA';
@@ -74,15 +74,15 @@ $attribute = [
     ],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-$gridId = 'sap-customer-master-list';
+$gridId = 'sap-member-provisional-list';
 $grid_option = [
     'id' => $gridId,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
         'update' => function ($url, $model) {
-            $url = ['/organisation/tbl-customer-master-provisional/update-sap-error-data', 'id' => $model->customer_provisional_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
+            $url = ['/dcsoperation/tbl-member-provisional/update-sap-error-data', 'id' => $model->provisional_member_code];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->provisional_member_code, 'data-name' => $model->member_name]);
         }
     ]
 ];

@@ -25,6 +25,7 @@ use yii\db\Expression;
 use app\modules\general\models\TblProcessApproval;
 use yii\helpers\Html;
 use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_dcs_provisional".
@@ -166,7 +167,7 @@ class TblDcsProvisional extends ChildModel {
     public $tmcc_code;
     public $is_sentbox;
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
-    public $milk_type_auto, $auto_member_create, $detail_code;
+    public $milk_type_auto, $detail_code;
     public $local_middlename, $is_verified;
     public $operation, $verifie_for, $file_name, $is_default;
     public $process_approval_code, $gender_code;
@@ -767,6 +768,10 @@ class TblDcsProvisional extends ChildModel {
                 return false;
             }
         }
+    }
+    
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
 }

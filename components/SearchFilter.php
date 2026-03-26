@@ -245,7 +245,7 @@ class SearchFilter {
             ],
             'TblMemberProvisionalSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date', 'approved_status'],
-                'action' => ['index', 'pending-approval']
+                'action' => ['index', 'pending-approval', 'sap-error-data-list'],
             ],
             'TblSampleBottleTestingSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
@@ -462,7 +462,7 @@ class SearchFilter {
             ],
             'TblDcsProvisionalSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
-                'action' => ['index', 'pending-approval'],
+                'action' => ['index', 'pending-approval', 'sap-error-data-list'],
             ],
             'TblBonusPaymentSummarySearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],

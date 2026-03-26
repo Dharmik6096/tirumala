@@ -424,7 +424,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->data_post_status = 0;
-            $this->model->resp_desc = $this->model->resp_status = $this->model->response_datetime = $this->model->picked_datetime = NULL;
+            $this->model->resp_desc = $this->model->resp_status = $this->model->response_datetime = $this->model->picked_datetime = $this->model->response_msg = NULL;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['sap-error-data-list']);
