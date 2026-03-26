@@ -1,6 +1,6 @@
 <?php
 return [
-    'bootstrap' => ['log', 'queue'],
+    'bootstrap' => ['log', 'queueInbox'],
     'components' => [
         'redis' => [
             'class' => 'yii\redis\Connection',
