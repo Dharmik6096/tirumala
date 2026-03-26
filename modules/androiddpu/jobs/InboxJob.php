@@ -26,7 +26,7 @@ class InboxJob extends BaseObject implements JobInterface
 
                 $generalModel = new \app\models\GeneralModel();
                 $transaction = $generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
-
+                echo "Processing with inbox job for UUID: " . $this->transaction_data['uuid'] . "\n";
                 if ($transaction !== 'customRedirect') {
                     $errorData = (string)$transaction;
                     if (str_contains(strtolower($errorData), 'duplicate key') || str_contains(strtolower($errorData), 'primary key')) {

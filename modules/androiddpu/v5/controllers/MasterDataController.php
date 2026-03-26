@@ -20,23 +20,11 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $error_id = [];
         $data = $this->post_data;
 
-        $hasQueue = false;
-        if (Yii::$app->has('queueInbox')) {
-            try {
-                $queue = Yii::$app->queueInbox;
-                $method = new \ReflectionMethod(get_class($queue), 'open');
-                $method->setAccessible(true);
-                $method->invoke($queue);
-                $hasQueue = true;
-            } catch (\Exception $e) {
-                $hasQueue = false;
-            }
-        }
         if (!empty($data['content'])) {
             foreach ($data['content'] as $transaction_data) {
                 if (!empty($transaction_data['uuid'])) {
                     $sync_timestamp = date('Y-m-d H:i:s');
-                    if ($hasQueue) {
+                    if (Yii::$app->has('queueInbox')) {
                         try {
                             $jobId = Yii::$app->queueInbox->push(new InboxJob([
                                 'transaction_data' => $transaction_data,
@@ -70,7 +58,6 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
                                 $error_id[] = $transaction_data['uuid'];
                             }
                         }
-
                     }
                 }
             }
