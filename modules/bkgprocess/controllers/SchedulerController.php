@@ -1455,7 +1455,7 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
-                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr) === 'customRedirect');
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true) === 'customRedirect');
                                 if ($processed) {
                                     $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
                                     $dcsDir = $baseDir . 'dcs';
