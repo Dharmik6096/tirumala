@@ -1569,7 +1569,7 @@ class SchedulerController extends ChildController {
         $f_date = date('Y-m-d');
         $t_date = date('Y-m-d');
         if (!empty($apiMasterData)) {
-            $output = \Yii::$app->general->getSpData('sp_mail_frequency_list', []);
+            $output = \Yii::$app->general->getSpData('portal_auto_mail_frequency_list', []);
             $j = 0;
             foreach ($output as $data) {
                 $sp_params = [];

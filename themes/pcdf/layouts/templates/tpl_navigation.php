@@ -1099,6 +1099,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Details Report'), 'url' => ['/misreports/reports/details-report']],
                             ['label' => Yii::t('app', 'User Task Activity MIS'), 'url' => ['/misreports/reports/field-staff-activity']],
                             ['label' => Yii::t('app', 'Complain Activity Report'), 'url' => ['/misreports/reports/complain-activity-list']],
+                            ['label' => Yii::t('app', 'Complain Status Report'), 'url' => ['/misreports/reports/complaint-summary-detail-report']],
                             ['label' => Yii::t('app', 'User Attendance Details'), 'url' => ['/misreports/reports/user-attendance-details']],
                             ['label' => Yii::t('app', 'User Attendance Report PDF'), 'url' => ['/jasperreports/default/user-attendance-report']],
                     ]
