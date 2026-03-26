@@ -15,12 +15,13 @@ return [
         'session' => [
             'class' => 'yii\redis\Session',
         ],
-        'queue' => [
+        'queueInbox' => [
             'class' => \yii\queue\amqp\Queue::class,
             'host' => '192.168.1.236',
             'port' => 5672,
             'user' => 'mobile',
-            'password' => 'mobile'
+            'password' => 'mobile',
+            'queueName' => 'androiddpu_inbox_api_req',
         ],
     ],
 ];

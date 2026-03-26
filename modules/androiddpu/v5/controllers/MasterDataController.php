@@ -21,10 +21,9 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $data = $this->post_data;
 
         $hasQueue = false;
-        if (Yii::$app->has('queue')) {
+        if (Yii::$app->has('queueInbox')) {
             try {
-                $queue = Yii::$app->queue;
-                $queue->queueName = "androiddpu_inbox_api_req";
+                $queue = Yii::$app->queueInbox;
                 $method = new \ReflectionMethod(get_class($queue), 'open');
                 $method->setAccessible(true);
                 $method->invoke($queue);
@@ -39,7 +38,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
                     $sync_timestamp = date('Y-m-d H:i:s');
                     if ($hasQueue) {
                         try {
-                            $jobId = Yii::$app->queue->push(new InboxJob([
+                            $jobId = Yii::$app->queueInbox->push(new InboxJob([
                                 'transaction_data' => $transaction_data,
                                 'sync_timestamp' => $sync_timestamp,
                             ]));
