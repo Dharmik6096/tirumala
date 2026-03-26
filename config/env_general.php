@@ -20,8 +20,7 @@ return [
             'host' => '192.168.1.236',
             'port' => 5672,
             'user' => 'mobile',
-            'password' => 'mobile',
-            'queueName' => 'inbox-queue',
+            'password' => 'mobile'
         ],
     ],
 ];
