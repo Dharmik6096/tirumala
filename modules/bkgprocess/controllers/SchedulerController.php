@@ -1456,7 +1456,7 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
-                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr) === 'customRedirect');
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true) === 'customRedirect');
                                 if ($processed) {
                                     $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
                                     $dcsDir = $baseDir . 'dcs';
@@ -1570,7 +1570,7 @@ class SchedulerController extends ChildController {
         $f_date = date('Y-m-d');
         $t_date = date('Y-m-d');
         if (!empty($apiMasterData)) {
-            $output = \Yii::$app->general->getSpData('sp_mail_frequency_list', []);
+            $output = \Yii::$app->general->getSpData('portal_auto_mail_frequency_list', []);
             $j = 0;
             foreach ($output as $data) {
                 $sp_params = [];
