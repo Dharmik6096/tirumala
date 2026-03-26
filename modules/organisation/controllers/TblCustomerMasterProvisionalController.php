@@ -404,4 +404,33 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         return Json::encode($record);
     }
 
+    public function actionSapErrorDataList() {
+        $searchModel = new TblCustomerMasterProvisionalSearch();
+        $searchModel->data_post_status = 3;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false);
+
+        return $this->render('index_sap', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionUpdateSapErrorData($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update_sap_error_data';
+        $this->model->scenario = 'updateFront';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblCustomerMasterProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $this->model->data_post_status = 0;
+            $this->model->resp_desc = $this->model->resp_status = $this->model->response_datetime = $this->model->picked_datetime = NULL;
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['sap-error-data-list']);
+            }
+        }
+        return $this->customRender();
+    }
+
 }

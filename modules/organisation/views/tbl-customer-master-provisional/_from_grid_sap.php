@@ -1,0 +1,117 @@
+<?php
+
+use webvimark\modules\UserManagement\components\GhostHtml;
+
+$attribute = [
+    ['attribute' => 'union_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+    }, 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'plant_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+    }, 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+    }, 'filter' => FALSE],
+    ['attribute' => 'bmc_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+    }, 'filter' => FALSE],
+    ['attribute' => 'route_code', 'filter' => false, 'label' => Yii::t('app', 'Route Code')],
+    ['attribute' => 'route_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+    }, 'filter' => FALSE],
+    ['attribute' => 'route_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+    }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
+    ['attribute' => 'customer_name'],
+    ['attribute' => 'district_code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->districtCode, 'district_name');
+    }, 'filter' => FALSE],
+    ['attribute' => 'state_code', 'filter' => false],
+    ['attribute' => 'pincode'],
+    ['attribute' => 'mobile_no', 'filter' => false],
+    ['attribute' => 'aadhaar_no', 'filter' => false],
+
+    ['attribute' => 'pan_no', 'filter' => false],
+    ['attribute' => 'address', 'filter' => FALSE],
+    // Bank Detail
+    [
+        'label' => 'Bank',
+        'filter' => false,
+        'value' => function ($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->bankCode) ? $detail = $detail->bankCode->bank_name : $detail = '';
+            return $detail;
+        }
+    ],
+    [
+        'label' => 'Branch',
+        'filter' => false,
+        'value' => function ($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->branchCode) ? $detail = $detail->branchCode->branch_name : $detail = '';
+            return $detail;
+        }
+    ],
+    [
+        'label' => 'Bank Account No',
+        'filter' => false,
+        'value' => function ($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->bank_account_no) ? $detail = $detail->bank_account_no : $detail = '';
+            return $detail;
+        }
+    ],
+    [
+        'label' => 'IFSC',
+        'filter' => false,
+        'value' => function ($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->ifsc) ? $detail = $detail->ifsc : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Employee', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->userCode, 'name');
+    }, 'filter' => FALSE],
+    ['label' => 'Start Date', 'attribute' => 'created_at', 'value' => function ($model) {
+        return $model->created_at ? date('d-m-Y', strtotime($model->created_at)) : 'NA';
+    }, 'filter' => false],
+    [
+        'attribute' => 'data_post_status',
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->data_post_status] : 'Pending';
+        },
+        'filter' => false,
+        'visible' => false
+    ],
+    [
+        'attribute' => 'picked_datetime',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        },
+        'filter' => FALSE,
+        'visible' => false
+    ],
+    [
+        'attribute' => 'response_datetime',
+        'value' => function ($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        },
+        'filter' => FALSE,
+        'visible' => false
+    ],
+    ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+];
+$gridId = 'sap-customer-master-list';
+$grid_option = [
+    'id' => $gridId,
+    'attributes' => $attribute,
+    'active_column' => false,
+    'actions' => [
+        'update' => function ($url, $model) {
+            $url = ['/organisation/tbl-customer-master-provisional/update-sap-error-data', 'id' => $model->customer_provisional_code];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
+        }
+    ]
+];
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

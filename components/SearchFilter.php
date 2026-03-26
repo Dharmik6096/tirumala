@@ -490,7 +490,7 @@ class SearchFilter {
             ],
             'TblCustomerMasterProvisionalSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code', 'from_date', 'to_date'],
-                'action' => ['index', 'pending-customer-approval']
+                'action' => ['index', 'pending-customer-approval', 'sap-error-data-list']
             ],
             'TblReportTxnLogSearch' => [
                 'filter' => ['from_date', 'to_date'],

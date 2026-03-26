@@ -17,6 +17,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
 use app\modules\organisation\models\TblCustomerDeactive;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_customer_master_provisional".
@@ -466,6 +467,10 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                 return false;
             }
         }
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
 }
