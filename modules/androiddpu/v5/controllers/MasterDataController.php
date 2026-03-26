@@ -24,7 +24,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         if (Yii::$app->has('queue')) {
             try {
                 $queue = Yii::$app->queue;
-                $queue->queueName = "amcs_inbox_api_req";
+                $queue->queueName = "androiddpu_inbox_api_req";
                 $method = new \ReflectionMethod(get_class($queue), 'open');
                 $method->setAccessible(true);
                 $method->invoke($queue);
