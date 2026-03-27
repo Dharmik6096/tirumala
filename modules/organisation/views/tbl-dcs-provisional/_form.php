@@ -134,11 +134,11 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
         <!--</div>-->
         <?php /*
-        if ($type == 'create') { ?>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbldcsprovisional-union_code', 'rate_chart_member', $model->getAttributeLabel('rate_chart_member')); ?>
-            </div>
-        <?php } */
+          if ($type == 'create') { ?>
+          <div class="col-sm-2">
+          <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbldcsprovisional-union_code', 'rate_chart_member', $model->getAttributeLabel('rate_chart_member')); ?>
+          </div>
+          <?php } */
         ?>
 
         <div class="col-sm-2">
@@ -251,7 +251,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
         <!--    <div class="col-sm-2">
-                <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+        <?php // $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
             </div>-->
         <div class="col-sm-2">
             <div class="col-sm-12">
@@ -311,70 +311,70 @@ $form = ActiveForm::begin([
         </div> -->
 
         <div class="clearfix"></div>
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading">Contact Details</h4>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'firstname')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'lastname')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'surname')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'email')->textInput() ?>
-            </div>
-            <!--<div class="col-sm-2">
-                <?php // $form->field($model, 'local_contact_person')->textInput() ?>
-            </div>-->
-            <div class="col-sm-2">
-                <?= $form->field($model, 'local_firstname')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'local_lastname')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'local_surname')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
-                <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
-            </div>
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Contact Details</h4>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'firstname')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'lastname')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'surname')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'email')->textInput() ?>
+        </div>
+        <!--<div class="col-sm-2">
+        <?php // $form->field($model, 'local_contact_person')->textInput() ?>
+        </div>-->
+        <div class="col-sm-2">
+            <?= $form->field($model, 'local_firstname')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'local_lastname')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'local_surname')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
+            <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+        </div>
 
-            <div class="clearfix"></div>
+        <div class="clearfix"></div>
 
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading">Bank Details</h4>
-            </div>
-            <?php if (!empty($dist)) { ?>
-                <?= Html::hiddenInput('union-dist', $dist, ['id' => 'tbldcsprovisional-district_code']) ?>
-            <?php } ?>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbldcsprovisional-district_code', 'bank_code', 'Bank'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbldcsprovisional-bank_code', '', 'Branch', 'branch_code'); ?>                        
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'bank_account_no')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'beneficiary_name')->textInput() ?>
-            </div>
-            <div class="col-sm-2 mt10">
-                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bank_verify'); ?>
-            </div>
-            <!--<div class="col-sm-2">
-            <? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
-            </div>-->
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Bank Details</h4>
+        </div>
+        <?php if (!empty($dist)) { ?>
+            <?= Html::hiddenInput('union-dist', $dist, ['id' => 'tbldcsprovisional-district_code']) ?>
+        <?php } ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbldcsprovisional-district_code', 'bank_code', 'Bank'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbldcsprovisional-bank_code', '', 'Branch', 'branch_code'); ?>                        
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'bank_account_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bank_verify'); ?>
+        </div>
+        <!--<div class="col-sm-2">
+        <? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+        </div>-->
         <!--</div>-->
         <div class="col-sm-12">
             <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
@@ -402,7 +402,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 mt10">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'milk_type_auto'); ?>
             </div>
-
             <?php // if ($type == 'create') {    ?>
             <!--        <div class="col-sm-3">
             <? Yii::$app->controls->active($model, $form); ?>
@@ -411,7 +410,7 @@ $form = ActiveForm::begin([
             <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
             <!-- <div class="clearfix"></div> -->
             <?php // if ($type == 'create') {     ?>
-            <?php if ($type == 'create') { ?>
+            <?php if ($model->provisional_from != 'mobile_update') { ?>
                 <div class="col-sm-2 mt10">
                     <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'auto_member_create'); ?>
                 </div>
