@@ -23,6 +23,7 @@ if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->g
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     $this->params['menu'][] = Yii::$app->controls->import('member-provisional', $this);
 }
+$this->params['menu'][] = Yii::$app->controls->custombutton('Update SAP Error Data', 'sap-error-data-list', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil"></i>');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

@@ -256,6 +256,21 @@ $attribute = [
         }, 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'security_return_amt', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'security_return_mode', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'is_approved', 'filter' => FALSE, 'visible' => FALSE,
+        'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_approved');
+        }],
+        ['attribute' => 'approved_at', 'filter' => FALSE, 'visible' => FALSE,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->approved_at);
+        }],
+        ['attribute' => 'approved_by', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'is_bank_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_bank_verify');
+        }, 'filter' => false, 'visible' => FALSE],
+        ['attribute' => 'is_aadhar_verify', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_aadhar_verify');
+        }, 'filter' => false, 'visible' => FALSE],
 ];
 $gridId = 'dcs-list';
 $grid_option = [
