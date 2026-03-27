@@ -1634,7 +1634,8 @@ class SchedulerController extends ChildController {
                         if (!empty($file_name)) {
                             $notificationModel = new TblAlertNotification();
                             $notificationModel->receiver_type = 'EMAIL';
-                            $notificationModel->message = !empty($templateData->message) ? $templateData->message : $htmlContent;
+                            $baseMessage = !empty($templateData->message) ? $templateData->message : $htmlContent;
+                            $notificationModel->message = str_replace('{TITLE}', $message, $baseMessage);
                             $notificationModel->header_info = $message;
                             $notificationModel->send_status = 0;
                             $notificationModel->content_id = $apiMasterData->api_master_id;
