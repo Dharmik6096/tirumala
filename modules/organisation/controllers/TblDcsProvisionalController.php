@@ -644,6 +644,9 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->ifsc = NULL;
                         $memberModel->beneficiary_name = NULL;
                         $memberModel->adhar_no = NULL;
+                        $memberModel->pan_no = NULL;
+                        $memberModel->mobile_no = NULL;
+                        $memberModel->vendor_code = NULL;
                         $master[] = $memberModel->save();
                     }
                 }

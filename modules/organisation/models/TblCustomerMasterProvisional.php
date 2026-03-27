@@ -17,7 +17,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
 use app\modules\organisation\models\TblCustomerDeactive;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_customer_master_provisional".
