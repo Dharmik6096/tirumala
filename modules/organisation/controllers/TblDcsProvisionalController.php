@@ -102,6 +102,7 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->getCode();
+            $this->model->data_post_id = Yii::$app->general->getUuid();
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
