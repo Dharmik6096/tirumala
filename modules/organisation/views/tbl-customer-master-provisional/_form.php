@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
         </div>
         <div class="col-sm-4 ">
-            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
+            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type')); ?>
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
@@ -80,9 +80,6 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
-        </div>
-        <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', $model->getAttributeLabel('gender')); ?>
         </div>
         <div class="col-sm-4">
@@ -108,6 +105,12 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
@@ -197,6 +200,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'is_bank_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
     </div>
     <div class="row">
@@ -324,6 +330,26 @@ $form = ActiveForm::begin([
         return val.toUpperCase();
     });
    });
+   
+   enableDisableField();
+   $('#tblcustomermasterprovisional-is_aadhar_verify,#tblcustomermasterprovisional-is_bank_verify').on('click',function(){
+        enableDisableField();
+    });
+    function enableDisableField(){
+        $('.field-tblcustomermasterprovisional-aadhaar_no').removeClass('disabled no_pointer');
+        $('.field-tblcustomermasterprovisional-bank_code').removeClass('disabled no_pointer');
+        $('.field-tblcustomermasterprovisional-branch_code').removeClass('disabled no_pointer');
+        $('.field-tblcustomermasterprovisional-bank_account_no').removeClass('disabled no_pointer');
+        
+        if ($('#tblcustomermasterprovisional-is_aadhar_verify').is(':checked')) {
+            $('.field-tblcustomermasterprovisional-aadhaar_no').addClass('disabled no_pointer');
+        }
+        if ($('#tblcustomermasterprovisional-is_bank_verify').is(':checked')) {
+            $('.field-tblcustomermasterprovisional-bank_code').addClass('disabled no_pointer');
+            $('.field-tblcustomermasterprovisional-branch_code').addClass('disabled no_pointer');
+            $('.field-tblcustomermasterprovisional-bank_account_no').addClass('disabled no_pointer');
+        }
+    }
 ";
-    $this->registerJs($script, View::POS_END, 'provisional_customer_master_create');
-    ?>
+$this->registerJs($script, View::POS_END, 'provisional_customer_master_create');
+?>

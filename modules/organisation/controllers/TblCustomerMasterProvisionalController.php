@@ -5,23 +5,18 @@ namespace app\modules\organisation\controllers;
 use Yii;
 use app\modules\organisation\models\TblCustomerMasterProvisional;
 use app\modules\organisation\models\TblCustomerMasterProvisionalSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
 use app\modules\document\models\TblAttachment;
 use yii\data\ActiveDataProvider;
 use yii\web\Response;
 use yii\helpers\Json;
-use app\modules\document\models\TblDocumentMapping;
-use yii\base\Model;
-use yii\web\UploadedFile;
-use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\organisation\models\TblCustomerMasterProvisionalHistory;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblCustomerMasterHistory;
 use app\modules\document\controllers\TblAttachmentController;
 use app\modules\general\models\TblProcessApprovalSearch;
 
@@ -227,6 +222,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             $model_save = [];
             $customer_error = '';
             $message = '';
+            $status = '';
             $model_save[] = $historyApproval;
             $model_save[] = $model;
             if (!empty($model_save)) {
@@ -238,10 +234,14 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 $customerModel->status = $status;
                 $customerModel->remarks = $model->remarks;
 
-                $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL');
-                $customerModel->customer_status = 0; // Approved
-                if (strtolower($status) == 'approve' && $customerCreationPendingForSapApproval != '1') {
-                    $customerModel->customer_status = 1; // Created
+                $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL') == '1';
+                $customerModel->customer_status = 0;
+                if (strtolower($status) === 'approve') {
+                    $customerModel->customer_status = $customerCreationPendingForSapApproval ? 0 : 1;
+                    if ($customerCreationPendingForSapApproval) {
+                        $customerModel->approved_at = date('Y-m-d H:i:s');
+                        $customerModel->approved_by = Yii::$app->user->identity->user_code;
+                    }
                 }
 
                 $model_save[] = $customerModel;
@@ -275,9 +275,9 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                             for ($i = 0; $i < count($all_doc); $i++) {
                                 $fileName = basename($customerdoc[$i]);
                                 $file = $customerDir . '/' . $fileName;
-                                $upload = copy($proCustomerDir . '/' . $all_doc[$i], $file);
-                                if ($upload) {
-                                    if (file_exists($proCustomerDir . '/' . $all_doc[$i])) {
+                                if (file_exists($proCustomerDir . '/' . $all_doc[$i])) {
+                                    $upload = copy($proCustomerDir . '/' . $all_doc[$i], $file);
+                                    if ($upload) {
                                         unlink($proCustomerDir . '/' . $all_doc[$i]);
                                     }
                                 }
@@ -304,22 +304,45 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
 
     public function createCustomer($customerProvisional, &$model_save, &$all_attachment, &$customerdoc, &$message) {
         if (!empty($customerProvisional)) {
+            $customerProvisional->is_approved = 1;
+            $customerProvisional->approved_at = date('Y-m-d H:i:s');
+            $customerProvisional->approved_by = Yii::$app->user->identity->user_code;
             $customerModel = new TblCustomerMaster();
-            $this->bankDetails = new TblBankDetails();
-            $this->contactDetails = new TblContactDetails();
+            if ($customerProvisional->provisional_from == 'mobile_update') {
+                $this->bankDetails = TblBankDetails::updateBankDetails($customerProvisional->customer_code, $customerProvisional->bank_account_no, 'customer', $model_save);
+                $this->contactDetails = TblContactDetails::updateContactDetails($customerProvisional->customer_code, $customerProvisional->mobile_no, 'customer', $model_save);
+            } else {
+                $this->bankDetails = new TblBankDetails();
+                $this->contactDetails = new TblContactDetails();
+            }
             $this->contactDetails->form_validation_type = 'customer-create';
             $customerModel->scenario = 'createFront';
-            $customerModel->attributes = $customerProvisional->attributes;
-            $customerModel->customer_code = $customerModel->getCode();
+            if ($customerProvisional->provisional_from == 'mobile_update') {
+                $customerModel = TblCustomerMaster::find()->where(['customer_code' => $customerProvisional->customer_code])->one();
+                $customerHistoryModel = new TblCustomerMasterHistory();
+                Yii::$app->operation->history($customerModel, $customerHistoryModel, UPDATE);
+                $model_save[] = $customerHistoryModel;
+                foreach ($customerProvisional->attributes as $key => $value) {
+                    if ($value !== null && $value !== '' && $customerModel->hasAttribute($key)) {
+                        $customerModel->$key = $value;
+                    }
+                }
+            } else {
+                $customerModel->attributes = $customerProvisional->attributes;
+                $customerModel->customer_code = $customerModel->getCode();
+            }
 
             $exCode = $customerModel->customer_code_ex;
             if ($customerModel->validate()) {
                 $model_save[] = $customerModel;
 
                 $this->bankDetails->attributes = $customerProvisional->attributes;
+                $this->bankDetails->is_verified = $this->bankDetails->is_kyc_verified = $customerProvisional->is_bank_verify;
                 $bankValidate = 1;
                 if (!empty($this->bankDetails->bank_code)) {
-                    $this->bankDetails->setModel('customer', $customerModel->customer_code);
+                    if (empty($this->bankDetails->detail_code)) {
+                        $this->bankDetails->setModel('customer', $customerModel->customer_code);
+                    }
                     $this->bankDetails->scenario = 'bank_selected';
                     array_push($model_save, $this->bankDetails);
 
@@ -327,9 +350,10 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 }
 
                 $this->contactDetails->attributes = $customerProvisional->attributes;
-                $this->contactDetails->load(Yii::$app->request->post());
                 if (!empty($this->contactDetails->mobile_no)) {
-                    $this->contactDetails->setModel('customer', $customerModel->customer_code);
+                    if (empty($this->contactDetails->detail_code)) {
+                        $this->contactDetails->setModel('customer', $customerModel->customer_code);
+                    }
                     array_push($model_save, $this->contactDetails);
                 }
 
@@ -378,6 +402,35 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionSapErrorDataList() {
+        $searchModel = new TblCustomerMasterProvisionalSearch();
+        $searchModel->data_post_status = 3;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false);
+
+        return $this->render('index_sap', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionUpdateSapErrorData($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update_sap_error_data';
+        $this->model->scenario = 'updateFront';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblCustomerMasterProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $this->model->data_post_status = 0;
+            $this->model->resp_desc = $this->model->resp_status = $this->model->response_datetime = $this->model->picked_datetime = $this->model->response_msg = NULL;
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['sap-error-data-list']);
+            }
+        }
+        return $this->customRender();
     }
 
 }
