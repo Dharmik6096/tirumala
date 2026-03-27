@@ -22,7 +22,7 @@ $attribute = [
     ['attribute' => 'route_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->routeMapping, 'ref_code');
     }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
-    ['attribute' => 'dcs_name'],
+    ['attribute' => 'dcs_name', 'filter' => false],
     ['attribute' => 'district_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->districtCode, 'district_name');
     }, 'filter' => FALSE],
