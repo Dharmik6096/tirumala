@@ -86,7 +86,7 @@ class SiteController extends \app\controllers\ChildController {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -3266,31 +3266,35 @@ class SiteController extends \app\controllers\ChildController {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'output' => $output, 'plant_tanker_capacity_wise_tanker_status' => $table];
     }
-    
+
     public function getFeedBlockStatus($sp_param) {
         $sp_name = 'sp_product_dashboard_block';
         $feed_status = \Yii::$app->general->getSpData($sp_name, $sp_param);
         return [$feed_status];
     }
-    
+
     public function actionFeedSummaryDashboard() {
         $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
         $monthYear = !empty($_POST['Dashboard']['date']) ? $_POST['Dashboard']['date'] : date('m-Y');
         $dateTime = \DateTime::createFromFormat('d-m-Y', $monthYear);
         $fromDate = $dateTime->format('Y-m-01');
         $toDate = $dateTime->format('Y-m-t');
+        $plantCodes =  !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : 0;
+        $mccCodes = !empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0;
         $bmcCodes = !empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0;
-        $blocks_data = $this->getFeedBlockStatus([$union, 0, 0, 0, $bmcCodes, $fromDate, $toDate]);
+        $blocks_data = $this->getFeedBlockStatus([$union, $plantCodes, $mccCodes, 0, 0, 0, $bmcCodes, $fromDate, $toDate]);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $blocks_data[0][0], 'fromDate' => $fromDate, 'toDate' => $toDate];
     }
-    
+
     public function actionFeedSummaryDashboardDetails() {
         $model = new Dashboard();
         $union = !empty($_POST['union']) ? $_POST['union'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
         $stateCodes = !empty($_POST['Dashboard']['state_code']) ? $_POST['Dashboard']['state_code'] : 0;
         $regionCodes = !empty($_POST['Dashboard']['region_code']) ? $_POST['Dashboard']['region_code'] : 0;
         $areaCode = !empty($_POST['Dashboard']['area_code']) ? $_POST['Dashboard']['area_code'] : 0;
+        $plantCodes =  !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : 0;
+        $mccCodes = !empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0;
         $bmcCodes = (!empty($_POST['Dashboard']['area_bmc_code']) && $_POST['Dashboard']['area_bmc_code'] != 0) ? $_POST['Dashboard']['area_bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0);
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
             $monthYear = !empty($_POST['Dashboard']['month_year']) ? $_POST['Dashboard']['month_year'] : date('m-Y');
@@ -3301,10 +3305,12 @@ class SiteController extends \app\controllers\ChildController {
             $sp = 'sp_product_dashboard_block_list';
             $sp_name = 'sp_product_dashboard_block';
             $sp_param[] = $union;
+            $sp_param[] = !empty($plantCodes) ? $plantCodes : 0;
+            $sp_param[] = !empty($mccCodes) ? $mccCodes : 0;
             $sp_param[] = !empty($stateCodes) ? implode(',', $stateCodes) : 0;
             $sp_param[] = !empty($regionCodes) ? implode(',', $regionCodes) : 0;
             $sp_param[] = !empty($areaCode) ? implode(',', $areaCode) : 0;
-            $sp_param[] = !empty($bmcCodes) ? implode(',', $bmcCodes) : 0;
+            $sp_param[] = is_array($bmcCodes) ? implode(',', $bmcCodes) : (string)$bmcCodes;
             $sp_param[] = $fromDate;
             $sp_param[] = $toDate;
             $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
@@ -3317,8 +3323,8 @@ class SiteController extends \app\controllers\ChildController {
             $dateTime = \DateTime::createFromFormat('d-m-Y', $date);
             $fromDate = $dateTime->format('Y-m-01');
             $toDate = $dateTime->format('Y-m-t');
-            $output = \Yii::$app->general->getSpData($sp, [$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
-            $blocks_data = $this->getFeedBlockStatus([$union, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
+            $output = \Yii::$app->general->getSpData($sp, [$union, $plantCodes, $mccCodes, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
+            $blocks_data = $this->getFeedBlockStatus([$union, $plantCodes, $mccCodes, $stateCodes, $regionCodes, $areaCode, $bmcCodes, $fromDate, $toDate]);
             return $this->render('_dashboard_grid_feed_summary_detail', ['blocks_data' => $blocks_data, 'model' => $model, 'output' => $output]);
         }
     }
