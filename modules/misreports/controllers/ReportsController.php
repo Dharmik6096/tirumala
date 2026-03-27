@@ -2290,6 +2290,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
     
+    public function actionComplaintSummaryDetailReport() {
+        $this->report = 'ComplaintSummaryDetailReport';
+        return $this->actionIndex();
+    }
+    
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5064,6 +5069,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DpuRateComparision',
                 'title' => 'DPU Rate Comparision',
                 'bkg_export' => TRUE
+            ],
+            'ComplaintSummaryDetailReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,report_type',
+                'sp_name' => 'sp_complaint_summary_detail_report_email_trigger',
+                'scenario' => 'ComplaintSummaryDetailReport',
+                'title' => 'Complaint Status Report',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
             ],
         ];
         return $label[$l];

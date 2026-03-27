@@ -58,10 +58,12 @@ use common\services\ImportFilesService;
 use app\modules\organisation\models\TblDcsProvisionalHistory;
 use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
 use app\modules\organisation\models\TblCustomerMasterProvisionalHistory;
+use app\modules\email\models\TblMailFrequency;
+use app\modules\sms\models\TblAlertTemplate;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files', 'provisional-data-exchange','download-acknowledge-files','process-acknowledge-files'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files', 'provisional-data-exchange', 'download-acknowledge-files','process-acknowledge-files', 'email-module-alert'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1453,7 +1455,7 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
-                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr) === 'customRedirect');
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true) === 'customRedirect');
                                 if ($processed) {
                                     $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
                                     $dcsDir = $baseDir . 'dcs';
@@ -1557,6 +1559,112 @@ class SchedulerController extends ChildController {
                 $ftpLog->save(FALSE);
                 \Yii::error('[ProcessAcknowledge] File: ' . $fileName . ' | Error: ' . $ex->getMessage() . ' | Line: ' . $ex->getLine(), __METHOD__);
             }
+        }
+    }
+    
+    public function actionEmailModuleAlert() {
+        $apiMaster = new TblApiMaster();
+        $apiMaster->receiver_type = 'EMAIL';
+        $apiMasterData = $apiMaster->getAPI();
+        $f_date = date('Y-m-d');
+        $t_date = date('Y-m-d');
+        if (!empty($apiMasterData)) {
+            $output = \Yii::$app->general->getSpData('portal_auto_mail_frequency_list', []);
+            $j = 0;
+            foreach ($output as $data) {
+                $sp_params = [];
+                $freq_type = $data['frequency_type'];
+                $sp_name = $data['sp_name'];
+                $union_code = $data['union_code'];
+                $fd = $data['from_date'];
+                $fs = $data['from_shift'];
+                $td = $data['to_date'];
+                $ts = $data['to_shift'];
+                $sp_params['union_code'] = $union_code;
+                $sp_params['from_date'] = $f_date;
+                $sp_params['to_date'] = $t_date;
+                if ($freq_type == 'FREQUENCY') {
+                    $fromDate = date('Y-m-' . $fd);
+                    if ($data['data_month'] == 'LAST') {
+                        $fromDate = date('Y-m-d', strtotime("-1 months", strtotime($fromDate)));
+                    }
+                    $sp_params['from_date'] = $fromDate;
+                    if ($td == 'MONTH_END') {
+                        $sp_params['to_date'] = date('Y-m-t', strtotime($fromDate));
+                    } else {
+                        $sp_params['to_date'] = date('Y-m-' . $td);
+                    }
+                } elseif ($freq_type == 'DAILY') {
+                    if ($fd == '-1') {
+                        $sp_params['from_date'] = date('Y-m-d', strtotime($f_date . ' -1 day'));
+                    }
+                    $sp_params['to_date'] = $sp_params['from_date'];
+                }
+                $sp_params['from_date'] .= ' ' . \Yii::$app->general->getshift($fs) . '.000';
+                $sp_params['to_date'] .= ' ' . \Yii::$app->general->getshift($ts) . '.000';
+                $result = \Yii::$app->general->getSpData($sp_name, $sp_params);
+                if (!empty($result)) {
+                    $mailArray = [];
+                    $i = 0;
+                    foreach ($result as $mailData) {
+                        $key = $mailData['email'];
+                        unset($mailData['email']);
+                        if (!empty($mailArray[$key])) {
+                            $mailArray[$key][] = $mailData;
+                        } else {
+                            $mailArray[$key] = [];
+                            $mailArray[$key][] = $mailData;
+                        }
+                        $i ++;
+                    }
+
+                    foreach ($mailArray as $keyValue => $mailDetail) {
+                        $htmlContent = "";
+                        $message = "";
+                        $file_name = "";
+                        $file_path = "";
+                        $this->setHtmlContentReport($htmlContent, $message, $file_name, $file_path, $mailDetail, $data, $j);
+                        $to = $keyValue;
+                        $j++;
+                        $templateModel = new TblAlertTemplate();
+                        $templateData = $templateModel->getTemplateData('portal_auto_email_alert', 'EMAIL', $apiMasterData->union_code);
+                        if (!empty($file_name)) {
+                            $notificationModel = new TblAlertNotification();
+                            $notificationModel->receiver_type = 'EMAIL';
+                            $notificationModel->message = !empty($templateData->message) ? $templateData->message : $htmlContent;
+                            $notificationModel->header_info = $message;
+                            $notificationModel->send_status = 0;
+                            $notificationModel->content_id = $apiMasterData->api_master_id;
+                            $notificationModel->module_type = "Mail Alert";
+                            $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                            $notificationModel->send_mail = 1;
+                            $notificationModel->receiver_detail = $to;
+                            $notificationModel->filename = $file_name;
+                            $notificationModel->file_path = $file_path;
+                            $notificationModel->has_attachment = 2;
+                            $notificationModel->save();
+                        }
+                    }
+                }
+                $frequencyModel = new TblMailFrequency();
+                $nextExec = date('Y-m-d  H:i:s', strtotime($data['next_execution_time'] . $data['frequency_interval']));
+                $frequencyModel->updateAll(['next_execution_time' => $nextExec, 'updated_at' => date('Y-m-d H:i:s')], ['mail_frequency_id' => $data['mail_frequency_id']]);
+            }
+        }
+    }
+
+    public function setHtmlContentReport(&$htmlContent, &$message, &$fileName, &$file_path, $result, $data, $j) {
+        $message = $data['report_name'];
+        $report_type = $data['report_type'];
+        $htmlContent = '<p>Dear Sir, <br/><br/>' . $message;
+        $htmlContent .= '<br/><br/>Detailed report is attached herewith </p>';
+        $htmlContent .= '<br/><br/>';
+        $htmlContent .= '<p>Regards,';
+        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
+        if (!empty($result) && $report_type == 'excel') {
+            $datetime = date('dmYhis') . $j;
+            $fileName = str_replace(' ', '_', $data['report_name']) . '-' . $datetime . '.xls';
+            $file_path = $this->CreateFile($fileName, $result);
         }
     }
 }

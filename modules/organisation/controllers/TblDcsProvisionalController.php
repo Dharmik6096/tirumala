@@ -421,7 +421,7 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false) {
         if (!empty($dcsProvisional)) {
             $dcsProvisional->is_approved = 1;
             $dcsProvisional->approved_at = date('Y-m-d H:i:s');
@@ -530,7 +530,7 @@ class TblDcsProvisionalController extends ChildController {
                     $mapList[] = $vendorModel;
                 }
             }
-            if ($bankValidate == 1) {
+            if ($bankValidate == 1 && !$skipUniqueValidation) {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
