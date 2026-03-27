@@ -150,6 +150,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->model->is_approved = 0;
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
             $this->model->provisional_member_code = Yii::$app->general->getUuid();
+            $this->model->data_post_id = Yii::$app->general->getUuid();
             $this->model->member_code = $this->model->getCode();
             $this->model->pro_ex_member_code = $this->model->ex_member_code;
             $this->setModel();

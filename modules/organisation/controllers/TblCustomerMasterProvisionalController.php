@@ -91,6 +91,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
 
             if (empty($this->model->getErrors())) {
+                $this->model->data_post_id = Yii::$app->general->getUuid();
                 $this->model->customer_code_ex = !empty($this->model->prefix . $exCode) ? $this->model->prefix . $exCode : $this->model->customer_code_ex;
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'create']);
                 if ($transaction == 'customRedirect') {
