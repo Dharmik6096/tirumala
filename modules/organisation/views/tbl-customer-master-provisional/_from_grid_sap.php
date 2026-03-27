@@ -22,12 +22,12 @@ $attribute = [
     ['attribute' => 'route_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
     }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
-    ['attribute' => 'customer_name'],
+    ['attribute' => 'customer_name', 'filter' => false],
     ['attribute' => 'district_code', 'value' => function ($model) {
         return Yii::$app->general->getforeignkey($model->districtCode, 'district_name');
     }, 'filter' => FALSE],
     ['attribute' => 'state_code', 'filter' => false],
-    ['attribute' => 'pincode'],
+    ['attribute' => 'pincode', 'filter' => false],
     ['attribute' => 'mobile_no', 'filter' => false],
     ['attribute' => 'aadhaar_no', 'filter' => false],
 
