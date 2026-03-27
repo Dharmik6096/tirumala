@@ -109,7 +109,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
-        <div class="col-sm-2 mt10">
+        <div class="col-sm-4 mt10">
             <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <div class='pull-left col-sm-8'>

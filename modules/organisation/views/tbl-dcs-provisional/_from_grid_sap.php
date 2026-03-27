@@ -1,6 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => function ($model) {
@@ -27,7 +27,7 @@ $attribute = [
         return Yii::$app->general->getforeignkey($model->districtCode, 'district_name');
     }, 'filter' => FALSE],
     ['attribute' => 'state_code', 'filter' => false],
-    ['attribute' => 'pincode'],
+    ['attribute' => 'pincode', 'filter' => false],
     ['attribute' => 'mobile_no', 'filter' => false],
     ['attribute' => 'aadhaar_no', 'filter' => false],
 
