@@ -405,7 +405,7 @@ $form = ActiveForm::begin([
         <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
         <!-- <div class="clearfix"></div> -->
         <?php // if ($type == 'create') {     ?>
-        <?php if ($type == 'create') { ?>
+        <?php if ($model->provisional_from != 'mobile_update') { ?>
             <div class="col-sm-2 mt10">
                 <?= $form->field($model, 'auto_member_create', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             </div>
