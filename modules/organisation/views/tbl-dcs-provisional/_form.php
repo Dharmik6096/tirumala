@@ -302,7 +302,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="clearfix"></div>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_aadhar_verify'); ?>
         </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_top">
@@ -370,14 +370,14 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'beneficiary_name')->textInput() ?>
             </div>
             <div class="col-sm-2 mt10">
-                <?= $form->field($model, 'is_bank_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bank_verify'); ?>
             </div>
             <!--<div class="col-sm-2">
             <? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div>-->
-        <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
         <div class="col-sm-12">
+            <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
             <div class="col-sm-2 mt10">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
             </div>

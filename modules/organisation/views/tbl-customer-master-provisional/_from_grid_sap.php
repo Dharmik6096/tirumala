@@ -82,7 +82,7 @@ $grid_option = [
     'actions' => [
         'update' => function ($url, $model) {
             $url = ['/organisation/tbl-customer-master-provisional/update-sap-error-data', 'id' => $model->customer_provisional_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
         }
     ]
 ];

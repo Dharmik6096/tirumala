@@ -82,7 +82,7 @@ $grid_option = [
     'actions' => [
         'update' => function ($url, $model) {
             $url = ['/dcsoperation/tbl-member-provisional/update-sap-error-data', 'id' => $model->provisional_member_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->provisional_member_code, 'data-name' => $model->member_name]);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->provisional_member_code, 'data-name' => $model->member_name]);
         }
     ]
 ];

@@ -110,7 +110,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
         <div class="col-sm-4 mt10">
-            <?= $form->field($model, 'is_aadhar_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_aadhar_verify'); ?>
         </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
@@ -202,7 +202,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'beneficiary_name')->textInput() ?>
         </div>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'is_bank_verify', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bank_verify'); ?>
         </div>
     </div>
     <div class="row">
