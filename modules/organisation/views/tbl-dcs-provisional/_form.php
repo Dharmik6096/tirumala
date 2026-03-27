@@ -300,6 +300,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-2 mt10">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_aadhar_verify'); ?>
+        </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_top">
         <!-- <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -365,12 +369,15 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'beneficiary_name')->textInput() ?>
             </div>
+            <div class="col-sm-2 mt10">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bank_verify'); ?>
+            </div>
             <!--<div class="col-sm-2">
             <? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div>-->
-        <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
         <div class="col-sm-12">
+            <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
             <div class="col-sm-2 mt10">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
             </div>
@@ -646,6 +653,25 @@ $form = ActiveForm::begin([
             }
         });
     });
+    enableDisableField();
+    $('#tbldcsprovisional-is_aadhar_verify,#tbldcsprovisional-is_bank_verify').on('click',function(){
+        enableDisableField();
+    });
+    function enableDisableField(){
+        $('.field-tbldcsprovisional-aadhaar_no').removeClass('disabled no_pointer');
+        $('.field-tbldcsprovisional-bank_code').removeClass('disabled no_pointer');
+        $('.field-tbldcsprovisional-branch_code').removeClass('disabled no_pointer');
+        $('.field-tbldcsprovisional-bank_account_no').removeClass('disabled no_pointer');
+
+        if ($('#tbldcsprovisional-is_aadhar_verify').is(':checked')) {
+            $('.field-tbldcsprovisional-aadhaar_no').addClass('disabled no_pointer');
+        }
+        if ($('#tbldcsprovisional-is_bank_verify').is(':checked')) {
+            $('.field-tbldcsprovisional-bank_code').addClass('disabled no_pointer');
+            $('.field-tbldcsprovisional-branch_code').addClass('disabled no_pointer');
+            $('.field-tbldcsprovisional-bank_account_no').addClass('disabled no_pointer');
+        }
+    }
 ";
     $this->registerJs($script, View::POS_END, 'union-select');
     $this->registerJs($script, View::POS_END, 'bank-select');

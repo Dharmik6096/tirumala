@@ -18,6 +18,7 @@ use app\modules\details\models\TblBankDetails;
 use app\modules\general\models\TblDepartment;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use app\modules\globalmaster\models\TblAnimalType;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -71,7 +72,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $main_rules = [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
                 [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc', 'pan_no'], 'safe'],
+                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'animal_type_code', 'distance_from_mcc', 'pan_no', 'is_aadhar_verify'], 'safe'],
                 [['route'], 'required', 'on' => ['importCsv']],
                 [['is_active', 'animal_type_code'], 'integer'],
                 [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
@@ -84,8 +85,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 [['customer_code_ex'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
-            //['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
-            [['bmc_code'], function ($attribute, $params) {
+                //['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
                 [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
@@ -288,7 +289,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
         foreach ($sentboxArray as $sent) {

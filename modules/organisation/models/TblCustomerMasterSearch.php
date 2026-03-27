@@ -22,7 +22,7 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
         return [
                 [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code', 'ref_code', 'aadhaar_no', 'master_type'], 'safe'],
                 [['is_active', 'originating_type'], 'integer'],
-                [['bmc_code', 'mcc_plant_code', 'plant_code', 'ts_code_m', 'ts_code_e'], 'safe'],
+                [['bmc_code', 'mcc_plant_code', 'plant_code', 'ts_code_m', 'ts_code_e', 'is_aadhar_verify'], 'safe'],
                 [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['verification']],
                 [['union_code', 'plant_code', 'master_type'], 'required', 'on' => ['mmd-verification']]
