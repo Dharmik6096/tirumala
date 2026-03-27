@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 ?>
 <?php

@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
@@ -20,7 +20,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <?= Html::hiddenInput('warning', $nameWarning, ['id' => 'warning']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+    <div class="col-md-6 padding_10_0 theme-box theme_border_right row">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Provisional DCS Details') ?></h4>
         </div>
@@ -109,7 +109,7 @@ $form = ActiveForm::begin([
     <div class="row">
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
-                <?= Html::submitButton(Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?= Html::submitButton(Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'name' => 'submitBtn', 'value' => 'save']) ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
