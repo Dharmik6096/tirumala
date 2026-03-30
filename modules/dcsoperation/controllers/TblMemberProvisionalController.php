@@ -541,7 +541,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                
+
                 if ($isValid) {
                     if ($memberModel->provisional_status == 'Approve' && $memberCreationPendingForSapApproval != '1') {
                         $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
@@ -554,6 +554,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         foreach ($errors as $error) {
                             $member_error .= $error . '<br/>';
                         }
+                    }
+                }
+                if (!empty($message)) {
+                    foreach ($message as $msg) {
+                        $member_error .= $msg;
                     }
                 }
                 if (empty($member_error)) {
