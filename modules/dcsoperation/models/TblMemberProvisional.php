@@ -712,11 +712,11 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function getMemberPrivisionalDocuments() {
-        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code']);
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code'])->andOnCondition(['tbl_attachment.module_name' => 'tbl_member_provisional']);
     }
 
     public function getMemberPrivisionalApproval() {
-        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->andOnCondition(['tbl_process_approval.process_name' => 'member'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
 
