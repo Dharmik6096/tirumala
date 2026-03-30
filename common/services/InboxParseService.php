@@ -43,7 +43,11 @@ class InboxParseService {
 
                 $verifyCountModel->total_count = count($modelData);
                 $verifyCountModel->updated_at = date('Y-m-d H:i:s');
-                $verifyCountModel->save();
+                try {
+                    $verifyCountModel->save();
+                } catch (\Throwable $e) {
+                    
+                }
 
                 foreach ($modelData as $transaction_data) {
                     try {
@@ -195,7 +199,7 @@ class InboxParseService {
                                 $masterSave = [];
                                 if ($process_record) {
                                     $masterSave[] = $model;
-                                    if(!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL'.$transaction_data->source_org_id.'AMCS'){
+                                    if (!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL' . $transaction_data->source_org_id . 'AMCS') {
                                         $transaction_data->generateSentBox($masterSave);
                                     }
                                 }
@@ -239,18 +243,30 @@ class InboxParseService {
                             }
                         }
                     } catch (\Throwable $ex) {
+                        if (Yii::$app->request->isConsoleRequest) {
+                            $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                            $this->stderr('[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: ' . $ex->getMessage() . PHP_EOL);
+                        }
                         $errorCount++;
-                        $transaction_data->error_log = 'Throwable Exception';
-                        $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                        $transaction_data->data_post_status = 3;
-                        $transaction_data->save();
+                        try {
+                            $transaction_data->error_log = substr($ex->getMessage(), 0, 1000);
+                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->data_post_status = 3;
+                            $transaction_data->save();
+                        } catch (\Throwable $e) {
+                            
+                        }
                     }
                     $i++;
                 }
-                $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
-                $verifyCountModel->success_count = $successCount;
-                $verifyCountModel->error_count = $errorCount;
-                $verifyCountModel->save();
+                try {
+                    $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
+                    $verifyCountModel->success_count = $successCount;
+                    $verifyCountModel->error_count = $errorCount;
+                    $verifyCountModel->save();
+                } catch (\Throwable $e) {
+                    
+                }
             } else {
                 return false;
             }
@@ -264,6 +280,7 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
+                
             }
         } catch (\Throwable $e) {
             try {
@@ -275,6 +292,7 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
+                
             }
         }
         return true;

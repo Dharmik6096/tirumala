@@ -74,7 +74,8 @@ class GeneralModel {
                 $transaction->commit();
                 //var_dump($master);exit;
                 if (Yii::$app->request->isConsoleRequest) {
-                    echo Yii::$app->label->message($message[1], $message[0]) . "\n";
+                    $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                    fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: ' . Yii::$app->label->message($message[1], $message[0]) . PHP_EOL);
                 } else {
                     Yii::$app->display->message(true, $message[0], $message[1]);
                 }
@@ -87,7 +88,8 @@ class GeneralModel {
                 $transaction->rollback();
                 //var_dump($model);exit;
                 if (Yii::$app->request->isConsoleRequest) {
-                    echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+                    $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                    fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: Your transaction is not saved successfully' . PHP_EOL);
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                         'message' => 'Your transaction is not saved successfully']);
@@ -97,7 +99,8 @@ class GeneralModel {
         } catch (UserException $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo $e->getMessage() . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . $e->getMessage() . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
@@ -108,7 +111,8 @@ class GeneralModel {
             $transaction->rollback();
             $message = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
             if (Yii::$app->request->isConsoleRequest) {
-                echo $message . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . $message . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $message]);
@@ -517,7 +521,8 @@ class GeneralModel {
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
                 if (Yii::$app->request->isConsoleRequest) {
-                    echo Yii::$app->label->message($message[1], $message[0]) . "\n";
+                    $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                    fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . Yii::$app->label->message($message[1], $message[0]) . PHP_EOL);
                 } else {
                     Yii::$app->display->message(true, $message[0], $message[1]);
                 }
@@ -525,7 +530,8 @@ class GeneralModel {
             }
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: Your transaction is not saved successfully' . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
@@ -534,7 +540,8 @@ class GeneralModel {
         } catch (UserException $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo $e->getMessage() . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . $e->getMessage() . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
@@ -548,7 +555,8 @@ class GeneralModel {
             $transaction->rollback();
             $message = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
             if (Yii::$app->request->isConsoleRequest) {
-                echo $message . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . $message . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $message]);
@@ -561,7 +569,8 @@ class GeneralModel {
         } catch (\Throwable $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo $e->getMessage() . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . $e->getMessage() . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
@@ -594,7 +603,8 @@ class GeneralModel {
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
                 if (Yii::$app->request->isConsoleRequest) {
-                    echo Yii::$app->label->message($message[1], $message[0]) . "\n";
+                    $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                    fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . Yii::$app->label->message($message[1], $message[0]) . PHP_EOL);
                 } else {
                     Yii::$app->display->message(true, $message[0], $message[1]);
                 }
@@ -602,7 +612,8 @@ class GeneralModel {
             }
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo Yii::t('app', 'Your transaction is not saved successfully') . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: Your transaction is not saved successfully' . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
@@ -611,7 +622,8 @@ class GeneralModel {
         } catch (UserException $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo $e->getMessage() . "\n";
+                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+                fwrite(STDERR,'[' . date('Y-m-d H:i:s') . '][' . $cmd . ']:' . $e->getMessage() . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $e->getMessage()]);
@@ -620,7 +632,8 @@ class GeneralModel {
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
             if (Yii::$app->request->isConsoleRequest) {
-                echo htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8') . "\n";
+                $cmd = (isset(Yii::$app->controller->id) ? Yii::$app->controller->id : "") . "/" . (isset(Yii::$app->controller->action->id) ? Yii::$app->controller->action->id : "");
+               fwrite(STDERR,$cmd . ' : ' . htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8') . PHP_EOL);
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
