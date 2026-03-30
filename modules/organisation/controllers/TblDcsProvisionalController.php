@@ -392,7 +392,7 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false) {
         if (!empty($dcsProvisional)) {
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
@@ -456,7 +456,7 @@ class TblDcsProvisionalController extends ChildController {
                 $vendorModel->vendor_code = $this->model->vendor_code;
                 array_push($mapList, $vendorModel);
             }
-            if ($bankValidate == 1) {
+            if ($bankValidate == 1 && !$skipUniqueValidation) {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
