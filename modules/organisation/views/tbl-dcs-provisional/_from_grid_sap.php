@@ -73,6 +73,7 @@ $attribute = [
         'visible' => false
     ],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'response_msg', 'filter' => FALSE],
 ];
 $gridId = 'sap-dcs-provisional-list';
 $grid_option = [
