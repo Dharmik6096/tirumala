@@ -115,7 +115,7 @@ class TblBonusPaymentController extends ChildController {
     }
 
     public function actionPaymentAdjust() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblBonusPaymentSummary();
         $model->load(Yii::$app->request->get());
         if (Yii::$app->request->post()) {
