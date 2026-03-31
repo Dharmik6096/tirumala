@@ -551,12 +551,12 @@ class TblDcsProvisional extends ChildModel {
 
     public function getDcsPrivisionalDocuments() {
         $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
-        return $this->hasMany(TblAttachment::className(), ['module_code' => 'dcs_provisional_code']);
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_attachment.module_name' => 'tbl_dcs_provisional']);
     }
 
     public function getDcsPrivisionalApproval() {
         $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
-        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->orderBy('level ASC');
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.process_name' => 'society'])->orderBy('level ASC');
     }
 
     function validOneDigitDecimal($model, $attribute, $params) {
