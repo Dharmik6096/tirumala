@@ -150,7 +150,7 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['dcs_provisional_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type', 'remarks'], 'safe'],
+                [['dcs_provisional_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type', 'remarks', 'provisional_from', 'is_aadhar_verify', 'is_bank_verify', 'is_approved', 'approved_at', 'approved_by'], 'safe'],
                 [['effective_date', 'registration_date', 'valid_from', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
                 [['DPUVersionNo'], 'safe'],
                 [['morning_kms', 'evening_kms', 'cheque_amount'], 'safe'],
@@ -316,6 +316,12 @@ class TblDcsProvisionalHistory extends \yii\db\ActiveRecord {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'status' => Yii::t('app', 'Status'),
+            'provisional_from' => Yii::t('app', 'Provisional From'),
+            'is_aadhar_verify' => Yii::t('app', 'Is Aadhar Verify'),
+            'is_bank_verify' => Yii::t('app', 'Is Bank Verify'),
+            'is_approved' => Yii::t('app', 'Is Approved'),
+            'approved_at' => Yii::t('app', 'Approved At'),
+            'approved_by' => Yii::t('app', 'Approved By'),
         ];
     }
 
