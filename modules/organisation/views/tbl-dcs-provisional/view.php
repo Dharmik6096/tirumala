@@ -469,6 +469,34 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_approved',
+                                'format' => 'html',
+                                'value' => Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_approved'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'provisional_from',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_aadhar_verify',
+                                'value' => Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_aadhar_verify'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'is_bank_verify',
+                                'value' => Yii::$app->general->getStaticDropdownVal('verified_flag', $model, 'is_bank_verify'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget

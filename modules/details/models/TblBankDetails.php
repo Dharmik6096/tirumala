@@ -171,4 +171,42 @@ class TblBankDetails extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'module_code']);
     }
 
+    public static function updateBankDetails($code, $bank_account_no, $module_name, &$mapList) {
+        $activeBanks = self::find()->where(['module_name' => $module_name, 'module_code' => $code, 'is_active' => 1])->indexBy('bank_account_no')->all();
+
+        $currentDefaultBank = false;
+        foreach ($activeBanks as $b) {
+            if ($b->is_default == 1) {
+                $currentDefaultBank = $b;
+                break;
+            }
+        }
+
+        $bankDetails = null;
+        if (isset($activeBanks[$bank_account_no])) {
+            $bankDetails = $activeBanks[$bank_account_no];
+            if ($bankDetails->is_default != 1) {
+                $historyBankDetails = new TblBankDetailsHistory();
+                \Yii::$app->operation->history($bankDetails, $historyBankDetails, UPDATE);
+                $mapList[] = $historyBankDetails;
+            }
+        } else {
+            $bankDetails = new self();
+        }
+
+        if ($currentDefaultBank && $currentDefaultBank->detail_code != $bankDetails->detail_code) {
+            $historyOldDefault = new TblBankDetailsHistory();
+            \Yii::$app->operation->history($currentDefaultBank, $historyOldDefault, UPDATE);
+            $mapList[] = $historyOldDefault;
+            $currentDefaultBank->is_active = 0;
+            $currentDefaultBank->is_default = 0;
+            $mapList[] = $currentDefaultBank;
+        }
+
+        $bankDetails->is_default = 1;
+        $bankDetails->is_active = 1;
+
+        return $bankDetails;
+    }
+
 }

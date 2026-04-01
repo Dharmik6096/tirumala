@@ -17,6 +17,7 @@ use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
 use app\modules\organisation\models\TblCustomerDeactive;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_customer_master_provisional".
@@ -116,9 +117,10 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'customer_code', 'firstname', 'mobile_no', 'customer_name', 'plant_code', 'mcc_plant_code', 'address', 'customer_type', 'bmc_code'], 'required'],
                 [['customer_name', 'address', 'state_code', 'process_approval_code', 'district_code', 'rate_chart_code', 'billing_payment_cycle', 'detail_code', 'over_head', 'ccenter_code', 'customer_code', 'bmc_code', 'old_bmc_code', 'bank_code', 'sub_district_code', 'old_mcc_plant_code', 'village_code', 'hamlet_code', 'vendor_code', 'local_name', 'local_firstname', 'local_lastname', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'remarks', 'animal_type_code', 'distance_from_mcc', 'created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'old_route_code', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix', 'contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code', 'x_col2', 'data_post_id', 'data_post_status', 'status', 'picked_datetime', 'resp_status', 'resp_desc', 'branch_code', 'response_datetime', 'morning_kms', 'evening_kms', 'originating_type', 'firstname', 'lastname'], 'safe'],
-                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
+                [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'is_aadhar_verify', 'is_bank_verify', 'provisional_from', 'is_approved', 'approved_at', 'approved_by'], 'safe'],
                 [['animal_type_code', 'auto_code'], 'integer'],
                 [['status'], 'default', 'value' => 'Pending'],
+                [['is_approved'], 'default', 'value' => 0],
                 [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
                 [['mobile_no'], function ($attribute, $params) {
@@ -149,6 +151,16 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                     }
                     Yii::$app->general->validateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'createFront']],
+                [['aadhaar_no'], 'required', 'when' => function ($model) {
+                    return ($model->is_aadhar_verify == 1);
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblcustomermasterprovisional-is_aadhar_verify').prop('checked') == true;
+                }", 'on' => ['createFront', 'updateFront']],
+                [['bank_account_no', 'bank_code', 'branch_code'], 'required', 'when' => function ($model) {
+                    return ($model->is_bank_verify == 1);
+                }, 'whenClient' => "function (attribute, value) { 
+                        return $('#tblcustomermasterprovisional-is_bank_verify').prop('checked') == true;
+                }", 'on' => ['createFront', 'updateFront']],
                 [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
@@ -245,7 +257,12 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
-            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
+            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name'),
+            'provisional_from' => Yii::t('app', 'Provisional From'),
+            'customer_status' => Yii::t('app', 'Customer Status'),
+            'is_approved' => Yii::t('app', 'Approval status'),
+            'approved_at' => Yii::t('app', 'Approve Date'),
+            'approved_by' => Yii::t('app', 'Approved By'),
         ];
     }
 
@@ -338,8 +355,11 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             $encryptedMobile = Yii::$app->general->encryptData($mobile);
 
             $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name', 'customer_type'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
-                    ->one();
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
+            if (!empty($this->customer_code)) {
+                $existsInCustomer->andWhere(['<>', 'customer_code', $this->customer_code]);
+            }
+            $existsInCustomer = $existsInCustomer->one();
             if ($existsInCustomer) {
                 $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomer->customer_code, TblCustomerDeactive::class, 'customer_code', $existsInCustomer->customer_type);
                 if (empty($isDeactive)) {
@@ -350,8 +370,10 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
 
             $existsInProvisional = $this->find()->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
                     ->andWhere(['not in', 'lower(status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!empty($this->customer_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            } else if (!empty($this->customer_code)) {
+                $existsInProvisional->andWhere(['<>', 'customer_code', $this->customer_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
@@ -369,12 +391,15 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
 
             $existsInCustomerBank = TblBankDetails::find()->select(['tbl_bank_details.module_code', 'cus.customer_name'])
-                            ->leftJoin('tbl_customer_master cus', 'cus.customer_code = tbl_bank_details.module_code')
-                            ->where(['tbl_bank_details.is_active' => 1])
-                            ->andWhere(['tbl_bank_details.module_name' => 'customer'])
-                            ->andWhere(['tbl_bank_details.is_default' => 1])
-                            ->andWhere(['or', ['tbl_bank_details.bank_account_no' => $bankAccNo], ['tbl_bank_details.bank_account_no' => $encryptedBankAccNo]])
-                            ->asArray()->one();
+                    ->leftJoin('tbl_customer_master cus', 'cus.customer_code = tbl_bank_details.module_code')
+                    ->where(['tbl_bank_details.is_active' => 1])
+                    ->andWhere(['tbl_bank_details.module_name' => 'customer'])
+                    ->andWhere(['tbl_bank_details.is_default' => 1])
+                    ->andWhere(['or', ['tbl_bank_details.bank_account_no' => $bankAccNo], ['tbl_bank_details.bank_account_no' => $encryptedBankAccNo]]);
+            if (!empty($this->customer_code)) {
+                $existsInCustomerBank->andWhere(['<>', 'tbl_bank_details.module_code', $this->customer_code]);
+            }
+            $existsInCustomerBank = $existsInCustomerBank->asArray()->one();
 
             if ($existsInCustomerBank) {
                 $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomerBank['module_code'], TblCustomerDeactive::class, 'customer_code');
@@ -386,8 +411,10 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
 
             $existsInProvisional = $this->find()->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
                     ->andWhere(['not in', 'lower(status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!empty($this->customer_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            } else if (!empty($this->customer_code)) {
+                $existsInProvisional->andWhere(['<>', 'customer_code', $this->customer_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
@@ -405,8 +432,11 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
 
             $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name', 'customer_type'])->where(['is_active' => 1])
-                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
-                    ->one();
+                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]]);
+            if (!empty($this->customer_code)) {
+                $existsInCustomer->andWhere(['<>', 'customer_code', $this->customer_code]);
+            }
+            $existsInCustomer = $existsInCustomer->one();
             if ($existsInCustomer) {
                 $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomer->customer_code, TblCustomerDeactive::class, 'customer_code', $existsInCustomer->customer_type);
                 if (empty($isDeactive)) {
@@ -425,8 +455,10 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
 
             $existsInProvisional = $this->find()->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
                     ->andWhere(['not in', 'lower(status)', ['reject']]);
-            if (!$this->isNewRecord) {
+            if (!empty($this->customer_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            } else if (!empty($this->customer_code)) {
+                $existsInProvisional->andWhere(['<>', 'customer_code', $this->customer_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
@@ -435,6 +467,10 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                 return false;
             }
         }
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
 }
