@@ -239,4 +239,42 @@ class TblContactDetails extends \app\models\ChildModel {
         }
     }
 
+    public static function updateContactDetails($code, $mobile_no, $module_name, &$mapList) {
+        $activeContacts = self::find()->where(['module_name' => $module_name, 'module_code' => $code, 'is_active' => 1])->indexBy('mobile_no')->all();
+
+        $currentDefaultContact = false;
+        foreach ($activeContacts as $c) {
+            if ($c->is_default == 1) {
+                $currentDefaultContact = $c;
+                break;
+            }
+        }
+
+        $contactDetails = null;
+        if (isset($activeContacts[$mobile_no])) {
+            $contactDetails = $activeContacts[$mobile_no];
+            if ($contactDetails->is_default != 1) {
+                $historyContactDetails = new TblContactDetailsHistory();
+                \Yii::$app->operation->history($contactDetails, $historyContactDetails, UPDATE);
+                $mapList[] = $historyContactDetails;
+            }
+        } else {
+            $contactDetails = new self();
+        }
+
+        if ($currentDefaultContact && $currentDefaultContact->detail_code != $contactDetails->detail_code) {
+            $historyOldDefault = new TblContactDetailsHistory();
+            \Yii::$app->operation->history($currentDefaultContact, $historyOldDefault, UPDATE);
+            $mapList[] = $historyOldDefault;
+            $currentDefaultContact->is_active = 0;
+            $currentDefaultContact->is_default = 0;
+            $mapList[] = $currentDefaultContact;
+        }
+
+        $contactDetails->is_default = 1;
+        $contactDetails->is_active = 1;
+
+        return $contactDetails;
+    }
+
 }
