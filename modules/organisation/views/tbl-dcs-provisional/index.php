@@ -7,6 +7,7 @@ if ($pending_approval) {
         $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Society'));
         $this->params['menu'][] = Yii::$app->controls->add('Provisional Society');
     }
+    $this->params['menu'][] = Yii::$app->controls->custombutton('Update SAP Error Data', 'sap-error-data-list', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil-alt"></i>');
 }
 ?>
 <div class="tbl-dcs-index">

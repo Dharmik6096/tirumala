@@ -102,6 +102,7 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->getCode();
+            $this->model->data_post_id = Yii::$app->general->getUuid();
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
@@ -275,19 +276,43 @@ class TblDcsProvisionalController extends ChildController {
         return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
     }
 
-    private function setMilk() {
+    private function setMilk($dcsUpdate = false) {
         $milkArray = $this->model->milk_type_code;
         if ($this->model->milk_type_auto == 1) {
-            $milkArray = ["1", "2", "3"];
+            $milkArray = [1, 2, 3];
         }
         $list = [];
-        foreach ($milkArray as $row) {
-            $modelMilk = new TblDcsMilkType();
-            $modelMilk->dcs_code = $this->model->dcs_code;
-            $modelMilk->milk_type_code = $row;
-            $modelMilk->is_active = 1;
-            array_push($list, $modelMilk);
+
+        if ($dcsUpdate) {
+            $milkType = TblDcsMilkType::find()->where(['dcs_code' => $this->model->dcs_code, 'is_active' => 1])->all();
+            $returnedArray = \yii\helpers\ArrayHelper::map($milkType, 'milk_type_code', 'milk_type_code');
+
+            $toRevoke = array_diff($returnedArray, $milkArray);
+            $toAssign = array_diff($milkArray, $returnedArray);
+            foreach ($toRevoke as $value) {
+                $milkModel = TblDcsMilkType::find()->where(['dcs_code' => $this->model->dcs_code, 'milk_type_code' => $value])->one();
+                $milkHistory = new TblDcsMilkTypeHistory();
+                Yii::$app->operation->history($milkModel, $milkHistory, DELETE);
+                array_push($list, $milkHistory);
+                array_push($list, $milkModel);
+            }
+            foreach ($toAssign as $value) {
+                $milkModel = new TblDcsMilkType();
+                $milkModel->dcs_code = $this->model->dcs_code;
+                $milkModel->milk_type_code = $value;
+                $milkModel->is_active = 1;
+                array_push($list, $milkModel);
+            }
+        } else {
+            foreach ($milkArray as $row) {
+                $modelMilk = new TblDcsMilkType();
+                $modelMilk->dcs_code = $this->model->dcs_code;
+                $modelMilk->milk_type_code = $row;
+                $modelMilk->is_active = 1;
+                array_push($list, $modelMilk);
+            }
         }
+
         return $list;
     }
 
@@ -324,6 +349,7 @@ class TblDcsProvisionalController extends ChildController {
             $model_save = [];
             $model_save[] = $historyApproval;
             $model_save[] = $model;
+            $status = '';
             if (!empty($model_save)) {
                 $model->ApprovalList($model, $model_save, $status);
                 $dcsModel = $this->findModel($model->process_code);
@@ -335,9 +361,13 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsModel->scenario = 'approveDcs';
 
                 $dcsCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($dcsModel->union_code, 'dcs_creation_pending_for_sap_approval', 'PORTAL');
-                $dcsModel->dcs_status = 0; // Approved
-                if (strtolower($status) == 'approve' && $dcsCreationPendingForSapApproval != '1') {
-                    $dcsModel->dcs_status = 1; // Created
+                $dcsModel->dcs_status = 0;
+                if (strtolower($status) === 'approve') {
+                    $dcsModel->dcs_status = $dcsCreationPendingForSapApproval ? 0 : 1;
+                    if ($dcsCreationPendingForSapApproval) {
+                        $dcsModel->approved_at = date('Y-m-d H:i:s');
+                        $dcsModel->approved_by = Yii::$app->user->identity->user_code;
+                    }
                 }
 
                 $model_save[] = $dcsModel;
@@ -364,9 +394,9 @@ class TblDcsProvisionalController extends ChildController {
                         for ($i = 0; $i < count($all_doc); $i++) {
                             $fileName = basename($dcsdoc[$i]);
                             $file = $dcsDir . '/' . $fileName;
-                            $upload = copy($proDcsDir . '/' . $all_doc[$i], $file);
-                            if ($upload) {
-                                if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
+                            if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
+                                $upload = copy($proDcsDir . '/' . $all_doc[$i], $file);
+                                if ($upload) {
                                     unlink($proDcsDir . '/' . $all_doc[$i]);
                                 }
                             }
@@ -392,12 +422,21 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false) {
         if (!empty($dcsProvisional)) {
+            $dcsProvisional->is_approved = 1;
+            $dcsProvisional->approved_at = date('Y-m-d H:i:s');
+            $dcsProvisional->approved_by = Yii::$app->user->identity->user_code;
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
-            $this->bankDetails = new TblBankDetails();
-            $this->contactDetails = new TblContactDetails();
+            $mapList = [];
+            if ($dcsProvisional->provisional_from == 'mobile_update') {
+                $this->bankDetails = TblBankDetails::updateBankDetails($dcsProvisional->dcs_code, $dcsProvisional->bank_account_no, 'society', $mapList);
+                $this->contactDetails = TblContactDetails::updateContactDetails($dcsProvisional->dcs_code, $dcsProvisional->mobile_no, 'society', $mapList);
+            } else {
+                $this->bankDetails = new TblBankDetails();
+                $this->contactDetails = new TblContactDetails();
+            }
             $this->contactDetails->form_validation_type = 'dcs-create';
             $validate = 1;
             $dcsProvisional->vendor = $dcsProvisional->vendor_code;
@@ -407,61 +446,100 @@ class TblDcsProvisionalController extends ChildController {
             $dcsProvisional->updated_at = '';
             $dcsProvisional->updated_by = '';
             $dcsProvisional->remarks = '';
-            $this->model->attributes = $dcsProvisional->attributes;
+            $oldVillage = '';
+            if ($dcsProvisional->provisional_from == 'mobile_update') {
+                $this->model = TblDcs::find()->where(['dcs_code' => $dcsProvisional->dcs_code])->one();
+                $historyDcsModel = new TblDcsHistory();
+                Yii::$app->operation->history($this->model, $historyDcsModel, UPDATE);
+                $model_save[] = $historyDcsModel;
+                $oldVillage = $this->model->village_code;
+                foreach ($dcsProvisional->attributes as $key => $value) {
+                    if ($value != null && $value != '' && $this->model->hasAttribute($key)) {
+                        $this->model->$key = $value;
+                    }
+                }
+            } else {
+                $this->model->attributes = $dcsProvisional->attributes;
+            }
+            $this->model->scenario = 'createDcs';
             $this->model->vendor = $dcsProvisional->vendor;
             $this->model->milk_type_code = $dcsProvisional->milk_type_code;
+            $this->model->auto_member_create = $dcsProvisional->auto_member_create;
 
-            //            $this->model->load($dcsProvisional->attributes);
-            $this->model->dcs_code = $this->model->getCode();
+            $this->model->dcs_code = ($dcsProvisional->provisional_from == 'mobile_update') ? $dcsProvisional->dcs_code : $this->model->getCode();
             //set mapping data
-            $mapList = [];
-            if (!empty($this->model->village_code)) {
-                $modelMapping = new TblDcsVillageMapping();
-                $this->setMapping($modelMapping);
-                array_push($mapList, $modelMapping);
+            if ($oldVillage != $this->model->village_code) {
+                if($dcsProvisional->provisional_from == 'mobile_update'){
+                    $oldModelMapping = TblDcsVillageMapping::find()->where(['dcs_code' => $this->model->dcs_code, 'village_code' => $oldVillage])->one();
+                    if (!empty($oldModelMapping)) {
+                        $modelMapping = $oldModelMapping;
+                        $mappingHistory = new TblDcsVillageMappingHistory();
+                        Yii::$app->operation->history($oldModelMapping, $mappingHistory, DELETE);
+                        array_push($mapList, $mappingHistory);
+                        array_push($mapList, $oldModelMapping);
+                    }
+                }
+                if (!empty($this->model->village_code)) {
+                    $modelMapping = new TblDcsVillageMapping();
+                    $this->setMapping($modelMapping);
+                    array_push($mapList, $modelMapping);
+                }
+            }
+            if($dcsProvisional->provisional_from != 'mobile_update'){
+                $modelCodes = new TblSocietyCodes();
+                $modelCodes->dcs_code = $this->model->dcs_code;
+                $modelCodes->bipl_code = $modelCodes->getBiplCode($this->model->village_code);
+                $modelCodes->union_code = $this->model->union_code;
+                $modelCodes->bmc_code = $this->model->bmc_code;
+                array_push($mapList, $modelCodes);
             }
 
-            $modelCodes = new TblSocietyCodes();
-            $modelCodes->dcs_code = $this->model->dcs_code;
-            $modelCodes->bipl_code = $modelCodes->getBiplCode($this->model->village_code);
-            $modelCodes->union_code = $this->model->union_code;
-            $modelCodes->bmc_code = $this->model->bmc_code;
-            array_push($mapList, $modelCodes);
-            //            $this->bankDetails->load($dcsProvisional);
             $this->bankDetails->attributes = $dcsProvisional->attributes;
+            $this->bankDetails->is_kyc_verified = $this->bankDetails->is_verified = $dcsProvisional->is_bank_verify;
             $bankValidate = 1;
             if (!empty($this->bankDetails->bank_code)) {
-                $this->bankDetails->setModel('society', $this->model->dcs_code);
+                if(empty($this->bankDetails->detail_code)){
+                    $this->bankDetails->setModel('society', $this->model->dcs_code);
+                }
                 $this->bankDetails->scenario = 'bank_selected';
                 array_push($mapList, $this->bankDetails);
                 $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails);
             }
-            //            $this->contactDetails->load($dcsProvisional);
+
             $this->contactDetails->attributes = $dcsProvisional->attributes;
             if (!empty($this->contactDetails->mobile_no)) {
-                $this->contactDetails->setModel('society', $this->model->dcs_code);
+                if(empty($this->contactDetails->detail_code)){
+                    $this->contactDetails->setModel('society', $this->model->dcs_code);
+                }
                 array_push($mapList, $this->contactDetails);
             }
             //set milk type data
             if ($this->model->default_milk_type == 8) {
                 $this->model->milk_type_auto = 1;
             }
-            $modelMilkType = $this->setMilk();
+            $modelMilkType = $this->setMilk($dcsProvisional->provisional_from == 'mobile_update');
             if (!empty($modelMilkType))
                 $mapList = array_merge($mapList, $modelMilkType);
             //set vendor applicability
             if ($this->model->vendor != 'NA') {
-                $vendorModel = new TblSocietyVendor();
-                $vendorModel->dcs_code = $this->model->dcs_code;
-                $vendorModel->vendor_code = $this->model->vendor_code;
-                array_push($mapList, $vendorModel);
+                $vendorModel = null;
+                $exists = ($dcsProvisional->provisional_from == 'mobile_update') ? TblSocietyVendor::find()->where(['dcs_code' => $this->model->dcs_code])->exists() : false;
+                if (!$exists) {
+                    $vendorModel = new TblSocietyVendor();
+                    $vendorModel->dcs_code = $this->model->dcs_code;
+                    $vendorModel->vendor_code = $this->model->vendor_code;
+                    $mapList[] = $vendorModel;
+                }
             }
-            if ($bankValidate == 1) {
+            if ($bankValidate == 1 && !$skipUniqueValidation) {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
-                $this->model->setModelData($this->model, $mapList);
+                if ($dcsProvisional->provisional_from != 'mobile_update') {
+                    $this->model->setModelData($this->model, $mapList);
+                }
+                $this->model->cutoff = '0000';
                 if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
                     $val = str_replace('.', '', $this->model->cutoff_val);
                     $val = str_pad($val, 3, '0', STR_PAD_LEFT);
@@ -567,6 +645,9 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->ifsc = NULL;
                         $memberModel->beneficiary_name = NULL;
                         $memberModel->adhar_no = NULL;
+                        $memberModel->pan_no = NULL;
+                        $memberModel->mobile_no = NULL;
+                        $memberModel->vendor_code = NULL;
                         $master[] = $memberModel->save();
                     }
                 }
@@ -636,4 +717,34 @@ class TblDcsProvisionalController extends ChildController {
         return Json::encode($record);
     }
 
+    public function actionSapErrorDataList() {
+        $searchModel = new TblDcsProvisionalSearch();
+        $searchModel->data_post_status = 3;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false);
+
+        return $this->render('index_sap', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionUpdateSapErrorData($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update_sap_error_data';
+        $this->model->scenario = 'updateDcs';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblDcsProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $this->model->milk_type_code = $this->model->milk_type;
+            $this->model->vendor = $this->model->vendor_code;
+            $this->model->data_post_status = 0;
+            $this->model->resp_desc = $this->model->resp_status = $this->model->response_datetime = $this->model->picked_datetime = $this->model->response_msg = NULL;
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Dcs Provisional', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['sap-error-data-list']);
+            }
+        }
+        return $this->customRender();
+    }
 }

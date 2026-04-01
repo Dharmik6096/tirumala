@@ -59,10 +59,12 @@ use common\services\ImportFilesService;
 use app\modules\organisation\models\TblDcsProvisionalHistory;
 use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
 use app\modules\organisation\models\TblCustomerMasterProvisionalHistory;
+use app\modules\email\models\TblMailFrequency;
+use app\modules\sms\models\TblAlertTemplate;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files', 'provisional-data-exchange','download-acknowledge-files','process-acknowledge-files'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign', 'process-attendance-data', 'milk-collection-ftp-upload-ananda', 'process-bulk-eipl-files', 'provisional-data-exchange', 'download-acknowledge-files', 'process-acknowledge-files', 'email-module-alert'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1186,9 +1188,9 @@ class SchedulerController extends ChildController {
                             $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['in', $modelKey, $update_ids]);
                         }
                         $name = 'DF_';
-                        if($value->tbl_name == 'TblDcsProvisional'){
+                        if ($value->tbl_name == 'TblDcsProvisional') {
                             $name = 'VLCC_';
-                        } else if($value->tbl_name == 'TblMemberProvisional'){
+                        } else if ($value->tbl_name == 'TblMemberProvisional') {
                             $name = 'Farmer_';
                         }
                         $fileName = $name . date('YmdHis') . '.xlsx';
@@ -1288,28 +1290,28 @@ class SchedulerController extends ChildController {
                             $ftp->local_path = $localPath;
                             $ftp->ftp_path = $subFolder;
                             $existingLog = TblFtpTxnLog::find()
-                                ->where(['ftp_type' => 'AWS', 'file_name' => $file, 'ftp_path' => $subFolder])
-                                ->exists();
+                                    ->where(['ftp_type' => 'AWS', 'file_name' => $file, 'ftp_path' => $subFolder])
+                                    ->exists();
                             if ($ftp->DownloadFile()) {
                                 $ftp->RenameFile($subFolder . $file, $subFolder . 'Archive/' . $file);
                                 if (!$existingLog) {
                                     $ftpLog = new TblFtpTxnLog();
-                                    $ftpLog->txn_type    = 'AWS';
-                                    $ftpLog->union_code  = $config->union_code;
+                                    $ftpLog->txn_type = 'AWS';
+                                    $ftpLog->union_code = $config->union_code;
                                     $ftpLog->module_name = 'Provisional';
                                     $ftpLog->module_code = $config->union_code;
-                                    $ftpLog->file_name   = $file;
-                                    $ftpLog->local_path  = $localPath . $file;
-                                    $ftpLog->ftp_path    = $subFolder;
-                                    $ftpLog->file_path   = $subFolder . $file;
-                                    $ftpLog->ftp_type    = $ftpData->ftp_type;
-                                    $ftpLog->ftp_host    = $ftpData->ftp_host;
+                                    $ftpLog->file_name = $file;
+                                    $ftpLog->local_path = $localPath . $file;
+                                    $ftpLog->ftp_path = $subFolder;
+                                    $ftpLog->file_path = $subFolder . $file;
+                                    $ftpLog->ftp_type = $ftpData->ftp_type;
+                                    $ftpLog->ftp_host = $ftpData->ftp_host;
                                     $ftpLog->ftp_username = $ftpData->ftp_username;
                                     $ftpLog->ftp_password = $ftpData->ftp_password;
-                                    $ftpLog->ftp_port    = $ftpData->ftp_port;
+                                    $ftpLog->ftp_port = $ftpData->ftp_port;
                                     $ftpLog->txn_datetime = date('Y-m-d H:i:s');
                                     $ftpLog->file_status = 0;
-                                    $ftpLog->status      = 0;
+                                    $ftpLog->status = 0;
                                     $ftpLog->total_count = 0;
                                     $ftpLog->success_count = 0;
                                     $ftpLog->error_count = 0;
@@ -1332,14 +1334,16 @@ class SchedulerController extends ChildController {
         $custCtrl = new TblCustomerMasterProvisionalController('customer-provisional', \Yii::$app->getModule('organisation'));
 
         $pendingLogs = TblFtpTxnLog::find()
-            ->where(['ftp_type' => 'AWS', 'txn_type' => 'AWS', 'file_status' => 0, 'status' => 0])
-            ->all();
+                ->where(['ftp_type' => 'AWS', 'txn_type' => 'AWS', 'file_status' => 0, 'status' => 0])
+                ->all();
 
         if (empty($pendingLogs)) {
             return;
         }
 
-        $logIds = array_map(function($l) { return $l->ftp_txn_log_id; }, $pendingLogs);
+        $logIds = array_map(function($l) {
+            return $l->ftp_txn_log_id;
+        }, $pendingLogs);
         TblFtpTxnLog::updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['ftp_txn_log_id' => $logIds]);
 
         foreach ($pendingLogs as $ftpLog) {
@@ -1396,7 +1400,8 @@ class SchedulerController extends ChildController {
                             'vendor' => isset($headerMap['vendor']) ? trim($row[$headerMap['vendor']] ?? '') : '',
                             'message' => isset($headerMap['message']) ? trim($row[$headerMap['message']] ?? '') : ''
                         ];
-                        if (isset($tokensByType[$type])) $tokensByType[$type][] = $token;
+                        if (isset($tokensByType[$type]))
+                            $tokensByType[$type][] = $token;
                     }
                 }
 
@@ -1454,7 +1459,7 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
-                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr) === 'customRedirect');
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true) === 'customRedirect');
                                 if ($processed) {
                                     $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
                                     $dcsDir = $baseDir . 'dcs';
@@ -1537,11 +1542,11 @@ class SchedulerController extends ChildController {
                     }
                 }
 
-                $ftpLog->total_count   = count($collectedData);
+                $ftpLog->total_count = count($collectedData);
                 $ftpLog->success_count = $successCount;
-                $ftpLog->error_count   = $errorCount;
-                $ftpLog->file_status   = $allRowProcessed ? 1 : 0;
-                $ftpLog->status        = $allRowProcessed ? 2 : 3;
+                $ftpLog->error_count = $errorCount;
+                $ftpLog->file_status = $allRowProcessed ? 1 : 0;
+                $ftpLog->status = $allRowProcessed ? 2 : 3;
                 $ftpLog->save(FALSE);
 
                 if ($allRowProcessed) {
@@ -1549,10 +1554,10 @@ class SchedulerController extends ChildController {
                 }
             } catch (\Exception $ex) {
                 $allRowProcessed = false;
-                if(!empty($collectedData)){
-                    $ftpLog->total_count   = count($collectedData);
+                if (!empty($collectedData)) {
+                    $ftpLog->total_count = count($collectedData);
                     $ftpLog->success_count = $successCount;
-                    $ftpLog->error_count   = $ftpLog->total_count - $successCount;
+                    $ftpLog->error_count = $ftpLog->total_count - $successCount;
                 }
                 $ftpLog->status = 3;
                 $ftpLog->save(FALSE);
@@ -1560,4 +1565,113 @@ class SchedulerController extends ChildController {
             }
         }
     }
+
+    public function actionEmailModuleAlert() {
+        $apiMaster = new TblApiMaster();
+        $apiMaster->receiver_type = 'EMAIL';
+        $apiMasterData = $apiMaster->getAPI();
+        $f_date = date('Y-m-d');
+        $t_date = date('Y-m-d');
+        if (!empty($apiMasterData)) {
+            $output = \Yii::$app->general->getSpData('portal_auto_mail_frequency_list', []);
+            $j = 0;
+            foreach ($output as $data) {
+                $sp_params = [];
+                $freq_type = $data['frequency_type'];
+                $sp_name = $data['sp_name'];
+                $union_code = $data['union_code'];
+                $fd = $data['from_date'];
+                $fs = $data['from_shift'];
+                $td = $data['to_date'];
+                $ts = $data['to_shift'];
+                $sp_params['union_code'] = $union_code;
+                $sp_params['from_date'] = $f_date;
+                $sp_params['to_date'] = $t_date;
+                if ($freq_type == 'FREQUENCY') {
+                    $fromDate = date('Y-m-' . $fd);
+                    if ($data['data_month'] == 'LAST') {
+                        $fromDate = date('Y-m-d', strtotime("-1 months", strtotime($fromDate)));
+                    }
+                    $sp_params['from_date'] = $fromDate;
+                    if ($td == 'MONTH_END') {
+                        $sp_params['to_date'] = date('Y-m-t', strtotime($fromDate));
+                    } else {
+                        $sp_params['to_date'] = date('Y-m-' . $td);
+                    }
+                } elseif ($freq_type == 'DAILY') {
+                    if ($fd == '-1') {
+                        $sp_params['from_date'] = date('Y-m-d', strtotime($f_date . ' -1 day'));
+                    }
+                    $sp_params['to_date'] = $sp_params['from_date'];
+                }
+                $sp_params['from_date'] .= ' ' . \Yii::$app->general->getshift($fs) . '.000';
+                $sp_params['to_date'] .= ' ' . \Yii::$app->general->getshift($ts) . '.000';
+                $result = \Yii::$app->general->getSpData($sp_name, $sp_params);
+                if (!empty($result)) {
+                    $mailArray = [];
+                    $i = 0;
+                    foreach ($result as $mailData) {
+                        $key = $mailData['email'];
+                        unset($mailData['email']);
+                        if (!empty($mailArray[$key])) {
+                            $mailArray[$key][] = $mailData;
+                        } else {
+                            $mailArray[$key] = [];
+                            $mailArray[$key][] = $mailData;
+                        }
+                        $i ++;
+                    }
+
+                    foreach ($mailArray as $keyValue => $mailDetail) {
+                        $htmlContent = "";
+                        $message = "";
+                        $file_name = "";
+                        $file_path = "";
+                        $this->setHtmlContentReport($htmlContent, $message, $file_name, $file_path, $mailDetail, $data, $j);
+                        $to = $keyValue;
+                        $j++;
+                        $templateModel = new TblAlertTemplate();
+                        $templateData = $templateModel->getTemplateData('portal_auto_email_alert', 'EMAIL', $apiMasterData->union_code);
+                        if (!empty($file_name)) {
+                            $notificationModel = new TblAlertNotification();
+                            $notificationModel->receiver_type = 'EMAIL';
+                            $baseMessage = !empty($templateData->message) ? $templateData->message : $htmlContent;
+                            $notificationModel->message = str_replace('{TITLE}', $message, $baseMessage);
+                            $notificationModel->header_info = $message;
+                            $notificationModel->send_status = 0;
+                            $notificationModel->content_id = $apiMasterData->api_master_id;
+                            $notificationModel->module_type = "Mail Alert";
+                            $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                            $notificationModel->send_mail = 1;
+                            $notificationModel->receiver_detail = $to;
+                            $notificationModel->filename = $file_name;
+                            $notificationModel->file_path = $file_path;
+                            $notificationModel->has_attachment = 2;
+                            $notificationModel->save();
+                        }
+                    }
+                }
+                $frequencyModel = new TblMailFrequency();
+                $nextExec = date('Y-m-d  H:i:s', strtotime($data['next_execution_time'] . $data['frequency_interval']));
+                $frequencyModel->updateAll(['next_execution_time' => $nextExec, 'updated_at' => date('Y-m-d H:i:s')], ['mail_frequency_id' => $data['mail_frequency_id']]);
+            }
+        }
+    }
+
+    public function setHtmlContentReport(&$htmlContent, &$message, &$fileName, &$file_path, $result, $data, $j) {
+        $message = $data['report_name'];
+        $report_type = $data['report_type'];
+        $htmlContent = '<p>Dear Sir, <br/><br/>' . $message;
+        $htmlContent .= '<br/><br/>Detailed report is attached herewith </p>';
+        $htmlContent .= '<br/><br/>';
+        $htmlContent .= '<p>Regards,';
+        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
+        if (!empty($result) && $report_type == 'excel') {
+            $datetime = date('YmdHis') . $j;
+            $fileName = str_replace(' ', '_', $datetime . '-' . $data['report_name']) . '.xls';
+            $file_path = $this->CreateFile($fileName, $result);
+            $file_path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . $this->attachment_folder . $fileName;
+        }
+    }
+
 }

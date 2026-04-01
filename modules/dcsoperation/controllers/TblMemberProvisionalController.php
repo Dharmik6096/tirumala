@@ -150,6 +150,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->model->is_approved = 0;
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
             $this->model->provisional_member_code = Yii::$app->general->getUuid();
+            $this->model->data_post_id = Yii::$app->general->getUuid();
             $this->model->member_code = $this->model->getCode();
             $this->model->pro_ex_member_code = $this->model->ex_member_code;
             $this->setModel();
@@ -541,7 +542,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                
+
                 if ($isValid) {
                     if ($memberModel->provisional_status == 'Approve' && $memberCreationPendingForSapApproval != '1') {
                         $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
@@ -554,6 +555,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         foreach ($errors as $error) {
                             $member_error .= $error . '<br/>';
                         }
+                    }
+                }
+                if (!empty($message)) {
+                    foreach ($message as $msg) {
+                        $member_error .= $msg;
                     }
                 }
                 if (empty($member_error)) {
@@ -1990,4 +1996,32 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         return $this->generalModel->saveTransaction([], $saveModel, ['Member Provisional Reroute', 'edit']);
     }
 
+    public function actionSapErrorDataList() {
+        $searchModel = new TblMemberProvisionalSearch();
+        $searchModel->data_post_status = 3;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false);
+
+        return $this->render('index_sap', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionUpdateSapErrorData($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update_sap_error_data';
+        $this->model->scenario = 'update_provisional_member';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblMemberProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $this->model->data_post_status = 0;
+            $this->model->resp_desc = $this->model->resp_status = $this->model->response_datetime = $this->model->picked_datetime = $this->model->response_msg = NULL;
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['sap-error-data-list']);
+            }
+        }
+        return $this->customRender();
+    }
 }

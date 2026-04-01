@@ -53,6 +53,7 @@ use yii\base\UserException;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\dcsoperation\models\TblMemberDeactive;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -141,7 +142,7 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'receipt_scan_copy'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'receipt_scan_copy', 'beneficiary_name'], 'safe'],
                 [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
@@ -711,11 +712,11 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function getMemberPrivisionalDocuments() {
-        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code']);
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code'])->andOnCondition(['tbl_attachment.module_name' => 'tbl_member_provisional']);
     }
 
     public function getMemberPrivisionalApproval() {
-        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->andOnCondition(['tbl_process_approval.process_name' => 'member'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
 
@@ -1193,4 +1194,7 @@ class TblMemberProvisional extends ChildModel {
         return $this->updateAll(['data_post_status' => $data_post_status], ['resp_desc' => $file_name]);
     }
 
+    public function getRouteMapping() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
 }
