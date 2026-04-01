@@ -238,11 +238,9 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL') == '1';
                 $customerModel->customer_status = 0;
                 if (strtolower($status) === 'approve') {
+                    $customerModel->approved_at = date('Y-m-d H:i:s');
+                    $customerModel->approved_by = Yii::$app->user->identity->user_code;
                     $customerModel->customer_status = $customerCreationPendingForSapApproval ? 0 : 1;
-                    if ($customerCreationPendingForSapApproval) {
-                        $customerModel->approved_at = date('Y-m-d H:i:s');
-                        $customerModel->approved_by = Yii::$app->user->identity->user_code;
-                    }
                 }
 
                 $model_save[] = $customerModel;
@@ -306,8 +304,6 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
     public function createCustomer($customerProvisional, &$model_save, &$all_attachment, &$customerdoc, &$message) {
         if (!empty($customerProvisional)) {
             $customerProvisional->is_approved = 1;
-            $customerProvisional->approved_at = date('Y-m-d H:i:s');
-            $customerProvisional->approved_by = Yii::$app->user->identity->user_code;
             $customerModel = new TblCustomerMaster();
             if ($customerProvisional->provisional_from == 'mobile_update') {
                 $this->bankDetails = TblBankDetails::updateBankDetails($customerProvisional->customer_code, $customerProvisional->bank_account_no, 'customer', $model_save);
