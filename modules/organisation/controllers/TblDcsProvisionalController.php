@@ -363,11 +363,9 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($dcsModel->union_code, 'dcs_creation_pending_for_sap_approval', 'PORTAL');
                 $dcsModel->dcs_status = 0;
                 if (strtolower($status) === 'approve') {
+                    $dcsModel->approved_at = date('Y-m-d H:i:s');
+                    $dcsModel->approved_by = Yii::$app->user->identity->user_code;
                     $dcsModel->dcs_status = $dcsCreationPendingForSapApproval ? 0 : 1;
-                    if ($dcsCreationPendingForSapApproval) {
-                        $dcsModel->approved_at = date('Y-m-d H:i:s');
-                        $dcsModel->approved_by = Yii::$app->user->identity->user_code;
-                    }
                 }
 
                 $model_save[] = $dcsModel;
@@ -425,8 +423,6 @@ class TblDcsProvisionalController extends ChildController {
     public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false) {
         if (!empty($dcsProvisional)) {
             $dcsProvisional->is_approved = 1;
-            $dcsProvisional->approved_at = date('Y-m-d H:i:s');
-            $dcsProvisional->approved_by = Yii::$app->user->identity->user_code;
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
             $mapList = [];
