@@ -15,8 +15,8 @@ class SchedulerController extends \yii\console\Controller {
             try {
                 $inboxParseService->InboxParsing() ? sleep(20) : sleep(60);
             } catch (\Throwable $ex) {
-                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
-                fwrite(STDERR, '[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: ' . $ex->getMessage() . PHP_EOL);
+//                $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
+//                fwrite(STDERR, '[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: ' . $ex->getMessage() . PHP_EOL);
                 sleep(60);
             }
         }

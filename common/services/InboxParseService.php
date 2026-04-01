@@ -46,7 +46,7 @@ class InboxParseService {
                 try {
                     $verifyCountModel->save();
                 } catch (\Throwable $e) {
-                    
+                    $modelData = [];
                 }
 
                 foreach ($modelData as $transaction_data) {
@@ -216,40 +216,48 @@ class InboxParseService {
                                         $inbox_constraint->data_post_status = 3;
                                         $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
                                         if ($transaction != 'customRedirect') {
-                                            $transaction_data->save();
+                                            try {
+                                                $transaction_data->save();
+                                            } catch (\Throwable $e) {
+                                            }
                                         }
                                     } else {
-                                        $transaction_data->save();
+                                        try {
+                                            $transaction_data->save();
+                                        } catch (\Throwable $e) {
+                                        }
                                     }
                                 } else {
                                     $successCount++;
                                 }
                             } else {
                                 $errorCount++;
-                                $transaction_data->error_log = Json::encode($model->getErrors());
-                                $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                                $transaction_data->data_post_status = 3;
-                                $transaction_data->save();
+                                try {
+                                    $transaction_data->error_log = Json::encode($model->getErrors());
+                                    $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                    $transaction_data->data_post_status = 3;
+                                    $transaction_data->save();
+                                } catch (\Throwable $e) {
+                                }
                             }
                         } else {
                             $errorCount++;
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction($childModel, [], $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
-                                $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
-                                $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                                $transaction_data->data_post_status = 3;
-                                $transaction_data->save();
+                                try {
+                                    $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
+                                    $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                    $transaction_data->data_post_status = 3;
+                                    $transaction_data->save();
+                                } catch (\Throwable $e) {
+                                }
                             }
                         }
                     } catch (\Throwable $ex) {
-                        if (Yii::$app->request->isConsoleRequest) {
-                            $cmd = (Yii::$app->controller->id ?? "") . "/" . (Yii::$app->controller->action->id ?? "");
-                            $this->stderr('[' . date('Y-m-d H:i:s') . '][' . $cmd . ']: ' . $ex->getMessage() . PHP_EOL);
-                        }
                         $errorCount++;
                         try {
-                            $transaction_data->error_log = substr($ex->getMessage(), 0, 1000);
+                            $transaction_data->error_log = 'Throwable Exception';
                             $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                             $transaction_data->data_post_status = 3;
                             $transaction_data->save();
