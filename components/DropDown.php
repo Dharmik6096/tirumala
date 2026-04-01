@@ -2442,6 +2442,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['Milk' => Yii::t('app', 'Milk'), 'Material' => Yii::t('app', 'Material')],
             ],
+            'account_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => [1 => Yii::t('app', 'Draft'), 2 => Yii::t('app', 'Posted')],
+            ],
+            'account_posting_type' => [
+                'name' => 'posting_type',
+                'prompt' => Yii::t('app', 'Select Posting Type'),
+                'data' => [1 => Yii::t('app', 'Consolidate'), 2 => Yii::t('app', 'Day'), 3 => Yii::t('app', 'Payment Cycle')],
+            ],
         ];
         return $records[$l];
     }
