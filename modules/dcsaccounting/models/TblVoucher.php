@@ -56,7 +56,7 @@ class TblVoucher extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['voucher_code', 'bill_no', 'remarks', 'dock_code', 'financial_year_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'auto_posted', 'cancelled', 'voucher_type_code', 'originating_type', 'bill_date', 'voucher_date', 'created_at', 'updated_at'], 'safe'],
-                [['voucher_code'], 'required'],
+                [['voucher_code'], 'required', 'on' => ['androidsync']],
         ];
     }
 
