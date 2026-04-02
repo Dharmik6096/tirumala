@@ -424,6 +424,12 @@ class ReportsController extends \app\controllers\ChildController {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
                 $this->report = 'CPRmrdReportSap';
             }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'CPMemberReportSapWithDateTime';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'CPRmrdReportSapWithDateTime';
+            }
         }
         return $this->actionIndex();
     }
@@ -2289,12 +2295,17 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'UnifiedWeighmentReport';
         return $this->actionIndex();
     }
-    
+
     public function actionDpuRateComparision() {
         $this->report = 'DpuRateComparision';
         return $this->actionIndex();
     }
-    
+
+    public function actionComplaintSummaryDetailReport() {
+        $this->report = 'ComplaintSummaryDetailReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2840,7 +2851,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_sap_rpt_cpmilk_member_collection',
                 'scenario' => 'CPReportSap',
                 'title' => '404 - SAP Data Export',
-                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC')],
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC'), Yii::t('app', 'MEMBER With Date Time'), Yii::t('app', 'BMC With Date Time')],
                 'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift',
             ],
             'CPRmrdReportSap' => [
@@ -2848,8 +2859,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection',
                 'scenario' => 'CPReportSap',
                 'title' => '404 - SAP Data Export',
-                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC')],
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC'), Yii::t('app', 'MEMBER With Date Time'), Yii::t('app', 'BMC With Date Time')],
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+            ],
+            'CPMemberReportSapWithDateTime' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_member_collection_rec_datetime',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC'), Yii::t('app', 'MEMBER With Date Time'), Yii::t('app', 'BMC With Date Time')],
+                'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift_With_Date_Time',
+            ],
+            'CPRmrdReportSapWithDateTime' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection_rec_datetime',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC'), Yii::t('app', 'MEMBER With Date Time'), Yii::t('app', 'BMC With Date Time')],
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift_With_Date_Time',
             ],
             'VendorPayment' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -5076,6 +5103,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DpuRateComparision',
                 'title' => 'DPU Rate Comparision',
                 'bkg_export' => TRUE
+            ],
+            'ComplaintSummaryDetailReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,report_type',
+                'sp_name' => 'sp_complaint_summary_detail_report_email_trigger',
+                'scenario' => 'ComplaintSummaryDetailReport',
+                'title' => 'Complaint Status Report',
+                'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
             ],
         ];
         return $label[$l];

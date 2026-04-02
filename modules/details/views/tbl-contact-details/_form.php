@@ -4,6 +4,7 @@ use yii\helpers\Html;
 
 $mail_info = !empty($mail_info) ? $mail_info : FALSE;
 $show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : FALSE;
+$plant_mail_info = !empty($plant_mail_info) ? $plant_mail_info : FALSE;
 ?>
 
 <!--<div class="col-sm-3">
@@ -49,6 +50,10 @@ $show_optional_fields = !empty($show_optional_fields) ? $show_optional_fields : 
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'email_bcc')->textInput() ?>
+    </div>
+<?php } else if ($plant_mail_info) { ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email_to')->textInput() ?>
     </div>
 <?php } ?>
 <?php if ($show_optional_fields) { ?>

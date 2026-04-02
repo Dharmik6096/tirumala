@@ -170,7 +170,11 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary li").remove();
 //                                                                    $("#tblgrn-grn_code").val(pk_code);
                                                                     $.each(data, function(key, val) {
-                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        if (key === "actual_stock") {
+                                                                            $("#tblinventorytransfertxn-available_stock").val(val);
+                                                                        } else {
+                                                                            $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        }
                                                                     });
                                                                     $(".error-summary").show();
                                                                 }

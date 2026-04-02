@@ -195,7 +195,7 @@ class InboxParseService {
                                 $masterSave = [];
                                 if ($process_record) {
                                     $masterSave[] = $model;
-                                    if(!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL'.$transaction_data->source_org_id.'AMCS'){
+                                    if (!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL' . $transaction_data->source_org_id . 'AMCS') {
                                         $transaction_data->generateSentBox($masterSave);
                                     }
                                 }
@@ -240,10 +240,14 @@ class InboxParseService {
                         }
                     } catch (\Throwable $ex) {
                         $errorCount++;
-                        $transaction_data->error_log = 'Throwable Exception';
-                        $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                        $transaction_data->data_post_status = 3;
-                        $transaction_data->save();
+                        try {
+                            $transaction_data->error_log = 'Throwable Exception';
+                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->data_post_status = 3;
+                            $transaction_data->save();
+                        } catch (\Throwable $e) {
+                            
+                        }
                     }
                     $i++;
                 }
@@ -264,6 +268,7 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
+                
             }
         } catch (\Throwable $e) {
             try {
@@ -275,6 +280,7 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
+                
             }
         }
         return true;

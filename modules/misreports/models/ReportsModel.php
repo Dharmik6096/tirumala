@@ -188,6 +188,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'product_code', 'from_date', 'to_date'], 'required', 'on' => ['MisFeedReport']],
                 [['union_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => 'SapReportExport'],
                 [['p_product_type'], 'required', 'on' => ['UnifiedWeighmentReport']],
+                [['from_date', 'report_type'], 'required', 'on' => ['ComplaintSummaryDetailReport']],
         ];
     }
 
