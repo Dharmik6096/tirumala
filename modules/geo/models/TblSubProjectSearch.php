@@ -60,7 +60,6 @@ class TblSubProjectSearch extends TblSubProject {
         ]);
 
         $query->andFilterWhere(['like', 'sub_project_name', $this->sub_project_name])
-                ->andFilterWhere(['like', 'tbl_project.description', $this->description])
                 ->andFilterWhere(['like', 'tbl_project.project_name', $this->project_code]);
 
         return $dataProvider;
