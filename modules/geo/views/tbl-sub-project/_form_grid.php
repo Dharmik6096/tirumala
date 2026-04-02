@@ -8,7 +8,7 @@ $attribute = [
     ['attribute' => 'project_code', 'label' => Yii::t('app', 'Project Name'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->projectCode, 'project_name');
         }, 'visible' => true, 'filter' => true],
-    ['attribute' => 'description', 'visible' => true, 'filter' => true],
+    ['attribute' => 'description', 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [
