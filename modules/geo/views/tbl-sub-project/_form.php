@@ -24,8 +24,8 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
         </div>     
-        <div class="col-sm-2 mt15">
-            <?= Yii::$app->controls->active($model, $form); ?>
+        <div class="col-sm-2 mt25">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model, 'btn-login'); ?>
