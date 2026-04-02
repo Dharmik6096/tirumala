@@ -48,6 +48,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'checked_ac_no'); ?>
     </div>
+    <div class="col-sm-2">
+        <?php echo Html::hiddenInput('ledger_type', 'bank', ['id' => 'ledger_type']); ?>
+        <?php echo Html::hiddenInput('union_code', 'bank', ['id' => 'union_code']); ?>
+        <?= Yii::$app->dropdown->ledgerList($model, $form, 'union_code,ledger_type', 'ledger_code', $model->getAttributeLabel('ledger_code'), false); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'nationalized_bank'); ?>

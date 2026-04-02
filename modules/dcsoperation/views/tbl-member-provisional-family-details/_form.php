@@ -14,15 +14,23 @@ echo $form->errorSummary($memberFamilyDetail);
     <div class="col-sm-12">
 
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <div class="panel-title">
-                    <a class="pull-right" data-bs-toggle="collapse" href="#familyDetailsCollapse">
-                        <i id="collapse" class="fa fa-chevron-up"></i>
-                    </a>
-                    <?= Yii::t('app', 'Family Details') ?>
+            <?php
+            $class = '';
+            if (empty($tabview)) {
+                $class = ' collapse';
+                ?>
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="pull-right" data-bs-toggle="collapse" href="#familyDetailsCollapse">
+                            <i id="collapse" class="fa fa-chevron-up"></i>
+                        </a>
+                        <?= Yii::t('app', 'Family Details') ?>
+                    </div>
                 </div>
-            </div>
-            <div id="familyDetailsCollapse" class="panel-collapse collapse">
+            <?php }
+            ?>
+
+            <div id="familyDetailsCollapse" class="panel-collapse <?= $class ?>">
                 <div class="panel-body">
                     <?= Html::activeHiddenInput($memberFamilyDetail, 'member_provisional_family_detail_code', ['id' => 'tblmemberprovisionalfamilydetails-member_provisional_family_detail_code']) ?>
                     <?= Html::activeHiddenInput($memberFamilyDetail, 'provisional_member_code', ['id' => 'provisional_member_code']) ?>
@@ -123,7 +131,27 @@ echo $form->errorSummary($memberFamilyDetail);
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+<?php
+if ($tabview) {
+    $previews = '';
+    $nAddressProof = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProof'], 'image');
+    $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Nominee Address Proof') . '</span>' . (trim($nAddressProof) != '' ? $nAddressProof : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
 
+    $nAddressProofback = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['nAddressProofback'], 'image');
+    $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Nominee Address Proof Back') . '</span>' . (trim($nAddressProofback) != '' ? $nAddressProofback : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+    ?>
+    <div class="row theme_border_left theme_border_right theme_border_bottom">
+        <div class="col-md-12 padding_10_0">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
+            </div>
+            <div class="doc-preview-container">
+                <?= $previews ?>
+            </div>
+        </div>
+    </div>
+
+<?php } ?>
 <div id="familyDetailsgrid" class="col-sm-12">
     <div class="form-grid rebind_grid hide-grid-settings collapse_grid">
         <?=

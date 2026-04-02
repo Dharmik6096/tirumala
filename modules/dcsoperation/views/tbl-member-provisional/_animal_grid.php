@@ -26,3 +26,7 @@ $grid_option = [
 
 Yii::$app->grid->bind($animalDataProvider, $animalMemberModel, $grid_option);
 ?>
+<?php
+
+$script = '$(".kv-panel-before").hide();';
+$this->registerJs($script, View::POS_END, 'member-animal-list');

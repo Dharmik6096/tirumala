@@ -204,7 +204,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
         return $this->hasOne(TblConfigTxnResult::className(), ['ref_code' => 'bmc_milk_dispatch_txn_code'])
                         ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for in ('BMC','PLANT') and c.process_name in ('BMC_DISPATCH','PLANT_DISPATCH')");
     }
-    
+
     public function getAnimalType() {
         return $this->hasOne(TblAnimalTypeAdditional::className(), ['animal_type_additional_code' => 'animal_type_additional_code']);
     }
@@ -335,7 +335,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
         foreach ($compartmentCapacities as $compartment) {
             $compartmentNo = $compartment['compartment_no'];
             $result[$compartmentNo] = [
-                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? $chamberWiseQty[$compartmentNo] : 0,
+                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? (float) $chamberWiseQty[$compartmentNo] : 0,
                 'capacity' => $compartment['capacity']
             ];
         }
@@ -352,11 +352,11 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             $tripModel->trip_status = 'open';
             $tripModel->trip_sub_status = $bmcMilkDispatchCode['source_org_type'] . '_dispatch_C' . $this->chamber_no;
             $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
-            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');  
+            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
             $tripDetail = TblVehicleTripDetail::find()->where([
-                    'challan_no' => $bmcMilkDispatchCode['challan_no'],
-                    'trip_code' => $bmcMilkDispatchCode['trip_code'],
-                ])->one();
+                        'challan_no' => $bmcMilkDispatchCode['challan_no'],
+                        'trip_code' => $bmcMilkDispatchCode['trip_code'],
+                    ])->one();
             $tripDetailCode = '';
             if ($tripDetail !== null) {
                 $tripDetailCode = $tripDetail->vehicle_trip_detail_code;
@@ -415,6 +415,43 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 }
             }
         }
+    }
+
+    public function getLastDispatchDetailChamberWise() {
+        $dispatchData = $this->find()
+                ->alias('t')
+                ->select(['t.chamber_no', 'd.source_org_code', 'd.source_org_type', 't.created_at', 'p.name as plant_name', 'b.bmc_name as bmc_name', 'p.ref_code as plant_ref_code', 'b.ref_code as bmc_ref_code', 'p.ref_code as plant_ref_code'])
+                ->innerJoin('tbl_bmc_milk_dispatch d', 'd.bmc_milk_dispatch_code = t.bmc_milk_dispatch_code')
+                ->leftJoin('tbl_plant p', "p.plant_code = d.source_org_code AND LOWER(d.source_org_type) = 'plant'")
+                ->leftJoin('tbl_bmc b', "b.bmc_code = d.source_org_code AND LOWER(d.source_org_type) = 'bmc'")
+                ->where(['d.trip_code' => $this->trip_code])
+                ->orderBy(['t.chamber_no' => SORT_ASC, 't.created_at' => SORT_DESC])
+                ->asArray()
+                ->all();
+        $result = [];
+        $processedChambers = [];
+
+        foreach ($dispatchData as $row) {
+            if (in_array($row['chamber_no'], $processedChambers)) {
+                continue;
+            }
+            $processedChambers[] = $row['chamber_no'];
+            $type = strtolower($row['source_org_type']);
+            if ($type == 'bmc') {
+                $refCode = $row['bmc_ref_code'];
+                $name = $row['bmc_name'];
+            } elseif ($type == 'plant') {
+                $refCode = $row['plant_ref_code'];
+                $name = $row['plant_name'];
+            }
+
+            $result[] = [
+                'fromLocation' => trim(($refCode ?? '') . ' - ' . ($name ?? '') . ' - ' . strtoupper($row['source_org_type'] ?? '')),
+                'compartmentNo' => (int) $row['chamber_no']
+            ];
+        }
+
+        return $result;
     }
 
 }

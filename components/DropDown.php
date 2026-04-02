@@ -808,7 +808,12 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/get-chamber-list', Yii::t('app', 'Select Chamber'), $multiple, '', $readonly);
     }
-    
+
+    public function ledgerList($model, $form, $depends, $name = 'ledger_code', $islable = false, $multiple = false, $readonly = false, $is_return = false, $input_name = '') {
+        $this->setClass($form, $name);
+        return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsaccounting/tbl-ledgers/get-ledger-list', Yii::t('app', 'Select Ledger'), $multiple, '', $readonly, '', true, '', $is_return, $input_name);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1101,7 +1106,7 @@ class DropDown extends Component {
             $records = $records->where($where)->orderBy($tablename . '.' . $fields[1])->all();
         }
 
-        return ArrayHelper::map($records, $fields[0], function ($array, $key) use ($fields) {
+        return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
                     if (!empty($fields[2]) && !empty($array[$fields[2]]))
                         $value = $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
                     else
@@ -1966,7 +1971,7 @@ class DropDown extends Component {
             'asset_detail_status' => [
                 'name' => 'current_status',
                 'prompt' => Yii::t('app', 'Select Asset Detail Status'),
-                'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped')],
+                'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped'), '4' => Yii::t('app', 'Working'), '5' => Yii::t('app', 'Under Maintenance'), '6' => Yii::t('app', 'Stuck'), '7' => Yii::t('app', 'In store'), '8' => Yii::t('app', 'MCC Store')],
             ],
             'complain_for' => [
                 'name' => 'complain_for',
@@ -2427,6 +2432,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Status'),
                 'data' => ['generate' => Yii::t('app', 'Generate'), 'regenerate' => Yii::t('app', 'Regenerate')],
             ],
+            'sim_network' => [
+                'name' => 'sim_network',
+                'prompt' => Yii::t('app', 'Select Sim'),
+                'data' => ['Jio' => Yii::t('app', 'Jio'), 'Airtel' => Yii::t('app', 'Airtel'), 'BSNL' => Yii::t('app', 'BSNL'), 'VI' => Yii::t('app', 'VI'), 'MTNL' => Yii::t('app', 'MTNL')],
+            ],
+            'p_product_type' => [
+                'name' => 'p_product_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['Milk' => Yii::t('app', 'Milk'), 'Material' => Yii::t('app', 'Material')],
+            ],
         ];
         return $records[$l];
     }
@@ -2563,14 +2578,14 @@ class DropDown extends Component {
             'payment_head_code' => ['name' => 'payment_head_code', 'fields' => 'payment_head_code,payment_head_name', 'prompt' => 'Payment Head Name', 'model' => 'TblPaymentHead'],
             'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
             'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
-            'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User'],
+            'user_code' => ['name' => 'user_code', 'fields' => 'user_code,name,employee_id', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User'],
             'login_user_code' => ['name' => 'login_user_code', 'fields' => 'app_login_id,user_name', 'prompt' => 'Select User Name', 'model' => 'TblEiplAppLogin', 'whereCondition' => ['master_type' => ['area', 'bmc', 'mccPlant', 'plant', 'region', 'routeMapping', 'union', 'user']]],
             'region' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'union_code'],
             'relation_code' => ['name' => 'relationship_code', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
             'product_depend_group' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'product_group_code'],
             'rule_code' => ['name' => 'rule_code', 'fields' => 'rule_code,rule_name,', 'prompt' => Yii::t('app', 'Select Rule'), 'model' => 'TblAlertRuleMaster', 'depend' => 'union_code', 'dependArray' => ['is_active']],
             'documnet_master_type' => ['name' => 'master_type_code', 'fields' => 'master_type_code,master_type_name', 'prompt' => 'Select Master Type', 'model' => 'TblDocumentMasterType'],
-            'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'latlong_user' => ['name' => 'id', 'fields' => 'id,name,user_code,employee_id', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
             'dispatch_center_type' => ['name' => 'dispatch_center_type_code', 'fields' => 'dispatch_center_type_code,dispatch_center_type', 'prompt' => 'Select Dispatch Center Type', 'model' => 'TblDispatchCenterType', 'joinwith' => ['userDispatchCenterMapping'], 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
             'dispatch_center' => ['name' => 'dispatch_center_code', 'fields' => 'dispatch_center_code,dispatch_center_name', 'prompt' => 'Select Dispatch Center', 'model' => 'TblDispatchCenter', 'joinwith' => ['dispatchCenterTypeCode', 'userDispatchCenterMapping'], 'concatfield' => 'tbl_dispatch_center_type.dispatch_center_type', 'rlsWhereCondition' => ['tbl_user_dispatch_center_mapping.user_code' => Yii::$app->session->get('UserCode')], 'applyRls' => !empty(Yii::$app->user->identity->user_type_id) ? !in_array(Yii::$app->user->identity->user_type_id, [2]) : ''],
             'insurance_master_list' => ['name' => 'insurance_master_code', 'fields' => 'insurance_master_code,insurance_description', 'prompt' => 'Select Insurance', 'model' => 'TblInsuranceMaster'],
@@ -2586,6 +2601,9 @@ class DropDown extends Component {
             'caseType' => ['name' => 'case_type_id', 'fields' => 'case_type_id,case_type_name,', 'prompt' => Yii::t('app', 'Select Case Type'), 'model' => 'TblCaseType', 'depend' => 'union_code'],
             'medicine_master' => ['name' => 'medicine_id', 'fields' => 'medicine_id,medicine_name,', 'prompt' => Yii::t('app', 'Select Medicine'), 'model' => 'TblMedicineMaster', 'depend' => 'union_code'],
             'committee_type_code' => ['name' => 'committee_type_code', 'fields' => 'committee_type_code,committee_type_name', 'prompt' => 'Select Type', 'model' => 'TblCommitteeType'],
+            'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
+            'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
+            'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
         ];
         return $label[$l];
     }

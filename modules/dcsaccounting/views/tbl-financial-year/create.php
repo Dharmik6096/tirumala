@@ -1,18 +1,14 @@
 <?php
-
-use yii\helpers\Html;
-
+$this->title = Yii::$app->label->title('create', 'Financial Year');
 ?>
-<div class="tbl-asset-group-create">
-    <div class="panel panel-main">
-        <div class="panel-heading"><?= Yii::t('app', 'Financial Year') ?></div>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
         <?=
         $this->render('_form', [
             'model' => $model,
             'type' => 'create'
         ])
         ?>
-
     </div>
 </div>

@@ -24,6 +24,7 @@ use app\modules\document\models\TblAttachment;
 use yii\db\Expression;
 use app\modules\general\models\TblProcessApproval;
 use yii\helpers\Html;
+use app\modules\organisation\models\TblDcsDeactive;
 
 /**
  * This is the model class for table "tbl_dcs_provisional".
@@ -183,7 +184,7 @@ class TblDcsProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['milk_type', 'milk_type_auto', 'auto_member_create', 'detail_code', 'is_default', 'latitude', 'longitude', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
+                [['milk_type', 'milk_type_auto', 'auto_member_create', 'detail_code', 'is_default', 'latitude', 'longitude', 'dcs_status', 'supervisor_employee_id', 'supervisor_employee_name', 'same_milk_type', 'diff_milk_type'], 'safe'],
                 [['status', 'dcs_code', 'milk_type_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type', 'effective_date', 'registration_date', 'valid_from', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'DPUVersionNo', 'morning_kms', 'evening_kms', 'cheque_amount', 'address', 'dcs_name', 'gender_code', 'cheque_bank', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
                 [['bank_account_no', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'upi_no', 'ccenter_code', 'center_code', 'vendor_code', 'sap_center_code', 'rate_chart_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'dob', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['contact_person', 'dcs_short_name', 'beneficiary_name', 'punch_line', 'department', 'firstname', 'lastname', 'surname', 'password', 'gender', 'account_type', 'cheque_number', 'dcs_code_ex', 'route_code', 'old_route_code', 'cutoff', 'lower_milk_type', 'cutoff_val', 'destination_code', 'branch_code', 'email', 'pincode', 'village_code', 'mcc_plant_code', 'plant_code', 'old_mcc_plant_code', 'registration_code', 'service_tax', 'tin_no', 'gst_no', 'fssi', 'fssi_expiry_date'], 'safe'],
@@ -659,8 +660,11 @@ class TblDcsProvisional extends ChildModel {
                     ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
                     ->one();
             if ($existsInDcs) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
@@ -687,8 +691,11 @@ class TblDcsProvisional extends ChildModel {
                     ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
                     ->one();
             if ($existsInDcs) {
-                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                    return false;
+                }
             }
 
             $existsInProvisional = $this->find()->where(['is_active' => 1])
@@ -715,8 +722,11 @@ class TblDcsProvisional extends ChildModel {
                     ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]])
                     ->one();
             if ($existsInDcs) {
-                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
-                return false;
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'DCS') . ' - ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInDcs->dcs_code . ' , ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInDcs->dcs_name));
+                    return false;
+                }
             }
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])

@@ -2,6 +2,7 @@
 
 namespace app\modules\product\models;
 
+use app\modules\dcsaccounting\models\TblLedgerMappingProductGroup;
 use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\syncutility\models\TblSentbox;
@@ -24,6 +25,8 @@ use yii\base\UserException;
  * @property TblProduct[] $tblProducts
  */
 class TblProductGroup extends \app\models\ChildModel {
+
+    public $ledger_sale_code, $ledger_purchase_code;
 
     /**
      * @inheritdoc
@@ -76,6 +79,10 @@ class TblProductGroup extends \app\models\ChildModel {
      */
     public function getTblProducts() {
         return $this->hasMany(TblProduct::className(), ['product_group_code' => 'product_group_code']);
+    }
+
+    public function getTblLedgerMappingProductGroup() {
+        return $this->hasOne(TblLedgerMappingProductGroup::className(), ['product_group_code' => 'product_group_code']);
     }
 
     /**

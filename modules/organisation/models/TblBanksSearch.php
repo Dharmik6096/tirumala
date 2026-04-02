@@ -17,7 +17,7 @@ class TblBanksSearch extends TblBanks {
      */
     public function rules() {
         return [
-                [['bank_code', 'bank_name', 'created_at', 'updated_at', 'created_by', 'updated_by', 'ac_no_length', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['bank_code', 'bank_name', 'created_at', 'updated_at', 'created_by', 'updated_by', 'ac_no_length', 'originating_org_code', 'originating_org_type', 'originating_type', 'ledger_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['is_active'], 'integer'],
                 [['checked_ac_no', 'nationalized_bank', 'is_alpha_acno_allow'], 'boolean'],
         ];

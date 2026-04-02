@@ -2,11 +2,14 @@
 
 namespace app\modules\dcsaccounting\controllers;
 
+use app\controllers\ChildController;
 use Yii;
 use app\modules\dcsaccounting\models\TblLedgerTypes;
 use app\modules\dcsaccounting\models\TblLedgerTypesSearch;
-use app\controllers\ChildController;
+use app\modules\dcsaccounting\models\TblLedgerTypesHistory;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblLedgerTypesController implements the CRUD actions for TblLedgerTypes model.
@@ -25,6 +28,65 @@ class TblLedgerTypesController extends ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    /**
+     * Creates a new TblLedgerTypes model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate() {
+        $this->model = new TblLedgerTypes();
+        $this->viewFile = 'create';
+        if ($this->model->load(Yii::$app->request->post())) {
+            if ($this->model->validate()) {
+                $this->model->ledger_type_code = (String) Yii::$app->general->getCodeAutoIncrement($this->model);
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['Ledger Types', 'create']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
+            }
+        }
+        return $this->customRender();
+    }
+
+    /**
+     * Updates an existing TblLedgerTypes model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+
+        if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
+            $historyModel = new TblLedgerTypesHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            if ($this->model->validate()) {
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Ledger Types', 'edit']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
+            }
+        }
+        return $this->customRender();
+    }
+
+    /**
+     * Deletes an existing TblLedgerTypes model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $historyModel = new TblLedgerTypesHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

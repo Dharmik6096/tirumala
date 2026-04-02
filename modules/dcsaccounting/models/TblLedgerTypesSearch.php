@@ -17,7 +17,7 @@ class TblLedgerTypesSearch extends TblLedgerTypes {
      */
     public function rules() {
         return [
-                [['ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'originating_type', 'union_code', 'ledger_type_name', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['ledger_type_code', 'balance_sheet', 'profit_loss', 'is_active', 'originating_type', 'union_code', 'ledger_type_name', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -39,8 +39,6 @@ class TblLedgerTypesSearch extends TblLedgerTypes {
     public function search($params) {
         $query = TblLedgerTypes::find();
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -48,8 +46,6 @@ class TblLedgerTypesSearch extends TblLedgerTypes {
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this);
         $query->joinWith(['unionCode']);
-
-
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -61,7 +57,6 @@ class TblLedgerTypesSearch extends TblLedgerTypes {
 
         $query->andFilterWhere(['like', 'tbl_ledger_types.ledger_type_name', $this->ledger_type_name])
                 ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code]);
-
 
         return $dataProvider;
     }

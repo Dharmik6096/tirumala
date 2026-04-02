@@ -99,14 +99,14 @@ class TblUserTrackingMovement extends ChildModel {
     public function getUserList($code) {
         $query1 = TblUserOrganizationMapping::find()
                 ->alias('tuom')
-                ->select(['tcd.mobile_no', 'tuom.user_id AS user_id', 'u.login_type', 'u.name AS user_name', new \yii\db\Expression("'1' AS order_by")])
+                ->select(['tcd.mobile_no', 'tuom.user_id AS user_id', 'u.login_type', 'u.name AS user_name', 'u.employee_id', new \yii\db\Expression("'1' AS order_by")])
                 ->innerJoin('user u', 'tuom.user_id = u.id')
                 ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
                 ->where(['tuom.organization_code' => $code, 'tuom.organization_type' => 'MCC']);
 
         $query2 = User::find()
                 ->alias('u')
-                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', new \yii\db\Expression("'2' AS order_by")])
+                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', 'u.employee_id', new \yii\db\Expression("'2' AS order_by")])
                 ->distinct()
                 ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
                 ->innerJoin('tbl_user_organization_mapping tuom', "tuom.user_id = u.id AND tuom.organization_type = 'DCS'")
@@ -115,7 +115,7 @@ class TblUserTrackingMovement extends ChildModel {
         
         $query3 = User::find()
                 ->alias('u')
-                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', new \yii\db\Expression("'2' AS order_by")])
+                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', 'u.employee_id', new \yii\db\Expression("'2' AS order_by")])
                 ->distinct()
                 ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
                 ->innerJoin('tbl_user_organization_mapping tuom', "tuom.user_id = u.id AND tuom.organization_type = 'BMC'")
@@ -131,7 +131,7 @@ class TblUserTrackingMovement extends ChildModel {
 
         $user = ArrayHelper::map($userData, 'user_id', function ($data) {
                     $extras = array_filter([$data['login_type'] ?? null, $data['mobile_no'] ?? null]);
-                    return $data['user_name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
+                    return $data['user_name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '') . (!empty($data['employee_id']) ? ' - ' . $data['employee_id'] : '');
                 });
 
         return $user;

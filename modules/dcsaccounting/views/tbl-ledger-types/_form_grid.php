@@ -1,9 +1,7 @@
 <?php
 
-use kartik\grid\GridView;
-?>
-
-<?php
+use app\modules\usermanagement\components\GhostHtml;
+use yii\helpers\Url;
 
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
@@ -30,8 +28,13 @@ $grid_option = [
     'id' => 'ledger-types-list',
     'attributes' => $attribute,
     'active_column' => true,
+    'actions' => [
+        'edit' => function ($url, $model) {
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-ledger-types/update', 'id' => $model->ledger_type_code]), ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
+        },
+        'delete' => ['option' => 'ledger_type_name,ledger_type_code,/dcsaccounting/tbl-ledger-types/delete'],
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-               

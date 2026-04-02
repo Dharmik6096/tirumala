@@ -1163,6 +1163,7 @@ class SchedulerController extends ChildController {
 
     public function actionProvisionalDataExchange() {
         $configModel = new TblDataExchangeConfig();
+        $configModel->api_type = 'AWS';
         $data = $configModel->getDataExchangeConfig();
         $this->generateSaveFile($data);
     }
@@ -1190,7 +1191,7 @@ class SchedulerController extends ChildController {
                         } else if($value->tbl_name == 'TblMemberProvisional'){
                             $name = 'Farmer_';
                         }
-                        $fileName = $name . date('YmdHis') . '.xls';
+                        $fileName = $name . date('YmdHis') . '.xlsx';
                         $folder = \Yii::$app->params['sap_data_files'] . 'vendor-data/';
                         $path = str_replace(['\\', '//'], '/', Yii::getAlias('@webroot') . '/' . $folder);
                         if (\Yii::$app->general->checkDirectory($path)) {
@@ -1201,16 +1202,23 @@ class SchedulerController extends ChildController {
 
                             $rowIdx = 2;
                             foreach ($output as $line) {
-                                $processedLine = array_map(function($val, $key) use ($decriptFields) {
-                                    return (in_array($key, $decriptFields) && !empty($val))
-                                        ? \Yii::$app->general->decryptData($val)
-                                        : $val;
-                                }, $line, array_keys($line));
-                                $sheet->fromArray($processedLine, NULL, 'A' . $rowIdx++);
+                                $colIdx = 1;
+                                foreach ($line as $key => $val) {
+                                    if (in_array($key, $decriptFields) && !empty($val) && $val != 'NA') {
+                                        $val = \Yii::$app->general->decryptData($val);
+                                    }
+                                    if (is_numeric($val) && preg_match('/^([0-9]+)$/', $val) && strlen($val) > 10) {
+                                        $sheet->setCellValueExplicitByColumnAndRow($colIdx, $rowIdx, $val, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                                    } else {
+                                        $sheet->setCellValueByColumnAndRow($colIdx, $rowIdx, $val);
+                                    }
+                                    $colIdx++;
+                                }
+                                $rowIdx++;
                             }
 
                             $filePath = $path . $fileName;
-                            $objWriter = IOFactory::createWriter($objPHPExcel, 'Xls');
+                            $objWriter = IOFactory::createWriter($objPHPExcel, 'Xlsx');
                             $objWriter->save($filePath);
 
                             $nextDate = date("Y-m-d H:i:s", strtotime("+{$value->interval} minutes"));
@@ -1279,8 +1287,34 @@ class SchedulerController extends ChildController {
                             $ftp->file_name = $file;
                             $ftp->local_path = $localPath;
                             $ftp->ftp_path = $subFolder;
+                            $existingLog = TblFtpTxnLog::find()
+                                ->where(['ftp_type' => 'AWS', 'file_name' => $file, 'ftp_path' => $subFolder])
+                                ->exists();
                             if ($ftp->DownloadFile()) {
                                 $ftp->RenameFile($subFolder . $file, $subFolder . 'Archive/' . $file);
+                                if (!$existingLog) {
+                                    $ftpLog = new TblFtpTxnLog();
+                                    $ftpLog->txn_type    = 'AWS';
+                                    $ftpLog->union_code  = $config->union_code;
+                                    $ftpLog->module_name = 'Provisional';
+                                    $ftpLog->module_code = $config->union_code;
+                                    $ftpLog->file_name   = $file;
+                                    $ftpLog->local_path  = $localPath . $file;
+                                    $ftpLog->ftp_path    = $subFolder;
+                                    $ftpLog->file_path   = $subFolder . $file;
+                                    $ftpLog->ftp_type    = $ftpData->ftp_type;
+                                    $ftpLog->ftp_host    = $ftpData->ftp_host;
+                                    $ftpLog->ftp_username = $ftpData->ftp_username;
+                                    $ftpLog->ftp_password = $ftpData->ftp_password;
+                                    $ftpLog->ftp_port    = $ftpData->ftp_port;
+                                    $ftpLog->txn_datetime = date('Y-m-d H:i:s');
+                                    $ftpLog->file_status = 0;
+                                    $ftpLog->status      = 0;
+                                    $ftpLog->total_count = 0;
+                                    $ftpLog->success_count = 0;
+                                    $ftpLog->error_count = 0;
+                                    $ftpLog->save(FALSE);
+                                }
                             } else {
                                 \Yii::error('[DownloadAcknowledge] Failed to download file: ' . $file . ' from ' . $subFolder, __METHOD__);
                             }
@@ -1294,194 +1328,235 @@ class SchedulerController extends ChildController {
     }
 
     public function actionProcessAcknowledgeFiles() {
-        $subFolders = ['Success/', 'Error/'];
-
         $dcsCtrl = new TblDcsProvisionalController('dcs-provisional', \Yii::$app->getModule('organisation'));
         $custCtrl = new TblCustomerMasterProvisionalController('customer-provisional', \Yii::$app->getModule('organisation'));
 
-        foreach ($subFolders as $subFolder) {
+        $pendingLogs = TblFtpTxnLog::find()
+            ->where(['ftp_type' => 'AWS', 'txn_type' => 'AWS', 'file_status' => 0, 'status' => 0])
+            ->all();
+
+        if (empty($pendingLogs)) {
+            return;
+        }
+
+        $logIds = array_map(function($l) { return $l->ftp_txn_log_id; }, $pendingLogs);
+        TblFtpTxnLog::updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['ftp_txn_log_id' => $logIds]);
+
+        foreach ($pendingLogs as $ftpLog) {
+            $filePath = $ftpLog->local_path;
+            $fileName = $ftpLog->file_name;
+            $subFolder = $ftpLog->ftp_path;
+
             $folder = \Yii::$app->params['sap_data_files'] . $subFolder;
             $localPath = rtrim(str_replace(['\\', '//'], '/', \Yii::getAlias('@webroot') . '/' . $folder), '/') . '/';
             $archivePath = $localPath . 'Archive/';
             \Yii::$app->general->checkDirectory($archivePath);
 
-            if (!is_dir($localPath)) continue;
+            if (!file_exists($filePath)) {
+                $ftpLog->status = 3;
+                $ftpLog->save(FALSE);
+                \Yii::error('[ProcessAcknowledge] File not found on disk: ' . $filePath, __METHOD__);
+                continue;
+            }
 
-            $allFiles = glob($localPath . '*.xls*');
-            if (empty($allFiles)) continue;
+            $allRowProcessed = true;
+            $successCount = 0;
+            $errorCount = 0;
+            $targetStatus = (stripos($subFolder, 'Success') !== false) ? 2 : 3;
 
-            foreach ($allFiles as $filePath) {
-                $fileName = basename($filePath);
-                $allRowProcessed = true;
-                $targetStatus = ($subFolder == 'Success/') ? 2 : 3;
+            try {
+                $headerMap = [];
+                $lookup = ['col:token' => 'token', 'col:type' => 'type', 'col:vendor' => 'vendor', 'col:message' => 'message'];
+                $collectedData = [];
+                $tokensByType = ['DCS' => [], 'Farmer' => [], 'Dairy Farm' => []];
 
-                try {
-                    $headerMap = [];
-                    $lookup = ['everesttoken' => 'token', 'type' => 'type', 'vendorcode' => 'vendor', 'message' => 'message'];
-                    $collectedData = [];
-                    $tokensByType = ['DCS' => [], 'Farmer' => [], 'Dairy Farm' => []];
+                $objPHPExcel = IOFactory::load($filePath);
+                $sheet = $objPHPExcel->getActiveSheet();
+                $maxRow = $sheet->getHighestRow();
+                $maxCol = $sheet->getHighestDataColumn();
+                $headerRow = $sheet->rangeToArray('A1:' . $maxCol . '1', NULL, TRUE, FALSE)[0];
 
-                    $objPHPExcel = IOFactory::load($filePath);
-                    $sheet = $objPHPExcel->getActiveSheet();
-                    $maxRow = $sheet->getHighestRow();
-                    $maxCol = $sheet->getHighestDataColumn();
-                    $headerRow = $sheet->rangeToArray('A1:' . $maxCol . '1', NULL, TRUE, FALSE)[0];
-
-                    if (!empty($headerRow)) {
-                        foreach ($headerRow as $colIndex => $colName) {
-                            $clean = strtr(strtolower(trim($colName)), [' ' => '']);
-                            if (isset($lookup[$clean])) {
-                                $headerMap[$lookup[$clean]] = $colIndex;
-                            }
+                if (!empty($headerRow)) {
+                    foreach ($headerRow as $colIndex => $colName) {
+                        $clean = strtr(strtolower(trim($colName)), [' ' => '']);
+                        if (isset($lookup[$clean])) {
+                            $headerMap[$lookup[$clean]] = $colIndex;
                         }
                     }
-
-                    for ($rowIdx = 2; $rowIdx <= $maxRow; $rowIdx++) {
-                        $row = $sheet->rangeToArray('A' . $rowIdx . ':' . $maxCol . $rowIdx, NULL, TRUE, FALSE)[0];
-                        $token = isset($headerMap['token']) ? trim($row[$headerMap['token']] ?? '') : '';
-                        if ($token !== '') {
-                            $type = isset($headerMap['type']) ? trim($row[$headerMap['type']] ?? '') : '';
-                            $collectedData[] = [
-                                'token'   => $token,
-                                'type'    => $type,
-                                'vendor'  => isset($headerMap['vendor']) ? trim($row[$headerMap['vendor']] ?? '') : '',
-                                'message' => isset($headerMap['message']) ? trim($row[$headerMap['message']] ?? '') : ''
-                            ];
-                            if (isset($tokensByType[$type])) $tokensByType[$type][] = $token;
-                        }
-                    }
-
-                    $models = [
-                        'DCS' => empty($tokensByType['DCS']) ? [] : TblDcsProvisional::find()->where(['in', 'data_post_id', $tokensByType['DCS']])->indexBy('data_post_id')->all(),
-                        'Farmer' => empty($tokensByType['Farmer']) ? [] : TblMemberProvisional::find()->where(['in', 'data_post_id', $tokensByType['Farmer']])->indexBy('data_post_id')->all(),
-                        'Dairy Farm' => empty($tokensByType['Dairy Farm']) ? [] : TblCustomerMasterProvisional::find()->where(['in', 'data_post_id', $tokensByType['Dairy Farm']])->indexBy('data_post_id')->all(),
-                    ];
-
-                    foreach ($collectedData as $row) {
-                        $model = $models[$row['type']][$row['token']] ?? null;
-                        if (!$model) {
-                            $allRowProcessed = false;
-                            continue;
-                        }
-
-                        $processed = false;
-                        if ($targetStatus == 3) {
-                            $historyModel = NULL;
-                            switch ($row['type']) {
-                                case 'DCS':
-                                    $historyModel = new TblDcsProvisionalHistory();
-                                    break;
-                                case 'Farmer':
-                                    $historyModel = new TblMemberProvisionalHistory();
-                                    break;
-                                case 'Dairy Farm':
-                                    $historyModel = new TblCustomerMasterProvisionalHistory();
-                                    $model->scenario = 'post_sap_data';
-                                    break;
-                            }
-                            if ($historyModel) {
-                                Yii::$app->operation->history($model, $historyModel, UPDATE);
-                            }
-                            $model->data_post_status = 3;
-                            $model->resp_desc = $row['message'];
-                            $processed = $this->generalModel->saveTransaction($historyModel ? [$model, $historyModel] : [$model], ['Acknowledgement Error', 'edit']);
-                        } else {
-                            switch ($row['type']) {
-                                case 'DCS':
-                                    if ($model->dcs_status == 1) {
-                                        $processed = true;
-                                        break;
-                                    }
-                                    $historyModel = new TblDcsProvisionalHistory();
-                                    Yii::$app->operation->history($model, $historyModel, UPDATE);
-                                    $model->scenario = 'approveDcs';
-                                    $model->vendor = $model->vendor_code;
-                                    $model->dcs_status = 1;
-                                    $model->sap_vendor_code = $row['vendor'];
-                                    $all_doc = [];
-                                    $dcsdoc = [];
-                                    $msgArr = [];
-                                    $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr) === 'customRedirect');
-                                    if ($processed) {
-                                        $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
-                                        $dcsDir = $baseDir . 'dcs';
-                                        $proDcsDir = $baseDir . 'provisional_dcs';
-                                        for ($i = 0; $i < count($all_doc); $i++) {
-                                            $docFileName = basename($dcsdoc[$i]);
-                                            $file = $dcsDir . '/' . $docFileName;
-                                            if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
-                                                if (copy($proDcsDir . '/' . $all_doc[$i], $file)) {
-                                                    unlink($proDcsDir . '/' . $all_doc[$i]);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    break;
-
-                                case 'Farmer':
-                                    if ($model->member_status == 1) {
-                                        $processed = true;
-                                        break;
-                                    }
-                                    $historyModel = new TblMemberProvisionalHistory();
-                                    Yii::$app->operation->history($model, $historyModel, UPDATE);
-                                    $model->vendor_code = $row['vendor'];
-                                    $modelSave = [$historyModel];
-                                    $deleteModelList = [];
-                                    $unlink_files = [];
-                                    $attachments = [];
-                                    $masterdoc = [];
-                                    $errors = [];
-                                    $model->setChildTableSaveDelete($model, $modelSave, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
-                                    $processed = !empty($modelSave) && ($this->generalModel->saveDeleteTransaction([$model], $modelSave, $deleteModelList, ['Member Creation', 'create']) === 'customRedirect');
-                                    if ($processed) {
-                                        $model->moveFiles($unlink_files, $attachments, $masterdoc);
-                                    }
-                                    break;
-
-                                case 'Dairy Farm':
-                                    if ($model->customer_status == 1) {
-                                        $processed = true;
-                                        break;
-                                    }
-                                    $historyModel = new TblCustomerMasterProvisionalHistory();
-                                    Yii::$app->operation->history($model, $historyModel, UPDATE);
-                                    $model->customer_status = 1;
-                                    $model->sap_vendor_code = $row['vendor'];
-                                    $saveArr = [$model, $historyModel];
-                                    $all_doc = [];
-                                    $customerdoc = [];
-                                    $msgArr = [];
-                                    $custCtrl->createCustomer($model, $saveArr, $all_doc, $customerdoc, $msgArr);
-                                    $processed = !empty($saveArr) && ($this->generalModel->saveTransaction($saveArr, ['Customer Creation', 'create']) === 'customRedirect');
-                                    if ($processed) {
-                                        $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
-                                        $customerDir = $baseDir . 'customer';
-                                        $proCustomerDir = $baseDir . 'provisional_customer';
-                                        for ($i = 0; $i < count($all_doc); $i++) {
-                                            $docFileName = basename($customerdoc[$i]);
-                                            $file = $customerDir . '/' . $docFileName;
-                                            if (file_exists($proCustomerDir . '/' . $all_doc[$i])) {
-                                                if (copy($proCustomerDir . '/' . $all_doc[$i], $file)) {
-                                                    unlink($proCustomerDir . '/' . $all_doc[$i]);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    break;
-                            }
-                        }
-
-                        if (!$processed) $allRowProcessed = false;
-                    }
-
-                    if ($allRowProcessed) {
-                        rename($filePath, $archivePath . $fileName);
-                    }
-                } catch (\Exception $ex) {
-                    $allRowProcessed = false;
-                    \Yii::error('[ProcessAcknowledge] File: ' . $fileName . ' | Error: ' . $ex->getMessage() . ' | Line: ' . $ex->getLine(), __METHOD__);
                 }
+
+                for ($rowIdx = 2; $rowIdx <= $maxRow; $rowIdx++) {
+                    $row = $sheet->rangeToArray('A' . $rowIdx . ':' . $maxCol . $rowIdx, NULL, TRUE, FALSE)[0];
+                    $token = isset($headerMap['token']) ? trim($row[$headerMap['token']] ?? '') : '';
+                    if ($token !== '') {
+                        $type = isset($headerMap['type']) ? trim($row[$headerMap['type']] ?? '') : '';
+                        $collectedData[] = [
+                            'token' => $token,
+                            'type' => $type,
+                            'vendor' => isset($headerMap['vendor']) ? trim($row[$headerMap['vendor']] ?? '') : '',
+                            'message' => isset($headerMap['message']) ? trim($row[$headerMap['message']] ?? '') : ''
+                        ];
+                        if (isset($tokensByType[$type])) $tokensByType[$type][] = $token;
+                    }
+                }
+
+                $models = [
+                    'DCS' => empty($tokensByType['DCS']) ? [] : TblDcsProvisional::find()->where(['in', 'data_post_id', $tokensByType['DCS']])->indexBy('data_post_id')->all(),
+                    'Farmer' => empty($tokensByType['Farmer']) ? [] : TblMemberProvisional::find()->where(['in', 'data_post_id', $tokensByType['Farmer']])->indexBy('data_post_id')->all(),
+                    'Dairy Farm' => empty($tokensByType['Dairy Farm']) ? [] : TblCustomerMasterProvisional::find()->where(['in', 'data_post_id', $tokensByType['Dairy Farm']])->indexBy('data_post_id')->all(),
+                ];
+
+                foreach ($collectedData as $row) {
+                    $model = $models[$row['type']][$row['token']] ?? null;
+                    if (!$model) {
+                        $allRowProcessed = false;
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $processed = false;
+                    if ($targetStatus == 3) {
+                        $historyModel = NULL;
+                        switch ($row['type']) {
+                            case 'DCS':
+                                $historyModel = new TblDcsProvisionalHistory();
+                                break;
+                            case 'Farmer':
+                                $historyModel = new TblMemberProvisionalHistory();
+                                break;
+                            case 'Dairy Farm':
+                                $historyModel = new TblCustomerMasterProvisionalHistory();
+                                $model->scenario = 'post_sap_data';
+                                break;
+                        }
+                        if ($historyModel) {
+                            Yii::$app->operation->history($model, $historyModel, UPDATE);
+                        }
+                        $model->data_post_status = 3;
+                        $model->resp_status = $fileName;
+                        $model->response_msg = $row['message'];
+                        $processed = $this->generalModel->saveTransaction($historyModel ? [$model, $historyModel] : [$model], ['Acknowledgement Error', 'edit']);
+                    } else {
+                        switch ($row['type']) {
+                            case 'DCS':
+                                if ($model->dcs_status == 1) {
+                                    $processed = true;
+                                    break;
+                                }
+                                $historyModel = new TblDcsProvisionalHistory();
+                                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                                $model->scenario = 'approveDcs';
+                                $model->vendor = $model->vendor_code;
+                                $model->dcs_status = 1;
+                                $model->sap_vendor_code = $row['vendor'];
+                                $model->resp_status = $fileName;
+                                $model->response_msg = $row['message'];
+                                $all_doc = [];
+                                $dcsdoc = [];
+                                $msgArr = [];
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr) === 'customRedirect');
+                                if ($processed) {
+                                    $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
+                                    $dcsDir = $baseDir . 'dcs';
+                                    $proDcsDir = $baseDir . 'provisional_dcs';
+                                    for ($i = 0; $i < count($all_doc); $i++) {
+                                        $docFileName = basename($dcsdoc[$i]);
+                                        $file = $dcsDir . '/' . $docFileName;
+                                        if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
+                                            if (copy($proDcsDir . '/' . $all_doc[$i], $file)) {
+                                                unlink($proDcsDir . '/' . $all_doc[$i]);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+
+                            case 'Farmer':
+                                if ($model->member_status == 1) {
+                                    $processed = true;
+                                    break;
+                                }
+                                $historyModel = new TblMemberProvisionalHistory();
+                                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                                $model->vendor_code = $row['vendor'];
+                                $model->resp_status = $fileName;
+                                $model->response_msg = $row['message'];
+                                $modelSave = [$historyModel];
+                                $deleteModelList = [];
+                                $unlink_files = [];
+                                $attachments = [];
+                                $masterdoc = [];
+                                $errors = [];
+                                $model->setChildTableSaveDelete($model, $modelSave, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
+                                $processed = !empty($modelSave) && ($this->generalModel->saveDeleteTransaction([$model], $modelSave, $deleteModelList, ['Member Creation', 'create']) === 'customRedirect');
+                                if ($processed) {
+                                    $model->moveFiles($unlink_files, $attachments, $masterdoc);
+                                }
+                                break;
+
+                            case 'Dairy Farm':
+                                if ($model->customer_status == 1) {
+                                    $processed = true;
+                                    break;
+                                }
+                                $historyModel = new TblCustomerMasterProvisionalHistory();
+                                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                                $model->customer_status = 1;
+                                $model->sap_vendor_code = $row['vendor'];
+                                $model->resp_status = $fileName;
+                                $model->response_msg = $row['message'];
+                                $saveArr = [$model, $historyModel];
+                                $all_doc = [];
+                                $customerdoc = [];
+                                $msgArr = [];
+                                $custCtrl->createCustomer($model, $saveArr, $all_doc, $customerdoc, $msgArr);
+                                $processed = !empty($saveArr) && ($this->generalModel->saveTransaction($saveArr, ['Customer Creation', 'create']) === 'customRedirect');
+                                if ($processed) {
+                                    $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
+                                    $customerDir = $baseDir . 'customer';
+                                    $proCustomerDir = $baseDir . 'provisional_customer';
+                                    for ($i = 0; $i < count($all_doc); $i++) {
+                                        $docFileName = basename($customerdoc[$i]);
+                                        $file = $customerDir . '/' . $docFileName;
+                                        if (file_exists($proCustomerDir . '/' . $all_doc[$i])) {
+                                            if (copy($proCustomerDir . '/' . $all_doc[$i], $file)) {
+                                                unlink($proCustomerDir . '/' . $all_doc[$i]);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                    }
+
+                    if ($processed) {
+                        $successCount++;
+                    } else {
+                        $allRowProcessed = false;
+                        $errorCount++;
+                    }
+                }
+
+                $ftpLog->total_count   = count($collectedData);
+                $ftpLog->success_count = $successCount;
+                $ftpLog->error_count   = $errorCount;
+                $ftpLog->file_status   = $allRowProcessed ? 1 : 0;
+                $ftpLog->status        = $allRowProcessed ? 2 : 3;
+                $ftpLog->save(FALSE);
+
+                if ($allRowProcessed) {
+                    rename($filePath, $archivePath . $fileName);
+                }
+            } catch (\Exception $ex) {
+                $allRowProcessed = false;
+                if(!empty($collectedData)){
+                    $ftpLog->total_count   = count($collectedData);
+                    $ftpLog->success_count = $successCount;
+                    $ftpLog->error_count   = $ftpLog->total_count - $successCount;
+                }
+                $ftpLog->status = 3;
+                $ftpLog->save(FALSE);
+                \Yii::error('[ProcessAcknowledge] File: ' . $fileName . ' | Error: ' . $ex->getMessage() . ' | Line: ' . $ex->getLine(), __METHOD__);
             }
         }
     }

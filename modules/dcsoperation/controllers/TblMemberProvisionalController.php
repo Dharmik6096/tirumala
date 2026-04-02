@@ -474,9 +474,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionApproveMember($id) {
+    public function actionApproveMember($id, $isTabApproval = 0) {
         $model = TblProcessApproval::findOne($id);
-        $model->scenario = 'approve';
+        $aproveStatus = Yii::$app->request->post('TblProcessApproval')['status'] ?? '';
+        $model->scenario = ($isTabApproval == 1 && $aproveStatus == 2) ? 'approvalTabWise' : 'approve';
         $model_save = [];
         $deleteModel = [];
         $member_error = '';
@@ -503,14 +504,45 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 if (strtolower($status) == 'approve' && ($memberCreationPendingForSapApproval != '1' || $memberModel->provisional_from == 'mobile_update')) {
                     $memberModel->member_status = 1; // Created
                 }
-                $memberModel->scenario = 'MemberApprove';
                 $model_save[] = $memberModel;
                 $all_doc = [];
                 $memberdoc = [];
                 $unlink_files = [];
                 $attachments = [];
                 $config = Yii::$app->general->getUnionConfigResult($memberModel->union_code, 'allow_member_other_detail');
-                if ($memberModel->validate()) {
+
+                $validationConfig = $this->getValidationConfig($memberModel);
+                $basePath = '/dcsoperation/tbl-member-provisional/';
+                $isValid = true;
+
+                foreach ($validationConfig as $action => $items) {
+                    if (Yii::$app->general->checkAccess($basePath . $action)) {
+                        foreach ($items as $item) {
+                            $modelToValidate = $item['model'];
+                            $modelToValidate->scenario = $item['scenario'];
+                            if (!$modelToValidate->validate(null, false)) {
+                                $isValid = false;
+                            }
+                        }
+                    }
+                }
+
+                $memberModel->scenario = 'MemberApprove';
+                if (!$memberModel->validate(null, false)) {
+                    $isValid = false;
+                }
+
+                if (!$isValid) {
+                    if (!empty($shareModel) && $shareModel->hasErrors()) {
+                        foreach ($shareModel->getErrors() as $attr => $errors) {
+                            foreach ($errors as $error) {
+                                $memberModel->addError($attr, $error);
+                            }
+                        }
+                    }
+                }
+                
+                if ($isValid) {
                     if ($memberModel->provisional_status == 'Approve' && $memberCreationPendingForSapApproval != '1') {
                         $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
                         if ($config == 1) {
@@ -518,13 +550,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         }
                     }
                 } else {
-                    foreach ($memberModel->getErrors() as $errorkey => $value) {
-                        $message = $value;
-                    }
-                }
-                if (!empty($message)) {
-                    foreach ($message as $msg) {
-                        $member_error .= $msg;
+                    foreach ($memberModel->getErrors() as $errorkey => $errors) {
+                        foreach ($errors as $error) {
+                            $member_error .= $error . '<br/>';
+                        }
                     }
                 }
                 if (empty($member_error)) {
@@ -533,7 +562,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         if ($memberModel->provisional_status == 'Approve') {
                             $memberModel->moveFiles($unlink_files, $attachments, $memberdoc);
                         }
-                        return $this->redirect(Url::previous());
+                        $redirectUrl = ($isTabApproval == 1 ? ['pending-approval'] : Url::previous());
+                        return $this->redirect($redirectUrl);
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
@@ -543,6 +573,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => 'Member provisional already approved by other user.']);
             }
+        }
+        if ($isTabApproval == 1) {
+            $errors = [];
+            foreach ($model->getErrors() as $attrErrors) {
+                foreach ($attrErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => implode('<br/>', $errors)]);
+            return $this->redirect(Yii::$app->request->referrer);
         }
         return $this->render('approve_member', [
                     'model' => $model,
@@ -1356,6 +1396,598 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionEditApproval($id) {
+        return $this->startFlow($id, false);
+    }
+
+    public function actionViewApproval($id) {
+        return $this->startFlow($id, true);
+    }
+
+    private function startFlow($id, $isView) {
+        $steps = $isView ? $this->getViewApprovalStepsList() : $this->getApprovalStepsList();
+        if (empty($steps)) {
+            throw new \yii\web\ForbiddenHttpException('You do not have permission to access any approval steps.');
+        }
+        $firstStep = reset($steps);
+        return $this->redirect([$firstStep['action'], 'id' => $id]);
+    }
+
+    private function getViewApprovalStepsList() {
+        $stepsConfig = [
+                ['label' => 'Member Details', 'actions' => ['approval-view-member-detail']],
+                ['label' => 'Address & Adhar Details', 'actions' => ['approval-view-address-detail', 'approval-view-adhar-detail']],
+                ['label' => 'Family Details', 'actions' => ['approval-view-family-detail']],
+                ['label' => 'Animal & Commitment Details', 'actions' => ['approval-view-animal-detail', 'approval-view-commitment-detail']],
+                ['label' => 'Share Details', 'actions' => ['approval-view-share-detail']],
+                ['label' => 'Bank Details', 'actions' => ['approval-view-bank-detail', 'approval-view-fee-detail', 'approval-view-mismatch-detail']],
+        ];
+        return $this->processSteps($stepsConfig);
+    }
+
+    private function getApprovalStepsList() {
+        $stepsConfig = [
+                ['label' => 'Member Details', 'actions' => ['approval-member-detail']],
+                ['label' => 'Address & Adhar Details', 'actions' => ['approval-address-detail', 'approval-adhar-detail']],
+                ['label' => 'Family Details', 'actions' => ['approval-family-detail']],
+                ['label' => 'Animal & Commitment Details', 'actions' => ['approval-animal-detail', 'approval-commitment-detail']],
+                ['label' => 'Share Details', 'actions' => ['approval-share-detail']],
+                ['label' => 'Bank Details', 'actions' => ['approval-bank-detail', 'approval-fee-detail', 'approval-mismatch-detail']],
+        ];
+        return $this->processSteps($stepsConfig);
+    }
+
+    private function processSteps($stepsConfig) {
+        $basePath = '/dcsoperation/tbl-member-provisional/';
+        $steps = [];
+
+        foreach ($stepsConfig as $config) {
+            foreach ($config['actions'] as $action) {
+                if (Yii::$app->general->checkAccess($basePath . $action)) {
+                    $steps[$action] = [
+                        'label' => $config['label'],
+                        'action' => $action
+                    ];
+                    break;
+                }
+            }
+        }
+        return $steps;
+    }
+
+    public function getNextStepUrl($currentAction, $id, $isView = false) {
+        $steps = $isView ? $this->getViewApprovalStepsList() : $this->getApprovalStepsList();
+        $keys = array_keys($steps);
+        $currentIndex = array_search($currentAction, $keys);
+
+        if ($currentIndex === false || $currentIndex >= count($keys) - 1) {
+            return null;
+        }
+        $nextAction = $keys[$currentIndex + 1];
+        return [$nextAction, 'id' => $id];
+    }
+
+    public function getPreviousStepUrl($currentAction, $id, $isView = false) {
+        $steps = $isView ? $this->getViewApprovalStepsList() : $this->getApprovalStepsList();
+        $keys = array_keys($steps);
+        $currentIndex = array_search($currentAction, $keys);
+        if ($currentIndex === false || $currentIndex <= 0) {
+            return null;
+        }
+        $prevAction = $keys[$currentIndex - 1];
+        return [$prevAction, 'id' => $id];
+    }
+
+    public function isLastStep($currentAction, $isView = false) {
+        $steps = $isView ? $this->getViewApprovalStepsList() : $this->getApprovalStepsList();
+        $keys = array_keys($steps);
+        $currentIndex = array_search($currentAction, $keys);
+        if ($currentIndex === false) {
+            return true;
+        }
+        return ($currentIndex >= count($keys) - 1);
+    }
+
+    private function handleNextStep($currentAction, $id) {
+        $isView = strpos($currentAction, 'view') !== false;
+        if ($this->isLastStep($currentAction, $isView)) {
+            return $this->actionApproveMember($id, 1);
+        }
+        $nextUrl = $this->getNextStepUrl($currentAction, $id, $isView);
+        if ($nextUrl) {
+            return $this->redirect($nextUrl);
+        }
+
+        return null;
+    }
+
+    public function actionApprovalMemberDetail($id) {
+        return $this->renderUnifiedMemberDetail($id, 'approval-member-detail');
+    }
+
+    public function actionApprovalViewMemberDetail($id) {
+        return $this->renderUnifiedMemberDetail($id, 'approval-view-member-detail', true);
+    }
+
+    private function renderUnifiedMemberDetail($id, $currentStep, $isView = false) {
+        $processModel = TblProcessApproval::findOne($id);
+        $memberModel = $this->findModel($processModel->process_code);
+
+        if (!$isView) {
+            $memberModel->dob = empty($memberModel->dob) ? NULL : $memberModel->dob;
+            $memberModel->member_name = ucwords($memberModel->member_name);
+            $memberModel->ex_member_code = !empty($memberModel->ex_member_code) ? str_pad($memberModel->ex_member_code, 4, '0', STR_PAD_LEFT) : '';
+            $memberModel->scenario = 'approval_member_detail';
+            $tblMember = new TblMember();
+            if (empty($memberModel->ex_member_code)) {
+                $memberModel->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $memberModel->dcs_code, $memberModel);
+            }
+        }
+
+        if (Yii::$app->request->post()) {
+            $res = $this->handleApprovalPost($id, $currentStep, $memberModel, $processModel, 'member');
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $viewFile = $isView ? 'approval_view_member_detail' : 'approval_member_detail';
+        return $this->render($viewFile, [
+                    'model' => $memberModel,
+                    'processModel' => $processModel,
+                    'currentStep' => $currentStep,
+                    'isLastStep' => $this->isLastStep($currentStep, $isView)
+        ]);
+    }
+
+    public function actionApprovalViewAddressDetail($id) {
+        return $this->renderUnifiedAddressDetail($id, 'approval-view-address-detail', true);
+    }
+
+    public function actionApprovalViewAdharDetail($id) {
+        return $this->renderUnifiedAddressDetail($id, 'approval-view-adhar-detail', true);
+    }
+
+    public function actionApprovalAddressDetail($id) {
+        return $this->renderUnifiedAddressDetail($id, 'approval-address-detail');
+    }
+
+    public function actionApprovalAdharDetail($id) {
+        return $this->renderUnifiedAddressDetail($id, 'approval-adhar-detail');
+    }
+
+    private function renderUnifiedAddressDetail($id, $currentStep, $isView = false) {
+        $processModel = TblProcessApproval::findOne($id);
+        $memberModel = $this->findModel($processModel->process_code);
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $processModel->process_code, 'module_name' => 'tbl_member_provisional']),
+        ]);
+        if (Yii::$app->request->post()) {
+            $res = $this->handleApprovalPost($id, $currentStep, $memberModel, $processModel, 'address');
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $viewFile = $isView ? 'approval_view_address_detail' : 'approval_address_detail';
+        return $this->render($viewFile, [
+                    'model' => $memberModel,
+                    'processModel' => $processModel,
+                    'currentStep' => $currentStep,
+                    'attachment' => $attachment,
+                    'dataProviderOther' => $dataProviderOther,
+                    'isLastStep' => $this->isLastStep($currentStep, $isView)
+        ]);
+    }
+
+    public function actionApprovalViewFamilyDetail($id) {
+        return $this->renderUnifiedFamilyDetail($id, 'approval-view-family-detail', true);
+    }
+
+    public function actionApprovalFamilyDetail($id) {
+        return $this->renderUnifiedFamilyDetail($id, 'approval-family-detail');
+    }
+
+    private function renderUnifiedFamilyDetail($id, $currentStep, $isView = false) {
+        $processModel = TblProcessApproval::findOne($id);
+        $memberModel = $this->findModel($processModel->process_code);
+
+        $msearchModel = new TblMemberProvisionalSearch();
+        $msearchModel->provisional_member_code = $memberModel->provisional_member_code;
+        $mdataProvider = $msearchModel->search(Yii::$app->request->queryParams);
+
+        $memberFamilyDetail = new TblMemberProvisionalFamilyDetails();
+        $memberFamilyDetail->provisional_member_code = $memberModel->provisional_member_code;
+        $memberFamilyDetail->scenario = 'member_family_detail';
+        $familySearchModel = new TblMemberProvisionalFamilyDetailsSearch();
+        $familySearchModel->provisional_member_code = $memberModel->provisional_member_code;
+        $fDataProvider = $familySearchModel->search(Yii::$app->request->queryParams);
+
+        if (Yii::$app->request->post()) {
+            $res = $this->handleApprovalPost($id, $currentStep, $memberModel, $processModel, 'family');
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $viewFile = $isView ? 'approval_view_family_detail' : 'approval_family_detail';
+        return $this->render($viewFile, [
+                    'model' => $memberModel,
+                    'processModel' => $processModel,
+                    'currentStep' => $currentStep,
+                    'memberFamilyDataProvider' => $fDataProvider,
+                    'memberFamilySearchModel' => $familySearchModel,
+                    'memberFamilyDetail' => $memberFamilyDetail,
+                    'msearchModel' => $msearchModel,
+                    'mdataProvider' => $mdataProvider,
+                    'isLastStep' => $this->isLastStep($currentStep, $isView)
+        ]);
+    }
+
+    public function actionApprovalViewAnimalDetail($id) {
+        return $this->renderUnifiedAnimalDetail($id, 'approval-view-animal-detail', true);
+    }
+
+    public function actionApprovalViewCommitmentDetail($id) {
+        return $this->renderUnifiedAnimalDetail($id, 'approval-view-commitment-detail', true);
+    }
+
+    public function actionApprovalAnimalDetail($id) {
+        return $this->renderUnifiedAnimalDetail($id, 'approval-animal-detail');
+    }
+
+    public function actionApprovalCommitmentDetail($id) {
+        return $this->renderUnifiedAnimalDetail($id, 'approval-commitment-detail');
+    }
+
+    private function renderUnifiedAnimalDetail($id, $currentStep, $isView = false) {
+        $processModel = TblProcessApproval::findOne($id);
+        $memberModel = $this->findModel($processModel->process_code);
+
+        $animalMemberModel = new TblMemberProvisionalAnimalDetailsSearch();
+        $animalMemberModel->provisional_member_code = $memberModel->provisional_member_code;
+        $animalDataProvider = $animalMemberModel->search(Yii::$app->request->queryParams);
+
+        $animal_model = new TblMemberAnimalType();
+        $animal_model->union_code = $memberModel->union_code;
+        $animals = $animal_model->getAnimal();
+        $member_animal_model_data = [];
+        $member_animal_model = new TblMemberProvisionalAnimalDetails();
+        $member_animal_model->provisional_member_code = $memberModel->provisional_member_code;
+
+        $h_model = [];
+        $msearchModel = new TblMemberProvisionalSearch();
+        $msearchModel->provisional_member_code = $memberModel->provisional_member_code;
+        $mdataProvider = $msearchModel->search(Yii::$app->request->queryParams);
+        $this->setAnimalModelData($animals, $member_animal_model_data, $h_model, $memberModel->provisional_member_code);
+
+        if (Yii::$app->request->post()) {
+            $res = $this->handleApprovalPost($id, $currentStep, $memberModel, $processModel, 'animal', null, $member_animal_model_data, $h_model);
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $viewFile = $isView ? 'approval_view_animal_detail' : 'approval_animal_detail';
+        return $this->render($viewFile, [
+                    'animals' => $animals,
+                    'member_animal_model' => $member_animal_model,
+                    'member_animal_model_data' => $member_animal_model_data,
+                    'model' => $memberModel,
+                    'processModel' => $processModel,
+                    'currentStep' => $currentStep,
+                    'animalDataProvider' => $animalDataProvider,
+                    'animalMemberModel' => $animalMemberModel,
+                    'isLastStep' => $this->isLastStep($currentStep, $isView)
+        ]);
+    }
+
+    public function actionApprovalViewShareDetail($id) {
+        return $this->renderUnifiedShareDetail($id, 'approval-view-share-detail', true);
+    }
+
+    public function actionApprovalShareDetail($id) {
+        return $this->renderUnifiedShareDetail($id, 'approval-share-detail');
+    }
+
+    private function renderUnifiedShareDetail($id, $currentStep, $isView = false) {
+        $processModel = TblProcessApproval::findOne($id);
+        $memberModel = $this->findModel($processModel->process_code);
+        $h_model = [];
+
+        $shareModel = new TblMemberProvisionalShareDetails();
+        $shareMemberModel = new TblMemberProvisionalShareDetailsSearch();
+        $shareMemberModel->provisional_member_code = $memberModel->provisional_member_code;
+        $shareDataProvider = $shareMemberModel->search(Yii::$app->request->queryParams);
+
+        $memberShareDetail = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $memberModel->provisional_member_code])->one();
+
+        if (!$isView) {
+            $shareConfig = new TblUnionShareConfig();
+            $shares = $shareConfig->getShareDetail('member', $memberModel->gender_code, $memberModel->union_code, $memberModel->bmc_code);
+
+            if (empty($memberShareDetail)) {
+                $memberShareDetail = new TblMemberProvisionalShareDetails();
+                $memberShareDetail->provisional_member_code = $memberModel->provisional_member_code;
+                $memberShareDetail->no_of_share_req = $shares['min_share'];
+                $memberShareDetail->no_of_share_apply = $shares['max_share'];
+                $memberShareDetail->admission_fee = $shares['admission_fee'];
+                $memberShareDetail->payable_share_amount = $shares['max_share'] * $shares['per_share_rate'];
+                $memberShareDetail->amount_payable = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
+                $memberShareDetail->total_amount = ($shares['max_share'] * $shares['per_share_rate']) + $shares['admission_fee'];
+                $memberShareDetail->per_share_rate = $shares['per_share_rate'];
+            }
+            $this->setShareModelData($memberShareDetail, $h_model, $memberModel->provisional_member_code);
+        }
+
+        if (Yii::$app->request->post()) {
+            $res = $this->handleApprovalPost($id, $currentStep, $memberModel, $processModel, 'share', $memberShareDetail, null, null, $h_model);
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $viewFile = $isView ? 'approval_view_share_detail' : 'approval_share_detail';
+        return $this->render($viewFile, [
+                    'model' => $memberModel,
+                    'shareModel' => $shareModel,
+                    'processModel' => $processModel,
+                    'currentStep' => $currentStep,
+                    'shareDataProvider' => $shareDataProvider,
+                    'shareMemberModel' => $shareMemberModel,
+                    'memberShareDetail' => $memberShareDetail,
+                    'isLastStep' => $this->isLastStep($currentStep, $isView)
+        ]);
+    }
+
+    public function actionApprovalViewBankDetail($id) {
+        return $this->renderUnifiedBankDetail($id, 'approval-view-bank-detail', true);
+    }
+
+    public function actionApprovalViewFeeDetail($id) {
+        return $this->renderUnifiedBankDetail($id, 'approval-view-fee-detail', true);
+    }
+
+    public function actionApprovalViewMismatchDetail($id) {
+        return $this->renderUnifiedBankDetail($id, 'approval-view-mismatch-detail', true);
+    }
+
+    public function actionApprovalBankDetail($id) {
+        return $this->renderUnifiedBankDetail($id, 'approval-bank-detail', false, 'approval_bank_detail');
+    }
+
+    public function actionApprovalFeeDetail($id) {
+        return $this->renderUnifiedBankDetail($id, 'approval-fee-detail');
+    }
+
+    public function actionApprovalMismatchDetail($id) {
+        return $this->renderUnifiedBankDetail($id, 'approval-mismatch-detail');
+    }
+
+    private function renderUnifiedBankDetail($id, $currentStep, $isView = false, $scenario = '') {
+        $processModel = TblProcessApproval::findOne($id);
+        $memberModel = $this->findModel($processModel->process_code);
+        $shareModel = TblMemberProvisionalShareDetails::find()->where(['provisional_member_code' => $memberModel->provisional_member_code])->one();
+        if (!$shareModel) {
+            $shareModel = new TblMemberProvisionalShareDetails();
+            $shareModel->provisional_member_code = $memberModel->provisional_member_code;
+        }
+
+        if (!$isView) {
+            $memberModel->scenario = $scenario;
+        }
+
+        if (Yii::$app->request->post()) {
+            $res = $this->handleApprovalPost($id, $currentStep, $memberModel, $processModel, 'bank');
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $viewFile = $isView ? 'approval_view_bank_detail' : 'approval_bank_detail';
+        $steps = $isView ? $this->getViewApprovalStepsList() : $this->getApprovalStepsList();
+        return $this->render($viewFile, [
+                    'model' => $memberModel,
+                    'shareModel' => $shareModel,
+                    'processModel' => $processModel,
+                    'steps' => $steps,
+                    'currentStep' => $currentStep,
+                    'isLastStep' => $this->isLastStep($currentStep, $isView)
+        ]);
+    }
+
+    private function getValidationConfig($memberModel) {
+        return [
+            'approval-member-detail' => [
+                    ['model' => $memberModel, 'scenario' => 'approval_member_detail']
+            ],
+            'approval-address-detail' => [
+                    ['model' => $memberModel, 'scenario' => 'approval_address_detail']
+            ],
+            'approval-adhar-detail' => [
+                    ['model' => $memberModel, 'scenario' => 'approval_adhar_detail']
+            ],
+            'approval-bank-detail' => [
+                    ['model' => $memberModel, 'scenario' => 'approval_bank_detail'],
+            ],
+        ];
+    }
+
+    private function handleApprovalPost($id, $action, $memberModel, $processModel, $step, $shareModel = null, $animalModel = null, $animalHistory = null, $shareHistory = null) {
+        $this->model = $memberModel;
+        $message = '';
+        if (!Yii::$app->request->post())
+            return null;
+
+        $postData = Yii::$app->request->post();
+
+        if (isset($postData['operation']) && $postData['operation'] == 'reroute') {
+            $remarks = !empty($postData['reroute_remarks']) ? $postData['reroute_remarks'] : '';
+            $res = $this->handleReroute($memberModel, $remarks);
+            if ($res == 'customRedirect') {
+                return $this->redirect(['pending-approval']);
+            }
+            return $res;
+        }
+
+        if (strpos($action, 'approval-view') !== false) {
+            return $this->handleNextStep($action, $id);
+        }
+
+        $models = [];
+        $histories = [];
+        $log = ['Member Provisional', 'edit'];
+
+        if ($step == 'member') {
+            $historyModel = new TblMemberProvisionalHistory();
+            Yii::$app->operation->history($memberModel, $historyModel, 'UPDATE');
+            $dcs_code = $memberModel->dcs_code;
+            $memberModel->load($postData);
+            if ($dcs_code != $memberModel->dcs_code && $memberModel->provisional_from != 'mobile_update') {
+                $memberModel->ex_member_code = Yii::$app->general->getMaxCode(new TblMember(), 'ex_member_code', $memberModel->dcs_code, $memberModel);
+            }
+            $memberModel->member_code = $memberModel->getCode();
+            $provisionalStatus = ['Register', 'Pending', 'Inprogress', 'Reroute'];
+            $memberModel->scenario = 'approval_member_detail';
+            if (isset($_POST['warning']) && $_POST['warning'] == 0) {
+                $validate = Yii::$app->warning->unique_member($memberModel, ['member_name', 'dcs_code', 'hamlet_code', 'provisional_status'], [$memberModel->member_name, $memberModel->dcs_code, $memberModel->hamlet_code, $provisionalStatus]);
+                if ($validate != 1)
+                    return null;
+            }
+            if ($memberModel->validate()) {
+                $memberModel->registration_date = empty($memberModel->registration_date) ? NULL : Yii::$app->formatter->asDate($memberModel->registration_date, DATE_FORMAT);
+                $memberModel->dob = empty($memberModel->dob) ? NULL : Yii::$app->formatter->asDate($memberModel->dob, DATE_FORMAT);
+                $models = [$memberModel];
+                $histories = [$historyModel];
+            }
+        } else if (in_array($step, ['address', 'commitment', 'bank'])) {
+            $historyModel = new TblMemberProvisionalHistory();
+            Yii::$app->operation->history($memberModel, $historyModel, 'UPDATE');
+            $memberModel->load($postData);
+
+            $isValid = true;
+            if ($step == 'address') {
+                if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-address-detail')) {
+                    $memberModel->scenario = 'approval_address_detail';
+                    if (!$memberModel->validate()) {
+                        $isValid = false;
+                    }
+                }
+
+                if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-adhar-detail')) {
+                    $memberModel->scenario = 'approval_adhar_detail';
+                    if (!$memberModel->validate(null, false)) {
+                        $isValid = false;
+                    }
+                }
+            }
+
+            if ($step == 'bank') {
+                if (Yii::$app->general->checkAccess('/dcsoperation/tbl-member-provisional/approval-bank-detail')) {
+                    $memberModel->scenario = 'approval_bank_detail';
+                    if (!$memberModel->validate()) {
+                        $isValid = false;
+                    }
+                }
+            }
+
+            if ($isValid) {
+                $models[] = $memberModel;
+                $histories[] = $historyModel;
+            }
+        } else if ($step == 'family' || $step == 'mismatch') {
+            return $this->handleNextStep($action, $id);
+        } else if ($step == 'animal') {
+            $memberModel->load($postData);
+            $histories = [$animalHistory];
+            $models = [$animalModel];
+            $historyModel = new TblMemberProvisionalHistory();
+            Yii::$app->operation->history($memberModel, $historyModel, 'UPDATE');
+            $histories = [$historyModel];
+            $models = [$memberModel];
+
+            if (isset($postData['TblMemberProvisionalAnimalDetails'])) {
+                $this->setAnimalDetails($postData['TblMemberProvisionalAnimalDetails'], $models, $animalModel);
+            }
+            $member_animal_model = new TblMemberProvisionalAnimalDetails();
+            if (!$member_animal_model->validate() || !$memberModel->validate()) {
+                return ['status' => 'error', 'errors' => \app\components\ActiveForm::validate($memberModel, $member_animal_model)];
+            }
+        } else if ($step == 'share') {
+            $histories = $shareHistory;
+            if ($shareModel->load($postData)) {
+                $shareModel->gender_code = $memberModel->gender_code;
+                $shareModel->union_code = $memberModel->union_code;
+                $shareModel->bmc_code = $memberModel->bmc_code;
+                $shareModel->deposit_date = empty($shareModel->deposit_date) ? NULL : Yii::$app->formatter->asDate($shareModel->deposit_date, DATE_FORMAT);
+                if ($shareModel->validate()) {
+                    $models = [$shareModel];
+                } else {
+                    foreach ($shareModel->getErrors() as $errorkey => $value) {
+                        $message .= $value[0] . '<br>';
+                    }
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $message]);
+                }
+            } else {
+                return ['status' => 'error', 'errors' => ActiveForm::validate($shareModel)];
+            }
+        } else if ($step == 'fee') {
+            $historyModel = new TblMemberProvisionalShareDetailsHistory();
+            Yii::$app->operation->history($shareModel, $historyModel, 'UPDATE');
+            if ($shareModel->load($postData)) {
+                if ($shareModel->validate()) {
+                    $models = [$shareModel];
+                    $histories = [$historyModel];
+                    $log = ['Member Provisional Share Detail', 'edit'];
+                }
+            }
+        }
+
+        if (!empty($models)) {
+            $transaction = $this->generalModel->saveTransaction($models, $histories, $log);
+            if ($transaction == 'customRedirect') {
+                return $this->handleNextStep($action, $id);
+            }
+        }
+        return null;
+    }
+
+    private function handleReroute($memberModel, $remarks) {
+        $saveModel = [];
+        $historyModel = new TblMemberProvisionalHistory();
+        Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
+
+        $memberModel->provisional_status = 'Reroute';
+        $memberModel->remarks = $remarks;
+        $memberModel->scenario = 'Reroute';
+        $saveModel[] = $memberModel;
+        if (!$memberModel->validate()) {
+            $errors = [];
+            foreach ($memberModel->getErrors() as $attrErrors) {
+                foreach ($attrErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => implode('<br/>', $errors)]);
+            return false;
+        }
+        $workflowRequired = Yii::$app->general->getUnionConfiguration($memberModel->union_code, 'workflow_require', 'PORTAL');
+        if ($workflowRequired == 1) {
+            $approvals = TblProcessApproval::find()->where(['process_code' => $memberModel->provisional_member_code])->all();
+            foreach ($approvals as $approval) {
+                $approvalHistory = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($approval, $approvalHistory, UPDATE);
+                $saveModel[] = $approvalHistory;
+
+                $approval->status = 0;
+                $saveModel[] = $approval;
+            }
+        }
+        return $this->generalModel->saveTransaction([], $saveModel, ['Member Provisional Reroute', 'edit']);
     }
 
 }

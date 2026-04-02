@@ -1,41 +1,39 @@
 <?php
-use yii\helpers\Html;
-use app\components\GeneralFunctions;
+
 use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
-?>
+use yii\helpers\Url;
 
-<div class="grid-search clearfix">
-    <?php //echo $this->render('_search', ['model' => $searchModel]);   ?>
-</div>
- <?php
 $attribute = [
-    ['attribute' => 'id', 'vAlign' => 'middle'],
-    ['attribute' => 'code', 'vAlign' => 'middle'],
-    [
+        ['attribute' => 'code', 'vAlign' => 'middle'],
+        [
         'attribute' => 'starting_date',
         'vAlign' => 'middle',
-        'filterType'=>GridView::FILTER_DATE,
-        'filterWidgetOptions'=>[
-            'pluginOptions'=>['format'=>'dd-mm-yyyy',
-                'autoclose'=>true]
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
+                'autoclose' => true
+            ]
         ],
-      //  'filter' => Yii::$app->controls->search_date($searchModel,'starting_date'),
-        'value' => function($model) {
+        'value' => function ($model) {
             return Yii::$app->controls->view_date($model->starting_date);
-}],
-      [
+        }
+    ],
+        [
         'attribute' => 'ending_date',
         'vAlign' => 'middle',
-        'filterType'=>GridView::FILTER_DATE,
-        'filterWidgetOptions'=>[
-            'pluginOptions'=>['format'=>'dd-mm-yyyy',
-                'autoclose'=>true]
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
+                'autoclose' => true
+            ]
         ],
-        'value' => function($model) {
+        'value' => function ($model) {
             return Yii::$app->controls->view_date($model->ending_date);
-}],   
-   
+        }
+    ],
 ];
 
 $grid_option = [
@@ -43,18 +41,11 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
-        'view' => false,
-        'edit'=> function ($url, $model)  {
-                $disable = ($model->checkEdit()==0)?'':'disabled';
-                $options = ['class'=>$disable];
-                
-                return GhostHtml::a('<span title="Edit"><i class="fa fa-pencil-alt"></i></span>', ['/dcsaccounting/tbl-financial-year/update','id'=>$model->id], $options);
-                
+        'edit' => function ($url, $model) {
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', Url::to(['tbl-financial-year/update', 'id' => $model->id]), ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
         },
-        'delete' => ['option' => 'code,id,/dcsaccounting/tbl-financial-year/delete'],
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-               

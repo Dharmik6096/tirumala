@@ -64,8 +64,11 @@ class TblDataExchangeConfig extends \app\models\ChildModel {
     public function getDataExchangeConfig($limit = 100) {
         $query = $this->find()
                 ->where(['is_active' => 1])
-                ->andWhere(['<=', 'tbl_data_exchange_config.next_execution', date('Y-m-d H:i:s')])
-                ->limit($limit);
+                ->andWhere(['<=', 'tbl_data_exchange_config.next_execution', date('Y-m-d H:i:s')]);
+                if (!empty($this->api_type)) {
+                    $query->andWhere(['api_type' => $this->api_type]);
+                }
+        $query->limit($limit);
         $query->orderBy(['priority' => SORT_ASC]);
         return $query->all();
     }

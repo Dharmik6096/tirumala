@@ -81,6 +81,7 @@ echo GhostMenu::widget([
                     'template' => '<a class="dropdown-toggle" href="#">Accounting Master <b class="caret"></b></a>',
                     'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
+                            ['label' => Yii::t('app', 'Financial Year'), 'url' => ['/dcsaccounting/tbl-financial-year/index'], 'active' => ($cntrl == 'tbl-financial-year')],
                             ['label' => Yii::t('app', 'Tax Group'), 'url' => ['/dcsaccounting/tbl-tax-group/index'], 'active' => ($cntrl == 'tbl-tax-group')],
                             ['label' => Yii::t('app', 'Basic Tax'), 'url' => ['/dcsaccounting/tbl-basic-tax/index'], 'active' => ($cntrl == 'tbl-basic-tax')],
                             ['label' => Yii::t('app', 'Tax'), 'url' => ['/dcsaccounting/tbl-tax/index'], 'active' => ($cntrl == 'tbl-tax')],
@@ -89,18 +90,18 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Ledger Group'), 'url' => ['/dcsaccounting/tbl-ledger-groups/index'], 'active' => ($cntrl == 'tbl-ledger-groups')],
                             ['label' => Yii::t('app', 'Ledger'), 'url' => ['/dcsaccounting/tbl-ledgers/index'], 'active' => ($cntrl == 'tbl-ledgers')],
                             ['label' => Yii::t('app', 'Sub Ledger'), 'url' => ['/dcsaccounting/tbl-sub-ledgers/index'], 'active' => ($cntrl == 'tbl-sub-ledgers')],
-                            ['label' => Yii::t('app', 'Member BillHead'), 'url' => ['/dcsaccounting/tbl-member-bill-head/index'], 'active' => ($cntrl == 'tbl-member-bill-head')],
-                            ['label' => Yii::t('app', 'Member Bill Criteria'), 'url' => ['/dcsaccounting/tbl-member-bill-criteria/index'], 'active' => ($cntrl == 'tbl-member-bill-criteria')],
-                            ['label' => Yii::t('app', 'Voucher'), 'url' => ['/dcsaccounting/tbl-voucher/index'], 'active' => ($cntrl == 'tbl-voucher')],
-                            ['label' => Yii::t('app', 'SubLedger Ledger Config'), 'url' => ['/dcsaccounting/tbl-sub-ledger-ledger-config/index'], 'active' => ($cntrl == 'tbl-sub-ledger-ledger-config')],
-                            ['label' => Yii::t('app', 'Voucher Type Ledger Config'), 'url' => ['/dcsaccounting/tbl-voucher-type-ledger-config/index'], 'active' => ($cntrl == 'tbl-voucher-type-ledger-config')],
-                            ['label' => Yii::t('app', 'Ledger Mapping TaxDetail'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-tax-detail/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-tax-detail')],
-                            ['label' => Yii::t('app', 'Ledger Mapping ProductGroup'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-product-group/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-product-group')],
-                            ['label' => Yii::t('app', 'Ledger Mapping Event'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-event/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-event')],
-                            ['label' => Yii::t('app', 'Ledger Mapping BillHead'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-bill-head/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-bill-head')],
-                            ['label' => Yii::t('app', 'Ledger Opening Balance'), 'url' => ['/dcsaccounting/tbl-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-ledger-opening-balance')],
-                            ['label' => Yii::t('app', 'SubLedger Opening Balance'), 'url' => ['/dcsaccounting/tbl-sub-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-sub-ledger-opening-balance')],
-                            ['label' => Yii::t('app', 'Dcs Year Closing'), 'url' => ['/dcsaccounting/tbl-dcs-year-closing/index'], 'active' => ($cntrl == 'tbl-dcs-year-closing')],
+//                            ['label' => Yii::t('app', 'Member BillHead'), 'url' => ['/dcsaccounting/tbl-member-bill-head/index'], 'active' => ($cntrl == 'tbl-member-bill-head')],
+//                            ['label' => Yii::t('app', 'Member Bill Criteria'), 'url' => ['/dcsaccounting/tbl-member-bill-criteria/index'], 'active' => ($cntrl == 'tbl-member-bill-criteria')],
+//                            ['label' => Yii::t('app', 'Voucher'), 'url' => ['/dcsaccounting/tbl-voucher/index'], 'active' => ($cntrl == 'tbl-voucher')],
+//                            ['label' => Yii::t('app', 'SubLedger Ledger Config'), 'url' => ['/dcsaccounting/tbl-sub-ledger-ledger-config/index'], 'active' => ($cntrl == 'tbl-sub-ledger-ledger-config')],
+//                            ['label' => Yii::t('app', 'Voucher Type Ledger Config'), 'url' => ['/dcsaccounting/tbl-voucher-type-ledger-config/index'], 'active' => ($cntrl == 'tbl-voucher-type-ledger-config')],
+//                            ['label' => Yii::t('app', 'Ledger Mapping TaxDetail'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-tax-detail/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-tax-detail')],
+                        ['label' => Yii::t('app', 'Ledger Mapping ProductGroup'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-product-group/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-product-group')],
+//                            ['label' => Yii::t('app', 'Ledger Mapping Event'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-event/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-event')],
+                        ['label' => Yii::t('app', 'Ledger Mapping BillHead'), 'url' => ['/dcsaccounting/tbl-ledger-mapping-bill-head/index'], 'active' => ($cntrl == 'tbl-ledger-mapping-bill-head')],
+//                            ['label' => Yii::t('app', 'Ledger Opening Balance'), 'url' => ['/dcsaccounting/tbl-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-ledger-opening-balance')],
+//                            ['label' => Yii::t('app', 'SubLedger Opening Balance'), 'url' => ['/dcsaccounting/tbl-sub-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-sub-ledger-opening-balance')],
+                        ['label' => Yii::t('app', 'Dcs Year Closing'), 'url' => ['/dcsaccounting/tbl-dcs-year-closing/index'], 'active' => ($cntrl == 'tbl-dcs-year-closing')],
                     ]
                 ],
                     ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
@@ -703,6 +704,7 @@ echo GhostMenu::widget([
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill 2'), 'url' => ['/misreports/reports/farmer-payment-wise-milk-wise']],
                                     ['label' => '119 -' . Yii::t('app', 'Farmer Wise Milk Bill Register With Summary'), 'url' => ['/misreports/reports/farmer-milk-bill-consolidated-summary']],
                                     ['label' => '120 -' . Yii::t('app', 'Company Wise Collection'), 'url' => ['/misreports/reports/company-wise-milk-collection']],
+                                    ['label' => '121 -' . Yii::t('app', 'DPU Rate Comparision'), 'url' => ['/misreports/reports/dpu-rate-comparision']],
                                     [
                                     'options' => ['class' => 'dropdown-submenu'],
                                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Customer receipt') . '<b class="caret"></b></a>',
@@ -869,6 +871,7 @@ echo GhostMenu::widget([
                                             ['label' => Yii::t('app', 'Format 3'), 'url' => ['/jasperreports/default/vsp-payment-vrs']],
                                             ['label' => Yii::t('app', 'Format 4'), 'url' => ['/jasperreports/default/vsp-payment-nawasa']],
                                             ['label' => Yii::t('app', 'BMC Milk Payment Voucher'), 'url' => ['/jasperreports/default/bmc-milk-payment-voucher']],
+                                            ['label' => Yii::t('app', 'VLCC Commission Bill'), 'url' => ['/jasperreports/default/vendor-commission-payment']],
                                     ]
                                 ],
                                     [
@@ -1161,6 +1164,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Comparison Report'), 'url' => ['/misreports/reports/comparison-report']],
                             ['label' => Yii::t('app', 'Complete Trip Details'), 'url' => ['/jasperreports/default/complete-trip']],
                             ['label' => Yii::t('app', 'Vehicle Status Report'), 'url' => ['/misreports/reports/vehicle-status-report']],
+                            ['label' => Yii::t('app', 'Weighment Slip'), 'url' => ['/jasperreports/default/weigh-slip']],
+                            ['label' => Yii::t('app', 'Weighment Report'), 'url' => ['/misreports/reports/unified-weighment-report']],
                     ]
                 ],
                     [
