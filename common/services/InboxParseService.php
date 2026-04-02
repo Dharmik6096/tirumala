@@ -43,11 +43,7 @@ class InboxParseService {
 
                 $verifyCountModel->total_count = count($modelData);
                 $verifyCountModel->updated_at = date('Y-m-d H:i:s');
-                try {
-                    $verifyCountModel->save();
-                } catch (\Throwable $e) {
-                    $modelData = [];
-                }
+                $verifyCountModel->save();
 
                 foreach ($modelData as $transaction_data) {
                     try {
@@ -216,42 +212,30 @@ class InboxParseService {
                                         $inbox_constraint->data_post_status = 3;
                                         $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
                                         if ($transaction != 'customRedirect') {
-                                            try {
-                                                $transaction_data->save();
-                                            } catch (\Throwable $e) {
-                                            }
+                                            $transaction_data->save();
                                         }
                                     } else {
-                                        try {
-                                            $transaction_data->save();
-                                        } catch (\Throwable $e) {
-                                        }
+                                        $transaction_data->save();
                                     }
                                 } else {
                                     $successCount++;
                                 }
                             } else {
                                 $errorCount++;
-                                try {
-                                    $transaction_data->error_log = Json::encode($model->getErrors());
-                                    $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                                    $transaction_data->data_post_status = 3;
-                                    $transaction_data->save();
-                                } catch (\Throwable $e) {
-                                }
+                                $transaction_data->error_log = Json::encode($model->getErrors());
+                                $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->data_post_status = 3;
+                                $transaction_data->save();
                             }
                         } else {
                             $errorCount++;
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction($childModel, [], $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
-                                try {
-                                    $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
-                                    $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                                    $transaction_data->data_post_status = 3;
-                                    $transaction_data->save();
-                                } catch (\Throwable $e) {
-                                }
+                                $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
+                                $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->data_post_status = 3;
+                                $transaction_data->save();
                             }
                         }
                     } catch (\Throwable $ex) {
@@ -267,14 +251,10 @@ class InboxParseService {
                     }
                     $i++;
                 }
-                try {
-                    $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
-                    $verifyCountModel->success_count = $successCount;
-                    $verifyCountModel->error_count = $errorCount;
-                    $verifyCountModel->save();
-                } catch (\Throwable $e) {
-                    
-                }
+                $verifyCountModel->response_datetime = date('Y-m-d H:i:s');
+                $verifyCountModel->success_count = $successCount;
+                $verifyCountModel->error_count = $errorCount;
+                $verifyCountModel->save();
             } else {
                 return false;
             }
