@@ -1425,6 +1425,8 @@ class SchedulerController extends ChildController {
                         switch ($row['type']) {
                             case 'DCS':
                                 $historyModel = new TblDcsProvisionalHistory();
+                                $model->milk_type_code = $model->milk_type;
+                                $model->vendor = $model->vendor_code;
                                 break;
                             case 'Farmer':
                                 $historyModel = new TblMemberProvisionalHistory();
