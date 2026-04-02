@@ -5,9 +5,7 @@ namespace app\modules\product\controllers;
 use Yii;
 use app\modules\product\models\TblIndentDispatch;
 use app\modules\product\models\TblIndentDispatchSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\product\models\TblIndentMasterSearch;
 use app\modules\product\models\TblIndentMaster;
 use app\modules\product\models\TblIndentMasterHistory;
@@ -16,7 +14,6 @@ use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
-use app\modules\product\models\TblProductStockSearch;
 use app\modules\payment\models\TblProductSale;
 use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblSaleInstallments;
@@ -104,6 +101,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                     $productStock = [];
                     $existfromTotalStock = [];
                     $originalTotalStock = [];
+                    $stockModelsByKey = [];
                     foreach ($codes as $code) {
                         $existData = TblIndentMaster::find()->where(['indent_code' => $code, 'status' => 2])->one();
                         $bmc = $existData->bmc_code;
@@ -256,8 +254,15 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                             $stockModel->product_code = $product;
                             $stockModel->union_code = $dispatch->union_code;
                             $stockModel->sap_batch_no = $batch;
-                            $existtoStock = $stockModel->getExistStock($checkStockFor, $batch);
                             $key = $stockModel->mcc_plant_code . '_' . $dcs . '_' . $stockModel->product_code . '_' . $batch;
+                            if (isset($stockModelsByKey[$key])) {
+                                $existtoStock = $stockModelsByKey[$key];
+                            } else {
+                                $existtoStock = $stockModel->getExistStock($checkStockFor, $batch);
+                                if (!empty($existtoStock)) {
+                                    $stockModelsByKey[$key] = $existtoStock;
+                                }
+                            }
                             $oldQty = 0;
 
                             if ($type != 'BULKVEN') {
@@ -279,6 +284,7 @@ class TblIndentDispatchNewController extends \app\controllers\ChildController {
                                     $stockModel->stock = $oldQty + $totalQty;
                                     $stockModel->x_col1 = Yii::$app->general->getUuid();
                                     $stockModel->rate = $rate;
+                                    $stockModelsByKey[$key] = $stockModel;
                                     $k++;
                                 }
                                 $saveModel[] = $stockModel;
