@@ -471,26 +471,36 @@ class SchedulerController extends ChildController {
         }
     }
 
-    public function CreateFile($fileName, $output, $folders = '') {
-        $column_header = array_keys($output[0]);
+    public function CreateFile($fileName, $output, $folders = '', $isMultiSheet = false) {
         $folder = !empty($folders) ? $folders : $this->attachment_folder;
         $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $folder;
         if (\Yii::$app->general->checkDirectory($path)) {
             $absoluteBaseUrl = Url::base(true);
             $objPHPExcel = new Spreadsheet();
-            $sheet = $objPHPExcel->getActiveSheet();
-            $sheet->fromArray(
-                    $column_header, // The data to set
-                    NULL, // Array values with this value will not be set
-                    'A1'         // Top left coordinate of the worksheet range where
-                    //    we want to set these values (default is A1)
-            );
-            $sheet->fromArray(
-                    $output, // The data to set
-                    NULL, // Array values with this value will not be set
-                    'A2'         // Top left coordinate of the worksheet range where
-                    //    we want to set these values (default is A1)
-            );
+            if ($isMultiSheet) {
+                $sheetIndex = 0;
+                foreach ($output as $sheetName => $sheetData) {
+                    if ($sheetIndex > 0) {
+                        $objPHPExcel->createSheet();
+                    }
+                    $objPHPExcel->setActiveSheetIndex($sheetIndex);
+                    $sheet = $objPHPExcel->getActiveSheet();
+                    $sheet->setTitle(substr($sheetName, 0, 31));
+                    if (!empty($sheetData)) {
+                        $column_header = array_keys(reset($sheetData));
+                        $sheet->fromArray($column_header, NULL, 'A1');
+                        $sheet->fromArray($sheetData, NULL, 'A2');
+                    }
+                    $sheetIndex++;
+                }
+            } else {
+                $sheet = $objPHPExcel->getActiveSheet();
+                if (!empty($output)) {
+                    $column_header = array_keys($output[0]);
+                    $sheet->fromArray($column_header, NULL, 'A1');
+                    $sheet->fromArray($output, NULL, 'A2');
+                }
+            }
             $filePath = $path . $fileName;
             $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
             $objWriter->save($filePath);
@@ -1609,19 +1619,37 @@ class SchedulerController extends ChildController {
                 $sp_params['from_date'] .= ' ' . \Yii::$app->general->getshift($fs) . '.000';
                 $sp_params['to_date'] .= ' ' . \Yii::$app->general->getshift($ts) . '.000';
                 $result = \Yii::$app->general->getSpData($sp_name, $sp_params);
-                if (!empty($result)) {
+                $otherResult = [];
+                if (!empty($data['other_sp_name'])) {
+                    $otherResult = \Yii::$app->general->getSpData($data['other_sp_name'], $sp_params);
+                }
+                if (!empty($result) || !empty($otherResult)) {
                     $mailArray = [];
-                    $i = 0;
-                    foreach ($result as $mailData) {
-                        $key = $mailData['email'];
-                        unset($mailData['email']);
-                        if (!empty($mailArray[$key])) {
-                            $mailArray[$key][] = $mailData;
-                        } else {
-                            $mailArray[$key] = [];
-                            $mailArray[$key][] = $mailData;
+                    if (!empty($result)) {
+                        foreach ($result as $mailData) {
+                            $key = $mailData['email'];
+                            unset($mailData['email']);
+                            if (!empty($data['other_sp_name'])) {
+                                if (!isset($mailArray[$key])) {
+                                    $mailArray[$key] = ['Sheet1' => [], 'Sheet2' => []];
+                                }
+                                $mailArray[$key]['Sheet1'][] = $mailData;
+                            } else {
+                                $mailArray[$key][] = $mailData;
+                            }
                         }
-                        $i ++;
+                    }
+                    if (!empty($otherResult)) {
+                        foreach ($otherResult as $mailData) {
+                            $key = $mailData['email'];
+                            unset($mailData['email']);
+                            if (!empty($data['other_sp_name'])) {
+                                if (!isset($mailArray[$key])) {
+                                    $mailArray[$key] = ['Sheet1' => [], 'Sheet2' => []];
+                                }
+                                $mailArray[$key]['Sheet2'][] = $mailData;
+                            }
+                        }
                     }
 
                     foreach ($mailArray as $keyValue => $mailDetail) {
@@ -1663,6 +1691,7 @@ class SchedulerController extends ChildController {
     public function setHtmlContentReport(&$htmlContent, &$message, &$fileName, &$file_path, $result, $data, $j) {
         $message = $data['report_name'];
         $report_type = $data['report_type'];
+        $isMultiSheet = !empty($data['other_sp_name']) ? true : false;
         $htmlContent = '<p>Dear Sir, <br/><br/>' . $message;
         $htmlContent .= '<br/><br/>Detailed report is attached herewith </p>';
         $htmlContent .= '<br/><br/>';
@@ -1671,7 +1700,7 @@ class SchedulerController extends ChildController {
         if (!empty($result) && $report_type == 'excel') {
             $datetime = date('YmdHis') . $j;
             $fileName = str_replace(' ', '_', $datetime . '-' . $data['report_name']) . '.xls';
-            $file_path = $this->CreateFile($fileName, $result);
+            $file_path = $this->CreateFile($fileName, $result, '', $isMultiSheet);
             $file_path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . $this->attachment_folder . $fileName;
         }
     }
