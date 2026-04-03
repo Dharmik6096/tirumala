@@ -216,7 +216,7 @@ class ChildModel extends \yii\db\ActiveRecord {
 
     public function afterSave($insert, $changedAttributes) {
         parent::afterSave($insert, $changedAttributes);
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentbox = new \app\modules\syncutility\models\TblSentbox();
         if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
             if (!($sentbox->setSentbox($this, $flag))) {

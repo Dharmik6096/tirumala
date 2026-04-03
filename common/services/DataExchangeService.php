@@ -16,8 +16,7 @@ class DataExchangeService {
             $configModel->api_type = 'COMFED';
             $configs = $configModel->getDataExchangeConfig(1);
             $config = $configs[0];
-            $records = \Yii::$app->general->getSpData($config->sp_name, [], TRUE);
-
+            $records = \Yii::$app->general->getSpData($config->sp_name, [], FALSE);
             if (empty($records)) {
                 return false;
             }
@@ -77,6 +76,9 @@ class DataExchangeService {
 
                         $response = $api->ExchangeData();
                         $responseData = json_decode($response, true);
+                        // echo '<pre>';
+                        // print_r($responseData);
+                        // die;
 
                         $respStatus = 3;
                         $respMsg = 'Response Not Parsed.';
