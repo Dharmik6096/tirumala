@@ -7,7 +7,6 @@ use app\components\WebApi;
 use app\models\TblPortalDataPostLog;
 use app\modules\bkgprocess\models\TblDataExchangeConfig;
 
-
 class DataExchangeService {
 
     public function processComfedCollection() {
@@ -33,28 +32,28 @@ class DataExchangeService {
                     if (!isset($groups[$eventId])) {
                         $groups[$eventId] = [
                             'metadata' => [
-                                "dcsNo" => (string)$record['dcsNo'],
-                                "collectionDate" => (string)$record['collectionDate'],
-                                "shift" => (string)$record['shift'],
+                                "dcsNo" => (string) $record['dcsNo'],
+                                "collectionDate" => (string) $record['collectionDate'],
+                                "shift" => (string) $record['shift'],
                                 "entity" => "COLLECTION",
-                                "eventId" => (string)$record['eventId']
+                                "eventId" => (string) $record['eventId']
                             ],
                             'collectionEntryList' => []
                         ];
                     }
 
                     $groups[$eventId]['collectionEntryList'][] = [
-                        "fat" => (float)$record['fat'],
-                        "snf" => (float)$record['snf'],
-                        "rate" => (float)$record['rate'],
-                        "kgQty" => (float)$record['kgQty'],
-                        "ltrQty" => (float)$record['ltrQty'],
-                        "amount" => (float)$record['amount'],
-                        "status" => (string)$record['status'],
-                        "frNo" => (string)$record['frNo'],
+                        "fat" => (float) $record['fat'],
+                        "snf" => (float) $record['snf'],
+                        "rate" => (float) $record['rate'],
+                        "kgQty" => (float) $record['kgQty'],
+                        "ltrQty" => (float) $record['ltrQty'],
+                        "amount" => (float) $record['amount'],
+                        "status" => (string) $record['status'],
+                        "frNo" => (string) $record['frNo'],
                         "milkType" => $record['milkType'],
                         "collectionTime" => $record['collectionTime'],
-                        "transactionId" => (string)$record['transactionId'],
+                        "transactionId" => (string) $record['transactionId'],
                         "eventType" => $record['eventType']
                     ];
                 }
@@ -69,6 +68,7 @@ class DataExchangeService {
                         ];
 
                         $api = new WebApi();
+                        $api->vendor_code = $eventId;
                         $api->serverUrl = $config->request_url;
                         $api->authentication = false;
                         $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
@@ -76,10 +76,7 @@ class DataExchangeService {
 
                         $response = $api->ExchangeData();
                         $responseData = json_decode($response, true);
-                        // echo '<pre>';
-                        // print_r($responseData);
-                        // die;
-
+           
                         $respStatus = 3;
                         $respMsg = 'Response Not Parsed.';
                         if (isset($responseData['status']) && $responseData['status'] == 'success') {
@@ -93,28 +90,15 @@ class DataExchangeService {
                             $respMsg = $responseData['message'];
                             $status = 0;
                         }
-                        $log_model = new TblPortalDataPostLog();
-                        $log_model->vendor_code = 'EIPL';
-                        $log_model->url = $config->request_url;
-                        $log_model->request = $api->body;
-                        $log_model->response = json_encode($response);
-                        $log_model->created_at = date('Y-m-d H:i:s');
-                        $log_model->status = $status;
-                        $log_model->save(FALSE);
-
                         $sp_res_param = [$eventId, $data_post_status, $respStatus, $respMsg];
                         $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
-                    } catch (\Exception $e) {
-                        $log_model = new TblPortalDataPostLog();
-                        $log_model->vendor_code = 'EIPL';
-                        $log_model->url = $config->request_url;
-                        $log_model->request = $api->body;
-                        $log_model->response = $e->getMessage();
-                        $log_model->created_at = date('Y-m-d H:i:s');
-                        $log_model->status = 0;
-                        $log_model->save(FALSE);
-                        $sp_res_param = [$eventId, 3, 'Error', $e->getMessage()];
-                        $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
+                    } catch (\Throwable $e) {
+                        try {
+                            $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
+                            $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
+                        } catch (\Throwable $e) {
+                            
+                        }
                     }
                 }
                 return true;
@@ -123,18 +107,13 @@ class DataExchangeService {
             }
         } catch (\Throwable $e) {
             try {
-                $log_model = new TblPortalDataPostLog();
-                $log_model->vendor_code = 'EIPL';
-                $log_model->url = $config->request_url;
-                $log_model->request = $api->body;
-                $log_model->response = $e->getMessage();
-                $log_model->created_at = date('Y-m-d H:i:s');
-                $log_model->status = 0;
-                $log_model->save(FALSE);
-                $sp_res_param = [$eventId, 3, 'Error', $e->getMessage()];
+                $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
                 $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
             } catch (\Throwable $e) {
+                
             }
+            return false;
         }
     }
+
 }

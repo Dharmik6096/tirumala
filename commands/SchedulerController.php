@@ -40,7 +40,11 @@ class SchedulerController extends \yii\console\Controller {
     public function actionProcessComfedDataExchange() {
         $dataExchangeService = new DataExchangeService();
         while (true) {
-            $dataExchangeService->processComfedCollection() ? sleep(10) : sleep(60);
+            try {
+                $dataExchangeService->processComfedCollection() ? sleep(20) : sleep(120);
+            } catch (\Throwable $ex) {
+                sleep(120);
+            }
         }
     }
 
