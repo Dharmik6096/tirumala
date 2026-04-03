@@ -250,7 +250,12 @@ class TblDcsProvisional extends ChildModel {
                 if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor)) { 
                     Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type'); 
                 } 
-            }],
+            }, 'except' => ['approveDcs']],
+            [['dpu_type'], function ($attribute, $params) { 
+                if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor_code)) { 
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor_code . '_dpu_type'); 
+                } 
+            }, 'on' => ['approveDcs']],
             [['mobile_no'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params); 
             }, 'skipOnEmpty' => false],
@@ -307,6 +312,10 @@ class TblDcsProvisional extends ChildModel {
             [['street1', 'street2'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
             }, 'skipOnEmpty' => false],
+            [['address'], function ($attribute, $params) { 
+                Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
+            }, 'skipOnEmpty' => false, 'on' => ['approveDcs']],
+            [['dcs_code_ex'], 'required', 'on' => ['approveDcs']],
             [['gst_no'], 'unique'],
             [['is_bmc'], 'unique', 'targetAttribute' => ['is_bmc', 'bmc_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) { return $model->is_bmc && $model->isAttributeChanged('is_bmc', FALSE); }],
             [['gst_no', 'sap_vendor_code', 'ref_code', 'is_bmc'], 'validateDcsUniqueness'],
