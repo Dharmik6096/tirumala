@@ -160,6 +160,7 @@ class TblDcsProvisionalController extends ChildController {
         if (!empty($this->model->cutoff_val) && !empty($this->model->lower_milk_type)) {
             $this->model->cutoff = 1;
         }
+        $this->model->gender_code = $this->model->gender;
         if (Yii::$app->request->post()) {
             $historyModel = new TblDcsProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
@@ -367,46 +368,52 @@ class TblDcsProvisionalController extends ChildController {
                     $dcsModel->approved_by = Yii::$app->user->identity->user_code;
                     $dcsModel->dcs_status = $dcsCreationPendingForSapApproval ? 0 : 1;
                 }
-
                 $model_save[] = $dcsModel;
                 $all_doc = [];
                 $dcsdoc = [];
                 $message = '';
                 $dcs_error = '';
-                if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
-                    $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message);
-                    if (!empty($message)) {
-                        foreach ($message as $msg) {
-                            $dcs_error .= $msg;
+                if($dcsModel->validate()){
+                    if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
+                        $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message);
+                        if (!empty($message)) {
+                            foreach ($message as $msg) {
+                                $dcs_error .= $msg;
+                            }
                         }
+                    } else {
+                        $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                     }
-                } else {
-                    $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
-                }
-                if ($transaction == 'customRedirect' && empty($dcs_error)) {
+                    if ($transaction == 'customRedirect' && empty($dcs_error)) {
 
-                    if ($status == 'Approve') {
-                        $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
-                        $dcsDir = $baseDir . 'dcs';
-                        $proDcsDir = $baseDir . 'provisional_dcs';
-                        for ($i = 0; $i < count($all_doc); $i++) {
-                            $fileName = basename($dcsdoc[$i]);
-                            $file = $dcsDir . '/' . $fileName;
-                            if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
-                                $upload = copy($proDcsDir . '/' . $all_doc[$i], $file);
-                                if ($upload) {
-                                    unlink($proDcsDir . '/' . $all_doc[$i]);
+                        if ($status == 'Approve') {
+                            $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
+                            $dcsDir = $baseDir . 'dcs';
+                            $proDcsDir = $baseDir . 'provisional_dcs';
+                            for ($i = 0; $i < count($all_doc); $i++) {
+                                $fileName = basename($dcsdoc[$i]);
+                                $file = $dcsDir . '/' . $fileName;
+                                if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
+                                    $upload = copy($proDcsDir . '/' . $all_doc[$i], $file);
+                                    if ($upload) {
+                                        unlink($proDcsDir . '/' . $all_doc[$i]);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    return $this->redirect(['pending-approval']);
+                        return $this->redirect(['pending-approval']);
+                    }
                 } else {
                     if (!empty($dcs_error)) {
-                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                            'message' => $dcs_error . ' in DCS.']);
+                    } else if(!empty($dcsModel->getErrors())){
+                        foreach($dcsModel->getErrors() as $error) {
+                            $dcs_error = !empty($dcs_error) ? $dcs_error.'<br> '.$error[0] : $error[0];
+                        }
                     }
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => $dcs_error . ' in DCS.']);
+                    return $this->redirect(['update', 'id' => $dcsModel->dcs_provisional_code]);
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', [
@@ -600,7 +607,14 @@ class TblDcsProvisionalController extends ChildController {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             $master = [];
-            $master[] = $model->save();
+            foreach ($provisionalModel as $m) {
+                if (!in_array(FALSE, $master)) {
+                    $master[] = $m->save();
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                $master[] = $model->save();
+            }
             if (!in_array(FALSE, $master)) {
                 foreach ($childModel as $key => $m) {
                     if ($key != 0 && strpos($childModel[$key - 1]->tableName(), 'history') !== false && $childModel[$key - 1]->operation_type == 'DELETE') {
@@ -646,12 +660,6 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->vendor_code = NULL;
                         $master[] = $memberModel->save();
                     }
-                }
-            }
-            if (!in_array(FALSE, $master)) {
-                foreach ($provisionalModel as $m) {
-                    $master[] = $m->save();
-                    //var_dump($m->getErrors());
                 }
             }
             if (!in_array(FALSE, $master)) {
