@@ -74,21 +74,18 @@ class DataExchangeService {
                         $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
                         $api->body = json_encode($body);
 
-                        $response = $api->ExchangeData();
-                        $responseData = json_decode($response, true);
-           
+                        $responseData = $api->ExchangeData();
+
                         $respStatus = 3;
                         $respMsg = 'Response Not Parsed.';
-                        if (isset($responseData['status']) && $responseData['status'] == 'success') {
+                        if (isset($responseData->status) && isset($responseData->data) && isset($responseData->data->status) && isset($responseData->data->message) && $responseData->status == 'success') {
                             $data_post_status = 2;
-                            $respStatus = $responseData['status'];
-                            $respMsg = $responseData['data']['message'];
-                            $status = 1;
-                        } else {
+                            $respStatus = $responseData->data->status;
+                            $respMsg = $responseData->data->message;
+                        } else if (isset($responseData->message) && isset($responseData->statusCode)) {
                             $data_post_status = 3;
-                            $respStatus = $responseData['status'];
-                            $respMsg = $responseData['message'];
-                            $status = 0;
+                            $respStatus = $responseData->statusCode;
+                            $respMsg = $responseData->message;
                         }
                         $sp_res_param = [$eventId, $data_post_status, $respStatus, $respMsg];
                         $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
