@@ -13,6 +13,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use app\modules\document\models\TblAttachment;
+use app\modules\general\models\TblDepartment;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
@@ -114,17 +115,24 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'customer_code', 'firstname', 'mobile_no', 'customer_name', 'plant_code', 'mcc_plant_code', 'address', 'customer_type', 'bmc_code'], 'required'],
+        $main_rules = [
+                [['union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'customer_code', 'firstname', 'mobile_no', 'customer_name', 'address', 'customer_type', 'bmc_code'], 'required'],
                 [['customer_name', 'address', 'state_code', 'process_approval_code', 'district_code', 'rate_chart_code', 'billing_payment_cycle', 'detail_code', 'over_head', 'ccenter_code', 'customer_code', 'bmc_code', 'old_bmc_code', 'bank_code', 'sub_district_code', 'old_mcc_plant_code', 'village_code', 'hamlet_code', 'vendor_code', 'local_name', 'local_firstname', 'local_lastname', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e', 'customer_category', 'remarks', 'animal_type_code', 'distance_from_mcc', 'created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'old_route_code', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix', 'contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code', 'x_col2', 'data_post_id', 'data_post_status', 'status', 'picked_datetime', 'resp_status', 'resp_desc', 'branch_code', 'response_datetime', 'morning_kms', 'evening_kms', 'originating_type', 'firstname', 'lastname'], 'safe'],
                 [['latitude', 'longitude', 'gender_code', 'pincode', 'pan_no', 'customer_status', 'supervisor_employee_id', 'supervisor_employee_name', 'is_aadhar_verify', 'is_bank_verify', 'provisional_from', 'is_approved', 'approved_at', 'approved_by'], 'safe'],
                 [['animal_type_code', 'auto_code'], 'integer'],
                 [['status'], 'default', 'value' => 'Pending'],
                 [['is_approved'], 'default', 'value' => 0],
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+                [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code']],
+                [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code']],
+                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type']],
                 [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['address'], function ($attribute, $params) { 
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
                 }, 'skipOnEmpty' => false],
                 [['local_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
@@ -133,46 +141,84 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
                 [['x_col1'], 'default', 'value' => '1#1'],
-                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['sap_vendor_code'], 'validateCustomerUniqueness'],
                 [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
                 [['customer_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code', FALSE);
-                }, 'skipOnEmpty' => false, 'on' => ['updateFront']],
+                }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'approve']],
+                [['department'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'department');
+                }],
+                [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id']],
                 [['bmc_code'], 'setExCode'],
                 [['customer_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+                }, 'skipOnEmpty' => false],
                 [['customer_code'], function ($attribute, $params) {
                     $update = FALSE;
                     if ($this->scenario == 'updateFront') {
                         $update = TRUE;
                     }
                     Yii::$app->general->validateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
-                }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'createFront']],
+                }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'createFront', 'approve']],
                 [['aadhaar_no'], 'required', 'when' => function ($model) {
                     return ($model->is_aadhar_verify == 1);
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblcustomermasterprovisional-is_aadhar_verify').prop('checked') == true;
-                }", 'on' => ['createFront', 'updateFront']],
+                }", 'on' => ['createFront', 'updateFront', 'approve']],
                 [['bank_account_no', 'bank_code', 'branch_code'], 'required', 'when' => function ($model) {
                     return ($model->is_bank_verify == 1);
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblcustomermasterprovisional-is_bank_verify').prop('checked') == true;
-                }", 'on' => ['createFront', 'updateFront']],
+                }", 'on' => ['createFront', 'updateFront', 'approve']],
                 [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-                [['aadhaar_no'], 'validateProvisionalAdharNo'],
                 [['ts_code_m', 'ts_code_e'], 'number', 'max' => 10],
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['aadhaar_no'], 'validateAdharNo', 'on' => ['createFront', 'updateFront']],
-                [['mobile_no'], 'validateMobileNo', 'on' => ['createFront', 'updateFront']],
-                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createFront', 'updateFront']],
+                [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address. e.g. "abc@xyz.com"')],
+                [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
+                }, 'skipOnEmpty' => false],
+                [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['ifsc'], 'required', 'when' => function ($model) {
+                    return !empty($model->bank_account_no);
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#tblcustomermasterprovisional-bank_account_no').val() != '';
+                }"],
+                [['ifsc'], function ($attribute, $params) {
+                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['bank_account_no'], function ($attribute, $params) {
+                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+                    if ($error !== TRUE)
+                        $this->addError($attribute, $error);
+                }],
+                [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
+                [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code']],
+                [['beneficiary_name'], function ($attribute, $params) {
+                    $error = Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+                    if ($error != NULL) {
+                        $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid'));
+                    }
+                }, 'skipOnEmpty' => false],
+                [['aadhaar_no'], 'validateAdharNo', 'on' => ['createFront', 'updateFront', 'approve']],
+                // [['mobile_no'], 'validateMobileNo', 'on' => ['createFront', 'updateFront', 'approve']],
+                // [['bank_account_no'], 'validateBankAccNo', 'on' => ['createFront', 'updateFront', 'approve']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblCustomerMaster', $this->form_validation_type);
+        $client_rules1 = Yii::$app->customvalidation->getRules('TblContactDetails', 'customer-create');
+        $client_rules2 = Yii::$app->customvalidation->getRules('TblBankDetails', 'default');
+        $rules = array_merge($client_rules, $main_rules);
+        $rules = array_merge($client_rules1, $rules);
+        $rules = array_merge($client_rules2, $rules);
+        return $rules;
     }
 
     /**
@@ -353,7 +399,7 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
 
         if (!empty($mobile)) {
             $encryptedMobile = Yii::$app->general->encryptData($mobile);
-
+            
             $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name', 'customer_type'])->where(['is_active' => 1])
                     ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
             if (!empty($this->customer_code)) {
@@ -361,24 +407,39 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             }
             $existsInCustomer = $existsInCustomer->one();
             if ($existsInCustomer) {
-                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomer->customer_code, TblCustomerDeactive::class, 'customer_code', $existsInCustomer->customer_type);
-                if (empty($isDeactive)) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ' , ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
-                    return false;
-                }
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ' , ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
+                return false;
             }
 
-            $existsInProvisional = $this->find()->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
-                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+            $existsInProvisional = $this->find()
+                    ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]])
+                    ->andWhere(['not in', 'lower(status)', ['pending','reject']]);
             if (!empty($this->customer_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
-            } else if (!empty($this->customer_code)) {
+            }
+            if (!empty($this->customer_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_code', $this->customer_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInProvisional->customer_provisional_code . ', Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code, Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
+                return false;
+            }
+
+            $existsInContact = TblContactDetails::find()
+                    ->select(['module_code', 'module_name'])
+                    ->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
+            if (!empty($this->customer_code)) {
+                $existsInContact->andWhere(['<>', 'module_code', $this->customer_code]);
+            }
+            if (!empty($this->detail_code)) {
+                $existsInContact->andWhere(['<>', 'detail_code', $this->detail_code]);
+            }
+            $existsInContact = $existsInContact->one();
+            if ($existsInContact) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Contact Details - Module Code : ' . $existsInContact->module_code . ', Module Name : ' . $existsInContact->module_name));
                 return false;
             }
         }
@@ -390,36 +451,31 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
         if (!empty($bankAccNo)) {
             $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
 
-            $existsInCustomerBank = TblBankDetails::find()->select(['tbl_bank_details.module_code', 'cus.customer_name'])
-                    ->leftJoin('tbl_customer_master cus', 'cus.customer_code = tbl_bank_details.module_code')
-                    ->where(['tbl_bank_details.is_active' => 1])
-                    ->andWhere(['tbl_bank_details.module_name' => 'customer'])
-                    ->andWhere(['tbl_bank_details.is_default' => 1])
-                    ->andWhere(['or', ['tbl_bank_details.bank_account_no' => $bankAccNo], ['tbl_bank_details.bank_account_no' => $encryptedBankAccNo]]);
-            if (!empty($this->customer_code)) {
-                $existsInCustomerBank->andWhere(['<>', 'tbl_bank_details.module_code', $this->customer_code]);
-            }
-            $existsInCustomerBank = $existsInCustomerBank->asArray()->one();
-
-            if ($existsInCustomerBank) {
-                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomerBank['module_code'], TblCustomerDeactive::class, 'customer_code');
-                if (empty($isDeactive)) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Customer') . ' Bank Detail - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomerBank['module_code'] . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomerBank['customer_name']));
-                    return false;
-                }
-            }
-
             $existsInProvisional = $this->find()->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]])
-                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+                    ->andWhere(['not in', 'lower(status)', ['reject', 'pending']]);
             if (!empty($this->customer_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
-            } else if (!empty($this->customer_code)) {
+            }
+            if (!empty($this->customer_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_code', $this->customer_code]);
             }
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
                 $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInProvisional->customer_provisional_code . ', Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
+                return false;
+            }
+
+            $existsInBank = TblBankDetails::find()
+                    ->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
+                    ->andWhere(['or', ['ifsc' => $this->ifsc], ['ifsc' => \Yii::$app->general->encryptData($this->ifsc)]]);
+            if (!empty($this->customer_code)) {
+                $existsInBank->andWhere(['not', ['and', ['module_code' => $this->customer_code], ['module_name' => 'customer']]]);
+            }
+            $existsInBank = $existsInBank->one();
+            if ($existsInBank) {
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Bank Details - Module Code : ' . $existsInBank->module_code . ', Module Name : ' . $existsInBank->module_name));
                 return false;
             }
         }
@@ -438,23 +494,12 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             }
             $existsInCustomer = $existsInCustomer->one();
             if ($existsInCustomer) {
-                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInCustomer->customer_code, TblCustomerDeactive::class, 'customer_code', $existsInCustomer->customer_type);
-                if (empty($isDeactive)) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
-                    return false;
-                }
+                $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Customer') . ' - ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInCustomer->customer_code . ', ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInCustomer->customer_name));
+                return false;
             }
-        }
-    }
-
-    public function validateProvisionalAdharNo($attribute, $params) {
-        $adharNo = $this->$attribute;
-
-        if (!empty($adharNo)) {
-            $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
 
             $existsInProvisional = $this->find()->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
-                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+                    ->andWhere(['not in', 'lower(status)', ['reject', 'pending']]);
             if (!empty($this->customer_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
             } else if (!empty($this->customer_code)) {
@@ -471,6 +516,49 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    public function CheckDuplicate($attribute, $params) {
+        if ($attribute == 'mobile_no') {
+            return $this->validateMobileNo($attribute, $params);
+        } else if ($attribute == 'bank_account_no') {
+            return $this->validateBankAccNo($attribute, $params);
+        }
+    }
+
+    public function validateCustomerUniqueness($attribute, $params) {
+        if (!empty($this->$attribute)) {
+            $queryProv = TblCustomerMasterProvisional::find()->where([$attribute => $this->$attribute]);
+
+            if ($attribute == 'sap_vendor_code') {
+                $queryProv->andWhere(['union_code' => $this->union_code]);
+            }
+            if (!empty($this->customer_provisional_code)) {
+                $queryProv->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            }
+            $queryProv->andWhere(['not in', 'lower(status)', ['reject', 'pending']]);
+
+            $existsProv = $queryProv->one();
+            if ($existsProv) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' already exists in Provisional Customer - Provisional Code : ' . $existsProv->customer_provisional_code . ', Name : ' . $existsProv->customer_name));
+                return false;
+            }
+
+            $query = TblCustomerMaster::find()->where([$attribute => $this->$attribute]);
+            if ($attribute == 'sap_vendor_code') {
+                $query->andWhere(['union_code' => $this->union_code]);
+            }
+            if (!empty($this->customer_code)) {
+                $query->andWhere(['<>', 'customer_code', $this->customer_code]);
+            }
+            $query->andWhere(['is_active' => 1]);
+
+            $existsMaster = $query->one();
+            if ($existsMaster) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' already exists in Customer Master - Customer Code : ' . $existsMaster->customer_code . ', Name : ' . $existsMaster->customer_name));
+                return false;
+            }
+        }
     }
 
 }

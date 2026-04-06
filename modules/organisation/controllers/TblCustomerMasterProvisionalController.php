@@ -118,7 +118,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         $module_code = $model->customer_provisional_code;
         $module_name = 'tbl_customer_master_provisional';
         $val = new TblAttachmentController($this->id, $this->module);
-        return $val->actiondocumentUpload('provisional_customer', $id, $model, $module_code, $module_name, true);
+        return $val->actionDocumentUpload('provisional_customer', $id, $model, $module_code, $module_name, true);
     }
 
     /**
@@ -257,7 +257,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
-                        $customer_error .= $msg;
+                        $customer_error .= !empty($customer_error) ? '<br>' . $msg : $msg;
                     }
                 }
                 if (empty($customer_error)) {
@@ -287,7 +287,8 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => $customer_error . ' in Customer Master']);
+                            'message' => $customer_error . ' in Customer Master.']);
+                    return $this->redirect(['update', 'id' => $model->process_code]);
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', [
