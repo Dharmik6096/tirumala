@@ -10,9 +10,7 @@ use app\modules\product\models\TblInventoryTransferTxnHistory;
 use app\modules\product\models\TblInventoryTransferHistory;
 use app\modules\product\models\TblInventoryTransferSearch;
 use app\modules\product\models\TblInventoryTransferTxnSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\product\models\TblProduct;
@@ -108,6 +106,12 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $qty = $txModel->qty;
                 $stock_ai = 1;
                 $rate = 0;
+                $actualStock = !empty($existfromStock) ? $existfromStock->stock : 0;
+                if ($qty > $actualStock) {
+                    $err['qty'] = Yii::t('app/validation', "Qty can not be Greater Than Available Stock.");
+                    $err['actual_stock'] = number_format($actualStock, 2, '.', '');
+                    return Json::encode($err);
+                }
                 if (!empty($existfromStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
@@ -129,6 +133,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $fstockTxnModel->attributes = $fstockModel->attributes;
                 unset($fstockTxnModel->created_at);
                 unset($fstockTxnModel->created_by);
+                unset($fstockTxnModel->updated_at);
+                unset($fstockTxnModel->updated_by);
                 $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                 $fstockTxnModel->old_value = $f_stock;
                 $fstockTxnModel->new_value = $qty;
@@ -201,6 +207,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $stockTxnModel->attributes = $stockModel->attributes;
                     unset($stockTxnModel->created_at);
                     unset($stockTxnModel->created_by);
+                    unset($stockTxnModel->updated_at);
+                    unset($stockTxnModel->updated_by);
                     $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
                     $stockTxnModel->old_value = $t_stock;
                     $stockTxnModel->new_value = $qty;
@@ -256,7 +264,6 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 }
 
                 return Json::encode($err);
-//                return Json::encode(ActiveForm::validate($this->model, $txModel));
             }
         } else {
             return $this->render('create', [

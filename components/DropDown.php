@@ -2522,7 +2522,7 @@ class DropDown extends Component {
             'scheme_id' => ['name' => 'scheme_id', 'fields' => 'scheme_id,scheme_name,', 'prompt' => Yii::t('app', 'Select Scheme'), 'model' => 'TblSchemeMaster', 'depend' => 'union_code'],
             'trip_code' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code', 'prompt' => 'Select Trip', 'model' => 'TblMilkVehicleEntry'],
             'grn_no' => ['name' => 'grn_no', 'fields' => 'grn_no,grn_no', 'prompt' => 'Select GRN No', 'model' => 'TblMilkVehicleEntry'],
-            'user' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'user' => ['name' => 'id', 'fields' => 'id,name,employee_id', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
             'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['bmc_code', 'status']],
             'approval_process' => ['name' => 'process_name', 'fields' => 'process_name,process_desc,', 'prompt' => Yii::t('app', 'Select Process'), 'model' => 'TblApprovalStagesProcess', 'depend' => 'union_code'],
             'indent-product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['is_indent']],
