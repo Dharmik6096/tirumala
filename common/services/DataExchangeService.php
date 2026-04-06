@@ -4,7 +4,6 @@ namespace common\services;
 
 use Yii;
 use app\components\WebApi;
-use app\models\TblPortalDataPostLog;
 use app\modules\bkgprocess\models\TblDataExchangeConfig;
 
 class DataExchangeService {
@@ -15,17 +14,17 @@ class DataExchangeService {
             $configModel->api_type = 'COMFED';
             $configs = $configModel->getDataExchangeConfig(1);
             $config = $configs[0];
+            $currentDate = strtotime(date('Y-m-d H:i:s'));
+            $futureDate = $currentDate + (60 * $config->interval);
+            $formatDate = date("Y-m-d H:i:s", $futureDate);
+            $config->updateAll(['last_execution' => date('Y-m-d H:i:s'), 'next_execution' => $formatDate], ['data_exchange_code' => $config->data_exchange_code]);
+
             $records = \Yii::$app->general->getSpData($config->sp_name, [], FALSE);
             if (empty($records)) {
                 return false;
             }
 
             if (!empty($records)) {
-                $currentDate = strtotime(date('Y-m-d H:i:s'));
-                $futureDate = $currentDate + (60 * $config->interval);
-                $formatDate = date("Y-m-d H:i:s", $futureDate);
-                $config->updateAll(['last_execution' => date('Y-m-d H:i:s'), 'next_execution' => $formatDate], ['data_exchange_code' => $config->data_exchange_code]);
-
                 $groups = [];
                 foreach ($records as $record) {
                     $eventId = $record['eventId'];
