@@ -144,12 +144,8 @@ class AlertNotification {
             });
             $mailer = Yii::$app->mailer;
             if (!empty($pwd)) {
-                $reflectionMailer = new \ReflectionObject($mailer);
-                $transportProperty = $reflectionMailer->getProperty('_transport');
-                $transportProperty->setAccessible(true);
-                $transport = $transportProperty->getValue($mailer);
-                $transport['password'] = $pwd;
-                $mailer->setTransport($transport);
+                $transport = $mailer->getTransport();
+                $transport->setPassword($pwd);
             }
             $email = $mailer->compose()
                     ->setTo($to_mail)
