@@ -66,7 +66,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_payment_installment_status_update',
                 ],
                 'primary_tpt_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
                     'sp_name' => 'sp_tpt_primary_payment_new',
                 ],
                 'vsp_payment_disburse' => [
@@ -100,6 +100,14 @@ class ClientPaymentConfig extends Component {
                 'party_payment_disburse' => [
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'disburse_party_payment',
+                ],
+                'hold_release_payment' => [
+                    'param' => 'union_code,bmc_code,customer_type,from_datetime,from_shift,to_datetime,to_shift,user_code',
+                    'sp_name' => 'sp_vendor_hold_release_payment_process',
+                ],
+                'hold_release_payment_disburse' => [
+                    'param' => 'union_code,bmc_code,customer_type,from_datetime,from_shift,to_datetime,to_shift,user_code',
+                    'sp_name' => 'sp_vendor_hold_release_payment_disburse',
                 ],
             ],
             'VARDDAN' => [
@@ -198,6 +206,14 @@ class ClientPaymentConfig extends Component {
                 'mcc_remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
                     'sp_name' => 'sp_mcc_remuneration_payment_itc',
+                ],
+                'hold_release_payment' => [
+                    'param' => 'union_code,bmc_code,customer_type,from_datetime,from_shift,to_datetime,to_shift,user_code',
+                    'sp_name' => 'sp_vendor_hold_release_payment_process_itc',
+                ],
+                'bonus_payment' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_process_ITC',
                 ],
             ],
             'SAUMYA' => [
@@ -359,6 +375,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
                     'sp_name' => 'sp_vsp_payment_devmilk',
                 ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_devmilk',
+                ],
             ],
             'CHADDHA' => [
                 'vsp_payment' => [
@@ -390,6 +410,70 @@ class ClientPaymentConfig extends Component {
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
                     'sp_name' => 'sp_vsp_payment_param',
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_param',
+                ],
+            ],
+            'ABT' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,user_code',
+                    'sp_name' => 'sp_member_payment_abt',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_abt',
+                ],
+            ],
+            'RAMSONS' => [
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_ramsons',
+                ],
+            ],
+            'DAURAU' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_daurau',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_daurau',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_daurau',
+                ],
+            ],
+            'ELANAD' => [
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_elanad',
+                ],
+            ],
+            'RHEMA' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_rhema',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_rhema',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_rhema',
+                ],
+            ],
+            'SRILAXMI' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_srilaxmi',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_srilaxmi',
                 ],
             ],
         ];

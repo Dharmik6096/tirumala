@@ -18,7 +18,7 @@ class DataExchangeController extends ChildController {
 
     public $freeAccessActions = ['data-exchange'];
     public $errorPath = '';
-    private $toEncrypt = ['Mdob', 'Ndob', 'Adharno', 'Fdob'];
+    private $toEncrypt = ['MDOB', 'NDOB', 'ADHARNO', 'FDOB'];
 
     public function init() {
         parent::init();
@@ -69,7 +69,7 @@ class DataExchangeController extends ChildController {
                 if (!empty($apiType) && $apiType == 'XML') {
                     $headers = [
                         'Content-Type: application/soap+xml;charset=UTF-8',
-                        'Cookie: sap-usercontext=sap-client=100',
+                        'Cookie: sap-usercontext=' . $updateKey,
                     ];
                     if (!empty($authData['header']) && is_array($authData['header'])) {
                         foreach ($authData['header'] as $key => $val) {
@@ -83,7 +83,7 @@ class DataExchangeController extends ChildController {
                     ]);
                     $client = new SoapClient(null, [
                         'location' => $value['request_url'],
-                        'uri' => 'urn:sap-com:document:sap:soap:functions:mc-style',
+                        'uri' => 'urn:sap-com:document:sap:rfc:functions',
                         'trace' => 1,
                         'exceptions' => true,
                         'soap_version' => SOAP_1_2,
@@ -92,10 +92,27 @@ class DataExchangeController extends ChildController {
                     ]);
 
                     $postData = $this->generateSoapXml($output, $value);
+
+                    $response = '';
+                    $log_model = new TblPortalDataPostLog();
+                    $log_model->created_at = date('Y-m-d H:i:s');
+                    $log_model->vendor_code = 'EIPL';
+                    $log_model->url = $value['request_url'];
+                    $log_model->request = $postData;
+
                     try {
                         $response = $client->__doRequest($postData, $value['request_url'], '', SOAP_1_2, false);
-                    } catch (\Exception $e) {
-                        echo "<h3>SOAP Error</h3><pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
+                        $status = 2;
+                        $log_model->status = 1;
+                        $log_model->response = $response;
+                        $log_model->updated_at = date('Y-m-d H:i:s');
+                        $log_model->save();
+                    } catch (\Throwable $ex) {
+                        $status = 3;
+                        $log_model->status = 0;
+                        $log_model->response = "SOAP Error: " . htmlspecialchars($ex->getMessage());
+                        $log_model->updated_at = date('Y-m-d H:i:s');
+                        $log_model->save();
                     }
                 } else {
                     $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
@@ -152,6 +169,7 @@ class DataExchangeController extends ChildController {
     }
 
     private function processXmlResponse($soapResponse, $sp_name, $exchangeData, $output, $request) {
+        $status = 0;
         $xml = simplexml_load_string($soapResponse);
         $namespaces = $xml->getNamespaces(true);
         foreach ($namespaces as $prefix => $uri) {
@@ -174,7 +192,7 @@ class DataExchangeController extends ChildController {
             $status = 0;
             foreach ($resParamKeys as $key) {
                 $resParams[] = $itemData[$key] ?? '';
-                if ($key == 'Type' && isset($itemData[$key])) {
+                if ($key == 'TYPE' && isset($itemData[$key])) {
                     $status = ($itemData[$key] == 'S') ? 2 : 3;
                 }
             }
@@ -183,7 +201,6 @@ class DataExchangeController extends ChildController {
                 \Yii::$app->general->getSpData('sp_data_exchange_log_update', $sp_res_param, true);
             }
         }
-        $this->saveExchangeLog('EIPL', $status, $exchangeData['request_url'], $request, $soapResponse);
     }
 
     private function generateSoapXml($data, $value) {
@@ -195,7 +212,7 @@ class DataExchangeController extends ChildController {
         $doc->formatOutput = true;
         $envelope = $doc->createElementNS(Yii::$app->params['data_exchange_url'], 'soap:Envelope');
         $envelope->setAttribute('xmlns:soap', Yii::$app->params['data_exchange_url']);
-        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:soap:functions:mc-style');
+        $envelope->setAttribute('xmlns:urn', 'urn:sap-com:document:sap:rfc:functions');
         $doc->appendChild($envelope);
 
         $envelope->appendChild($doc->createElement('soap:Header'));
@@ -229,17 +246,6 @@ class DataExchangeController extends ChildController {
         }
         $xml = $doc->saveXML();
         return $xml;
-    }
-
-    private function saveExchangeLog($vendorCode, $status, $url, $request, $response) {
-        $log_model = new TblPortalDataPostLog();
-        $log_model->vendor_code = $vendorCode;
-        $log_model->created_at = date('Y-m-d H:i:s');
-        $log_model->status = ($status == 2) ? 1 : 0;
-        $log_model->url = $url;
-        $log_model->request = $request;
-        $log_model->response = $response;
-        $log_model->save();
     }
 
 }

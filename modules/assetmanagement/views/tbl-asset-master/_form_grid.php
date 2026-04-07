@@ -1,8 +1,6 @@
 <?php
 
-use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
-use yii\helpers\Url;
 
 ?>
 <?php
@@ -24,6 +22,9 @@ $attribute = [
         }, 'filter' => FALSE],
     ['attribute' => 'local_name', 'filter' => FALSE],
     ['attribute' => 'ref_code', 'filter' => FALSE],
+    ['attribute' => 'asset_type_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->assetTypeCode, 'asset_type_name');
+        }, 'visible' => true],
 ];
 
 $grid_option = [

@@ -2,6 +2,7 @@
 
 namespace app\modules\payment\controllers;
 
+use app\modules\organisation\models\TblMccPlant;
 use Yii;
 use app\modules\payment\models\TblTransporterPayment;
 use app\modules\payment\models\TblTransporterPaymentHistory;
@@ -45,18 +46,35 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
             $model->transporter_type = 0;
             $model->from_date = date('Y-m-d', strtotime($model->from_date));
             $model->to_date = date('Y-m-d', strtotime($model->to_date));
-            $data = [];
-            $data['union_code'] = $model->union_code;
-            $data['plant_code'] = $model->plant_code;
-            $data['mcc_plant_code'] = $model->mcc_plant_code;
-            $data['bmc_code'] = $model->bmc_code;
-            $data['transporter_code'] = $model->transporter_code;
-            $data['from_date'] = $model->from_date;
-            $data['to_date'] = $model->to_date;
-            $data['user_code'] = \Yii::$app->user->identity->user_code;
-
-            Yii::$app->ClientPaymentConfig->processPayment('primary_tpt_payment', $data);
-            return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code, 'transporter_code' => $model->transporter_code, 'transporter_type' => 0]]);
+            $mcc_plant_code = $model->mcc_plant_code;
+            $bmc_code = $model->bmc_code;
+            if(empty($model->mcc_plant_code)){
+                $mccs = new TblMccPlant();
+                $mccData = $mccs->getMCCList($model->plant_code);
+                if(!empty($mccData)){
+                    $mcc_plant_code = array_keys($mccData);
+                }
+            }
+            if(empty($model->bmc_code)){
+                $bmcData = $model->getdatewiseBmcList($model->union_code, $model->plant_code, $mcc_plant_code, $model->from_date, $model->to_date);
+                if(empty($bmcData)){
+                    $model->addError('bmc_code','All '.Yii::t('app', 'BMC').' payment process already done');
+                }
+                $bmc_code = array_keys($bmcData);
+            }
+            if(empty($model->getErrors())){
+                $data = [];
+                $data['union_code'] = $model->union_code;
+                $data['plant_code'] = $model->plant_code;
+                $data['mcc_plant_code'] = !empty($mcc_plant_code) ? implode(',',$mcc_plant_code) : '';
+                $data['bmc_code'] = !empty($bmc_code) ? implode(',',$bmc_code) : '';
+                $data['from_date'] = $model->from_date;
+                $data['to_date'] = $model->to_date;
+                $data['user_code'] = \Yii::$app->user->identity->user_code;
+                $data['transporter_code'] = $model->transporter_code;
+                Yii::$app->ClientPaymentConfig->processPayment('primary_tpt_payment', $data);
+                return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $bmc_code, 'union_code' => $model->union_code, 'transporter_code' => $model->transporter_code, 'transporter_type' => 0]]);
+            }
         }
         return $this->render('create', [
                     'model' => $model,
@@ -140,7 +158,14 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
                 ->andFilterWhere(['transporter_code' => $model->transporter_code])
                 ->all();
         if (!empty($detailModel)) {
+            $model->bmc_code = array_column($detailModel,'bmc_code');
             if (Yii::$app->request->post('TblTransporterPayment')) {
+                $message = 'adjusted succesfully';
+                if(is_array($model->bmc_code) && count($model->bmc_code) > 1) {
+                    $message = 'Payment of All > '. $message;
+                } else {
+                    $message = 'Payment of ' . $model->bmcCode->bmc_name . '(' . $model->bmcCode->ref_code . ') ' . $message;
+                }
                 $hisModel = [];
                 $mainModel = [];
                 foreach ($detailModel as $dh) {
@@ -154,7 +179,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
                         $dh->final_amount = $dh->net_amount + $dh->adjust_amount;
                         $mainModel[] = $dh;
                     }
-                    $transaction = $this->generalModel->saveTransaction($mainModel, $hisModel, ['Payment of ' . $model->bmcCode->bmc_name . '(' . $model->bmcCode->ref_code . ')' . ' adjusted succesfully', 'info']);
+                    $transaction = $this->generalModel->saveTransaction($mainModel, $hisModel, [$message, 'info']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(['index']);
                     }
@@ -235,8 +260,9 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3]) && !empty($parents[4])) {
+                $check_condition = !empty($parents[5]) ? $parents[5] : 'Yes';
                 $mccs = new TblTransporterPayment();
-                $data = $mccs->getdatewiseBmcList($parents[0], $parents[1], $parents[2], $parents[3], $parents[4]);
+                $data = $mccs->getdatewiseBmcList($parents[2], $parents[1], $parents[0], $parents[3], $parents[4], $check_condition);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -265,18 +291,15 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         $id = Yii::$app->request->post('id');
         $this->model = $this->findModel($id);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        $Models = [];
         if (!empty($this->model)) {
-            $data = TblTransporterPayment::find()->where(['from_date' => $this->model->from_date, 'to_date' => $this->model->to_date, 'transporter_code' => $this->model->transporter_code, 'transporter_type' => $this->model->transporter_type])->all();
-            foreach ($data as $bill) {
-                $historyModel = new TblTransporterPaymentHistory();
-                Yii::$app->operation->history($bill, $historyModel, UPDATE);
-                $bill->status = 'locked';
-                $Models[] = $historyModel;
-                $Models[] = $bill;
-            }
-            $transaction = $this->generalModel->saveTransaction($Models, ['Billing', 'edit']);
-            if ($transaction !== FALSE) {
+            $param = [];
+            $param[] = $this->model->from_date;
+            $param[] = $this->model->to_date;
+            $param[] = $this->model->transporter_code;
+            $param[] = $this->model->transporter_type;
+            $param[] = \Yii::$app->user->identity->user_code;
+            $output = \Yii::$app->general->getSpData('sp_disburse_transporter_payment', $param);
+            if (!empty($output[0]) && !empty($output[0]['result'])) {
                 $record = ['status' => 'success', 'msg' => 'Transporter Payment locked successfully.'];
                 return Json::encode($record);
             }
@@ -315,6 +338,37 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionDisbursePayment() {
+        $model = new TblTransporterPayment();
+        if(Yii::$app->request->post()){
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $transporterCode = implode(',',Yii::$app->request->post('selection'));
+                $param = [];
+                $param[] = date('Y-m-d', strtotime($model->from_date));
+                $param[] = date('Y-m-d', strtotime($model->to_date));
+                $param[] = $transporterCode;
+                $param[] = $model->transporter_type;
+                $param[] = \Yii::$app->user->identity->user_code;
+                $output = \Yii::$app->general->getSpData('sp_disburse_transporter_payment', $param);
+                if (!empty($output[0]) && !empty($output[0]['result'])) {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => 'Transporter Payment locked successfully.']);
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => 'Your transaction is not saved successfully.']);
+                }
+                return $this->redirect(['index']);
+            }
+        }
+        $searchModel = new TblTransporterPaymentSearch();
+        $searchModel->scenario = 'disbursePayment';
+        $dataProvider = $searchModel->disburseSearch(Yii::$app->request->queryParams);
+
+        return $this->render('disburse_payment', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'model' => $model
+        ]);
     }
 
 }

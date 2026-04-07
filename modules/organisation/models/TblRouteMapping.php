@@ -484,6 +484,11 @@ class TblRouteMapping extends \app\models\ChildModel {
         array_push($modelSave, $contactDetails);
     }
 
+    public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, $unlink_files, $attachments, $masterdoc, $errors) {
+
+        //
+    }
+
     public function graceTimeValidate($attribute, $params) {
         if (!empty($this->morning_grace_time) && !empty($this->evening_grace_time)) {
             if ($this->evening_grace_time < $this->morning_grace_time) {
@@ -514,7 +519,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
     public function getUserList($routeCode) {
         $data = $this->find()
-                ->select(['u.user_code', 'u.name'])
+                ->select(['u.user_code', 'u.name', 'u.employee_id'])
                 ->distinct()
                 ->innerJoin('tbl_dcs d', '(tbl_route_mapping.to_type = :typeBmc AND tbl_route_mapping.to_dest = d.bmc_code) 
                      OR (tbl_route_mapping.to_type = :typeMcc AND tbl_route_mapping.to_dest = d.mcc_plant_code)', [
@@ -525,7 +530,7 @@ class TblRouteMapping extends \app\models\ChildModel {
                 ->innerJoin('user u', 'u.user_code = om.user_id')
                 ->where(['tbl_route_mapping.route_code' => $routeCode])
                 ->andWhere(['om.organization_type' => 'DCS'])
-                ->andWhere(['u.login_type' => 'route_supervisor'])
+                ->andWhere(['LOWER(u.login_type)' => ['route_supervisor', 'dcs']])
                 ->asArray()
                 ->all();
 

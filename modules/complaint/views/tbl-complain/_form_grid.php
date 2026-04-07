@@ -75,7 +75,7 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'delete' => ['option' => 'complain_code,complain_code,tbl-complain/delete,checkEditable()'],
+        'delete' => ['option' => 'complain_code,complain_code,tbl-complain/delete,canDelete()'],
         'assign-complain' => function ($url, $model) {
             $url = Url::to(['assign-complain', 'complain_code' => $model->complain_code]);
             $class = ($model->checkAssign()) ? 'link-disable' : '';

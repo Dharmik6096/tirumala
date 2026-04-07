@@ -10,8 +10,6 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlantConversionVendorMapping;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
-use app\modules\syncutility\models\TblSentbox;
-use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_vehicle_trip".
@@ -44,7 +42,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
     public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $filter_plant_code;
     public $fl_type, $fl_code, $type;
-    public $generateAutoTrip = FALSE;
+    public $generateAutoTrip = FALSE, $is_not_actual_plant;
 
     /**
      * @inheritdoc
@@ -59,8 +57,8 @@ class TblVehicleTrip extends \app\models\ChildModel {
     public function rules() {
         return [
             [['vehicle_code', 'transaction_date', 'union_code', 'plant_code'], 'required', 'except' => ['closetrip', 'autogeneratetrip', 'chekinout']],
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime'], 'safe'],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'no_of_compartment', 'vehicle_capacity', 'remark', 'force_close', 'force_close_remarks'], 'safe'],
+            [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active', 'is_auto_trip', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'generateAutoTrip', 'is_check_in', 'check_in_type', 'check_in_code', 'check_in_datetime', 'is_not_actual_plant'], 'safe'],
             [['trip_status'], 'default', 'value' => 'generated'],
             [['trip_for'], 'default', 'value' => 'bmcdispatch'],
             [['trip_mode'], 'default', 'value' => 'online'],
@@ -68,6 +66,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             [['is_auto_trip'], 'default', 'value' => 0],
             [['is_check_in'], 'default', 'value' => 0],
             [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
+            [['force_close_remarks'], 'string', 'max' => 100],
         ];
     }
 
@@ -153,10 +152,22 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 ->andWhere(['transaction_date' => $this->transaction_date])
                 ->orderBy(['transaction_date' => SORT_ASC, 'created_at' => SORT_ASC])
                 ->one();
+        if (empty($model) && $this->trip_mode == 'online') {
+            $model = $this->find()->where(['vehicle_code' => $this->vehicle_code])
+                    ->andWhere(['!=', 'trip_status', 'closed'])
+                    ->andWhere(['is_active' => 1])
+                    ->andWhere(['<=', 'CAST(transaction_date as date)', $this->transaction_date])
+                    ->orderBy(['transaction_date' => SORT_DESC, 'created_at' => SORT_DESC])
+                    ->one();
+            if (!empty($model)){
+                $this->transaction_date = $model->transaction_date;
+            }
+        }
         $same_day_trip_count = $this->find()->where(['vehicle_code' => $this->vehicle_code])
                         ->andWhere(['!=', 'trip_status', 'closed'])
                         ->andWhere(['is_active' => 1])
                         ->andWhere(['transaction_date' => $this->transaction_date])->count();
+
         if (!empty($model) && (($this->trip_mode != 'offline') || ($same_day_trip_count > 1))) {
             $api_res = TRUE;
             if ($model->trip_status == 'generated') {
@@ -327,11 +338,11 @@ class TblVehicleTrip extends \app\models\ChildModel {
     }
 
     public function getVehicleTripDetailCode() {
-        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['arrival_time' => null])->orderBy('sequence_no');
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['and', ['arrival_time' => null], ['departure_time' => null]])->orderBy('sequence_no');
     }
 
     public function getTakenTripDetailCode() {
-        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['IS NOT', 'arrival_time', null])->orderBy('sequence_no');
+        return $this->hasMany(TblVehicleTripDetail::className(), ['vehicle_trip_code' => 'vehicle_trip_code'])->onCondition(['or', ['is not', 'arrival_time', null], ['is not', 'departure_time', null]])->orderBy('sequence_no');
     }
 
     public function addTripRoute(&$saveModel, &$deleteModel, $challan_no, $source_org_type, $source_org_code, $destination_type, $destination_code, &$validation, $is_last_destination = 0) {
@@ -466,11 +477,56 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $trip_sub_status = $model->trip_sub_status;
             $model->trip_sub_status = 'trip_check_' . $content['action_type'];
             $model->sub_status_time = $content['check_in_datetime'];
-            Yii::$app->general->setVehicleTripTrackingDetail($model, $remarks);
+            $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
+            Yii::$app->general->setVehicleTripTrackingDetail($model, $trackingDetail, $remarks);
             $model->trip_sub_status = $trip_sub_status;
             $model->sub_status_time = $sub_status_time;
             $model->updated_by = Yii::$app->eiplapp->identity->module_code;
         }
+    }
+
+    public function addAutoQaCleaning($remarks) {
+        $isVirtualLocation = TblVehicleTripDetail::find()->alias('td')
+                        ->select(['td.is_virtual_location'])
+                        ->leftJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+                        ->where(['td.trip_code' => $this->trip_code, 'td.source_org_type' => 'plant', 'td.source_org_code' => $this->plant_code, 'td.is_last_destination' => 1])
+                        ->orderBy(['td.sequence_no' => SORT_ASC])
+                        ->asArray()
+                        ->one()['is_virtual_location'];
+
+        if ($isVirtualLocation == '2') {
+            $vehicleCleaningInspection = new TblVehicleCleaningInspection();
+            $vehicleCleaningInspection->union_code = $this->union_code;
+            $vehicleCleaningInspection->vehicle_code = $this->vehicle_code;
+            $vehicleCleaningInspection->transporter_code = $this->vehicleCode->transporter_code;
+            $vehicleCleaningInspection->trip_code = $this->trip_code;
+            $vehicleCleaningInspection->transaction_datetime = date('Y-m-d H:i:s');
+            if ($vehicleCleaningInspection->save()) {
+                $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                $this->trip_sub_status = 'qa_pending';
+                $this->sub_status_time = date('Y-m-d H:i:s', strtotime('+1 second', strtotime($this->sub_status_time)));
+                Yii::$app->general->setVehicleTripTrackingDetail($this, $trackingDetail, $remarks);
+            }
+
+            $vehicleQaInspection = new TblVehicleQaInspection();
+            $vehicleQaInspection->attributes = $vehicleCleaningInspection->attributes;
+            $vehicleQaInspection->status = 'pending';
+            if ($vehicleQaInspection->save()) {
+                $this->trip_sub_status = 'tanker_qualified';
+                $this->sub_status_time = date('Y-m-d H:i:s', strtotime('+1 second', strtotime($this->sub_status_time)));
+                $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                Yii::$app->general->setVehicleTripTrackingDetail($this, $trackingDetail, $remarks);
+                $this->save();
+            }
+        }
+    }
+    public function getPlantCodeFromBmc($bmcCodeArray){
+        $plantCodeArray = TblDcsBmc::find()->select('plant_code')
+            ->where(['bmc_code' => $bmcCodeArray])
+            ->asArray()
+            ->distinct()
+            ->all();
+        return !empty($plantCodeArray) ? array_column($plantCodeArray, 'plant_code') : [];
     }
 
 }

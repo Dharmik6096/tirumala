@@ -18,7 +18,6 @@ use app\modules\globalmaster\models\TblCasteCategory;
 use app\modules\general\models\TblBloodgroup;
 use app\modules\general\models\TblGender;
 use app\modules\general\models\TblReligion;
-use app\modules\dcsoperation\models\TblMemberDownload;
 use app\modules\general\models\TblRelationship;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
@@ -30,6 +29,9 @@ use app\modules\geo\models\TblRegion;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblMemberSpecialCode;
+use app\modules\organisation\models\TblFederations;
+use yii\base\UserException;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_member".
@@ -137,7 +139,7 @@ class TblMember extends ChildModel {
                 [['sap_farmer_code'], 'unique', 'targetAttribute' => ['sap_farmer_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'specialCodeImportCsv', 'kycVerify']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync', 'specialCodeImportCsv']],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
@@ -146,13 +148,13 @@ class TblMember extends ChildModel {
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
-                [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->is_active;
-                }, 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
                 [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'member_detail', 'specialCodeImportCsv']],
-            /*    [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+                /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+                    return $this->is_active;
+                }, 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
+                [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }], */
 //                ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -211,6 +213,7 @@ class TblMember extends ChildModel {
                 [['ifsc', 'bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'on' => 'kycVerify'],
                 [['rate_class'], 'validateRateClass', 'on' => ['androidsync']],
                 [['member_code'], 'refCodeValidate', 'on' => ['androidsync']],
+                [['member_code'], 'resetDefaultValue']
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -514,7 +517,7 @@ class TblMember extends ChildModel {
 //        $model->is_download = 1;
 //        $model->upload_datetime = date('Y-m-d H:i:s');
 //        $model->save();
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
@@ -807,6 +810,72 @@ class TblMember extends ChildModel {
         if (empty($this->hamlet_code)) {
             $this->hamlet_code = Yii::$app->general->getforeignkey($this->dcsCode, 'hamlet_code');
         }
+    }
+
+    public function resetDefaultValue() {
+        $this->data_post_status = 0;
+        $this->picked_datetime = $this->response_datetime = $this->resp_desc = NULL;
+    }
+
+    public function getMasterRecord(){
+        $farmers = (new Query())
+            ->select([
+                'companyCode' => new Expression("ISNULL(u.x_col1, '')"),
+                'mainMemberCode' => new Expression("ISNULL(m.member_code, '')"),
+                'memberCode' => new Expression("ISNULL(m.ex_member_code, '')"),
+                'sapFarmerCode' => new Expression("ISNULL(m.sap_farmer_code, '')"),
+                'memberName' => new Expression("ISNULL(m.member_name, '')"),
+                'lastName' => new Expression("ISNULL(m.surname, '')"),
+                'gender' => new Expression("ISNULL(LEFT(g.gender, 1), '')"),
+                'address' => new Expression("ISNULL(m.address, '')"),
+                'bmcCode' => new Expression("ISNULL(b.ref_code, '')"),
+                'mppCode' => new Expression("ISNULL(d.ref_code, '')"),
+                'bankId' => new Expression("0"),
+                'accountNumber' => new Expression("''"),
+                'accountHolderName' => new Expression("''"),
+                'ifscCode' => new Expression("''"),
+                'branchName' => new Expression("''"),
+                'mobileNumber' => new Expression("ISNULL(m.mobile_no, '')"),
+                'effectiveDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), m.registration_date, 120), '')"),
+                'isActive' => new Expression("ISNULL(m.is_active, 0)"),
+                'expiryDate' => new Expression("''"),
+                'expiryShift' => new Expression("''"),
+                'approvalDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), m.registration_date, 120), '')"),
+                'aadharNumber' => new Expression("ISNULL(m.adhar_no, '')"),
+            ])
+            ->from(['m' => 'tbl_member'])
+            ->innerJoin(['u' => 'tbl_unions'], 'u.union_code = m.union_code')
+            ->innerJoin(['d' => 'tbl_dcs'], 'm.dcs_code = d.dcs_code')
+            ->innerJoin(['b' => 'tbl_bmc'], 'd.bmc_code = b.bmc_code')
+            ->leftJoin(['g' => 'tbl_gender'], 'm.gender_code = g.gender_code')
+            ->where(['isnull(m.data_post_status,0)' => [0,'']])
+            ->andWhere(['d.dpu_type' => 93])
+            ->limit(20)
+            ->all();
+        if (!empty($farmers)) {
+            $primaryKeyCode = [];
+            $companyCode = (string)$farmers[0]['companyCode'];
+            array_walk($farmers, function(&$item) use (&$primaryKeyCode){
+                $key = $item['memberCode'].$item['mppCode'];
+                $primaryKeyCode[$key] = $item['mainMemberCode'];
+                $item['isActive'] = (bool)$item['isActive'];
+                $item['aadharNumber'] = !empty($item['aadharNumber']) ? \Yii::$app->general->decryptData($item['aadharNumber']) : '';
+                unset($item['companyCode']);
+                unset($item['mainMemberCode']);
+            });
+            return [
+                'mppCode' => $primaryKeyCode,
+                'companyCode' => $companyCode,
+                'farmerImport' => $farmers
+            ];
+        }
+        return [];
+
+    }
+    
+    public function updateStatus($updateData, $ids) 
+    {
+        return $this->updateAll($updateData,['member_code' => $ids]);
     }
 
 }

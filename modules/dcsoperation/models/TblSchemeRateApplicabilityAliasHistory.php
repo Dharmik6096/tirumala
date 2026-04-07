@@ -54,7 +54,7 @@ class TblSchemeRateApplicabilityAliasHistory extends \yii\db\ActiveRecord
     {
         return [
             [['scheme_rate_app_alias_code', 'from_shift', 'to_shift', 'is_active', 'originating_type'], 'integer'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at', 'status', 'is_member_rate'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at', 'status', 'is_member_rate', 'description'], 'safe'],
             [['rtpl'], 'number'],
             [['scheme_rate_code', 'applicable_for', 'applicable_code'], 'string', 'max' => 20],
             [['union_code', 'rate_class'], 'string', 'max' => 3],
@@ -102,6 +102,7 @@ class TblSchemeRateApplicabilityAliasHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'is_member_rate' => Yii::t('app', 'Is Member Rate'),
+            'description' => Yii::t('app', 'Description'),
         ];
     }
 }

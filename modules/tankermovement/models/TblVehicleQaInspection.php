@@ -50,9 +50,9 @@ class TblVehicleQaInspection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['config_code', 'transaction_datetime', 'created_at', 'updated_at', 'transporter_code', 'vehicle_code', 'trip_code', 'status', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'originating_type', 'union_code', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['union_code', 'transporter_code', 'vehicle_code'], 'required'],
-            [['vehicle_code'], 'tripCodeRequired'],
+                [['config_code', 'transaction_datetime', 'created_at', 'updated_at', 'transporter_code', 'vehicle_code', 'trip_code', 'status', 'remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'originating_type', 'union_code', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['union_code', 'transporter_code', 'vehicle_code'], 'required'],
+                [['vehicle_code'], 'tripCodeRequired', 'except' => 'qaInspection'],
         ];
     }
 
@@ -108,7 +108,7 @@ class TblVehicleQaInspection extends \app\models\ChildModel {
         $tankerQualifiedWithin = Yii::$app->general->getUnionConfiguration($unionCode, 'tanker_qualified_within', 'PORTAL');
         $inspectionVehicle = TblVehicleMaster::find()->alias('vm')->select('vm.vehicle_code, vm.parsing_no')
                         ->innerJoin('tbl_vehicle_qa_inspection as vqi', 'vqi.vehicle_code = vm.vehicle_code')
-                        ->where(['vqi.status' => 'pending', 'vm.vehicle_use_type' => [1, 2]])
+                        ->where(['vqi.status' => 'pending', 'vm.vehicle_use_type' => [1, 2], 'vm.is_active' => 1])
                         ->andWhere(['>=', 'vqi.transaction_datetime', new Expression('DATEADD(HOUR, -' . (int) $tankerQualifiedWithin . ', GETDATE())')])
                         ->orderBy('vqi.transaction_datetime', SORT_DESC)->all();
         return ArrayHelper::map($inspectionVehicle, 'vehicle_code', 'parsing_no');

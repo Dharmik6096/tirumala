@@ -359,6 +359,7 @@ class TblIndentMasterNewController extends \app\controllers\ChildController {
                         'rate' => $item['rate'],
                         'user_name' => $item['user_name'],
                         'login_type' => $item['login_type'],
+                        'department' => $item['department'],
                         'credit_amount' => $creditAmount,
                         'member_array' => []
                     ];

@@ -12,6 +12,7 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\dcsoperation\models\TblMember;
 use yii\helpers\ArrayHelper;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\general\models\TblDepartment;
 
 /**
  * This is the model class for table "tbl_bulk_notification".
@@ -50,35 +51,29 @@ class TblBulkNotification extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'payment_cycle_code', 'from_date', 'to_date', 'auto_scrolling'], 'safe'],
-                [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type', 'auto_scrolling', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type', 'auto_scrolling', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_shift_code', 'to_shift_code', 'notification_type', 'filename', 'file_path', 'department'], 'safe'],
                 [['content_id', 'status'], 'integer'],
-                [['message', 'wef_date', 'notification_type'], 'required'],
+                [['message', 'notification_type'], 'required'],
                 [['status', 'auto_scrolling'], 'default', 'value' => 0],
                 [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
-                    return $model->notification_type == '4';
-                }, 'whenClient' => "function (attribute, value) { 
-                            return $('#tblbulknotification-notification_type').val() == '4'; 
-                        }"],
-                [['title', 'from_date', 'to_date', 'campaign_name', 'wef_date'], 'required', 'when' => function ($model) {
-                    return $model->notification_type == '3';
-                }, 'whenClient' => "function (attribute, value) { 
-                        return $('#tblbulknotification-notification_type').val() == '3'; 
-                    }"],
-                [['login_type', 'receiver_type'], 'required', 'when' => function ($model) {
-                    return $model->notification_type != '3';
-                }, 'whenClient' => "function (attribute, value) { 
-                        return $('#tblbulknotification-notification_type').val() != '3'; 
-                    }"],
-                [
-                    ['from_date', 'to_date'], 'required', 'when' => function ($model) {
-                    return !empty($model->auto_scrolling);
-                },
-                'whenClient' => "function (attribute, value) { return $('#tblbulknotification-auto_scrolling').is(':checked') }"
-            ],
+                [['union_code', 'plant_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('Plant');
+                }],
+                [['mcc_plant_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('MCC');
+                }],
+                [['bmc_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('BMC');
+                }],
+                [['dcs_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->session->get('Dcs');
+                }],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblBulkNotification', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -89,9 +84,9 @@ class TblBulkNotification extends \app\models\ChildModel {
             'bulk_notification_id' => Yii::t('app', 'Bulk Notification ID'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
-            'mcc_plant_code' => Yii::t('app', 'MCC Name'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
-            'dcs_code' => Yii::t('app', 'DCS Name'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'member_code' => Yii::t('app', 'Member Code'),
             'app_type' => Yii::t('app', 'App Type'),
             'login_type' => Yii::t('app', 'Login Type'),
@@ -109,6 +104,8 @@ class TblBulkNotification extends \app\models\ChildModel {
             'response_datetime' => Yii::t('app', 'Response Datetime'),
             'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'auto_scrolling' => Yii::t('app', 'Is Auto Scrolling'),
+            'from_shift_code' => Yii::t('app', 'From Shift'),
+            'to_shift_code' => Yii::t('app', 'To Shift'),
         ];
     }
 
@@ -169,6 +166,10 @@ class TblBulkNotification extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

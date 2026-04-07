@@ -7,9 +7,7 @@ use app\modules\installation\models\TblUserAndroid;
 use app\modules\installation\models\TblUserAndroidSearch;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\installation\models\TblUserDownloadAck;
 use app\modules\installation\models\TblAndroidInstallationDetails;
 
@@ -80,31 +78,27 @@ class TblUserAndroidController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = "update";
         $saveModel = [];
-        $deleteModel = [];
         $model = new TblUserRoleMapping();
         $this->model->role_code = $model->getRole($id);
         $this->model->repeat_password = $this->model->password;
         if ($this->model->load(Yii::$app->request->post())) {
-            $where['user_code'] = $id;
-            $roleMappingModel = TblUserRoleMapping::find()->where($where)->one();
+            $roleMappingModel = TblUserRoleMapping::find()->where(['user_code' => $id])->one();
             if (!empty($roleMappingModel)) {
-                $deleteModel[] = $roleMappingModel;
-            }
-            if (!empty($this->model->role_code)) {
+                $roleMappingModel->role_code = $this->model->role_code;
+                $saveModel[] = $roleMappingModel;
+            } else if (!empty($this->model->role_code)) {
                 $model->role_code = $this->model->role_code;
                 $model->user_code = $id;
                 $saveModel[] = $model;
             }
             $this->setUserDownloadAck($this->model, $saveModel);
             $saveModel[] = $this->model;
-            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['User', 'edit']);
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['User', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
         }
-        return $this->render('update', [
-                    'model' => $this->model,
-        ]);
+        return $this->render('update', ['model' => $this->model]);
     }
 
     /**

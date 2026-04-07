@@ -1,49 +1,19 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\detail\DetailView;
 use yii\helpers\Url;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Accept Requisition'));
 $is_submit = FALSE;
 ?>
-
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
     <div class="panel-body padding-0">
-        <div class="accept-grid-search-inner clearfix">
-            <?php
-            // DetailView Attributes Configuration
-            $attributes = [
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'product_requisition_code',
-                            'label' => Yii::t('app', 'Product Requisition Code'),
-                            'valueColOptions' => ['style' => 'width:80%']
-                        ],
-                    ],
-                ],
-            ];
-            echo DetailView::widget([
-                'model' => $model,
-                'attributes' => $attributes,
-                'mode' => 'view',
-                'bordered' => false,
-                'striped' => false,
-                'responsive' => true,
-                'hAlign' => 'left',
-                'vAlign' => 'top',
-                'deleteOptions' => [// your ajax delete parameters
-                    'params' => ['id' => 1000, 'kvdelete' => true],
-                ],
-            ]);
-            ?>
-        </div>
-
+        <?php echo $this->render('_search', ['model' => $searchModel]); ?>
         <?php
         $form = ActiveForm::begin(['options' => [
                         'class' => 'save-form',
@@ -56,7 +26,14 @@ $is_submit = FALSE;
         <table class="table table-hover table-bordered table-striped table-main table-language">
             <thead>
                 <tr>
-<!--                            <th class="width5">Select</th>-->
+                    <!--<th><?php //Yii::t('app', '')           ?></th>-->
+                    <th><?= Html::checkbox('requisition_checkbox', false, ['label' => '', 'class' => 'allCheckBoxManage reqTxnFieldsNotDisabled']) ?></th>
+                    <th><?= Yii::t('app', 'Requisition') ?></th>
+                    <th><?= Yii::t('app', 'Type') ?></th>
+                    <th><?= Yii::t('app', 'Code') ?></th>
+                    <th><?= Yii::t('app', 'Ref Code') ?></th>
+                    <th><?= Yii::t('app', 'Name') ?></th>
+                    <th><?= Yii::t('app', 'SAP Code') ?></th>
                     <th><?= Yii::t('app', 'Product') ?></th>
                     <th><?= Yii::t('app', 'Requested Qty') ?></th>
                     <th><?= Yii::t('app', 'Rate') ?></th>
@@ -67,29 +44,30 @@ $is_submit = FALSE;
                     <th><?= Yii::t('app', 'Discount Amount (Rs.)') ?></th>
                     <th><?= Yii::t('app', 'Status') ?></th>
                     <th><?= Yii::t('app', 'Action') ?></th>
-                    <!--<th><?php // Yii::t('app', 'Add')              ?></th>-->
+                    <th><?= Yii::t('app', 'Remark') ?></th>
                 </tr>     
                 <?php
-                foreach ($model->tblProductRequisitionTransactions as $key => $transaction) {
+                foreach ($model as $key => $transaction) {
                     $row_id = '';
                     if ($transaction->status == 'Rejected') {
                         $class = 'hidden';
                     } else {
                         $class = '';
-//                            if (!empty($transaction->parent_product_code)) {
                         $addid = '';
-//                            if ($transaction->scheme_add_type == 1) {
-//                                $class = 'success';
-//                                $addid = '1';
-//                            } else {
                         $class = 'success';
-//                            }
-//                        $row_id = 'db-' . $addid;
-//                            } else
-//                                $row_id = '';
                     }
                     ?>
                     <tr id="<?= $row_id ?>" class="<?= $class ?>">   
+                        <?php
+                        $requisition = $transaction->productRequisitionCode;
+                        ?>
+                        <td class="pcheckbox"><?= $form->field($transaction, '[' . $key . ']requisition_transaction_code', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{endLabel}</div>'])->checkbox(['class' => 'reqTxnFields reqTxnFieldsNotDisabled']); ?></td>
+                        <td class="pname"><?= !empty($requisition) && !empty($requisition->product_requisition_code) ? $requisition->product_requisition_code : '' ?></td>
+                        <td class="pname"><?= !empty($requisition) && !empty($requisition->vendor_type) ? $requisition->vendor_type : '' ?></td>
+                        <td class="pname"><?= !empty($requisition) && !empty($requisition->vendor_code) ? $requisition->vendor_code : '' ?></td>
+                        <td class="pname"><?= $transaction->getEntityRefCode() ?></td>
+                        <td class="pname"><?= $transaction->getEntityName() ?></td>
+                        <td class="pname"><?= Yii::$app->general->getforeignkey($transaction->productCode, 'ref_code') ?></td>
                         <td class="pname"><?= Yii::$app->general->getforeignkey($transaction->productCode, 'product_name') ?></td>
                         <td><?= $transaction->quantity ?></td>
                         <td class="pro-rate"><?= $transaction->provisional_rate ?></td>
@@ -102,13 +80,8 @@ $is_submit = FALSE;
                             } else {
                                 $value = $transaction->quantity;
                             }
-//                            if (in_array($transaction->status, array(1, 6, 46, 51))) {
-                            if (in_array($transaction->status, ['Sent'])) {
-                                $is_submit = TRUE;
-                                $disabled = FALSE;
-                            } else {
-                                $disabled = 'disabled';
-                            }
+                            $is_submit = TRUE;
+                            $disabled = 'disabled';
 
                             echo $form->field($transaction, '[' . $key . ']approved_quantity', ['options' => ['class' => '']])->textInput(['maxlength' => true, 'value' => $value, 'class' => 'form-control qty-validate accept-qty', 'data-incr' => $key, "disabled" => $disabled])->label(false);
                             ?></td>
@@ -124,34 +97,25 @@ $is_submit = FALSE;
                             } else if (in_array($transaction->status, ['Under Dispatch'])) {
                                 $transaction->req_action = 1;
                             } else {
-                                $transaction->req_action = '';
+                                $transaction->req_action = 1;
                             }
                             if (in_array($transaction->status, ['Sent'])) {
-//                                    if (empty($transaction->parent_product_code))
                                 echo $form->field($transaction, '[' . $key . ']req_action')->dropdownList(['1' => 'Accept', '2' => 'Reject'], ['data-incr' => $key, "disabled" => $disabled, 'class' => 'action-req form-control', 'prompt' => 'Select'])->label(false);
-//                                    else {
-//                                        echo Html::activeHiddenInput($transaction, '[' . $key . ']req_action', ['value' => '1', 'class' => 'action-req']);
-//                                        // echo Html::activeHiddenInput($transaction, '[' . $key . ']parent_product_code', ['value' => 'Yes']);
-//                                    }
                             }
                             ?></td>
-                        <!--<td>-->
-                        <?php
-                        if ($row_id == '' && !$disabled) {
-//                                    echo Html::a(Yii::t('app', '<span class="glyphicon glyphicon-plus icon-size"></span>'), 'javascript:void(0)', ['class' => 'apply-shortcut show-sample', 'shortcut_key' => 'ctrl+alt+c', 'title' => 'Add Scheme Product']);
-                        }
-                        ?>
-                        <!--</td>-->
-                        <?= Html::activeHiddenInput($transaction, '[' . $key . ']requisition_transaction_code', ['value' => $transaction->requisition_transaction_code, 'class' => 'trans']) ?>
-                        <?= Html::activeHiddenInput($transaction, '[' . $key . ']quantity', ['value' => $transaction->quantity]) ?>
-                        <?= Html::activeHiddenInput($transaction, '[' . $key . ']provisional_rate', ['value' => $transaction->provisional_rate]) ?>
-                        <?= Html::activeHiddenInput($transaction, '[' . $key . ']product_code', ['value' => $transaction->product_code, 'class' => 'pcode']) ?>
-                        <?php // Html::activeHiddenInput($transaction, '[' . $key . ']parent_product_code', ['value' => $transaction->parent_product_code]) ?>
+                        <td class='width10'>
+                            <?= Html::activeHiddenInput($transaction, '[' . $key . ']requisition_transaction_code', ['value' => $transaction->requisition_transaction_code, 'class' => 'trans', 'disabled' => true]) ?>
+                            <?= Html::activeHiddenInput($transaction, '[' . $key . ']quantity', ['value' => $transaction->quantity, 'disabled' => true]) ?>
+                            <?= Html::activeHiddenInput($transaction, '[' . $key . ']provisional_rate', ['value' => $transaction->provisional_rate, 'disabled' => true]) ?>
+                            <?= Html::activeHiddenInput($transaction, '[' . $key . ']product_code', ['value' => $transaction->product_code, 'class' => 'pcode', 'disabled' => true]) ?>
 
+                            <?php
+                            echo $form->field($transaction, '[' . $key . ']x_col2', ['options' => ['class' => '']])->textInput(['maxlength' => true, 'value' => $transaction->x_col2, 'class' => 'form-control discount', "disabled" => $disabled])->label(false);
+                            ?>
+                        </td>
                     </tr>                
                     <?php
                 }
-
                 echo Html::hiddenInput('flag', '1', ['id' => 'flag']);
                 ?>
                 <?= Html::hiddenInput('scheme_item', '', ['id' => 'scheme_item']); ?>
@@ -162,7 +126,7 @@ $is_submit = FALSE;
             <div class="form-group">
                 <?php
                 if ($is_submit) {
-                    echo Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-default apply-shortcut', 'value' => '1', 'name' => 'accept', 'id' => 'accept']);
+                    echo Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-default apply-shortcut submitForm', 'value' => '1', 'name' => 'accept', 'id' => 'accept']);
                 }
                 echo Yii::$app->controls->cancel($model);
                 ?>
@@ -170,18 +134,14 @@ $is_submit = FALSE;
         </div>
         <?php ActiveForm::end(); ?>
     </div>
-    <?php // $this->render('_manual_scheme', ['schememodal' => $schememodal]) ?>
 </div>
 <?php
 $script = " 
-  var oldval='';
-    
-
-   $('.accept-qty').on('click',function(){
-   oldval=$(this).val();
-   });
-    $('.accept-qty').on('blur',function(){
-        
+    var oldval='';
+    $('.accept-qty').on('click',function(){
+        oldval=$(this).val();
+    });
+    $('.accept-qty').on('blur',function(){        
         var incr = $(this).data('incr');
         var remain = $('#tblproductrequisitiontransaction-'+incr+'-quantity').val();
         var value = $(this).val();
@@ -310,7 +270,10 @@ function calcDiscount(parent,value,id,per)
         var id = $(this).attr('id');
         var value = $(this).val();  
         var parent = $(this).parents('tr');
-        var amt = parent.find('.pro-amt').text();      
+        var amt = parent.find('.pro-amt').text();
+        if(isNaN(parseInt(amt))) {
+            amt = 0;
+        }
         if((parseInt(value) > parseInt(amt))){
 //            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>" . Yii::t('app', 'Discount amount can not be grater than amount.') . "</span></div></div>\");
             bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>" . Yii::t('app', 'Discount amount can not be grater than amount.') . "</span></div></div>\",function(){
@@ -329,22 +292,83 @@ function calc(parent){
          parent.find('.pro-amt').text(amt);                    
         }
 }
+
+
+$(document).off('click', '.reqTxnFields').on('click', '.reqTxnFields', function(e){
+    e.stopPropagation();
+    $('.enabDisabFields').removeClass('enabDisabFields');
+    $(this).closest('tr').addClass('enabDisabFields');
+    var checked_length = $('input:checkbox:checked:not(\'.allCheckBoxManage\')').length;
+    var total_length = $('input:checkbox:not(\'.allCheckBoxManage\')').length;
+    if($(this).is(':checked')) {
+        $('tr.enabDisabFields input').removeAttr('disabled');
+        $('tr.enabDisabFields select').removeAttr('disabled');
+        if(checked_length == total_length){
+            $('.allCheckBoxManage').prop('checked', true);
+        }
+    } else {
+        $('tr.enabDisabFields input:not(\'.reqTxnFieldsNotDisabled\')').prop('disabled', true);
+        $('tr.enabDisabFields select').prop('disabled', true);
+        $('.allCheckBoxManage').prop('checked', false);
+    }
+});
+
+$('.submitForm').on('click',function(e) {
+    e.preventDefault();
+    var checked_length = $('input:checkbox:checked:not(\'.allCheckBoxManage\')').length;
+    if(checked_length <= 0){
+        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>" . Yii::t('app', 'Please select atleast one record.') . "</span></div></div>\");
+        return false;
+    }
+    $('.reqTxnFields:not(:checked)').closest('tr').addClass('restrictPost');
+    $('.reqTxnFieldsNotDisabled:not(:checked)').closest('tr').addClass('restrictPost');
+    $('tr.restrictPost input').prop('disabled', true);
+    $('tr.restrictPost select').prop('disabled', true);
+    $('#req-accept-form').submit();
+});
+
+$('.allCheckBoxManage').on('click', function(e) {
+    $('.enabDisabFields').removeClass('enabDisabFields');
+    $('tr').addClass('enabDisabFields');
+    if($(this).is(':checked')) {
+        $('tr.enabDisabFields input').removeAttr('disabled');
+        $('tr.enabDisabFields select').removeAttr('disabled');
+        $('.reqTxnFields').prop('checked', true);
+    } else {
+        $('tr.enabDisabFields input:not(\'.reqTxnFieldsNotDisabled\')').prop('disabled', true);
+        $('tr.enabDisabFields select').prop('disabled', true);
+        $('.reqTxnFields').prop('checked', false);
+    }
+})
+
 ";
 $this->registerJs($script, View::POS_END, 'product-code');
 ?>
 
 <?php
 $script = "
-     localStorage.removeItem('transactionsArray');
-     $('#error-summary').hide();
-     $('#scheme_item').val('');
-     $('.show-sample').on('click',function(e){  
-       var parent = $(this).parents('tr');
-       var prod= parent.find('.trans').val();
-       $('#requisition_transaction_no').val(prod);
-       $('#error-summary').hide();                    
-       $('#sampleModal').modal('toggle');
-            });
+    localStorage.removeItem('transactionsArray');
+    $('#error-summary').hide();
+    $('#scheme_item').val('');
+    $('.show-sample').on('click',function(e){  
+        var parent = $(this).parents('tr');
+        var prod= parent.find('.trans').val();
+        $('#requisition_transaction_no').val(prod);
+        $('#error-summary').hide();                    
+        $('#sampleModal').modal('toggle');
+    });
 ";
 $this->registerJs($script, View::POS_END, 'scheme-add');
+
+if (!empty($selectedArr)) {
+    $selectedArrJ = json_encode($selectedArr);
+    $script = "
+        var selectedArr = '" . $selectedArrJ . "';
+        selectedArr = JSON.parse(selectedArr);
+        $.each(selectedArr, function(index, value) {
+            $('#tblproductrequisitiontransaction-'+value+'-requisition_transaction_code').trigger('click');
+        });
+    ";
+    $this->registerJs($script, View::POS_END, 'selectDefaultCheckbox');
+}
 ?>

@@ -398,7 +398,7 @@ class TblDcsController extends ChildController {
                         $vendorModel = $vendorModelData;
                     }
                     $vendorModel->vendor_code = $this->model->vendor;
-                    if ($this->model->vendor == 'BIPL') {
+                    if ($this->model->vendor == 'BIPL' && $this->model->dpu_type == 91) {
                         Yii::$app->general->generateFTPDir($this->model, 'dcs_code', [], $this->model->mcc_plant_code, $this->model->ref_code);
                     }
                     array_push($mappingList, $vendorModel);
@@ -1192,31 +1192,7 @@ class TblDcsController extends ChildController {
 
             if (!in_array(FALSE, $master)) {
                 if (!empty($model->auto_member_create)) {
-                    $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
-                    for ($x = 1; $x <= $config; $x += 1) {
-                        $memberModel = new TblMember();
-                        $memberModel->attributes = $model->attributes;
-                        $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
-                        $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                        if (!empty($memberModel->set_master_hierarchy)) {
-                            $memberModel->set_master_hierarchy[0]->member_code = $memberModel->member_code;
-                        }
-                        Yii::$app->default->getDefaults($memberModel);
-                        $memberModel->address = $model->dcs_name;
-                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
-                        $memberModel->member_type_code = '1';
-                        $memberModel->member_name = 'No Name';
-                        $memberModel->gender_code = 1;
-                        $memberModel->caste_category_code = 1;
-                        $memberModel->member_type_code = 1;
-                        $memberModel->bank_code = NULL;
-                        $memberModel->branch_code = NULL;
-                        $memberModel->bank_account_no = NULL;
-                        $memberModel->ifsc = NULL;
-                        $memberModel->beneficiary_name = NULL;
-                        $memberModel->adhar_no = NULL;
-                        $master[] = $memberModel->save();
-                    }
+                    $model->autoGenerateMember($master);
                 }
             }
 
@@ -1316,7 +1292,7 @@ class TblDcsController extends ChildController {
                 $applicability = new TblPurchaseRateApplicability();
                 $applicableData = $applicability->getDcsApplicability($dcsModel->dcs_code, date('Y-m-d'));
                 $purchaseRate = !empty($applicableData) ? $applicableData->purchase_rate_code : '';
-                if (!empty($purchaseRate)) {
+                if (!empty($purchaseRate) && $dcsModel->dpu_type == 91) {
                     $org_model = new TblOrgFileLog();
                     $org_model->module_code = $model->module_code;
                     $model->value1 = $purchaseRate;
@@ -1326,9 +1302,11 @@ class TblDcsController extends ChildController {
                     $saveModel[] = $model;
                 }
             } else {
-                $org_model = new TblOrgFileLog();
-                $org_model->module_code = $model->module_code;
-                $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                if($dcsModel->dpu_type == 91){
+                    $org_model = new TblOrgFileLog();
+                    $org_model->module_code = $model->module_code;
+                    $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                }
                 $model->status = 2;
                 $model->file_status = 1;
                 $saveModel[] = $model;

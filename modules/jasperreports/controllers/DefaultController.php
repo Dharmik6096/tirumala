@@ -259,6 +259,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'PARAM') {
             $this->report = 'VendorMilkPaymentShuddh';
         }
+        if ($client_code == 'RAMSONS') {
+            $this->report = 'VendorMilkPaymentShuddh';
+        }
         return $this->actionIndex();
     }
 
@@ -510,27 +513,27 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'ShiftWiseBill';
         return $this->actionIndex();
     }
-    
+
     public function actionCompleteTrip() {
         $this->report = 'CompleteTrip';
         return $this->actionIndex();
     }
-    
+
     public function actionCcTruckSlip() {
         $this->report = 'CcTruckSlip';
         return $this->actionIndex();
     }
-    
+
     public function actionDmrReport() {
         $this->report = 'DmrReport';
         return $this->actionIndex();
     }
-    
+
     public function actionCcSubStandardMrg() {
         $this->report = 'CcSubStandardMrg';
         return $this->actionIndex();
     }
-    
+
     public function actionDmrCheckList() {
         $this->report = 'DmrCheckList';
         return $this->actionIndex();
@@ -538,6 +541,61 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionDmrWeightedAverage() {
         $this->report = 'DmrWeightedAverage';
+        return $this->actionIndex();
+    }
+
+    public function actionMccBonusReport() {
+        $this->report = 'MccBonusReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMccMaintanceReport() {
+        $this->report = 'MccMaintanceReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMccVlcRecieptRouteWise() {
+        $this->report = 'MccVlcRecieptRouteWise';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcMilkPaymentVoucher() {
+        $this->report = 'BmcMilkPaymentVoucher';
+        return $this->actionIndex();
+    }
+
+    public function actionDayWiseSummary() {
+        $this->report = 'DayWiseSummary';
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post('ReportsModel')['report_type'] == '1') {
+                $this->report = 'RouteWiseSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionVlccTransactionDataReportRegionAll() {
+        $this->report = 'VlccTransactionDataReportRegionAll';
+        return $this->actionIndex();
+    }
+
+    public function actionUserAttendanceReport() {
+        $this->report = 'UserAttendanceReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBankPaymentReport() {
+        $this->report = 'MemberBankPaymentReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionVendorCommissionPayment() {
+        $this->report = 'VendorCommissionPayment';
+        return $this->actionIndex();
+    }
+    
+    public function actionWeighSlip() {
+        $this->report = 'WeighSlip';
         return $this->actionIndex();
     }
 
@@ -580,7 +638,7 @@ class DefaultController extends \app\controllers\ChildController {
                     $controls[$value] = (int) $pay_cycle[1];
                     $controls['p_dcs_payment_date'] = $pay_cycle[0];
                 } else {
-                    $controls[$value] = $model->{$value};
+                    $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
                 }
                 if (isset($value_array[1]) && $value_array[1] == 'month') {
                     $model->{$value} = !empty($month) ? date('m-Y', strtotime($month)) : NULL;
@@ -1283,6 +1341,79 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/DMRWeightedAverage',
                 'scenario' => 'DmrWeightedAverage',
                 'title' => 'Route wise Weighted Average',
+            ],
+            'MccBonusReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/MccBonusReport',
+                'scenario' => 'MccBonusReport',
+                'title' => 'MCC Bonus',
+            ],
+            'MccMaintanceReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/MccMaintanceReport',
+                'scenario' => 'MccMaintanceReport',
+                'title' => 'Mcc maintenance',
+            ],
+            'MccVlcRecieptRouteWise' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/MccVlcRecieptRouteWise',
+                'scenario' => 'MccVlcRecieptRouteWise',
+                'title' => 'Mcc Vlc Reciept Route Wise',
+            ],
+            'BmcMilkPaymentVoucher' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_payment_cycle_code:default:dcs',
+                'path' => 'vsp/BmcMilkPaymentVoucher',
+                'scenario' => 'BmcMilkPaymentVoucher',
+                'title' => 'BMC Milk Payment Voucher',
+            ],
+            'DayWiseSummary' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/DayWiseSummary',
+                'scenario' => 'DayWiseSummary',
+                'title' => 'Day Wise Summary',
+                'report_type' => [Yii::t('app', 'Day Wise Summary'), Yii::t('app', 'Route Wise Summary')],
+            ],
+            'RouteWiseSummary' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/RouteWiseSummary',
+                'scenario' => 'DayWiseSummary',
+                'title' => 'Route Wise Summary',
+                'report_type' => [Yii::t('app', 'Day Wise Summary'), Yii::t('app', 'Route Wise Summary')],
+            ],
+            'VlccTransactionDataReportRegionAll' => [
+                'param' => 'p_union_code,state_code,region_code,area_code,p_bmc_code:area_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'milkcollection/VLCCTransactionDataFTPRegionAll',
+                'scenario' => 'VlccTransactionDataReportRegionAll',
+                'title' => 'VLCC Transaction Data Report 1',
+                'multiArray' => ['state_code', 'region_code', 'area_code', 'p_bmc_code', 'p_dcs_code'],
+                'bkg_export' => TRUE,
+            ],
+            'UserAttendanceReport' => [
+                'param' => 'p_union_code,p_login_type,p_from_date:string,p_to_date:string',
+                'path' => 'staff/Attendance',
+                'scenario' => 'UserAttendanceReport',
+                'title' => 'User Attendance Report PDF',
+                'bkg_export' => TRUE,
+            ],
+            'MemberBankPaymentReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_bank_type',
+                'path' => 'vsp/MemberBankPayment',
+                'scenario' => 'MemberBankPaymentReport',
+                'title' => 'Member Bank Payment - PDF',
+            ],
+            'VendorCommissionPayment' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/VendorCommissionPayment',
+                'scenario' => 'VendorCommissionPayment',
+                'title' => 'VLCC Commission Bill',
+                'bkg_export' => TRUE,
+            ],
+            'WeighSlip' => [
+                'param' => 'p_union_code,p_plant_code,p_from_date:string,p_to_date:string,p_product_type',
+                'path' => 'vsp/WeighSlip',
+                'scenario' => 'WeighSlip',
+                'title' => 'Weighment Slip',
+                'bkg_export' => TRUE,
             ],
         ];
         return $label[$l];

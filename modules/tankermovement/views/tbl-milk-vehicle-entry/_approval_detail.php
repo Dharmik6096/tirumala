@@ -15,6 +15,9 @@ use yii\helpers\Url;
                 return Yii::$app->general->getforeignkey($model->userCode, 'name');
             }, 'filter' => false],
             ['attribute' => 'login_type', 'filter' => false],
+            ['attribute' => 'department', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+            }, 'filter' => false],
             ['attribute' => 'updated_by', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->updatedBy, 'name');
             }, 'filter' => false],

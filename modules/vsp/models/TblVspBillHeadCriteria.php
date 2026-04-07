@@ -51,7 +51,7 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
                 ['criteria_name', 'unique', 'targetAttribute' => ['criteria_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['create']],
                 [['criteria_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
                 [['criteria_type'], 'default', 'value' => 0]
         ];

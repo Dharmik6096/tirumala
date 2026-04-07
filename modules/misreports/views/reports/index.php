@@ -160,8 +160,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
-                                                </div>
+                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>                                                </div>
                                                 <?php
                                             } else {
                                                 ?>
@@ -184,8 +183,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>
-                                                </div>
+                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>                                                </div>
                                                 <?php
                                             }
                                         }
@@ -304,7 +302,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type_report', 'current_status'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -526,7 +524,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('user_login_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('Login Type'), false, $value, TRUE, TRUE) ?> 
+                                                <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('Login Type'), false, $value, TRUE, TRUE) ?>
                                             </div>
                                             <?php
                                         }
@@ -534,6 +532,64 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->bill_head($model, $form, 'reportsmodel-union_code', 'bill_head_code', 'Bill Head', 'U'); ?>       
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('insurance_master_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('insurance_master_list', $model, $form, 'form-group col-sm-2 padding-right-5', $model->getAttributeLabel('insurance_master'), FALSE, FALSE); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('operation_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic('action_perform', $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('dispatch_center_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('dispatch_center_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('dispatch_center_type'), false, 'dispatch_center_type'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('dispatch_center'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dispatchCenterType($model, $form, 'reportsmodel-dispatch_center_type', 'dispatch_center', $model->getAttributeLabel('dispatch_center'), FALSE, FALSE); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('store_location_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'reportsmodel-store_location_type_all', '', $model->getAttributeLabel('store_location_code')); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('store_location_type_all'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), FALSE, 'store_location_type_all', TRUE); ?>
+
+                                            </div>
+
+                                            <?php
+                                        }
+                                        if (in_array($value, array('product_group_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('product_group', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product Group'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('department'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('department', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('department'), false, 'department'); ?>
                                             </div>
                                             <?php
                                         }
@@ -747,6 +803,14 @@ $('.mis_report_modal_toggle').on('click', function(){
                  hideShift();
             });
         }
+        
+        if('" . $report . "'=='LocalMilkSale'){
+            hideShiftCode();
+            $(document).on('change','#reportsmodel-milk_sale_on', function() {
+                 hideShiftCode();
+            });
+        }
+		
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -853,6 +917,21 @@ $('.mis_report_modal_toggle').on('click', function(){
         }
        
     }
+     
+    function hideShiftCode(){
+        if('" . $report . "'=='LocalMilkSale'){
+            var basis_on =  $('#reportsmodel-milk_sale_on option:selected').val();
+             if(basis_on == '1'){
+                $('.val_shift').show();
+            }else {
+                $('.val_shift').hide();
+                $('.val_shift select').val('');
+                $('.val_shift select').trigger('change');
+            }
+        }
+       
+    }
+	
 ";
 
 if ($defaultToggle) {

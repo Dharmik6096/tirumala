@@ -14,6 +14,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
 
     public $is_search;
     public $to_plant, $to_mcc, $to_bmc, $to_dcs, $sloc_code;
+    public $cluster_email, $cluster_mobile, $vendor_email, $vendor_mobile;
 
     /**
      * @inheritdoc
@@ -21,7 +22,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
     public function rules() {
         return [
             [['asset_transaction_code', 'asset_detail_code', 'status', 'current_status'], 'integer'],
-            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_date', 'received_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_search', 'put_to_use_date', 'purchase_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'make', 'sap_code', 'detail_code', 'manufacturer_serial_number', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sloc_code'], 'safe'],
+            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_date', 'received_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_search', 'put_to_use_date', 'purchase_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'make', 'sap_code', 'detail_code', 'manufacturer_serial_number', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sloc_code', 'cluster_email', 'cluster_mobile', 'vendor_email', 'vendor_mobile'], 'safe'],
             [['to_plant', 'to_mcc', 'to_bmc', 'to_dcs'], 'required', 'on'=> 'assetTransfer']
         ];
     }
@@ -91,13 +92,15 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
         ]);
 
         $this->load($params);
+        // Yii::$app->general->filterByOrg($query, $this, 'tbl_asset_transaction', 'tbl_dcs', 'tbl_dcs', 'tbl_dcs');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
 
-        $query->joinWith(['toStoreLocCode', 'toStoreLocCode.plantCode', 'toStoreLocCode.mccPlantCode', 'toStoreLocCode.dcsCode', 'assetDetail', 'assetCode', 'assetDetail.manufacturerCode', 'fromStoreLocCode as fromStoreLocCode']);
+        $query->joinWith(['unionCode', 'toStoreLocCode', 'toStoreLocCode.plantCode', 'toStoreLocCode.bmcCode', 'toStoreLocCode.dcsCode', 'assetDetail', 'assetCode', 'assetDetail.manufacturerCode', 'fromStoreLocCode as fromStoreLocCode']);
+        $query->leftJoin('tbl_asset_cluster_vendor_info', 'tbl_asset_cluster_vendor_info.asset_code = tbl_asset_transaction.asset_code  AND tbl_asset_cluster_vendor_info.serial_number = tbl_asset_transaction.serial_number');
         if (!empty($this->purchase_date))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_asset_detail.purchase_date, 126)', date('Y-m-d', strtotime($this->purchase_date))]);
         if (!empty($this->put_to_use_date))
@@ -115,15 +118,17 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
         ]);
         if (Yii::$app->session->get('UserType') == 7) {
             $query->andFilterWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        } elseif (Yii::$app->session->get('UserType') == 6) {
+            $query->andFilterWhere(['or', ['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))], ['tbl_dcs.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]]);
         } elseif (Yii::$app->session->get('UserType') == 5) {
-            $query->andFilterWhere(['or', ['tbl_dcs.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))], ['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]]);
+            $query->andFilterWhere(['or', ['tbl_bmc.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))], ['tbl_dcs.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]]);
         } elseif (Yii::$app->session->get('UserType') == 4) {
-            $query->andFilterWhere(['or', ['tbl_dcs.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_mcc_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]]);
+            $query->andFilterWhere(['or', ['tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_bmc.plant_code' => explode(',', Yii::$app->session->get('Plant'))], ['tbl_dcs.plant_code' => explode(',', Yii::$app->session->get('Plant'))]]);
         }
         if (!empty($this->f_dcs_code)) {
             $query->andFilterWhere(['tbl_dcs.dcs_code' => $this->f_dcs_code]);
-        } else if (!empty($this->f_mcc_code)) {
-            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => $this->f_mcc_code]);
+        } else if (!empty($this->f_bmc_code)) {
+            $query->andFilterWhere(['tbl_bmc.bmc_code' => $this->f_bmc_code]);
         } else if (!empty($this->f_plant_code)) {
             $query->andFilterWhere(['tbl_plant.plant_code' => $this->f_plant_code]);
         }
@@ -140,7 +145,11 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
                 ->andFilterWhere(['like', 'tbl_asset_detail.make', $this->make])
                 ->andFilterWhere(['like', 'tbl_asset_transaction.sap_code', $this->sap_code])
                 ->andFilterWhere(['like', 'tbl_store_location.sloc_code', $this->sloc_code])
-                ->andFilterWhere(['like', 'tbl_asset_transaction.serial_number', $this->serial_number]);
+                ->andFilterWhere(['like', 'tbl_asset_transaction.serial_number', $this->serial_number])
+                ->andFilterWhere(['like', 'tbl_asset_cluster_vendor_info.cluster_email', $this->cluster_email])
+                ->andFilterWhere(['like', 'tbl_asset_cluster_vendor_info.cluster_mobile', $this->cluster_mobile])
+                ->andFilterWhere(['like', 'tbl_asset_cluster_vendor_info.vendor_email', $this->vendor_email])
+                ->andFilterWhere(['like', 'tbl_asset_cluster_vendor_info.vendor_mobile', $this->vendor_mobile]);
 
         return $dataProvider;
     }

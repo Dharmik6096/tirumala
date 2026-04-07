@@ -135,6 +135,9 @@ $form = ActiveForm::begin([
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'total_vehicle_capacity')->textInput(['readonly' => true]) ?>
+            </div>
         </div>
         <div class="col-lg-4">
             <h5 class="panel-heading mb15"><?= Yii::t('app', 'Purchase Information') ?></h5>
@@ -201,22 +204,22 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'fat')->textInput() ?>
+            <?= $form->field($txn_model, 'fat')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'snf')->textInput() ?>
+            <?= $form->field($txn_model, 'snf')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <?php if ($txnEdit) { ?>
             <div class="clearfix"></div>
         <?php } ?>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'clr')->textInput() ?>
+            <?= $form->field($txn_model, 'clr')->textInput(['class' => 'two-decimal-validate']) ?>
         </div>
         <?php if (!$txnEdit) { ?>
             <div class="clearfix"></div>
         <?php } ?>
         <div class="col-sm-1 number-validate">
-            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+            <?= $form->field($txn_model, 'temperature')->textInput(['class' => 'one-decimal-validate']) ?>
         </div>
         <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
@@ -283,6 +286,7 @@ $form = ActiveForm::begin([
 </div>
 <div id='trip_auto_generate_data'></div>
 <?php
+Yii::$app->disable->getDisableFields($txn_model);
 $script = "
 var isTransactionFormLoad = false;
 var isTransactionDetailLoad = false;
@@ -296,17 +300,22 @@ $(document).ready(function(){
     var destType = $('#tblbmcmilkdispatch-destination_type').val().toUpperCase();
     updateLastDestinationCheckbox(destType);
     if(!isSecondTransaction) {
-        $('#tblbmcmilkdispatch-trip_code').on('change',function() {
+        $(document).off('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code').on('change', '#tblbmcmilkdispatch-vehicle_code, #tblbmcmilkdispatch-trip_code', function() {
             $('#addTripButtonDiv').hide();
-            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if(setData(transaction_date) && setData(transaction_date) && setData(vehicleCode) && setData(vehicleCode) && tripCodeDropdownLength == 1){
-                if (tripGenerateBtn) {
-                    $('#addTripButtonDiv').show();   
-                }
-            } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-                $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
+            var bmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+            var transactionDate = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (setData(bmcCode) && setData(transactionDate) && setData(vehicleCode)) {
+                setTimeout(function() {
+                    var tripCodeOptions = $('#tblbmcmilkdispatch-trip_code option');
+                    var tripCodeDropdownLength = tripCodeOptions.length;
+                    if (tripCodeDropdownLength === 1 && tripGenerateBtn) {
+                        $('#addTripButtonDiv').show();
+                    } else if (tripCodeDropdownLength === 2) {
+                        var lastOptionValue = tripCodeOptions.last().val();
+                        $('#tblbmcmilkdispatch-trip_code').val(lastOptionValue).trigger('change');
+                    }
+                }, 200);
             }
         });
     }
@@ -437,6 +446,30 @@ $(document).off('change', '#tblbmcmilkdispatch-destination_type').on('change', '
     var destType = $(this).val().toUpperCase();
     updateLastDestinationCheckbox(destType);
 });
+$('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+function setVehicleCapacity(vehicleCode) {
+    if (setData(vehicleCode)) {
+        $.ajax({
+            type: 'get',
+            url: '" . Url::to(['total-vehicle-capacity']) . "',
+            data: {vehicle_code: vehicleCode},
+            success: function(data) {
+                var res = JSON.parse(data);
+                $('#tblbmcmilkdispatch-total_vehicle_capacity').val(res.totalVehicleCapacity + ' Ltrs');
+            }
+        });
+    } else {
+        $('#tblbmcmilkdispatch-total_vehicle_capacity').val(0 + ' Ltrs');
+    }
+}
+$(document).off('change', '#tblbmcmilkdispatch-vehicle_code').on('change', '#tblbmcmilkdispatch-vehicle_code', function () {
+    var vehicleCode = $(this).val();
+    setVehicleCapacity(vehicleCode);
+});
+if (isSecondTransaction) {
+    var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+    setVehicleCapacity(vehicleCode);
+}
 if(!isSecondTransaction) {
     $(document).on('change', '#tblbmcmilkdispatch-bmc_code, #tblbmcmilkdispatch-trip_code', function() {   
         var source_org_code = $('#tblbmcmilkdispatch-bmc_code').val();
@@ -526,13 +559,13 @@ function calculateClr(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['calculate-clr']) . "',
-            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'bmcCode':bmcCode},
+            data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'orgCode':bmcCode,'orgType':'BMC','processName':'BMC_DISPATCH_CONFIG'},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success') {
                     if(is_clr_input==0){
                         $('#tblbmcmilkdispatchtxn-clr').val('');
-                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data.toFixed(2));
+                        $('#tblbmcmilkdispatchtxn-clr').val(obj.data);
                     }else{
                         $('#tblbmcmilkdispatchtxn-snf').val('');
                         $('#tblbmcmilkdispatchtxn-snf').val(obj.data);
@@ -565,7 +598,7 @@ function checkQualityRanges(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['get-quality-param-range']) . "',
-            data: {'union':union, 'bmcCode':bmcCode, 'milkTypeCode':milkTypeCode},
+            data: {'union':union,'orgCode':bmcCode,'milkTypeCode':milkTypeCode,'orgType':'BMC','processName':'BMC_MILK_DISPATCH'},
             success: function(data) {  
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success') {
@@ -658,7 +691,7 @@ function isClrInput(){
         $.ajax({
             type: 'post',
             url:'" . Url::to(['get-clr-input']) . "',
-            data: {'union_code':union,'bmcCode':bmcCode},
+            data: {'union_code':union,'orgCode':bmcCode,'field':'BMC','for':'BMC_DISPATCH_CONFIG'},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success' && obj.data != null) {
@@ -769,12 +802,12 @@ $script .= "
             $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-form']) . "',
-                data: {'bmc_code' : bmc_code,'union_code':union_code},             
+                data: {'process_name':'BMC_DISPATCH','org_type':'BMC','org_code':bmc_code,'union_code':union_code},             
                 success: function(data) {
                     if(isSecondTransaction){
                         isTransactionFormLoad = true;
                     }
-                    $('#transactions-from').html(data);                                                                 
+                    $('#transactions-from').html(data);
                 }
             });
         }

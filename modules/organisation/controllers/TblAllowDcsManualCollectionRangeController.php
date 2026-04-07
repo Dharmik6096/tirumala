@@ -57,6 +57,7 @@ class TblAllowDcsManualCollectionRangeController extends \app\controllers\ChildC
             $this->model->from_date = Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) . $fromShift;
             $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . $toShift;
             $this->model->status = '2';
+            $this->model->request_type = '1';
             $transaction = $this->generalModel->saveTransaction([$this->model], ['DCS Manual Collection Range', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();

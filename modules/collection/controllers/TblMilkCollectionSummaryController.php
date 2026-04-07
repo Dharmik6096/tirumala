@@ -8,7 +8,11 @@ use app\modules\collection\models\TblMilkCollectionSummarySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\collection\models\TblMilkCollectionSearch;
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\collection\models\TblMilkCollectionHistory;
 use app\modules\collection\models\TblMilkCollectionSummaryHistory;
+use yii\helpers\Url;
 
 /**
  * TblMilkCollectionSummaryController implements the CRUD actions for TblMilkCollectionSummary model.
@@ -99,6 +103,100 @@ class TblMilkCollectionSummaryController extends \app\controllers\ChildControlle
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionRepushDataView($id) {
+        $model = $this->findModel($id);
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->dcs_code = $model->dcs_code;
+        $searchModel->date_time_of_collection = $model->date_time_of_collection;
+        $searchModel->shift_code = $model->shift_code;
+        $dataProvider = $searchModel->repushsearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deleteMilkCollection';
+        if (Yii::$app->request->post()) {
+
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $message = 'Data Repush';
+                $type = 'edit';
+                $selectedcodes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($selectedcodes as $code) {
+                    $where['milk_collection_code'] = $code;
+                    $existData = TblMilkCollection::find()->where($where)->one();
+                    if (!empty($existData)) {
+                        $historyModel = new TblMilkCollectionHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'REPUSH');
+                        $saveModel[] = $historyModel;
+                        $existData->data_post_status = 0;
+                        $saveModel[] = $existData;
+                        $message = 'Data Repush';
+                        $type = 'edit';
+                    }
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(Url::previous());
+                }
+            }
+        }
+
+        return $this->render('repush_view', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionRepushBulkData() {
+        $searchModel = new TblMilkCollectionSummarySearch();
+        $searchModel->scenario = 'listSearch';
+        $searchModel->load(Yii::$app->request->post());
+        $dataProvider = $searchModel->searchrepush(Yii::$app->request->queryParams);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $selectedcodes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $matchCount = 0;
+                foreach ($selectedcodes as $code) {
+                    $model = $this->findModel($code);
+                    $historyModel = new TblMilkCollectionSummaryHistory();
+                    Yii::$app->operation->history($model, $historyModel, UPDATE);
+                    $model->data_post_status = 0;
+                    $model->resp_desc = null;
+                    $model->resp_status = null;
+                    $model->response_datetime = null;
+                    $model->pick_datetime = null;
+                    $milkCollModel = new TblMilkCollection();
+                    $collectionData = $milkCollModel->getCollectionSummaryData($model->dcs_code, $model->shift_code, $model->date_time_of_collection);
+                    if (!empty($collectionData)) {
+                        if (count($collectionData) == $model->sample_count) {
+                            $matchCount++;
+                            $saveModel[] = $model;
+                            $saveModel[] = $historyModel;
+                            foreach ($collectionData as $data) {
+                                $historyModelMilkColl = new TblMilkCollectionHistory();
+                                Yii::$app->operation->history($data, $historyModelMilkColl, 'REPUSH');
+                                $saveModel[] = $historyModelMilkColl;
+                                $data->data_post_status = 0;
+                                $data->resp_desc = null;
+                                $data->resp_status = null;
+                                $data->response_datetime = null;
+                                $data->picked_datetime = null;
+                                $saveModel[] = $data;
+                            }
+                        }
+                    }
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Milk Collection Summary Re-Push', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(Url::previous());
+                }
+            }
+        }
+        return $this->render('_repush_data', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

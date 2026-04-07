@@ -34,7 +34,7 @@ class TblEiplAppWidgetMapping extends \app\models\ChildModel {
                 [['widget_id'], 'integer'],
                 [['union_code'], 'required'],
                 [['login_type', 'department', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at', 'union_code'], 'safe'],
+                [['created_at', 'updated_at', 'union_code', 'app_type'], 'safe'],
         ];
     }
 
@@ -51,6 +51,7 @@ class TblEiplAppWidgetMapping extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'app_type' => Yii::t('app', 'App Type'),
         ];
     }
 

@@ -130,8 +130,13 @@ $rmrd_selected_widgets = !empty($userRmrdWidgets) ? $userRmrdWidgets : [];
 $rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], $rmrd_selected_widgets);
 $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
+$plant_selected_widgets = !empty($userPlantWidgets) ? $userPlantWidgets : [];
+$plant_unselected_widgets = array_diff(!empty($plantWidgets) ? $plantWidgets : [], $plant_selected_widgets);
+$allPlantWidgets = array_merge($plant_selected_widgets, $plant_unselected_widgets);
+
 $farmer_selected_popup = !empty($userFarmerPopup) ? $userFarmerPopup : [];
 $rmrd_selected_popup = !empty($userRmrdPopup) ? $userRmrdPopup: [];
+$plant_selected_popup = !empty($userPlantPopup) ? $userPlantPopup: [];
 
 if ($widget_type == 'farmer'){
     $farmerSelectedWidget = array_flip($farmer_selected_widgets);
@@ -144,6 +149,13 @@ if ($widget_type == 'rmrd'){
     $rmrdSelectedWidgets = array_flip($rmrd_selected_widgets);
     $rmrdSelectedPopup = array_flip($rmrd_selected_popup);
     $mergeWidgets = array_merge($rmrdSelectedWidgets, $rmrdSelectedPopup);
+    $lazy_loading_widgets = json_encode(array_flip($mergeWidgets));
+}
+
+if ($widget_type == 'plant'){
+    $plantSelectedWidgets = array_flip($plant_selected_widgets);
+    $plantSelectedPopup = array_flip($plant_selected_popup);
+    $mergeWidgets = array_merge($plantSelectedWidgets, $plantSelectedPopup);
     $lazy_loading_widgets = json_encode(array_flip($mergeWidgets));
 }
 
@@ -160,6 +172,7 @@ $model->dpu_status = !empty($model->dpu_status) ? $model->dpu_status : -1;
 $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 $enableDashboardPopup = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'enable_dashboard_popup');
 $shift = Yii::$app->general->getShiftName($model->shift);
+$user_type = Yii::$app->session->get('UserType');
 ?>
 
 <div class="panel-group row panel-fixed dashboard_search_filter" id="filter">
@@ -188,6 +201,10 @@ $shift = Yii::$app->general->getShiftName($model->shift);
                                 <label for="radio-farmer"><?= Yii::t('app', 'DCS') ?></label>
                                 <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
                                 <label for="radio-rmrd"><?= Yii::t('app', 'RMRD') ?></label>
+                                <?php if ($user_type <= 4) { ?>
+                                    <input type="radio" id="radio-plant" class="radio_widgit_type" name="widget_type" value="plant" />
+                                    <label for="radio-plant"><?= Yii::t('app', 'PLANT') ?></label>
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="col-sm-2 searchFilterHeader">
@@ -212,7 +229,7 @@ $shift = Yii::$app->general->getShiftName($model->shift);
                         </div>
                     </span>
 
-                    <div class="collapse" id="modal_widget_selection">
+                    <div class="collapse" id="modal_widget_selection">   
                         <?php if (!empty($enableDashboardPopup)) { ?>
                             <div class='col-sm-6 padding_right_0'>
                                 <div class='col-sm-9 widget_label_box padding_right_0'><div>Name</div> </div>
@@ -222,7 +239,53 @@ $shift = Yii::$app->general->getShiftName($model->shift);
                                 <div class='col-sm-9 widget_label_box padding_right_0'><div>Name</div> </div>
                                 <div class='col-sm-3 widget_label_box'><div>Show PopUp</div></div>
                             </div>
-                        <?php } ?>
+                        <?php } ?>      
+                        <?php
+                        if ($user_type <= 4) {
+                            echo $form->field($model, 'plant_widgets[]')->checkboxList(
+                                    $allPlantWidgets, [
+                                'id' => 'plant_widgets_list',
+                                'class' => 'row sortable',
+                                'item' =>
+                                function ($index, $label, $name, $checked, $value) use ($allPlantWidgets, $plant_selected_widgets, $model, $dashboard_widget, $plant_selected_popup, $enableDashboardPopup) {
+                                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $plant_selected_widgets);
+                                    $dispLabel = '';
+                                    $dispLabel = $dashboard_widget->getWidgetLabel($label, 'plant');
+                                    if (empty($dispLabel)) {
+                                        return '';
+                                    } else {
+                                        $selectedPopup = in_array($label, $plant_selected_popup);
+                                        $className = 'Dashboard';
+                                        $plant_value = [];
+                                        $output = "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                                    'value' => $label,
+                                                    'id' => 'plant_' . $label,
+                                                    'label' => '<label for="plant_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'plant') . '</label>',
+                                                    'labelOptions' => [
+                                                        'class' => 'widgets-text' //. $disabled,
+                                                    ],
+                                                    'class' => 'widgets-checkbox',
+                                        ]);
+                                        if (!empty($enableDashboardPopup) && in_array($label, $plant_value)) {
+                                            $output .= Html::checkbox($className . '[plant_widgets_after][]', $selectedPopup, [
+                                                        'value' => $label,
+                                                        'id' => 'plant_' . $label . '_after',
+                                                        'label' => '<label for="plant_' . $label . '_after" class="widgets-text"></label>', // Label for the second checkbox
+                                                        'class' => 'widgets-checkbox',
+                                                        'labelOptions' => [
+                                                            'class' => 'right_align_date mr-2',],
+                                            ]);
+                                        }
+                                        $output .= "</div></div>";
+                                        return $output;
+                                    }
+                                },
+                                    ]
+                            )->label(false);
+                        }
+                        ?>
+
                         <?php
                         echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
                                 $allRmrdWidgets, [
@@ -399,8 +462,8 @@ $shift = Yii::$app->general->getShiftName($model->shift);
         </div>
 
         <?php
-        $selected_widgets = $widget_type == 'farmer' ? $farmer_selected_widgets : $rmrd_selected_widgets;
-        $all_widgets = $widget_type == 'farmer' ? $farmerWidgets : $rmrdWidgets;
+        $selected_widgets = ($widget_type == 'farmer') ? $farmer_selected_widgets : (($widget_type == 'plant') ? $plant_selected_widgets : $rmrd_selected_widgets);
+        $all_widgets = ($widget_type == 'farmer') ? $farmerWidgets : (($widget_type == 'plant') ? $plantWidgets : $rmrdWidgets);
         if (!empty($selected_widgets)) {
             foreach ($selected_widgets as $key => $value) {
                 if (in_array($value, $all_widgets)) {
@@ -466,8 +529,11 @@ $shift = Yii::$app->general->getShiftName($model->shift);
 <div id="chartToTable"></div>
 
 <?php
-if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup')) && !empty($rmrd_selected_popup))) :
-    $title = ($widget_type == 'farmer') ? Yii::t('app', 'DCS') : Yii::t('app', 'RMRD');
+if (!empty($enableDashboardPopup) && (($widget_type == 'farmer' && !Yii::$app->session->get('dashboardFarmerPopup') && !empty($farmer_selected_popup)) 
+        || ($widget_type == 'rmrd' && !Yii::$app->session->get('dashboardRmrdPopup') && !empty($rmrd_selected_popup))
+        || ($widget_type == 'plant' && !Yii::$app->session->get('dashboardPlantPopup') && !empty($plant_selected_popup))
+    )) :
+    $title = ($widget_type == 'farmer') ? Yii::t('app', 'DCS') : (($widget_type == 'plant') ? Yii::t('app', 'PLANT') : Yii::t('app', 'RMRD'));
     ?>
     <div class="modal fade" id="dashboardFarmerPopup" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog custom_width_dup_modal">
@@ -475,10 +541,10 @@ if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmer
                 <div class="modal-header font-large"> <?= strtoupper($title) . ' : ' . Yii::$app->controls->view_date($date) . '(' . $shift . ')' ?>
                     <?php echo Html::button(Yii::t('app', 'OK'), ['class' => 'btn btn-primary pop_button', 'id' => 'close']); ?>
                 </div>
-                <div class="modal-body h560">
+                <div class="modal-body widget_popup">
                     <?php
-                    $selected_popup = $widget_type == 'farmer' ? $farmer_selected_popup : $rmrd_selected_popup;
-                    $all_widgets = $widget_type == 'farmer' ? $farmerWidgets : $rmrdWidgets;
+                    $selected_popup = ($widget_type == 'farmer') ? $farmer_selected_popup : (($widget_type == 'plant') ? $plant_selected_popup : $rmrd_selected_popup);
+                    $all_widgets = ($widget_type == 'farmer') ? $farmerWidgets : (($widget_type == 'plant') ? $plantWidgets : $rmrdWidgets);
                     if (!empty($selected_popup)) {
                         foreach ($selected_popup as $key => $value) {
                             if (in_array($value, $all_widgets)) {
@@ -490,6 +556,8 @@ if (!empty($enableDashboardPopup) && ((!Yii::$app->session->get('dashboardFarmer
                         Yii::$app->session->set('dashboardFarmerPopup', true);
                     } elseif ($widget_type == 'rmrd') {
                         Yii::$app->session->set('dashboardRmrdPopup', true);
+                    } elseif ($widget_type == 'plant') {
+                        Yii::$app->session->set('dashboardPlantPopup', true);
                     }
                     ?>
                 </div>
@@ -531,13 +599,21 @@ $('.dpu_data_icon').click(function(){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);
             $('#rmrd_widgets_list').hide();
+            $('#plant_widgets_list').hide();
             $('#farmer_widgets_list').show();
+        }else if('" . $widget_type . "' == 'plant'){
+            $('#hidden_widget_type').val('plant');
+            $('#radio-plant').prop('checked', true);
+            $('#plant_widgets_list').show();
+            $('#rmrd_widgets_list').hide();
+            $('#farmer_widgets_list').hide();
         }
         else{
             $('#hidden_widget_type').val('" . $widget_type . "');
             $('#radio-rmrd').prop('checked', true);
             $('#rmrd_widgets_list').show();
             $('#farmer_widgets_list').hide();
+            $('#plant_widgets_list').hide();
         }
         var position = '';
         var widgets = '" . $lazy_loading_widgets . "';
@@ -568,6 +644,12 @@ $('.dpu_data_icon').click(function(){
                     'mcc_wise_indent_summary',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
+                    'intransit_tanker_milk_detail',
+                    'plant_wise_tanker_status',
+                    'plant_wise_tanker_milk_detail',
+                    'intransit_tanker_status_detail',
+                    'plant_tanker_capacity_wise_tanker_status',
+                    'feed_summary_dashboard',
                     'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
@@ -1208,6 +1290,138 @@ $('.dpu_data_icon').click(function(){
                             }
                         });
                     }
+                    else if(['intransit_tanker_milk_detail'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_plant_intransit_tanker_milk_detail'; 
+                    var union= '" . $unionCode . "';
+//                    var mcc= '" . $mccCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/plant-intransit-tanker-milk-detail']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success'){
+                                    $('#Empty_Tankers').text(obj1.res.Empty_Tankers ?? 0);
+                                    $('#With_Milk').text(obj1.res.With_Milk ?? 0);
+                                    $('#Total_Calculated').text(obj1.res.Total_Calculated ?? 0);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    }
+                    else if(['intransit_tanker_status_detail'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_plant_intransit_tanker_status_details'; 
+                    var union= '" . $unionCode . "';
+//                    var mcc= '" . $mccCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/intransit-tanker-status-detail']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success'){
+                                    $('#Waiting_for_loading').text(obj1.res.Waiting_for_loading ?? 0);
+                                    $('#Loading_Completed').text(obj1.res.Loading_Completed ?? 0);
+                                    $('#Total').text(obj1.res.Total ?? 0);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    }
+                    else if(['plant_wise_tanker_status'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_plant_wise_tanker_status'; 
+                    var union= '" . $unionCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/plant-wise-tanker-status']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success') {
+                                  $('#plant_wise_tanker_status').html(obj1.plant_wise_tanker_status);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    }
+                    else if(['plant_wise_tanker_milk_detail'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_plant_wise_tanker_status'; 
+                    var union= '" . $unionCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/plant-wise-tanker-milk-detail']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success') {
+                                  $('#plant_wise_tanker_milk_detail').html(obj1.plant_wise_tanker_milk_detail);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    }
+                    else if(['plant_tanker_capacity_wise_tanker_status'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_plant_tanker_capacity_wise_tanker_status'; 
+                    var union= '" . $unionCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/plant-tanker-capacity-wise-tanker-status']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success') {
+                                  $('#plant_tanker_capacity_wise_tanker_status').html(obj1.plant_tanker_capacity_wise_tanker_status);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    }
+                    else if(['feed_summary_dashboard'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_product_dashboard_block';
+                    var union= '" . $unionCode . "';                        
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/feed-summary-dashboard']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                
+                                $('#opening_balance').text(obj1.res.opening_balance);
+                                $('#received').text(obj1.res.received);
+                                $('#inventory_transfer').text(obj1.res.inventory_transfer);
+                                $('#sale').text(obj1.res.sale);
+                                $('#sale_return').text(obj1.res.sale_return);
+                                $('#balance_qty').text(obj1.res.balance_qty);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
             }, timeOut);
             timeOut = timeOut + 3000;
 //            console.log(timeOut);
@@ -1609,12 +1823,20 @@ $('.radio_widgit_type').on('change',function() {
 
     if($('input[name=widget_type]:checked', '.switch-field').val() == 'farmer'){
         $('#rmrd_widgets_list').hide();
+        $('#plant_widgets_list').hide();
         $('#farmer_widgets_list').show();
     }
 
     if($('input[name=widget_type]:checked', '.switch-field').val() == 'rmrd'){
         $('#farmer_widgets_list').hide();
+        $('#plant_widgets_list').hide();
         $('#rmrd_widgets_list').show();
+    }
+    
+    if($('input[name=widget_type]:checked', '.switch-field').val() == 'plant'){
+        $('#farmer_widgets_list').hide();
+        $('#rmrd_widgets_list').hide();
+        $('#plant_widgets_list').show();
     }
 });
 

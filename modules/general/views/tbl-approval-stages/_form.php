@@ -62,8 +62,10 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdownStatic('approval_type', $txModel, $form, '', $txModel->getAttributeLabel('approval_type'), FALSE, 'approval_type') ?> 
         </div>
         <div class="col-sm-2 reset_field login_type_dd">
-            <?= Yii::$app->dropdown->dropdownStatic('login_type_ho_flutter', $txModel, $form, '', 'Login Type', false, 'login_type', FALSE, TRUE); ?>
-            <?php // Yii::$app->dropdown->dropdownStatic('user_login_type', $txModel, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE) ?> 
+            <?= Yii::$app->dropdown->dropdownStatic('route_login_type', $txModel, $form, '', 'Login Type', false, 'login_type'); ?>
+        </div>
+        <div class="col-sm-2 reset_field login_type_dd">
+            <?= Yii::$app->dropdown->dropdown('department', $txModel, $form, 'col-sm-3 form-group', $model->getAttributeLabel('department'), false, 'department'); ?>
         </div>
         <div class="col-sm-2 reset_field user_dd">
             <?= Yii::$app->dropdown->dropdown('user', $txModel, $form, 'col-sm-3 form-group', $txModel->getAttributeLabel('user_code'), false, 'user_code'); ?>
@@ -117,9 +119,9 @@ $form = ActiveForm::begin([
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("select2:select");
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("change");
                                                                   
-                                                                    $("#change_event").val("1");
-                                                                    $("#change_event").trigger("change");
-                                                                   
+                                                                    var current_change_event_val = $("#change_event").val();
+                                                                    $("#change_event").val(current_change_event_val == "1" ? "0" : "1").trigger("change");
+                                                                    
                                                                     $(".panel-body").scrollTop(0);
                                                                    
                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
@@ -162,9 +164,11 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-    
+    var type = `$type`;
     $('#tblapprovalstages-process_name').change(function() {
-        approvalMode();
+        if(type == 'create'){
+            approvalMode();
+        }
     });
     
     function approvalMode(){

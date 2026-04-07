@@ -236,7 +236,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'local_address',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     [
@@ -251,7 +250,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     [
@@ -266,7 +264,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => Yii::$app->general->getforeignkey($model->blockCode, 'block_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     /* [
@@ -341,7 +338,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
 //                            [
 //                                'attribute' => 'upi_no',
 //                                'valueColOptions' => ['style' => 'width:30%'],
@@ -361,7 +357,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => $model->allow_multi_family_member == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            
                         ],
                     ],
                     [
@@ -376,7 +371,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => isset($model->societyVendors) ? $model->societyVendors->vendor_code : Yii::t('app', 'Other'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     [
@@ -393,7 +387,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
 //                            [
 //                                'label' => 'IMEI Number',
 //                                'value' => isset($model->societyCodes) ? $model->societyCodes->imei_no : '',
@@ -415,7 +408,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => isset($model->is_dispatch_mandate) ? Yii::$app->dropdown->getRecords('is_dispatch_mandate')['data'][$model->is_dispatch_mandate] : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
 //                            [
 //                                'attribute' => 'is_weight_manual',
 //                                'format' => 'html',
@@ -448,7 +440,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => $model->credit_sale_allow == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     [
@@ -463,7 +454,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'format' => 'html',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     [
@@ -478,7 +468,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'format' => 'html',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            
                         ],
                     ],
                     [
@@ -492,7 +481,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => isset($model->antibiotic_check) ? Yii::$app->dropdown->getRecords('is_type')['data'][$model->antibiotic_check] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            
                         ],
                     ],
                     [
@@ -505,7 +493,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'ts_code_m',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            
                         ],
                     ],
                     [
@@ -520,7 +507,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'value' => Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            
                         ],
                     ],
                     [
@@ -534,7 +520,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'cutoff',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            
                         ],
                     ],
                     [
@@ -604,7 +589,24 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             [
                                 'attribute' => 'is_security_cheque',
                                 'value' => ($model->is_security_cheque == 1) ? 'Yes' : 'No',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'type_of_dcs',
+                                'value' => isset($model->type_of_dcs) ? Yii::$app->dropdown->getRecords('type_of_dcs')['data'][$model->type_of_dcs] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'sim_network',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'sim_no',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],

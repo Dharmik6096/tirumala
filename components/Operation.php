@@ -32,12 +32,12 @@ class Operation extends Component {
     }
 
     private function insertDefault($model) {
-        $model->created_by = \Yii::$app->user->identity->user_code;
+        $model->created_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $model->created_at = date('Y-m-d H:i:s');
     }
 
     private function updateDefault($model) {
-        $model->updated_by = \Yii::$app->user->identity->user_code;
+        $model->updated_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $model->updated_at = date('Y-m-d H:i:s');
     }
 

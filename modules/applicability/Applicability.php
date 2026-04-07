@@ -75,12 +75,15 @@ class Applicability extends \yii\base\Module {
     public $isApproval = false;
     public $periodic_applicability = FALSE;
     public $login_type = '';
+    public $department = '';
     public $is_bulk_notification = false;
     public $with_wef_date = true;
     public $update_applicability = FALSE;
     public $rateMccCode = [];
     public $with_applicable_code = false;
     public $load_data_on_apply_to_checkbox = false;
+    public $save_applicability_child = false;
+    public $check_applicability_with_field_name = TRUE;
 
     /**
      * @inheritdoc
@@ -201,9 +204,11 @@ class Applicability extends \yii\base\Module {
                     'selectedRouteCode' => $this->selectedRouteCode,
                     'generateMail' => $this->generateMail,
                     'login_type' => $this->login_type,
+                    'department' => $this->department,
                     'is_bulk_notification' => $this->is_bulk_notification,
                     'periodic_applicability' => $this->periodic_applicability,
                     'load_data_on_apply_to_checkbox' => $this->load_data_on_apply_to_checkbox,
+                    'check_applicability_with_field_name' => $this->check_applicability_with_field_name
         ]);
     }
 
@@ -446,6 +451,15 @@ class Applicability extends \yii\base\Module {
                                     }
                                 } else {
                                     $saveModel[] = $appModel->save();
+                                }
+                                $saveChildModels = [];
+                                if ($this->save_applicability_child) {
+                                    $model->saveApplicabilityChild($model, $saveChildModels, $value);
+                                    if (!empty($saveChildModels)) {
+                                        foreach ($saveChildModels as $saveChildModel) {
+                                            $saveModel[] = $saveChildModel->save();
+                                        }
+                                    }
                                 }
                             } catch (UserException $e) {
                                 $saveModel[] = false;

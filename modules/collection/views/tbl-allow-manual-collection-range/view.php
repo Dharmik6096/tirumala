@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use kartik\detail\DetailView;
-use yii\widgets\ActiveForm;
 
 $this->title = Yii::$app->label->title('view', 'Manual Collection Request');
 $approval_detail = $model->collectionApproval;
@@ -85,7 +84,7 @@ $approval_detail = $model->collectionApproval;
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             ['attribute' => 'table_name',
-                            'value' => isset($model->table_name) && isset(Yii::$app->dropdown->getRecords('table_name')['data'][$model->table_name]) ? Yii::$app->dropdown->getRecords('table_name')['data'][$model->table_name]: '',
+                            'value' => !empty($model->table_name) ? ucwords(str_replace('_', ' ', preg_replace('/^tbl_/', '', $model->table_name))): '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],        
                     ],
@@ -142,7 +141,7 @@ $approval_detail = $model->collectionApproval;
                     [
                     'columns' => [
                                 ['attribute' => 'action_perform',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                     ],
                 ],
@@ -182,8 +181,8 @@ $approval_detail = $model->collectionApproval;
                                     <th><?= Yii::t('app', 'Status By') ?></th>
                                     <th><?= Yii::t('app', 'Status') ?></th>
                                     <th><?= Yii::t('app', 'Date') ?></th>
+                                    <th><?= Yii::t('app', 'Department') ?></th>
                                     <th><?= Yii::t('app', 'Remarks') ?></th>
-
                                 </tr>
                             </thead>
                             <?php foreach ($approval_detail as $approval) { ?>
@@ -214,6 +213,7 @@ $approval_detail = $model->collectionApproval;
                                         ?>
                                     </td>
                                     <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
+                                    <td><?= $approval->department; ?></td>
                                     <td><?= $approval->remarks; ?></td>
                                 </tr>
                             <?php } ?>

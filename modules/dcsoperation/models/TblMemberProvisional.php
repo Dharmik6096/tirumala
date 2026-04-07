@@ -27,7 +27,6 @@ use app\modules\document\models\TblAttachment;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblApprovalStagesDetail;
-use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use yii\web\UploadedFile;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\geo\models\TblRegion;
@@ -35,7 +34,6 @@ use app\modules\dcsoperation\models\TblMemberProvisionalShareDetails;
 use app\modules\collection\models\TblProvisionalMilkCollection;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\dcsoperation\models\TblMemberHistory;
-use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
 use app\modules\collection\models\TblMilkCollection;
 use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
 use app\modules\dcsoperation\models\TblMemberProvisionalFamilyDetails;
@@ -52,6 +50,10 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use yii\base\UserException;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\dcsoperation\models\TblMemberDeactive;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -140,7 +142,7 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'receipt_scan_copy', 'beneficiary_name'], 'safe'],
                 [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
@@ -166,7 +168,7 @@ class TblMemberProvisional extends ChildModel {
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'hosync', 'hosyncUpdate', 'pro_member_sap_import']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
@@ -175,10 +177,10 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
                     return ($this->chackExistRecord($params) && $this->is_active);
                 }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
+                /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
                     return ($this->chackExistRecord($params) && $this->is_active);
                 }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-            /*    [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+               [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }],
               [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -212,13 +214,11 @@ class TblMemberProvisional extends ChildModel {
                 [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
                 [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'when' => function($attribute, $params) {
                     return ($this->chackExistRecord($params));
-                }, 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate', 'create_animal', 'update_provisional_member']],
+                }, 'except' => ['androidsync', 'MemberApprove', 'hosyncUpdate', 'create_animal', 'update_provisional_member', 'approval_member_detail']],
                 [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'activityStatus'], 'safe'],
                 [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from', 'employee_code', 'employee_name', 'region_code'], 'safe'],
-                [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
-                    return ($this->chackExistRecord($params) && $this->is_active);
-                }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'updateProvisionalMember', 'hosync', 'hosyncUpdate']],
+                [['mobile_no'], 'validateProvisionalMobile', 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'hosync', 'hosyncUpdate']],
                 [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
                 [['ex_member_code'], 'setExMember'],
                 [['provisional_member_code'], 'setProvisionalMemberCode', 'on' => 'importCsv'],
@@ -228,7 +228,7 @@ class TblMemberProvisional extends ChildModel {
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
                 [['application_no', 'sap_farmer_code'], 'required', 'on' => ['pro_member_sap_import']],
-                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument']],
+                [['application_no'], 'checkExistData', 'on' => ['pro_member_sap_import'], 'except' => ['createProvisionalMember', 'MemberDocument', 'MemberReroute', 'Reroute']],
                 [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['createProvisionalMember']],
@@ -236,7 +236,7 @@ class TblMemberProvisional extends ChildModel {
                     return ($model->is_verify == 1);
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblmemberprovisional-is_verify').prop('checked') == true;
-                }", 'on' => ['createProvisionalMember']],
+                }", 'on' => ['createProvisionalMember', 'approval_bank_detail']],
                 [['adhar_no'], 'required', 'when' => function ($model) {
                     return ($model->is_aadhar_verify == 1);
                 }, 'whenClient' => "function (attribute, value) { 
@@ -252,6 +252,15 @@ class TblMemberProvisional extends ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
                         return $('#tblmemberprovisional-is_email_verify').prop('checked') == true;
                 }", 'on' => ['createProvisionalMember']],
+                [['ifsc'], 'required', 'when' => function ($model) {
+                    return !empty($model->bank_account_no);
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#tblmemberprovisional-bank_account_no').val() != '';
+                }", 'except' => ['saveCreamyData', 'androidsync', 'hosync', 'hosyncUpdate']],
+                [['mobile_no'], 'validateMobileNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_address_detail']],
+                [['bank_account_no'], 'validateBankAccNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_bank_detail']],
+                [['adhar_no'], 'validateAdharNo', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_adhar_detail']],
+                [['remarks'], 'required', 'message' => 'Reroute Remarks cannot be blank.', 'on' => ['Reroute']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -345,7 +354,8 @@ class TblMemberProvisional extends ChildModel {
             'payment_type' => Yii::t('app', 'Mode Of Payment'),
             'route_code' => Yii::t('app', 'Route'),
             'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
-            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name')
+            'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name'),
+            'receipt_scan_copy' => Yii::t('app', 'Fee Receipt Number'),
         ];
     }
 
@@ -487,6 +497,18 @@ class TblMemberProvisional extends ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getEmailRelationship() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'email_relation']);
+    }
+
     public function getMembers($dcs_code, $as_array = false) {
         if (!empty($dcs_code)) {
             $query = $this->find()->where(['dcs_code' => $dcs_code, 'is_active' => 1]);
@@ -573,7 +595,7 @@ class TblMemberProvisional extends ChildModel {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {
@@ -690,11 +712,11 @@ class TblMemberProvisional extends ChildModel {
     }
 
     public function getMemberPrivisionalDocuments() {
-        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code']);
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code'])->andOnCondition(['tbl_attachment.module_name' => 'tbl_member_provisional']);
     }
 
     public function getMemberPrivisionalApproval() {
-        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->andOnCondition(['tbl_process_approval.process_name' => 'member'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
 
@@ -803,9 +825,18 @@ class TblMemberProvisional extends ChildModel {
         return $this->hasOne(TblMemberProvisionalShareDetails::className(), ['provisional_member_code' => 'provisional_member_code']);
     }
 
+    public function getFamilyDetail() {
+        return $this->hasOne(TblMemberProvisionalFamilyDetails::className(), ['provisional_member_code' => 'provisional_member_code'])->onCondition(['is_nominee' => 1]);
+    }
+
     public function setChildTableSaveDelete(&$model, &$modelSave, &$deleteModel, &$unlink_files, &$attachments, &$memberdoc, &$errors) {
-        $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
-        $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'member_creation_pending_for_sap_approval');
+            $config = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'allow_member_other_detail');
+        } else {
+            $memberCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_creation_pending_for_sap_approval', 'PORTAL');
+            $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'allow_member_other_detail', 'PORTAL');
+        }
         $model->member_status = 1;
         $all_doc = [];
         $memberdoc = [];
@@ -1027,4 +1058,143 @@ class TblMemberProvisional extends ChildModel {
         return TblDcs::find()->select(['dcs_code_ex'])->where(['dcs_code' => $dcs_code])->one();
     }
 
+    public function validateMobileNo($attribute, $params) {
+        $mobile = $this->$attribute;
+
+        if (!empty($mobile)) {
+            $encryptedMobile = Yii::$app->general->encryptData($mobile);
+            $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
+            if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInMember->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInMember = $existsInMember->one();
+            if ($existsInMember) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInMember->member_code, TblMemberDeactive::class, 'member_code');
+
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Active Member - ') . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name);
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function validateProvisionalMobile($attribute, $params) {
+        if (!empty($this->$attribute)) {
+            $encryptedMobile = Yii::$app->general->encryptData($this->$attribute);
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['mobile_no' => $this->$attribute], ['mobile_no' => $encryptedMobile]]);
+
+            if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInProvisional->member_code, TblMemberDeactive::class, 'member_code');
+                $currentStatus = strtolower($existsInProvisional->provisional_status);
+                $excludeStatuses = (!empty($isDeactive)) ? ['approve', 'reject'] : ['reject'];
+                if (!in_array($currentStatus, $excludeStatuses)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function validateBankAccNo($attribute, $params) {
+        $bankAccNo = $this->$attribute;
+
+        if (!empty($bankAccNo)) {
+            $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
+            $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]]);
+            if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInMember->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInMember = $existsInMember->one();
+
+            if ($existsInMember) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInMember->member_code, TblMemberDeactive::class, 'member_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                    return false;
+                }
+            }
+
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['bank_account_no' => $this->$attribute], ['bank_account_no' => $encryptedBankAccNo]]);
+
+            if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInProvisional->member_code, TblMemberDeactive::class, 'member_code');
+                $currentStatus = strtolower($existsInProvisional->provisional_status);
+                $excludeStatuses = (!empty($isDeactive)) ? ['approve', 'reject'] : ['reject'];
+                if (!in_array($currentStatus, $excludeStatuses)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function validateAdharNo($attribute, $params) {
+        $adharNo = $this->$attribute;
+
+        if (!empty($adharNo)) {
+            $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
+            $existsInMember = TblMember::find()->select(['member_code', 'member_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['adhar_no' => $adharNo], ['adhar_no' => $encryptedAdharNo]]);
+            if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInMember->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInMember = $existsInMember->one();
+
+            if ($existsInMember) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInMember->member_code, TblMemberDeactive::class, 'member_code');
+
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in ' . Yii::t('app', 'Member') . ' - ' . Yii::t('app', 'Member') . ' Code : ' . $existsInMember->member_code . ' , ' . Yii::t('app', 'Member') . ' Name : ' . $existsInMember->member_name));
+                    return false;
+                }
+            }
+
+            $existsInProvisional = $this->find()->where(['is_active' => 1])
+                    ->andWhere(['or', ['adhar_no' => $this->$attribute], ['adhar_no' => $encryptedAdharNo]]);
+
+            if (!$this->isNewRecord && $this->provisional_from != 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'provisional_member_code', $this->provisional_member_code]);
+            } else if (!$this->isNewRecord && $this->provisional_from == 'mobile_update') {
+                $existsInProvisional->andWhere(['<>', 'member_code', $this->member_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInProvisional->member_code, TblMemberDeactive::class, 'member_code');
+                $currentStatus = strtolower($existsInProvisional->provisional_status);
+                $excludeStatuses = (!empty($isDeactive)) ? ['approve', 'reject'] : ['reject'];
+                if (!in_array($currentStatus, $excludeStatuses)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhar Card No already exists in Provisional ' . Yii::t('app', 'Member') . ' - Provisional ' . Yii::t('app', 'Member') . ' Code : ' . $existsInProvisional->provisional_member_code . ', Provisional ' . Yii::t('app', 'Member') . ' Name : ' . $existsInProvisional->member_name));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function updateProcessStatus($data_post_status, $file_name) {
+        return $this->updateAll(['data_post_status' => $data_post_status], ['resp_desc' => $file_name]);
+    }
+
+    public function getRouteMapping() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
 }

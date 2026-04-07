@@ -19,6 +19,9 @@ class Clienterp extends \yii\base\Module {
         parent::init();
 
         $this->modules = [
+            'eipl' => [
+                'class' => 'app\modules\clienterp\eipl\Eipl',
+            ],
             'vka' => [
                 'class' => 'app\modules\clienterp\vka\Vka',
             ],
@@ -30,6 +33,9 @@ class Clienterp extends \yii\base\Module {
             ],
             'nddb' => [
                 'class' => 'app\modules\clienterp\nddb\Nddb',
+            ],
+            'tally' => [
+                'class' => 'app\modules\clienterp\tally\Tally',
             ],
         ];
     }

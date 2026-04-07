@@ -47,7 +47,7 @@ class TblBillHeadHistory extends \yii\db\ActiveRecord {
                 [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code', 'operation_type', 'history_created_by', 'general_formula_comma', 'originating_org_code', 'originating_org_type'], 'string'],
                 [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'default_bill_head_code', 'sequence_no', 'originating_type'], 'integer'],
                 [['created_at', 'updated_at', 'history_created_at', 'milk_type_code'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'sap_seq_no'], 'safe']
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'sap_seq_no', 'is_reserved', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe']
         ];
     }
 
@@ -78,6 +78,7 @@ class TblBillHeadHistory extends \yii\db\ActiveRecord {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'is_reserved' => Yii::t('app', 'Is Reserved'),
         ];
     }
 

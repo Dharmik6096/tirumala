@@ -13,6 +13,9 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\collection\controllers\TblMccShiftLockController;
+use app\modules\tankermovement\models\TblRawFgMaterialReceipt;
+use yii\db\Expression;
+use app\modules\syncutility\models\TblForceSyncRequest;
 
 class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\RealtimeServicesController {
 
@@ -87,6 +90,9 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                         $tripArray['dispatchFromCode'] = $dispatchFromCode;
                         $tripArray['lotQltyValidate'] = $milkVehicleEntryQltyData['lotQltyValidate'];
                         $tripArray['lotQltyData'] = $milkVehicleEntryQltyData['lotQltyData'];
+                        $bmcDispatch = new TblBmcMilkDispatchTxn();
+                        $bmcDispatch->trip_code = $trip_code;
+                        $tripArray['dispatchDetail'] = $bmcDispatch->getLastDispatchDetailChamberWise();
                         $tripData[] = $tripArray;
                     }
                     $res_data = $tripData;
@@ -120,7 +126,9 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                             $tripModel->plant_code = $data['organization_code'];
                             $plantData = $tripModel->plantCode;
                             $remarks = $plantData->ref_code . '-' . $plantData->name;
-                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                            $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
+                            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+                            $tripModel->addAutoQaCleaning($remarks);
                         }
                     }
                 }
@@ -225,7 +233,8 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                                     $sourceData = $tripDetail->{$response['rel'] . 'Source'};
                                     $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']};
                                 }
-                                Yii::$app->general->setVehicleTripTrackingDetail($result[1][0], $remarks);
+                                $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
+                                Yii::$app->general->setVehicleTripTrackingDetail($result[1][0], $trackingDetail, $remarks);
                             }
                         }
                     }
@@ -281,16 +290,18 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vehicle Trip', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $res_data['message'] = 'Trip Updated Successfully.';
-                    $response = Yii::$app->general->getColumnName('bmc');
-                    if (!empty($response['rel'])) {
-                        $model = new TblBmcMilkDispatch();
-                        $model->source_org_code = $source_org_code;
-                        $sourceData = $model->{$response['rel'] . 'Source'};
-                        $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
-                    }
-                    $tripModel->trip_sub_status = 'bmc_dispatch';
-                    $tripModel->sub_status_time = date('Y-m-d H:i:s');
-                    Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                    /*
+                      $response = Yii::$app->general->getColumnName('bmc');
+                      if (!empty($response['rel'])) {
+                      $model = new TblBmcMilkDispatch();
+                      $model->source_org_code = $source_org_code;
+                      $sourceData = $model->{$response['rel'] . 'Source'};
+                      $remarks = $sourceData->{$response['ref_code']} . '-' . $sourceData->{$response['name']} . '-' . $remarks;
+                      }
+                      $tripModel->trip_sub_status = 'bmc_dispatch';
+                      $tripModel->sub_status_time = date('Y-m-d H:i:s');
+                      Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                     */
                 }
             }
         }
@@ -404,6 +415,66 @@ class RealtimeServicesController extends \app\modules\androiddpu\v4\controllers\
             $orgDetail = $this->getOrgDetail($data['organization_type'], $data['organization_code'], FALSE);
             if (!empty($orgDetail['union_code'])) {
                 $res_data = \Yii::$app->general->getSpData('sp_app_amcs_v5_tanker_destination_list', ['union_code' => $orgDetail['union_code']]);
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionGetReceiptSeqNumber() {
+        $res_data = [];
+        $msg = 'Data Not Found.';
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code']) && !empty($content['receipt_seq_number'])) {
+                $receiptSeqNumber = $content['receipt_seq_number'];
+                $lastSlashPos = strrpos($receiptSeqNumber, '/');
+                $prefix = substr($receiptSeqNumber, 0, $lastSlashPos + 1);
+                if (strtoupper($data['organization_type']) == 'PLANT') {
+                    $maxReceiptSequenceNumber = TblRawFgMaterialReceipt::find()
+                            ->select([new Expression("MAX(CONVERT(INT, RIGHT(receipt_seq_number, 4))) as max_receipt_seq_number")])
+                            ->where(['plant_code' => $data['organization_code']])
+                            ->andWhere(new Expression("SUBSTRING(receipt_seq_number, 1, :prefix_length) = :seq_number", [':seq_number' => $prefix, ':prefix_length' => strlen($prefix)]))
+                            ->andWhere(['is not', 'receipt_seq_number', null])
+                            ->scalar();
+                    $msg = 'Data Found.';
+                    $nextSeq = !empty($maxReceiptSequenceNumber) ? (int) $maxReceiptSequenceNumber + 1 : 1;
+                    $res_data = ['receiptSeqNumber' => $prefix . str_pad($nextSeq, 4, '0', STR_PAD_LEFT)];
+                }
+            }
+        }
+        $this->response['error']['message'] = [$msg];
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionSyncRequest() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+            $model = new TblForceSyncRequest();
+            $model->dcs_code = $data['organization_code'];
+            $modelData = $model->find()->where(['ISNULL(is_download, 0)' => 0])
+                            ->andWhere(['dcs_code' => $data['organization_code']])->asArray()->all();
+            if (!empty($modelData)) {
+                $res_data = $modelData;
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionSyncRequestAcknowledgement() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+                $res_data['message'] = 'Acknowledgement Updated.';
+                $reqCodes = explode(',', $content['force_sync_request_code']);
+                $model = new TblForceSyncRequest();
+                $model->updateAll(['is_download' => 1, 'updated_at' => date('Y-m-d H:i:s')], ['force_sync_request_code' => $reqCodes]);
             }
         }
         $this->response['data'] = $res_data;

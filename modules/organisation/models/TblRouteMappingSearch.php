@@ -19,10 +19,10 @@ class TblRouteMappingSearch extends TblRouteMapping {
      */
     public function rules() {
         return [
-            [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
-            [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
-            [['route_length_kms'], 'number'],
-            [['route_code_ex', 'ref_code', 'sap_route_code'], 'safe'],
+                [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
+                [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
+                [['route_length_kms'], 'number'],
+                [['route_code_ex', 'ref_code', 'sap_route_code'], 'safe'],
         ];
     }
 
@@ -53,8 +53,11 @@ class TblRouteMappingSearch extends TblRouteMapping {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mccCode', 'dcsBmcCode']);
+//        $query->joinWith(['dcsCode', 'mccCode', 'dcsBmcCode']);
 //        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant', 'tbl_bmc');
+        $query->leftJoin('tbl_dcs', 'tbl_dcs.route_code = tbl_route_mapping.route_code');
+        $query->leftJoin('tbl_mcc_plant', 'tbl_mcc_plant.mcc_plant_code = tbl_route_mapping.to_dest AND UPPER(tbl_route_mapping.to_type) = \'MCC\'');
+        $query->leftJoin('tbl_bmc', 'tbl_bmc.bmc_code = tbl_route_mapping.to_dest AND UPPER(tbl_route_mapping.to_type) = \'BMC\'');
 
         $model_class = (new \ReflectionClass($this))->getShortName();
         $q_param = Yii::$app->request->queryParams;
@@ -79,16 +82,16 @@ class TblRouteMappingSearch extends TblRouteMapping {
             $plantArr = explode(',', Yii::$app->session->get('Plant'));
             $query->andFilterWhere([
                 'or',
-                ['tbl_mcc_plant.plant_code' => $plantArr, 'tbl_route_mapping.to_type' => 'MCC'],
-                ['tbl_bmc.plant_code' => $plantArr, 'tbl_route_mapping.to_type' => 'BMC']
+                    ['tbl_mcc_plant.plant_code' => $plantArr, 'UPPER(tbl_route_mapping.to_type)' => 'MCC'],
+                    ['tbl_bmc.plant_code' => $plantArr, 'UPPER(tbl_route_mapping.to_type)' => 'BMC']
             ]);
         }
         if (!empty($this->f_plant_code) && empty($this->f_bmc_code)) {
 //            $query->andFilterWhere(['tbl_mcc_plant.plant_code' => $this->f_plant_code]);
             $query->andFilterWhere([
                 'or',
-                ['tbl_mcc_plant.plant_code' => $this->f_plant_code, 'tbl_route_mapping.to_type' => 'MCC'],
-                ['tbl_bmc.plant_code' => $this->f_plant_code, 'tbl_route_mapping.to_type' => 'BMC']
+                    ['tbl_mcc_plant.plant_code' => $this->f_plant_code, 'UPPER(tbl_route_mapping.to_type)' => 'MCC'],
+                    ['tbl_bmc.plant_code' => $this->f_plant_code, 'UPPER(tbl_route_mapping.to_type)' => 'BMC']
             ]);
         }
 
@@ -96,7 +99,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
 //        if (Yii::$app->session->get('MCC') !== '')
 //            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         if (!empty($this->f_mcc_code) && empty($this->f_bmc_code)) {
-            $query->andFilterWhere(['or', ['tbl_route_mapping.to_dest' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'MCC'], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'BMC']]);
+            $query->andFilterWhere(['or', ['tbl_route_mapping.to_dest' => $this->f_mcc_code, 'UPPER(tbl_route_mapping.to_type)' => 'MCC'], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code, 'UPPER(tbl_route_mapping.to_type)' => 'BMC']]);
         }
 
 
@@ -111,20 +114,20 @@ class TblRouteMappingSearch extends TblRouteMapping {
         $where_bmc = [];
         if (Yii::$app->session->get('BMC') !== '') {
             $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
-            $where_bmc['tbl_bmc.bmc_code'] = explode(',', Yii::$app->session->get('BMC'));
-            $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
+            //$where_bmc['tbl_bmc.bmc_code'] = explode(',', Yii::$app->session->get('BMC'));
+            $where_bmc['LOWER(tbl_route_mapping.to_type)'] = 'bmc';
         }
 
         $where_mcc = [];
         if (Yii::$app->session->get('MCC') !== '') {
             $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
-            $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
-            $where_mcc['tbl_route_mapping.to_type'] = 'mcc';
+            // $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
+            $where_mcc['LOWER(tbl_route_mapping.to_type)'] = 'mcc';
 
             if (Yii::$app->session->get('BMC') == '') {
 //                $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
                 $where_bmc['tbl_bmc.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
-                $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
+                $where_bmc['LOWER(tbl_route_mapping.to_type)'] = 'bmc';
             }
         }
         $query->andWhere(['or', $where_bmc, $where_mcc]);
@@ -161,7 +164,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_type', $this->route_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_type', $this->from_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_dest', $this->from_dest])
-                ->andFilterWhere(['like', 'tbl_route_mapping.to_type', $this->to_type])
+                ->andFilterWhere(['like', 'UPPER(tbl_route_mapping.to_type)', !empty($this->to_type) ? strtoupper($this->to_type) : $this->to_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.sap_route_code', $this->sap_route_code])
                 ->andFilterWhere(['like', 'tbl_route_mapping.to_dest', $this->to_dest]);
 

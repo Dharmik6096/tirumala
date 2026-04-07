@@ -39,29 +39,30 @@ class TblContactDetails extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['detail_code'], 'required'],
-            [['detail_code'], 'required', 'on' => ['additional']],
-            [['detail_code'], 'required', 'except' => ['additional']],
-            [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
-            [['detail_code', 'mobile_no'], 'integer'],
-            [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                [['detail_code'], 'required'],
+                [['detail_code'], 'required', 'on' => ['additional']],
+                [['detail_code'], 'required', 'except' => ['additional']],
+                [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
+                [['detail_code', 'mobile_no'], 'integer'],
+                [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['mobile_no'], function ($attribute, $params) {
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
+                [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             // [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['module_name', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code', 'from_date', 'to_date', 'primary_parent', 'secondary_parent'], 'safe'],
-            [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
+                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code', 'from_date', 'to_date', 'primary_parent', 'secondary_parent'], 'safe'],
+                [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
-            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0],
-            [['to_date'], 'validateToDate'],
-            [['secondary_parent'], 'validateUniqueParent'],
+                [['is_verified', 'is_contact_verified'], 'default', 'value' => 0],
+                [['to_date'], 'validateToDate'],
+                [['secondary_parent'], 'validateUniqueParent'],
+                [['to_date'], 'convertDate', 'except' => ['verification']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -186,8 +187,8 @@ class TblContactDetails extends \app\models\ChildModel {
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
         return $OrgContacts = TblContactDetails::find()
                 ->where(['or',
-                    ['mobile_no' => $encryptedmobile],
-                    ['mobile_no' => $this->mobile_no]
+                        ['mobile_no' => $encryptedmobile],
+                        ['mobile_no' => $this->mobile_no]
                 ])->andWhere(['module_name' => $this->module_name, 'is_active' => 1, 'is_default' => 1])
                 ->all();
     }
@@ -223,12 +224,57 @@ class TblContactDetails extends \app\models\ChildModel {
     }
 
     public function contactDetailList($moduleCode) {
-        $detailCode = TblAssetDetail::find()->select('detail_code')->joinWith(['storeLocCode'])->where(['reference_code' => $moduleCode])->scalar();
+        $detailCode = TblAssetDetail::find()->select('detail_code')->joinWith(['storeLocCode'])->where(['reference_code' => $moduleCode])->column();
         $data = $this->find()
-            ->where(['module_code' => $moduleCode, 'module_name' => 'society'])
-            ->andWhere(['not in', 'detail_code', $detailCode])
-            ->all();
-        return ArrayHelper::map($data, 'detail_code', 'contact_person');
+                ->where(['module_code' => $moduleCode, 'module_name' => 'society', 'is_active' => 1])
+                ->andWhere(['not in', 'detail_code', $detailCode])
+                ->all();
+        return ArrayHelper::map($data, 'detail_code', 'firstname');
     }
-    
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : NULL;
+            $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : NULL;
+        }
+    }
+
+    public static function updateContactDetails($code, $mobile_no, $module_name, &$mapList) {
+        $activeContacts = self::find()->where(['module_name' => $module_name, 'module_code' => $code, 'is_active' => 1])->indexBy('mobile_no')->all();
+
+        $currentDefaultContact = false;
+        foreach ($activeContacts as $c) {
+            if ($c->is_default == 1) {
+                $currentDefaultContact = $c;
+                break;
+            }
+        }
+
+        $contactDetails = null;
+        if (isset($activeContacts[$mobile_no])) {
+            $contactDetails = $activeContacts[$mobile_no];
+            if ($contactDetails->is_default != 1) {
+                $historyContactDetails = new TblContactDetailsHistory();
+                \Yii::$app->operation->history($contactDetails, $historyContactDetails, UPDATE);
+                $mapList[] = $historyContactDetails;
+            }
+        } else {
+            $contactDetails = new self();
+        }
+
+        if ($currentDefaultContact && $currentDefaultContact->detail_code != $contactDetails->detail_code) {
+            $historyOldDefault = new TblContactDetailsHistory();
+            \Yii::$app->operation->history($currentDefaultContact, $historyOldDefault, UPDATE);
+            $mapList[] = $historyOldDefault;
+            $currentDefaultContact->is_active = 0;
+            $currentDefaultContact->is_default = 0;
+            $mapList[] = $currentDefaultContact;
+        }
+
+        $contactDetails->is_default = 1;
+        $contactDetails->is_active = 1;
+
+        return $contactDetails;
+    }
+
 }

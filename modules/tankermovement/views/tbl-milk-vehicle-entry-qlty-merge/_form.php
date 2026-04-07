@@ -31,13 +31,13 @@ $form = ActiveForm::begin([
                     <?= Yii::$app->dropdown->chamberNoList($model, $form, 'vehicle', 'chamber_no', Yii::t('app', 'Chamber No')); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'fat')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                    <?= $form->field($model, 'fat')->textInput(['class' => 'form-control two-decimal-validate', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 1 ? true : false])->label(); ?>
+                    <?= $form->field($model, 'snf')->textInput(['class' => 'form-control two-decimal-validate', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 1 ? true : false])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 0 ? true : false])->label(); ?>
+                    <?= $form->field($model, 'clr')->textInput(['class' => 'form-control two-decimal-validate', 'autocomplete' => "off", 'readonly' => $model->is_clr_input == 0 ? true : false])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'water')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -58,7 +58,7 @@ $form = ActiveForm::begin([
                     <?= $form->field($model, 'mbrt')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
-                    <?= $form->field($model, 'temp')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
+                    <?= $form->field($model, 'temp')->textInput(['class' => 'form-control one-decimal-validate', 'autocomplete' => "off"])->label(); ?>
                 </div>
                 <div class="col-sm-1 number-validate">
                     <?= $form->field($model, 'acidity')->textInput(['class' => 'form-control', 'autocomplete' => "off"])->label(); ?>
@@ -148,7 +148,7 @@ $script = "
     var is_clr_input = `$model->is_clr_input`;
     var plantCode = `$model->plant_code`;
 
-    $(document).on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-clr, #tblmilkvehicleentryqltymerge-snf', function() {
+    $(document).on('change', '#tblmilkvehicleentryqltymerge-fat, #tblmilkvehicleentryqltymerge-clr, #tblmilkvehicleentryqltymerge-snf, #tblmilkvehicleentryqltymerge-chamber_no', function() {
         calculateClr();
     });
     
@@ -160,20 +160,22 @@ $script = "
         var fat = $('#tblmilkvehicleentryqltymerge-fat').val();
         var snf = $('#tblmilkvehicleentryqltymerge-snf').val();
         var clr = $('#tblmilkvehicleentryqltymerge-clr').val();
+        var chamberNo = $('#tblmilkvehicleentryqltymerge-chamber_no').val();
+        var tripCode = $('#tblmilkvehicleentryqltymergesearch-trip_code').val();
 
         is_clr_input == 0 && (fat == '' || snf == '') && $('#tblmilkvehicleentryqltymerge-clr').val('');
         is_clr_input == 1 && (fat == '' || clr == '') && $('#tblmilkvehicleentryqltymerge-snf').val('');
 
-        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr)))){
+        if(((is_clr_input == 0 && setData(fat) && setData(snf)) || (is_clr_input ==1 && setData(fat) && setData(clr))) && setData(chamberNo) && setData(tripCode)){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['calculate-clr']) . "',
-                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode},
+                data: {'union_code':union,'fat':fat,'snf':snf,'clr':clr,'is_clr_input':is_clr_input,'plantCode':plantCode,'chamberNo':chamberNo,'tripCode':tripCode},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
                         if(is_clr_input==0) {
-                            $('#tblmilkvehicleentryqltymerge-clr').val(obj.data.toFixed(2));
+                            $('#tblmilkvehicleentryqltymerge-clr').val(obj.data);
                         } else {
                             $('#tblmilkvehicleentryqltymerge-snf').val(obj.data);
                         }

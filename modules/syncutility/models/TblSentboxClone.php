@@ -48,7 +48,8 @@ class TblSentboxClone extends \yii\db\ActiveRecord {
                 [['sequence_no'], 'integer'],
                 [['posting_timestamp', 'sync_timestamp', 'error_timestamp', 'data_post_status'], 'safe'],
                 [['posting_timestamp'], 'default', 'value' => date('Y-m-d H:i:s')],
-                [['data_post_status'], 'default', 'value' => 0]
+                [['data_post_status'], 'default', 'value' => 0],
+                [['sync_timestamp'],'setDefaultData']
         ];
     }
 
@@ -81,4 +82,8 @@ class TblSentboxClone extends \yii\db\ActiveRecord {
         ];
     }
 
+    public function setDefaultData() {
+        $this->sync_timestamp = date('Y-m-d H:i:s');
+        return true;
+    }
 }

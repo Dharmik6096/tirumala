@@ -20,6 +20,8 @@ use app\modules\dcsoperation\models\TblMemberHistory;
  * TblMasterTransferController implements the CRUD actions for TblMasterTransfer model.
  */
 class TblMasterTransferController extends \app\controllers\ChildController {
+    
+    public $freeAccessActions = ['dcs-list'];
 
     /**
      * Lists all TblMasterTransfer models.
@@ -191,6 +193,23 @@ class TblMasterTransferController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionDcsList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $transafer = new TblMasterTransfer();
+                $rls = isset($parents[1]) && $parents[1] == 'false' ? 'FALSE' : 'TRUE';
+                $data = $transafer->getDCSList($parents[0], $rls);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

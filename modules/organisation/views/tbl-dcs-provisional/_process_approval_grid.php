@@ -8,6 +8,10 @@ $attribute = [
         }, 'filter' => false
     ],
     ['attribute' => 'login_type', 'filter' => false],
+    ['attribute' => 'department', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->departmentId, 'department');
+        }, 'filter' => false
+    ],
     ['attribute' => 'updated_by', 'label' => 'Status By', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->updatedBy, 'name');
         }, 'filter' => false
@@ -18,6 +22,7 @@ $attribute = [
     ['attribute' => 'created_at', 'label' => 'Date', 'vAlign' => 'middle', 'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->created_at);
         }, 'filter' => false],
+    ['attribute' => 'department', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
 ];
 

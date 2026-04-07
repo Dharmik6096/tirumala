@@ -60,7 +60,7 @@ use yii\helpers\ArrayHelper;
  */
 class TblBmcMilkDispatch extends \app\models\ChildModel {
 
-    public $transporter_code, $is_clr_input;
+    public $transporter_code, $is_clr_input, $total_vehicle_capacity;
 
     /**
      * @inheritdoc
@@ -74,21 +74,21 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
-            [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
-            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by'], 'safe'],
-            [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
-            [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
-            [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-            [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
-            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
-            [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'tripUpdate']],
+                [['vehicle_out_time'], 'required', 'except' => ['androidsync', 'importCsv', 'createPlantDispatch', 'create', 'tripUpdate']],
+                [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'source_org_code', 'source_org_type', 'is_clr_input', 'tested_by', 'total_vehicle_capacity'], 'safe'],
+                [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
+                [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => ['create', 'createPlantDispatch']],
+                [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
+                [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'vehicle_in_time', 'transaction_date'], 'required', 'on' => 'createPlantDispatch'],
+                [['originating_org_code', 'originating_org_type'], function($attribute, $params) {
                     $this->source_org_code = $this->originating_org_code;
                     $this->source_org_type = $this->originating_org_type;
                 }, 'on' => 'androidsync'],
-            [['tested_by'], 'string', 'max' => 100],
+                [['tested_by'], 'string', 'max' => 100],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblBmcMilkDispatch', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -259,7 +259,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                             return TRUE;
                         } else if ($stock_date->to_date == $this->from_date && $stock_date->to_date == $this->to_date) {
                             return TRUE;
-                        } else if ($this->from_date < $dispatch_date) {
+                        } else if ($this->from_date < $stock_date->to_date) {
                             $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date. Please select this date: ' . $formatted_date . ' and shift ' . $formatted_shift));
                             return FALSE;
                         } else if ($this->from_date > $dispatch_date) {
@@ -346,7 +346,14 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 ->andWhere(['IS NOT', 'arrival_time', null])
                 ->andWhere(['IS', 'departure_time', null])
                 ->count();
-        return $count == 1;
+        if ($count == 1) {
+            $fromDateToDateData = $this->getFromDateToDate();
+            if ($this->from_date != $fromDateToDateData['from_datetime'] || $this->to_date != $fromDateToDateData['to_datetime']) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     public function getFromDateToDate($is_physical_stock = false) {
@@ -519,9 +526,30 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         }
     }
 
-    public function getBmcSilosInfoList(){
+    public function getBmcSilosInfoList() {
         $data = TblBmcSilosInfo::find()->select(['bmc_silos_info_code', 'silo_no'])->where(['module_name' => 'BMC', 'module_code' => $this->bmc_code])->asArray()->all();
         return ArrayHelper::map($data, 'bmc_silos_info_code', 'silo_no');
+    }
+
+    public function getDispatchData($union, $tripCode, $chamberNo, $org_code) {
+        $bmcMilkDispatchData = [];
+        if (!empty($tripCode) && !empty($chamberNo)) {
+            $bmcMilkDispatchData = $this->find()
+                    ->select(['tbl_bmc_milk_dispatch.plant_code', 'tbl_bmc_milk_dispatch.bmc_code'])
+                    ->joinWith(['bmcMilkDispatchTxnCode'])
+                    ->where(['tbl_bmc_milk_dispatch.union_code' => $union, 'tbl_bmc_milk_dispatch.trip_code' => $tripCode, 'tbl_bmc_milk_dispatch_txn.chamber_no' => $chamberNo])
+                    ->orderBy(['tbl_bmc_milk_dispatch.created_at' => SORT_DESC])
+                    ->one();
+        }
+        if (!empty($bmcMilkDispatchData)) {
+            if (!empty($bmcMilkDispatchData->bmc_code)) {
+                return ['config' => 'BMC_DISPATCH_CONFIG', 'orgType' => 'BMC', 'orgCode' => $bmcMilkDispatchData->bmc_code];
+            } else {
+                return ['config' => 'PLANT_DISPATCH_CONFIG', 'orgType' => 'PLANT', 'orgCode' => $bmcMilkDispatchData->plant_code];
+            }
+        } else {
+            return ['config' => 'PLANT_RECEIPT_CONFIG', 'orgType' => 'PLANT', 'orgCode' => $org_code];
+        }
     }
 
 }

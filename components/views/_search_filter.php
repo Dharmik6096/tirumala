@@ -22,12 +22,17 @@ if (!empty($filter_data)) {
                 <?php
                 if (!empty($filter_data)) {
                     $aciton = isset($filter_data['action']) ? $filter_data['action'] : ['index'];
+                    $removefield = isset($filter_data['removefield']) ? $filter_data['removefield'] : [];
                     $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
                     $filters = $filter_data['filter'];
                     $count = count($filters);
                     if (!empty($filters) && in_array(Yii::$app->controller->action->id, $aciton) && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
                         $f_cnt = 0;
                         $aciton = [Yii::$app->controller->action->id];
+                        if(!empty($removefield) && array_key_exists(Yii::$app->controller->action->id, $removefield)){
+                            $filters = array_diff($filters, $removefield[Yii::$app->controller->action->id]);
+                            $filters = array_values($filters);
+                        }
                         $form = \yii\widgets\ActiveForm::begin([
                                     'action' => $aciton,
                                     'method' => $method,
@@ -333,7 +338,7 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status', 'quality_config_process_name'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status', 'txn_type', 'approved_status', 'billing_type', 'erp_process_name', 'trip_status', 'status', 'quality_config_process_name', 'department_wise'))) {
                                         $flag = isset($value_array[1]) ? $value_array[1] : $value;
                                         $f_cnt++;
                                         ?>
@@ -362,7 +367,7 @@ if (!empty($filter_data)) {
                                         $f_cnt++
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
+                                            <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
                                     <?php
@@ -390,13 +395,45 @@ if (!empty($filter_data)) {
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'area_code'); ?>
                                         </div>
-                                    <?php } ?>
-                                    <?php
+                                        <?php
+                                    }
+                                    if (in_array($value, array('dispatch_center_code'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('dispatch_center', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
+                                        </div>
+                                        <?php
+                                    }
+                                    if (in_array($value, array('insurance_master_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('insurance_master_list', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
+                                        </div>
+                                        <?php
+                                    }
+                                    if (in_array($value, array('f_u_dcs_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, $field_class . '-f_union_code', '', 'Society'); ?>
+                                        </div>
+                                        <?php
+                                    }
                                     if (in_array($value, array('mcc_user_code'))) {
                                         $f_cnt++
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->UserList($model, $form, $field_class . '-f_mcc_code', 'mcc_user_code', FALSE, FALSE, FALSE, '/tms/tbl-user-tracking-movement/user-list'); ?>
+                                        </div>
+                                    <?php } ?> 
+                                    <?php
+                                    if (in_array($value, array('send_status'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownstatic('send_status', $model, $form, 'form-group padding-right-5 padding-left-0', FALSE, FALSE, 'data_post_status'); ?>
                                         </div>
                                     <?php } ?> 
                                 <?php } ?>

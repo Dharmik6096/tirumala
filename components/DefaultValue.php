@@ -35,6 +35,12 @@ class DefaultValue extends Component {
                 'TblMember' => [
                     'animal_type_code' => 1,
                 ],
+                'TblMemberRateRepushLogSearch' => [
+                    'dpu_type' => 91,
+                ],
+                'TblVehicleTrip' => [
+                    'is_auto_trip' => 1,
+                ],
             ],
             'ABT' => [
                 'TblDcs' => [
@@ -52,9 +58,24 @@ class DefaultValue extends Component {
                     'billing_qty_flag' => 1,
                 ],
             ],
+            'AMULAMCS' => [
+                'TblBulkNotification' => [
+                    'login_type' => 'MEMBER',
+                ],
+            ],
             'COMFED' => [
                 'TblMember' => [
                     'animal_type_code' => 3,
+                ],
+            ],
+            'CARGILL' => [
+                'TblVehicleTrip' => [
+                    'is_auto_trip' => 0,
+                ],
+            ],
+            'KOTMALE' => [
+                'TblVehicleTrip' => [
+                    'is_auto_trip' => 0,
                 ],
             ],
         ];

@@ -46,9 +46,10 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function rules() {
         return [
 //                [['process_approval_code'], 'required'],
-                [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
+                [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks', 'department'], 'safe'],
                 [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'status_date', 'status_by'], 'safe'],
                 [['status'], 'required', 'on' => 'approve'],
+                [['status', 'remarks'], 'required', 'on' => 'approvalTabWise'],
         ];
     }
 
@@ -74,6 +75,7 @@ class TblProcessApproval extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'remarks' => Yii::t('app', 'Remarks'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 
@@ -104,6 +106,10 @@ class TblProcessApproval extends \app\models\ChildModel {
         if (isset(\Yii::$app->user->identity->login_type) && \Yii::$app->user->identity->login_type != '') {
             $login_type = \Yii::$app->user->identity->login_type;
         }
+        $department = '';
+        if (isset(\Yii::$app->user->identity->department) && \Yii::$app->user->identity->department != '') {
+            $department = \Yii::$app->user->identity->department;
+        }
         $subquery = $this::find()
                 ->select([
             'process_code',
@@ -129,7 +135,7 @@ class TblProcessApproval extends \app\models\ChildModel {
                 )
                 ->where([
             'or',
-                ['app.login_type' => $login_type],
+                ['and', ['app.login_type' => $login_type], ['app.department' => $department]],
                 ['app.user_code' => \Yii::$app->user->identity->user_code]
         ]);
         if ($status == 2) {
@@ -226,6 +232,10 @@ class TblProcessApproval extends \app\models\ChildModel {
 
     public function getManualCollectionUpdatedBy() {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'status_by']);
+    }
+
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

@@ -304,8 +304,11 @@ class PendriveImportController extends \app\controllers\ChildController {
                     ->bindValue(':updated_at', date('Y-m-d H:i:s'))
                     ->execute();
 
-            Yii::$app->db->createCommand("insert into txfarmer (farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,createdtime,packet,uuid) "
-                            . "SELECT farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,'$current_datetime',line_text,'$uuid' from tbl_eipl_packet_process where file_name in ($file_id) and main_table=1")
+            Yii::$app->db->createCommand("insert into txfarmer (farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,createdtime,packet,uuid,qltyauto,qtyauto) "
+                            . "SELECT farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,'$current_datetime',line_text,'$uuid',
+                                CASE WHEN ISNULL(txflag,'')='' THEN 0 ELSE SUBSTRING(txflag, 1, 1) END AS qltyauto,
+                                CASE WHEN ISNULL(txflag,'')='' THEN 0 ELSE SUBSTRING(txflag, 2, 1) END AS qtyauto
+                                from tbl_eipl_packet_process where file_name in ($file_id) and main_table=1")
                     ->execute();
 
             if ($transaction->isActive) {

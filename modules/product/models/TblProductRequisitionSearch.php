@@ -12,16 +12,16 @@ use app\modules\product\models\TblProductRequisition;
  */
 class TblProductRequisitionSearch extends TblProductRequisition {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $dispatch_center_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['product_requisition_code', 'from_date', 'to_date', 'customer_name', 'req_date', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_name', 'mcc_name', 'route_code'], 'safe'],
+                [['product_requisition_code', 'from_date', 'to_date', 'customer_name', 'req_date', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_name', 'mcc_name', 'route_code', 'dispatch_center_code'], 'safe'],
                 [['originating_type'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'vendor_type'], 'required', 'on' => 'searchdispatch'],
+                [['union_code'], 'required', 'on' => 'searchdispatch'],
 //                [['dcs_code'], 'required', 'when' => function ($model) {
 //                    return $model->vendor_type == 'DCS';
 //                }, 'whenClient' => "function (attribute, value) { 
@@ -63,6 +63,12 @@ class TblProductRequisitionSearch extends TblProductRequisition {
             // $query->where('0=1');
             return $dataProvider;
         }
+        if (Yii::$app->session->get('BMC') !== '') {
+            $query->andWhere(['tbl_product_requisition.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        if (Yii::$app->session->get('Dcs') !== '') {
+            $query->andWhere(['or', ['tbl_product_requisition.vendor_code' => explode(',', Yii::$app->session->get('Dcs'))], ['vendor_type' => 'BMC']]);
+        }
 
         if (!empty($this->req_date)) {
             $query->andFilterWhere(['like', 'tbl_product_requisition.req_date', date('Y-m-d', strtotime($this->req_date))]);
@@ -100,20 +106,21 @@ class TblProductRequisitionSearch extends TblProductRequisition {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE,
         ]);
 
 
         $query->joinWith(['dcsCode']);
 
         $this->load($params);
-        $query->andWhere([
-            'tbl_product_requisition.union_code' => $this->union_code,
-            'tbl_product_requisition.plant_code' => $this->plant_code,
-            'tbl_product_requisition.mcc_plant_code' => $this->mcc_plant_code,
-            'tbl_product_requisition.bmc_code' => $this->bmc_code,
-            'tbl_product_requisition.vendor_type' => $this->vendor_type,
-        ]);
-        $query->andWhere(['tbl_product_requisition.status' => ['Under Dispatch']]);
+//        $query->andWhere([
+//            'tbl_product_requisition.union_code' => $this->union_code,
+//            'tbl_product_requisition.plant_code' => $this->plant_code,
+//            'tbl_product_requisition.mcc_plant_code' => $this->mcc_plant_code,
+//            'tbl_product_requisition.bmc_code' => $this->bmc_code,
+//            'tbl_product_requisition.vendor_type' => $this->vendor_type,
+//        ]);
+//        $query->andWhere(['tbl_product_requisition.status' => ['Under Dispatch']]);
 
         if (strtolower($this->vendor_type) == 'dcs') {
             $query->andFilterWhere([
@@ -126,7 +133,15 @@ class TblProductRequisitionSearch extends TblProductRequisition {
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        if (Yii::$app->session->get('Dcs') !== '') {
+            $query->andWhere(['tbl_product_requisition.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
+        if (Yii::$app->session->get('BMC') !== '') {
+            $query->andWhere(['tbl_product_requisition.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        if (Yii::$app->session->get('MCC') !== '') {
+            $query->andWhere(['tbl_product_requisition.mcc_plant_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
         // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
         return $dataProvider;
     }

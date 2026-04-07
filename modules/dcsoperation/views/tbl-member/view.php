@@ -322,11 +322,11 @@ if ($model->is_active == 1) {
                             'attribute' => 'total_land',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
-                            'attribute' => 'rate_class',
-                            'value' => !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
+                           [
+                           'attribute' => 'rate_class',
+                           'value' => !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '',
+                           'valueColOptions' => ['style' => 'width:30%']
+                       ],
                     ],
                 ],
                     [
@@ -626,6 +626,21 @@ if ($model->is_active == 1) {
                         'shareMemberModel' => $shareMemberModel,
                         'shareDataProvider' => $shareDataProvider,
                     ])
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box hide-grid-settings">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Member Animal Tag Detail</h4>
+                </div>
+                <div class="col-sm-12">
+                    <?php
+                    echo $this->render('../../../veterinary/views/tbl-member-animal-tag-details/index', [
+                        'searchModel' => $tagSearchModel,
+                        'dataProvider' => $tagDataProvider,
+                    ]);
                     ?>
                 </div>
             </div>

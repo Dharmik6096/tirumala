@@ -4,7 +4,6 @@ namespace app\modules\general\models;
 
 use Yii;
 use webvimark\modules\UserManagement\models\User;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_approval_stages_detail".
@@ -41,14 +40,14 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         return [
                 [['approval_stages_code'], 'integer'],
                 [['approval_type', 'level', 'approval_mode'], 'required'],
-                [['approval_type', 'login_type', 'user_code', 'level', 'level_priority', 'approval_mode'], 'safe'],
+                [['approval_type', 'login_type', 'user_code', 'level', 'level_priority', 'approval_mode', 'department'], 'safe'],
                 [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['user_code'], 'required', 'when' => function ($model) {
                     return $model->approval_type == 1;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblapprovalstagesdetail-approval_type').val() == '1' }"
             ],
-                [['login_type'], 'required', 'when' => function ($model) {
+                [['login_type', 'department'], 'required', 'when' => function ($model) {
                     return $model->approval_type == 2;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblapprovalstagesdetail-approval_type').val() == '2' }"
@@ -77,6 +76,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 
@@ -146,11 +146,15 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         return $levels;
     }
 
-    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE, $parent_key = '', $created_by = '') {
+    public function setProcessWiseApprovalData($approvalModel, $unionCode, $processName, &$saveModel, &$auto_key_config, &$i, $processFlag = FALSE, $parent_key = '', $created_by = '', $ManualCollectionComplain = false) {
         $approvalStage = $this->approvalStages($unionCode, $processName);
         $errorMessage = '';
         $approvalModel->approval_status = 'Pending';
         $saveModel[] = $approvalModel;
+        if ($ManualCollectionComplain) {
+            $i++;
+            $auto_key_config[$i] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+        }
         $parent_index = $i;
         if (!empty($approvalStage)) {
             foreach ($approvalStage as $key => $stage) {
@@ -173,6 +177,10 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         } else {
             $errorMessage = "No approval stages found.";
         }
+    }
+
+    public function getDepartmentId() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

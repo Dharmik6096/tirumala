@@ -49,7 +49,7 @@ class TblUserTrackingMovement extends ChildModel {
      */
     public function rules() {
         return [
-            [['tracking_datetime', 'created_at', 'updated_at', 'union_code', 'plant_code', 'mcc_plant_code'], 'safe'],
+            [['tracking_datetime', 'created_at', 'updated_at', 'union_code', 'plant_code', 'mcc_plant_code', 'department'], 'safe'],
             [['originating_type'], 'integer'],
             [['lat_long', 'module_name', 'mobile_no', 'login_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['module_code'], 'string', 'max' => 50],
@@ -88,6 +88,7 @@ class TblUserTrackingMovement extends ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'department' => Yii::t('app', 'Department'),
         ];
     }
 
@@ -98,30 +99,39 @@ class TblUserTrackingMovement extends ChildModel {
     public function getUserList($code) {
         $query1 = TblUserOrganizationMapping::find()
                 ->alias('tuom')
-                ->select(['tcd.mobile_no', 'tuom.user_id AS user_id', 'u.login_type', 'u.name AS user_name', new \yii\db\Expression("'1' AS order_by")])
+                ->select(['tcd.mobile_no', 'tuom.user_id AS user_id', 'u.login_type', 'u.name AS user_name', 'u.employee_id', new \yii\db\Expression("'1' AS order_by")])
                 ->innerJoin('user u', 'tuom.user_id = u.id')
                 ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
                 ->where(['tuom.organization_code' => $code, 'tuom.organization_type' => 'MCC']);
 
         $query2 = User::find()
                 ->alias('u')
-                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("'route_supervisor' AS login_type"), 'u.name AS user_name', new \yii\db\Expression("'2' AS order_by")])
+                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', 'u.employee_id', new \yii\db\Expression("'2' AS order_by")])
                 ->distinct()
                 ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
                 ->innerJoin('tbl_user_organization_mapping tuom', "tuom.user_id = u.id AND tuom.organization_type = 'DCS'")
                 ->innerJoin('tbl_dcs d', 'd.dcs_code = tuom.organization_code')
                 ->where(['d.mcc_plant_code' => $code]);
+        
+        $query3 = User::find()
+                ->alias('u')
+                ->select(['tcd.mobile_no', 'u.id AS user_id', new \yii\db\Expression("u.login_type AS login_type"), 'u.name AS user_name', 'u.employee_id', new \yii\db\Expression("'2' AS order_by")])
+                ->distinct()
+                ->innerJoin('tbl_contact_details tcd', 'tcd.module_code = u.id')
+                ->innerJoin('tbl_user_organization_mapping tuom', "tuom.user_id = u.id AND tuom.organization_type = 'BMC'")
+                ->innerJoin('tbl_bmc b', 'b.bmc_code = tuom.organization_code')
+                ->where(['b.mcc_plant_code' => $code]);
 
         $unionSql = (new \yii\db\Query())
                 ->select('*')
-                ->from(['unioned' => $query1->union($query2)])
+                ->from(['unioned' => $query1->union($query2)->union($query3)])
                 ->orderBy(['order_by' => SORT_ASC]);
 
         $userData = $unionSql->all();
 
         $user = ArrayHelper::map($userData, 'user_id', function ($data) {
                     $extras = array_filter([$data['login_type'] ?? null, $data['mobile_no'] ?? null]);
-                    return $data['user_name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '');
+                    return $data['user_name'] . (!empty($extras) ? ' (' . implode(' - ', $extras) . ')' : '') . (!empty($data['employee_id']) ? ' - ' . $data['employee_id'] : '');
                 });
 
         return $user;

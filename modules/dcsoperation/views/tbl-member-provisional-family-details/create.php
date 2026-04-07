@@ -11,5 +11,6 @@ $this->render('_form', [
     'memberFamilySearchModel' => $memberFamilySearchModel,
     'memberFamilyDataProvider' => $memberFamilyDataProvider,
     'model' => $model,
+    'tabview' => !empty($tabview) ? $tabview : false
 ])
 ?>

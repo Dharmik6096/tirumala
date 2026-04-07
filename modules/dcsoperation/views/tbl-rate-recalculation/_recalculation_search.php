@@ -54,7 +54,12 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->customer_code($searchModel, $form, 'tblraterecalculationsearch-bmc_code,tblraterecalculationsearch-customer_type', 'customer_code', FALSE, FALSE); ?>
     </div>
 
-<?php } ?>
+<?php } else if ($rtype == 'custom') { ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->customer_type($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'customer_type'); ?>
+    </div>
+<?php }
+?> 
 <div class="clearfix"></div>
 <div class="col-sm-2">
     <?= Yii::$app->controls->date($searchModel, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>

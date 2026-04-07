@@ -29,7 +29,6 @@ $this->title = Yii::t('app', $title);
                     'field-class' => 'col-sm-3'
                 ],
                 'validateOnBlur' => TRUE,
-                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,
@@ -38,9 +37,11 @@ $this->title = Yii::t('app', $title);
     <table class="table table-bordered table-striped table-main table-language">
         <thead>
             <tr>
+                <th><?= Html::checkbox('requisition_checkbox', false, ['label' => '', 'class' => 'allCheckBoxManage reqTxnFieldsNotDisabled']) ?></th>
                 <th><?= Yii::t('app', 'Type') ?></th>
                 <th><?= Yii::t('app', 'Name') ?></th>
                 <th><?= Yii::t('app', 'Req No.') ?></th>
+                <th><?= Yii::t('app', 'SAP Code') ?></th>
                 <th><?= Yii::t('app', 'Product') ?></th>
                 <th><?= Yii::t('app', 'Req. Qty') ?></th>
                 <th><?= Yii::t('app', 'Accepted Qty') ?></th>   
@@ -50,13 +51,17 @@ $this->title = Yii::t('app', $title);
                 <th><?= Yii::t('app', 'Pending to be Disp.') ?></th>
                 <th><?= Yii::t('app', 'Discount Amount (Rs.)') ?></th>
                 <th><?= Yii::t('app', 'Disp. Qty') ?></th>
+                <th><?= Yii::t('app', 'SO Number') ?></th>
+                <th><?= Yii::t('app', 'Delivery Number') ?></th>
+                <th><?= Yii::t('app', 'Bill Number') ?></th>
+                <th><?= Yii::t('app', 'Remarks') ?></th>
                 <th><?= Yii::t('app', 'Close') ?></th>
             </tr> 
         </thead>
         <?php
         $i = 0;
         foreach ($dataProvider->models as $row) {
-            $reqTransactions = $row->getApprovedRequisitionTransactions($row->product_requisition_code);
+            $reqTransactions = $row->getApprovedRequisitionTransactions($row->product_requisition_code, $searchModel->dispatch_center_code);
             foreach ($reqTransactions as $transaction) {
                 $remainQty = $transaction['approved_quantity'] - $modeltransaction->getPreviousDispQty($transaction['requisition_transaction_code']);
                 $class = '';
@@ -68,10 +73,15 @@ $this->title = Yii::t('app', $title);
 //                    }
                 }
                 ?>
-                <tr class="<?= $class ?>">   
+                <tr class="<?= $class ?>">  
+                    <!--<td class="pname"><? $form->field($modeltransaction, '[' . $i . ']requisition_transaction_code', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{endLabel}</div>{error}{hint}'])->checkbox(['class' => 'reqTxnFields']); ?></td>-->
+                    <td> 
+                        <?php echo $form->field($modeltransaction, '[' . $i . ']requisition_transaction_code')->checkbox(['label' => null, 'class' => 'reqTxnFields reqTxnFieldsNotDisabled']); ?>
+                    </td>
                     <td class="dcsname"><?= isset($row->vendor_type) ? Yii::$app->dropdown->getRecords('requisition_type')['data'][$row->vendor_type] : '' ?></td>
                     <td class="subcentername"><?= $row->getEntityName() ?></td>
                     <td><?= $row->product_requisition_code ?></td>
+                    <td><?= $transaction['ref_code'] ?></td>
                     <td><?= $transaction['product_name'] ?></td>
                     <td><?= $transaction['quantity'] ?></td>
                     <td><?= $transaction['approved_quantity'] ?></td>
@@ -79,12 +89,17 @@ $this->title = Yii::t('app', $title);
                     <td class="pro-amt"><?= $transaction['provisional_rate'] * $remainQty ?></td>
                     <td><?= $modeltransaction->getPreviousDispQty($transaction['requisition_transaction_code']) ?></td>
                     <td><?= $remainQty ?></td>
-                    <td><?= $form->field($modeltransaction, '[' . $i . ']discount_amount')->textInput(['maxlength' => true, 'value' => $transaction['discount_amount'], 'class' => 'form-control number-validate discount', 'data-incr' => $i])->label(false) ?></td>
+                    <?php $disabled = 'disabled'; ?>
+                    <td><?= $form->field($modeltransaction, '[' . $i . ']discount_amount')->textInput(['maxlength' => true, 'value' => $transaction['discount_amount'], 'class' => 'form-control number-validate discount', 'data-incr' => $i, "disabled" => $disabled])->label(false) ?></td>
 
-                    <td><?= $form->field($modeltransaction, '[' . $i . ']dispatch_qty')->textInput(['maxlength' => true, 'value' => $remainQty, 'class' => 'form-control qty-validate qty-dispatch', 'data-incr' => $i])->label(false) ?></td>
+                    <td><?= $form->field($modeltransaction, '[' . $i . ']dispatch_qty')->textInput(['maxlength' => true, 'value' => $remainQty, 'class' => 'form-control qty-validate qty-dispatch', 'data-incr' => $i, "disabled" => $disabled])->label(false) ?></td>
+                    <td><?= $form->field($modeltransaction, '[' . $i . ']so_no')->textInput(['maxlength' => true, 'class' => 'form-control number-validate so_no', 'data-incr' => $i, "disabled" => $disabled])->label(false) ?></td>
+                    <td><?= $form->field($modeltransaction, '[' . $i . ']delivery_no')->textInput(['maxlength' => true, 'class' => 'form-control number-validate delivery_no', 'data-incr' => $i, "disabled" => $disabled])->label(false) ?></td>
+                    <td><?= $form->field($modeltransaction, '[' . $i . ']bill_no')->textInput(['maxlength' => true, 'class' => 'form-control number-validate bill_no', 'data-incr' => $i, "disabled" => $disabled])->label(false) ?></td>
+                    <td><?= $form->field($modeltransaction, '[' . $i . ']remarks')->textInput(['maxlength' => true, 'class' => 'form-control remarks', 'data-incr' => $i, "disabled" => $disabled])->label(false) ?></td>
 
                     <td> 
-                        <?php echo $form->field($modeltransaction, '[' . $i . ']is_close')->checkbox(['label' => null, 'class' => 'transaction-close']); ?>
+                        <?php echo $form->field($modeltransaction, '[' . $i . ']is_close')->checkbox(['label' => null, 'class' => 'transaction-close', "disabled" => $disabled]); ?>
                     </td>
 
                     <?= Html::activeHiddenInput($modeltransaction, '[' . $i . ']product_code', ['value' => $transaction['product_code']]) ?>
@@ -141,15 +156,15 @@ $this->title = Yii::t('app', $title);
         <?php // Html::activeHiddenInput($model, 'dcs_code', ['value' => $dscCode]) ?>
         <?php // Html::activeHiddenInput($model, 'sub_center_code', ['value' => $subCenterCode]) ?>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_no', $model->getAttributeLabel('vehicle_no'), false); ?>
+            <?= $form->field($model, 'vehicle_no', ['options' => ['class' => 'form-group']])->textInput(['maxlength' => true]) ?>            
         </div>
-        <?php // $form->field($model, 'vehicle_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>                      
+        <?php // $form->field($model, 'vehicle_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true])  ?>                      
         <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
         <?php // Html::hiddenInput('scheme_item', '', ['id' => 'scheme_item']); ?>
     </div>
 
     <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <?= Html::submitButton($button, ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => $model->isNewRecord ? 'ctrl+alt+s' : 'ctrl+alt+u',]) ?>
+        <?= Html::submitButton($button, ['class' => 'btn btn-default apply-shortcut submitForm', 'shortcut_key' => $model->isNewRecord ? 'ctrl+alt+s' : 'ctrl+alt+u',]) ?>
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
@@ -212,6 +227,52 @@ $('.transaction-close').on('change', function () {
          parent.find('.pro-amt').text(amt);                    
         }
 }  
+$(document).off('click', '.reqTxnFields').on('click', '.reqTxnFields', function(e){
+    e.stopPropagation();
+    $('.enabDisabFields').removeClass('enabDisabFields');
+    $(this).closest('tr').addClass('enabDisabFields');
+    var checked_length = $('input:checkbox:checked:not(\'.allCheckBoxManage\')').length;
+    var total_length = $('input:checkbox:not(\'.allCheckBoxManage\')').length;
+    if($(this).is(':checked')) {
+        $('tr.enabDisabFields input').removeAttr('disabled');
+        $('tr.enabDisabFields select').removeAttr('disabled');
+        if(checked_length == total_length){
+            $('.allCheckBoxManage').prop('checked', true);
+        }
+    } else {
+        $('tr.enabDisabFields input:not(\'.reqTxnFieldsNotDisabled\')').prop('disabled', true);
+        $('tr.enabDisabFields select').prop('disabled', true);
+        $('.allCheckBoxManage').prop('checked', false);
+    }
+});
+
+$('.allCheckBoxManage').on('click', function(e) {
+    $('.enabDisabFields').removeClass('enabDisabFields');
+    $('tr').addClass('enabDisabFields');
+    if($(this).is(':checked')) {
+        $('tr.enabDisabFields input').removeAttr('disabled');
+        $('tr.enabDisabFields select').removeAttr('disabled');
+        $('.reqTxnFields').prop('checked', true);
+    } else {
+        $('tr.enabDisabFields input:not(\'.reqTxnFieldsNotDisabled\')').prop('disabled', true);
+        $('tr.enabDisabFields select').prop('disabled', true);
+        $('.reqTxnFields').prop('checked', false);
+    }
+})
+$('.submitForm').on('click',function(e) {
+    e.preventDefault();
+    var checked_length = $('input:checkbox:checked:not(\'.allCheckBoxManage\')').length;
+    if(checked_length <= 0){
+        bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>" . Yii::t('app', 'Please select atleast one record.') . "</span></div></div>\");
+        return false;
+    }
+    $('.reqTxnFields:not(:checked)').closest('tr').addClass('restrictPost');
+    $('.reqTxnFieldsNotDisabled:not(:checked)').closest('tr').addClass('restrictPost');
+    $('tr.restrictPost input').prop('disabled', true);
+    $('tr.restrictPost select').prop('disabled', true);
+    $('#req-accept-form').submit();
+});
+
 ";
 //
 //$script = "function closeproduct(val, id) {

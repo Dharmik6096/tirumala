@@ -157,7 +157,37 @@ $is_button_visible = true;
                         'columns' => [
                             [
                                 'attribute' => 'trip_sub_status',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'no_of_compartment',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'vehicle_capacity',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'remark',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'force_close',
+                                'label' => Yii::t('app', 'Is force Close?'),
+                                'value' => Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'force_close'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'force_close_remarks',
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],

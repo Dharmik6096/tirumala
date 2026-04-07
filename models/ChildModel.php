@@ -20,24 +20,24 @@ use yii\base\InvalidParamException;
 class ChildModel extends \yii\db\ActiveRecord {
 
     public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code, $f_route_code;
-    private $toEncrypt = ['pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob'];
+    private $toEncrypt = ['pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob', 'nominee_adhar_no'];
     public $grid_filter = TRUE;
     public $form_validation_type = 'default';
     public $hasImport = FALSE;
     public $import_union_config;
     public $set_master_hierarchy = [];
+    public $isValidateAddressBeforeSave = TRUE;
 
     //put your code here
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
 
             if ($this->hasAttribute('address'))
-                \Yii::$app->general->validateDiscriptiveField($this, 'address');
+                \Yii::$app->general->validateDiscriptiveField($this, 'address', $this->isValidateAddressBeforeSave);
 
             if ($this->hasAttribute('description'))
                 \Yii::$app->general->validateDiscriptiveField($this, 'description');
-
-            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             if ($insert) {
                 if ($this->hasAttribute('created_by') && $this->created_by == NULL)
                     $this->created_by = $user;
@@ -216,7 +216,7 @@ class ChildModel extends \yii\db\ActiveRecord {
 
     public function afterSave($insert, $changedAttributes) {
         parent::afterSave($insert, $changedAttributes);
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : (($insert) ? 'INSERT' : 'UPDATE');
         $sentbox = new \app\modules\syncutility\models\TblSentbox();
         if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
             if (!($sentbox->setSentbox($this, $flag))) {

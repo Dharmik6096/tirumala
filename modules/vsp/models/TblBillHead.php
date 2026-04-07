@@ -11,6 +11,7 @@ use app\modules\payment\models\TblPaymentCycle;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_bill_head".
@@ -31,7 +32,7 @@ use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
  */
 class TblBillHead extends \app\models\ChildModel {
 
-    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code, $from_date, $to_date;
+    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code, $from_date, $to_date, $ledger_code, $has_sub_ledger, $credit_debit;
 
     /**
      * @inheritdoc
@@ -48,7 +49,7 @@ class TblBillHead extends \app\models\ChildModel {
                 [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
                 [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
                 [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
-                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'milk_type_code'], 'safe'],
+                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'milk_type_code', 'ledger_code', 'has_sub_ledger', 'credit_debit', 'bill_head_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_disburse_allowed'], 'default', 'value' => '1'],
                 [['is_default', 'has_slab', 'is_hold'], 'default', 'value' => '0'],
@@ -60,13 +61,14 @@ class TblBillHead extends \app\models\ChildModel {
               return $('#tblbillhead-is_default').is(':checked'); 
           }"],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab', 'sap_seq_no'], 'safe'],
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code', 'to_date'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code', 'to_date', 'is_reserved'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
 //            ['customer_type', 'required', 'when' => function ($model) {
 //                    return $model->bill_head_for != 'MEMBER';
 //                }, 'whenClient' => "function (attribute, value) { 
 //              return $('#tblbillhead-bill_head_for').val()!='MEMBER'; 
 //          }", 'on' => ['dcsWiseHead']],
+                [['is_reserved'], 'default', 'value' => '0'],
         ];
     }
 
@@ -94,6 +96,7 @@ class TblBillHead extends \app\models\ChildModel {
             'is_hold' => Yii::t('app', 'Is Hold'),
             'payment_cycle_type' => Yii::t('app', 'Payment Cycle Type'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'is_reserved' => Yii::t('app', 'Is Reserved'),
         ];
     }
 
@@ -114,10 +117,14 @@ class TblBillHead extends \app\models\ChildModel {
     }
 
     public function getAllBillHead($society = '', $union = '') {
-        $query = $this->find()->select('tbl_bill_head.bill_head_code,bill_head_name')->where(['is_active' => 1, 'is_default' => 0]);
+        $query = $this->find()->select('tbl_bill_head.bill_head_code,bill_head_name')->where(['tbl_bill_head.is_active' => 1]);
         $query->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
         if (!empty($union)) {
+            $query->joinWith('defaultBillHeadCode');
+            $query->andWhere(['or', ['is_default' => 0], ['bill_head_type' => 1]]);
             $query->andWhere(['union_code' => $union]);
+        } else {
+            $query->andWhere(['is_default' => 0]);
         }
         if (!empty($society)) {
             $query->innerJoinWith('billHeadCode')->andWhere(['dcs_code' => $society]);
@@ -202,6 +209,28 @@ class TblBillHead extends \app\models\ChildModel {
                         ->where(['union_code' => $searchData->union_code, 'bmc_code' => $searchData->bmc_code, 'applicable_code' => $code, 'applicable_for' => $searchData->customer_type, 'bill_head_for' => $searchData->bill_head_for])->all();
 
         return ArrayHelper::map($query, 'bill_head_code', 'bill_head_code');
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

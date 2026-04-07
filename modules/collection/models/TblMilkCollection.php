@@ -506,7 +506,12 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function validateUnique($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        if ($this->scenario == 'ho_sync_create') {
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
+        }
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, $configKey, 'PORTAL');
         $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($this->union_code, 'qty_wise_collection', 'VLC');
 
         $model = new TblMember();
@@ -525,7 +530,12 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function validateUpdate($attribute, $params) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        if ($this->scenario == 'ho_sync_update') {
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
+        }
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, $configKey, 'PORTAL');
         $ApprovalModel = new TblCollectionDataAlias();
         $oldMilktype = $this->oldAttributes['milk_type_code'];
         if (!empty($this->oldAttributes) && ($this->fat != $this->oldAttributes['fat'] || $this->snf != $this->oldAttributes['snf'] || $this->qty != $this->oldAttributes['qty'] || $this->milk_type_code != $this->oldAttributes['milk_type_code'] || $this->milk_quality_type_code != $this->oldAttributes['milk_quality_type_code'])) {
@@ -567,7 +577,12 @@ class TblMilkCollection extends \app\models\ChildModel {
         } else {
             $modelData->is_antibiotic = 0;
         }
-        $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+        if ($modelData->scenario == 'ho_sync_create' || $modelData->scenario == 'ho_sync_update') {
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
+        }
+        $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, $configKey, 'PORTAL');
         $sameMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_same_milk', 'VLC');
         $diffMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_other_milk', 'VLC');
         $uniqueCheckAntibiotic = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'unique_check_with_antibiotic', 'VLC');
@@ -1018,7 +1033,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             $model->originating_org_type = 'MOBILE';
             $model->originating_org_code = $model->union_code;
             if ($existingData) {
-                $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+                $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval_mobile_app', 'PORTAL');
                 $qtyWiseCollConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'qty_wise_collection', 'VLC');
                 if ($qtyWiseCollConfig == 1) {
                     $this->claculateFatSnf($model, -7, -1);
@@ -1079,7 +1094,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 $login_data = Yii::$app->eiplapp->identity;
                 $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
                 if ($existingData) {
-                    $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
+                    $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval_mobile_app', 'PORTAL');
                     if (in_array($collectionApprovalConfig, [1, 2])) {
                         $ApprovalModel = new TblCollectionDataAlias();
                         $ApprovalModel->attributes = $existingData->attributes;
@@ -1293,19 +1308,24 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function postDataSet(&$model, $flag, &$modelSave, &$auto_key_config, &$message = '', &$type = '') {
-        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, 'collection_approval', 'PORTAL');
-
         if ($flag == 'api_create') {
             $login_data = Yii::$app->eiplapp->identity;
             $created_by = !empty($login_data['module_code']) ? $login_data['module_code'] : '';
             $model->originating_org_type = 'MOBILE';
             $model->originating_org_code = $model->union_code;
+            $configKey = 'collection_approval_mobile_app';
+        } else {
+            $configKey = 'collection_approval';
         }
+        $collectionApprovalConfig = Yii::$app->general->getUnionConfiguration($model->union_code, $configKey, 'PORTAL');
         if (in_array($collectionApprovalConfig, [1, 2])) {
             $approvalModel = new TblCollectionDataAlias();
             $approvalModel->attributes = $model->attributes;
             $approvalModel->table_name = 'tbl_milk_collection';
             $approvalModel->action_perform = 'CREATE';
+            if ($flag == 'create') {
+                $approvalModel->x_col1 = Yii::$app->general->getUuid();
+            }
             $approvalModel->setOldAttributesValues($approvalModel);
             if ($collectionApprovalConfig == 2) {
                 $i = 0;
@@ -1316,6 +1336,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $modelStages->setProcessWiseApprovalData($approvalModel, $model->union_code, 'tbl_milk_collection', $modelSave, $auto_key_config, $i, TRUE, 'collection_data_alias_code');
                 }
             } else {
+                $approvalModel->approval_status = 'Pending';
                 $modelSave[] = $approvalModel;
             }
             $message = 'Data For Approval';
@@ -1341,12 +1362,22 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function validateDelete($attribute) {
-        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval_mobile_app', 'PORTAL');
         $ApprovalModel = new TblCollectionDataAlias();
         $existTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'milk_quality_type_code' => $this->milk_quality_type_code, 'action_perform' => 'DELETE'])->one();
         if (($flag == 1 || $flag == 2) && !empty($existTableData)) {
             $this->addError($attribute, "Record is Already Exist For Approval.");
         }
+    }
+
+    public function getCollectionSummaryData($dcs_code, $shift, $collection_datetime) {
+        return $this->find()
+                        ->where([
+                            'date_time_of_collection' => $collection_datetime,
+                            'dcs_code' => $dcs_code,
+                            'shift_code' => $shift
+                        ])
+                        ->all();
     }
 
 }

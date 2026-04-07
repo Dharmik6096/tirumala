@@ -22,6 +22,7 @@ use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
 use app\modules\general\models\TblSocietyVendor;
 use app\models\ChildModel;
+use app\models\TblKeyPatternChild;
 use yii\db\Query;
 use app\modules\organisation\models\TblDpuInstallation;
 use app\modules\organisation\models\TblSocietyCodes;
@@ -44,6 +45,8 @@ use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\product\models\TblProductSaleRate;
 use yii\base\UserException;
 use yii\helpers\Html;
+use app\modules\organisation\models\TblMasterHierarchy;
+use yii\db\Expression;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -174,7 +177,7 @@ class TblDcs extends ChildModel {
             // [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
             [['allow_multi_family_member', /* 'destination_type', */], 'integer', 'except' => ['routeMapping']],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
-            [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date'], 'safe'],
+            [['vendor_code', 'is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e', 'cutoff', 'lower_milk_type', 'cutoff_val', 'employee_id', 'fssi_expiry_date', 'type_of_dcs', 'sim_network', 'sim_no', 'is_aadhar_verify'], 'safe'],
                 [['fssi_expiry_date'], 'required', 'when' => function ($model) {
                     return !empty($model->fssi);
                 }, 'whenClient' => "function (attribute, value) {return $('#tbldcs-fssi').val() !== '';
@@ -275,12 +278,12 @@ class TblDcs extends ChildModel {
                 [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'password'], 'safe'],
                 [['cheque_number', 'cheque_amount', 'is_security_cheque', 'emilk_sync_status', 'emilk_sync_timestamp', 'cheque_bank', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
                 [['dcs_code'], function ($attribute, $params) {
-                    ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+                    ($this->vendor == 'BIPL' && $this->dpu_type == '91') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv'], 'when' => function ($model) {
                     return $model->isAttributeChanged('ref_code', FALSE);
                 }],
                 [['dcs_code'], function ($attribute, $params) {
-                    ($this->vendor == 'BIPL' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+                    ($this->vendor == 'BIPL' && $this->dpu_type == '91' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs']],
                 [['dcs_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
@@ -316,7 +319,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'machine_owned_type');
                 }, 'on' => ['importCsv']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number'],
+                [['ts_code_m', 'ts_code_e', 'sim_no'], 'number'],
                 [['is_bmc'], 'unique', 'targetAttribute' => ['is_bmc', 'bmc_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                     return $model->is_bmc && $model->isAttributeChanged('is_bmc', FALSE);
                 }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
@@ -334,6 +337,10 @@ class TblDcs extends ChildModel {
                     }
                 }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
                 [['is_security_cheque'], 'default', 'value' => 0],
+                [['dcs_code'], 'resetDefaultValue'],
+                [['sim_network'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'sim_network');
+                }, 'on' => 'importCsv'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -457,6 +464,10 @@ class TblDcs extends ChildModel {
             'security_return_date' => Yii::t('app', 'Security Return Date'),
             'security_return_amt' => Yii::t('app', 'Security Return Amount'),
             'security_return_mode' => Yii::t('app', 'Security Return Mode'),
+            'type_of_dcs' => Yii::t('app', 'Type Of DCS'),
+            'sim_network' => Yii::t('app', 'Sim Network'),
+            'sim_no' => Yii::t('app', 'Sim No'),
+            'is_aadhar_verify' => Yii::t('app', 'Is Aadhar Verify'),
         ];
     }
 
@@ -677,9 +688,9 @@ class TblDcs extends ChildModel {
             $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
         }
 
-        if ($unionCode !== '')
+        if (!empty($unionCode))
             $query->andWhere(['union_code' => explode(',', $unionCode)]);
-        if (Yii::$app->session->get('Dcs') !== '') {
+        if (!empty(Yii::$app->session->get('Dcs'))) {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
         return $query->all();
@@ -1461,6 +1472,367 @@ class TblDcs extends ChildModel {
 
     public function resetData() {
         $this->aadhaar_no = $this->pan_no = null;
+    }
+
+    public function autoGenerateMember(&$master) {
+        $config = !empty(Yii::$app->session->get('unionConfig')[$this->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['no_of_auto_member_create'] : 100;
+        $max_qty_config_val = Yii::$app->general->getUnionConfiguration($this->union_code, 'max_qty_limit_member', 'PORTAL');
+        $memberMod = new TblMember();
+
+        $memberModels = [];
+        $keyPattern = Yii::$app->general->getKeyPattern('tbl_member');
+
+        if (empty($keyPattern)) {
+            $memberMod->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            $master[] = FALSE;
+        }
+
+        $exCodeData = $memberMod->find()
+                ->select(['ex_code' => 'ISNULL(MAX(CAST(ex_member_code as int)),0)+1'])
+                ->where([$keyPattern['ex_code_reset_on'] => $this->{$keyPattern['ex_code_reset_on']}])
+                ->asArray()
+                ->one();
+
+        $refAutoCodeData = $memberMod->find()
+                ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $keyPattern['ref_code_length'] . ') as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+                ->where(['union_code' => $this->union_code])
+                ->asArray()
+                ->one();
+
+        $exCode = str_pad($exCodeData['ex_code'], $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+        $autoCode = $refAutoCodeData['auto_code'];
+        $refCode = str_pad($refAutoCodeData['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+
+        $prefixData = [];
+        if ($keyPattern['ref_code_type'] == 1) {
+            $prefix_seq = explode(',', $keyPattern['prefix_field']);
+            foreach ($prefix_seq as $pre) {
+                $pre_info = explode(':', $pre);
+                if (isset($pre_info[1])) {
+                    $t_info = explode('#', $pre_info[0]);
+                    $table_name = $t_info[0];
+                    $where_key = $t_info[1];
+                    $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                    $append_field = $pre_info[1];
+
+                    $key = "$table_name|$where_key|$where_val";
+                    if (!isset($prefixData[$key])) {
+                        $query = new \yii\db\Query();
+                        $prefixData[$key] = $query->select($append_field)
+                                ->from($table_name)
+                                ->where([$where_key => $this->{$where_val}])
+                                ->one();
+                    }
+                }
+            }
+        }
+        if ($keyPattern['master_hierarchy_auto_entry'] == 1) {
+            $childPattern = new TblKeyPatternChild();
+            $childKeyPatterns = $childPattern->find()->where(['key_pattern_code' => $keyPattern['key_pattern_code']])->all();
+
+            $childPrefixData = [];
+            $childSuffixData = [];
+
+            $childRefCodeData = [];
+
+            foreach ($childKeyPatterns as $childKey => $childKeyPattern) {
+                if ($childKeyPattern['key_code_type'] == 1) {
+                    if (!empty($childKeyPattern['prefix_field'])) {
+                        $prefix_seq = explode(',', $childKeyPattern['prefix_field']);
+                        foreach ($prefix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+
+                                $key = "$table_name|$where_key|$where_val";
+                                if (!isset($childPrefixData[$key])) {
+                                    $query = new \yii\db\Query();
+                                    $childPrefixData[$key] = $query->select($append_field)
+                                            ->from($table_name)
+                                            ->where([$where_key => $this->{$where_val}])
+                                            ->one();
+                                }
+                            }
+                        }
+                    }
+
+                    if (!empty($childKeyPattern['suffix_field'])) {
+                        $suffix_seq = explode(',', $childKeyPattern['suffix_field']);
+                        foreach ($suffix_seq as $pre) {
+                            $pre_info = explode(':', $pre);
+                            if (isset($pre_info[1])) {
+                                $t_info = explode('#', $pre_info[0]);
+                                $table_name = $t_info[0];
+                                $where_key = $t_info[1];
+                                $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                $append_field = $pre_info[1];
+
+                                $key = "$table_name|$where_key|$where_val";
+                                if (!isset($childSuffixData[$key])) {
+                                    $query = new \yii\db\Query();
+                                    $childSuffixData[$key] = $query->select($append_field)
+                                            ->from($table_name)
+                                            ->where([$where_key => $this->{$where_val}])
+                                            ->one();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $index = $childKey + 1;
+                $key_name = 'ref_code' . $index;
+                $key_length = (int) $childKeyPattern['key_length'];
+                $masterHierarchy = new TblMasterHierarchy();
+                $childRefCodeData[$key_name] = $masterHierarchy->find()
+                        ->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(' . $key_name . ',' . $key_length . ') as bigint)),0)+1'])
+                        ->where(['union_code' => $this->union_code])
+                        ->asArray()
+                        ->one();
+                $activeCounts[$key_name] = $masterHierarchy->getActiveCount($key_name, $childKeyPattern['key_reset_on']);
+            }
+        }
+
+        for ($x = 0; $x < $config; $x++) {
+            $memberModel = new TblMember();
+            $memberModel->attributes = $this->attributes;
+
+            $memberModel->ex_member_code = str_pad((int) $exCode + $x, $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            $memberModel->auto_code = $autoCode + $x;
+
+            $pk_code = $this->union_code . str_pad($memberModel->auto_code, 3, '0', STR_PAD_LEFT);
+
+            if ($keyPattern['ref_code_type'] == 0) {
+                $memberModel->ref_code = $pk_code;
+            } elseif ($keyPattern['ref_code_type'] == 1) {
+                $memberModel->ref_code = '';
+                foreach ($prefix_seq as $pre) {
+                    $pre_info = explode(':', $pre);
+                    if (isset($pre_info[1])) {
+                        $t_info = explode('#', $pre_info[0]);
+                        $table_name = $t_info[0];
+                        $where_key = $t_info[1];
+                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+
+                        $key = "$table_name|$where_key|$where_val";
+                        if (isset($prefixData[$key]) && !empty($prefixData[$key])) {
+                            $memberModel->ref_code .= $prefixData[$key][$append_field];
+                        } else {
+                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $this->{$where_val} . ')';
+                            $this->addError('ref_code', $message);
+                            $master[] = FALSE;
+                        }
+                    } else {
+                        $memberModel->ref_code .= $memberModel->{$pre};
+                    }
+                }
+                $memberModel->ref_code = str_pad($memberModel->ref_code, $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
+            } elseif ($keyPattern['ref_code_type'] == 2) {
+                $memberModel->ref_code = $pk_code;
+            }
+
+            $memberModel->ref_code = str_pad($memberModel->ref_code, $keyPattern['ref_code_fix_length'], '0', STR_PAD_LEFT);
+            $memberModel->member_code = $this->dcs_code . $memberModel->ex_member_code;
+
+            if ($keyPattern['master_hierarchy_auto_entry'] == 1) {
+                if (!empty($childKeyPatterns)) {
+                    $masterHierarchy = new TblMasterHierarchy();
+                    $pk_name = $memberModel::primaryKey()[0];
+                    $masterHierarchy->attributes = $memberModel->attributes;
+                    $masterHierarchy->master_key = $pk_name;
+                    $masterHierarchy->{$pk_name} = $pk_code;
+                    $masterHierarchy->wef_date = date('Y-m-d');
+                    $masterHierarchy->is_active = 1;
+
+                    foreach ($childKeyPatterns as $key => $childKeyPattern) {
+                        $index = $key + 1;
+                        $key_name = 'ref_code' . $index;
+                        $masterHierarchy->master_type = $childKeyPattern->pattern_for;
+                        $key_length = (int) $childKeyPattern['key_length'];
+                        $key_fix_length = (int) $childKeyPattern['key_fix_length'];
+                        $key_reset_on = $childKeyPattern['key_reset_on'];
+
+                        if ($childKeyPattern['key_code_type'] == 1) {
+                            $ref_code = ($key_length > 0) ? str_pad($childRefCodeData[$key_name]['ref_code'] + $x, $key_length, '0', STR_PAD_LEFT) : '';
+
+                            if (!empty($childKeyPattern['prefix_field'])) {
+                                $masterHierarchy->{$key_name} = '';
+                                $prefix_seq = explode(',', $childKeyPattern['prefix_field']);
+                                foreach ($prefix_seq as $pre) {
+                                    $pre_info = explode(':', $pre);
+                                    if (isset($pre_info[1])) {
+                                        $t_info = explode('#', $pre_info[0]);
+                                        $table_name = $t_info[0];
+                                        $where_key = $t_info[1];
+                                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                        $append_field = $pre_info[1];
+
+                                        $key = "$table_name|$where_key|$where_val";
+                                        if (isset($childPrefixData[$key]) && !empty($childPrefixData[$key])) {
+                                            $masterHierarchy->{$key_name} .= $childPrefixData[$key][$append_field];
+                                        } else {
+                                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $this->{$where_val} . ')';
+                                            $this->addError('ref_code', $message);
+                                            $master[] = FALSE;
+                                        }
+                                    } else {
+                                        $masterHierarchy->{$key_name} .= $memberModel->{$pre};
+                                    }
+                                }
+                            }
+
+                            $masterHierarchy->{$key_name} .= $ref_code;
+
+                            if (!empty($childKeyPattern['suffix_field'])) {
+                                $suffix_seq = explode(',', $childKeyPattern['suffix_field']);
+                                foreach ($suffix_seq as $pre) {
+                                    $pre_info = explode(':', $pre);
+                                    if (isset($pre_info[1])) {
+                                        $t_info = explode('#', $pre_info[0]);
+                                        $table_name = $t_info[0];
+                                        $where_key = $t_info[1];
+                                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                                        $append_field = $pre_info[1];
+
+                                        $key = "$table_name|$where_key|$where_val";
+                                        if (isset($childSuffixData[$key]) && !empty($childSuffixData[$key])) {
+                                            $masterHierarchy->{$key_name} .= $childSuffixData[$key][$append_field];
+                                        } else {
+                                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $this->{$where_val} . ')';
+                                            $this->addError('ref_code', $message);
+                                            $master[] = FALSE;
+                                        }
+                                    } else {
+                                        $masterHierarchy->{$key_name} .= $memberModel->{$pre};
+                                    }
+                                }
+                            }
+                        } elseif ($childKeyPattern['key_code_type'] == 2) {
+                            $masterHierarchy->{$key_name} = !empty($masterHierarchy->{$key_name}) ? $masterHierarchy->{$key_name} : NULL;
+                        }
+
+                        if ($childKeyPattern['key_code_type'] == 1) {
+                            if (empty($masterHierarchy->{$key_name})) {
+                                $this->addError('ref_code', Yii::t('app/validation', $this->getAttributeLabel('ref_code') . ' can not be blank.'));
+                                $master[] = FALSE;
+                            } else {
+                                if ($activeCounts[$key_name] > 0) {
+                                    $this->addError('ref_code', Yii::t('app/validation', $this->getAttributeLabel('ref_code') . ' has already been taken.'));
+                                    $master[] = FALSE;
+                                }
+                            }
+
+                            if (!empty($masterHierarchy->{$key_name})) {
+                                $masterHierarchy->{$key_name} = str_pad($masterHierarchy->{$key_name}, $key_fix_length, '0', STR_PAD_LEFT);
+                                if (strlen($masterHierarchy->{$key_name}) != $key_fix_length) {
+                                    $this->addError('ref_code', Yii::t('app/validation', $this->getAttributeLabel('ref_code') . ' length must be ' . $key_fix_length . '.'));
+                                    $master[] = FALSE;
+                                }
+                            }
+                        }
+                    }
+                    $memberModel->set_master_hierarchy[] = $masterHierarchy;
+                }
+            }
+
+            Yii::$app->default->getDefaults($memberModel);
+            $memberModel->address = $this->dcs_name;
+            $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+            $memberModel->member_name = 'No Name';
+            $memberModel->gender_code = 1;
+            $memberModel->caste_category_code = 1;
+            $memberModel->member_type_code = 1;
+            $memberModel->bank_code = NULL;
+            $memberModel->branch_code = NULL;
+            $memberModel->bank_account_no = NULL;
+            $memberModel->ifsc = NULL;
+            $memberModel->beneficiary_name = NULL;
+            $memberModel->adhar_no = NULL;
+            $memberModel->data_post_status = 0;
+            $memberModel->is_download = $memberModel->is_email_verify = $memberModel->rate_class = $memberModel->is_verified = $memberModel->is_contact_verified = $memberModel->is_dcs_member = '0';
+            $memberModel->is_active = 1;
+            if (empty($memberModel->x_col3)) {
+                $memberModel->x_col3 = (!empty($max_qty_config_val) && ($max_qty_config_val > 0)) ? $max_qty_config_val : 15;
+            }
+            foreach ($memberModel->attributes as $key => $value) {
+                if ($value == '') {
+                    $memberModel->$key = null;
+                }
+            }
+
+            $memberModels[] = $memberModel;
+        }
+
+        $columns = array_keys($memberModels[0]->getAttributes());
+        $rows = [];
+        foreach ($memberModels as $memberModel) {
+            $row = [];
+            foreach ($columns as $column) {
+                $row[] = $memberModel->$column;
+            }
+            $rows[] = $row;
+        }
+        Yii::$app->db->createCommand()->batchInsert(TblMember::tableName(), $columns, $rows)->execute();
+    }
+
+    public function resetDefaultValue() {
+        $this->data_post_status = 0;
+        $this->picked_datetime = $this->response_datetime = $this->resp_desc = NULL;
+    }
+
+    public function getMasterRecord(){
+        $data = (new \yii\db\Query())
+            ->select([
+                'companyCode' => new Expression("ISNULL(u.x_col1, '')"),
+                'mppCode' => new Expression("ISNULL(d.ref_code, '')"),
+                'mppName' => new Expression("ISNULL(d.dcs_name, '')"),
+                'sapMppCode' => new Expression("ISNULL(d.sap_vendor_code, '')"),
+                'sapRouteCode' => new Expression("ISNULL(rm.sap_route_code, '')"),
+                'sapPlantCode' => new Expression("''"),
+                'mobileNo' => new Expression("ISNULL(c.mobile_no, '')"),
+                'bmcCode' => new Expression("ISNULL(b.ref_code, '')"),
+                'routeCode' => new Expression("ISNULL(rm.ref_code, '')"),
+                'bankId' => new Expression("0"),
+                'bankBranchName' => new Expression("''"),
+                'accountName' => new Expression("''"),
+                'accountNumber' => new Expression("''"),
+                'ifsc' => new Expression("''"),
+                'isActive' => new Expression("ISNULL(d.is_active, 0)"),
+                'effectiveDate' => new Expression("ISNULL(CONVERT(VARCHAR(10), d.valid_from, 120), '')"),
+                'effectiveShift' => new Expression("''"),
+                'census_code' => new Expression("ISNULL(d.dcs_code, '')"),
+                'sapVendorCode' => new Expression("''"),
+            ])
+            ->from('tbl_dcs d')
+            ->innerJoin('tbl_unions u', 'u.union_code = d.union_code')
+            ->innerJoin('tbl_bmc b', 'b.bmc_code = d.bmc_code')
+            ->leftJoin('tbl_route_mapping rm', 'rm.route_code  = d.route_code')
+            ->leftJoin('tbl_contact_details c', 'c.module_code = d.dcs_code AND c.is_default = 1 AND c.is_active = 1')
+            ->where(['isnull(d.data_post_status,0)' => [0,'']])
+            ->andWhere(['d.dpu_type' => 93])
+            ->limit(5)
+            ->all();
+        if (!empty($data)) {
+            $companyCode = (string)$data[0]['companyCode'];
+            array_walk($data, function(&$item) {
+                $item['isActive'] = (bool)$item['isActive'];
+                unset($item['companyCode']);
+            });
+            return [
+                'companyCode' => $companyCode,
+                'mppDetails' => $data
+            ];
+        }
+        return [];
+
+    }
+
+    public function updateStatus($updateData, $ids) {
+        return $this->updateAll($updateData, ['ref_code' => $ids]);
     }
 
 }

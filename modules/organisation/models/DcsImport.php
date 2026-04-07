@@ -22,20 +22,20 @@ class DcsImport extends TblDcs {
             /*   [['bmc_code'], function ($attribute, $params) {
               Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
               }, 'on' => ['importCsv']], */
-                [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name'], 'required', 'on' => ['customImport']],
-                [['dpu_type'], 'required', 'on' => 'importCsv'],
-                [['union_code'], 'validateUnionCode', 'when' => function ($model) {
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name'], 'required', 'on' => ['customImport']],
+            [['dpu_type'], 'required', 'on' => 'importCsv'],
+            [['union_code'], 'validateUnionCode', 'when' => function ($model) {
                     return $model->isAttributeChanged('union_code', FALSE);
                 }],
-                [['hamlet_code'], 'validateHamlet', 'when' => function ($model) {
+            [['hamlet_code'], 'validateHamlet', 'when' => function ($model) {
                     return $model->isAttributeChanged('hamlet_code', FALSE);
                 }],
-                [['dcs_type_code'], 'validateDcsType', 'when' => function ($model) {
+            [['dcs_type_code'], 'validateDcsType', 'when' => function ($model) {
                     return $model->isAttributeChanged('dcs_type_code', FALSE);
                 }],
-                [['registration_date', 'effective_date'], 'convertDateDot'],
-                [['registration_date', 'effective_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018')],
-                [['registration_date', 'effective_date'], 'convertDate'],
+            [['registration_date', 'effective_date', 'security_return_date'], 'convertDateDot'],
+            [['registration_date', 'effective_date', 'security_return_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018')],
+            [['registration_date', 'effective_date', 'security_return_date'], 'convertDate'],
             //  [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
             //  [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
             //  [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
@@ -43,7 +43,11 @@ class DcsImport extends TblDcs {
             [['dpu_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
                 }, 'on' => 'importCsv'],
-                ['auto_member_create', 'in', 'range' => [0, 1], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Create Auto Member either 1 or 0')],
+            [['security_return_mode'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'security_return_mode');
+                }, 'on' => 'importCsv'],
+            ['auto_member_create', 'in', 'range' => [0, 1], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Create Auto Member either 1 or 0')],
+            [['cheque_amount', 'security_return_amt'], 'number', 'on' => ['importCsv']],
         ];
 
         foreach ($rules as $row) {
@@ -148,12 +152,18 @@ class DcsImport extends TblDcs {
         } catch (\Throwable $e) {
             $this->effective_date = '-';
         }
+        try {
+            $this->security_return_date = Yii::$app->controls->view_date($this->security_return_date, 'php:d.m.Y');
+        } catch (\Throwable $e) {
+            $this->security_return_date = '-';
+        }
     }
 
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->registration_date = !empty($this->registration_date) ? Yii::$app->controls->view_date($this->registration_date, 'php:Y-m-d') : NULL;
             $this->effective_date = !empty($this->effective_date) ? Yii::$app->controls->view_date($this->effective_date, 'php:Y-m-d') : NULL;
+            $this->security_return_date = !empty($this->security_return_date) ? Yii::$app->controls->view_date($this->security_return_date, 'php:Y-m-d') : NULL;
         }
     }
 

@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\tankermovement\models\TblQtyDiffType;
 use app\modules\organisation\models\TblPlant;
 use app\modules\transporter\models\TblVehicleCompartmentDetail;
+use app\modules\globalmaster\models\TblAnimalTypeAdditional;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
@@ -92,13 +93,13 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'milk_analyser_type_code', 'ws_code', 'adt_param', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
-            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code', 'transaction_date', 'test_report_no', 'shift_of_milk', 'physical_stock_only', 'from_date_tr', 'is_clr_input', 'original_dispatch_qty', 'bmc_silos_info_code', 'milk_quality_type_code'], 'safe'],
+            [['qty_time', 'qlty_time', 'created_at', 'updated_at', 'trip_code', 'vehicle_code', 'transaction_date', 'test_report_no', 'shift_of_milk', 'physical_stock_only', 'from_date_tr', 'is_clr_input', 'original_dispatch_qty', 'bmc_silos_info_code', 'milk_quality_type_code', 'animal_type_additional_code'], 'safe'],
             [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Chamber Entry for selected milk and silo has been already taken.'), 'on' => 'create'],
             [['qty_time', 'qlty_time'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['qty_auto', 'qlty_auto', 'is_rejected', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff', 'rtpl', 'amount',], 'default', 'value' => '0'],
             [['milk_type_code'], 'ValidateData', 'on' => 'create'],
             [['union_code'], 'required', 'except' => ['androidsync', 'update']],
-            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'temperature', 'chamber_no'], 'required', 'on' => 'createPlantDispatch'],
+            [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'temperature', 'chamber_no', 'animal_type_additional_code'], 'required', 'on' => 'createPlantDispatch'],
             [['dispatch_qty'], 'ValidateCapacity', 'on' => ['createPlantDispatch', 'create']],
             [['shift_of_milk'], 'string', 'max' => 25],
             [['fat'], 'validateQualityRange', 'except' => ['androidsync']],
@@ -171,6 +172,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'shift_of_milk' => Yii::t('app', 'Shift Of Milk'),
             'original_dispatch_qty' => Yii::t('app', 'Original Qty'),
+            'animal_type_additional_code' => Yii::t('app', 'Additional Milk Type'),
         ];
     }
 
@@ -200,7 +202,11 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getSampleBottleNo() {
         return $this->hasOne(TblConfigTxnResult::className(), ['ref_code' => 'bmc_milk_dispatch_txn_code'])
-                        ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for='BMC' and c.process_name='BMC_DISPATCH'");
+                        ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for in ('BMC','PLANT') and c.process_name in ('BMC_DISPATCH','PLANT_DISPATCH')");
+    }
+
+    public function getAnimalType() {
+        return $this->hasOne(TblAnimalTypeAdditional::className(), ['animal_type_additional_code' => 'animal_type_additional_code']);
     }
 
     public function ValidateData() {
@@ -329,7 +335,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
         foreach ($compartmentCapacities as $compartment) {
             $compartmentNo = $compartment['compartment_no'];
             $result[$compartmentNo] = [
-                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? $chamberWiseQty[$compartmentNo] : 0,
+                'total_qty' => isset($chamberWiseQty[$compartmentNo]) ? (float) $chamberWiseQty[$compartmentNo] : 0,
                 'capacity' => $compartment['capacity']
             ];
         }
@@ -339,18 +345,24 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         if ($insert) {
-            $bmcMilkDispatchData = $this->bmcMilkDispatchCode;
-            $tripTrackingModel = new TblVehicleTripTracking();
-            $tripTrackingModel->union_code = $bmcMilkDispatchData->union_code;
-            $tripTrackingModel->plant_code = $bmcMilkDispatchData->plant_code;
-            $tripTrackingModel->trip_code = $bmcMilkDispatchData->trip_code;
-            $tripTrackingModel->vehicle_code = $bmcMilkDispatchData->vehicle_code;
-            $tripTrackingModel->trip_date = date('Y-m-d');
-            $tripTrackingModel->trip_status = 'open';
-            $tripTrackingModel->trip_sub_status = 'bmc_dispatch_C' . $this->chamber_no;
-            $tripTrackingModel->sub_status_time = date('Y-m-d H:i:s');
-            $tripTrackingModel->remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
-            $tripTrackingModel->save(TRUE, FALSE);
+            $tripModel = new TblVehicleTrip();
+            $bmcMilkDispatchCode = $this->bmcMilkDispatchCode;
+            $tripModel->attributes = $bmcMilkDispatchCode->attributes;
+            $tripModel->transaction_date = date('Y-m-d');
+            $tripModel->trip_status = 'open';
+            $tripModel->trip_sub_status = $bmcMilkDispatchCode['source_org_type'] . '_dispatch_C' . $this->chamber_no;
+            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($this->created_at . ' +1 second'));
+            $remarks = $this->dispatch_qty . '-' . Yii::$app->general->getforeignkey($this->milkType, 'animal_type_name');
+            $tripDetail = TblVehicleTripDetail::find()->where([
+                        'challan_no' => $bmcMilkDispatchCode['challan_no'],
+                        'trip_code' => $bmcMilkDispatchCode['trip_code'],
+                    ])->one();
+            $tripDetailCode = '';
+            if ($tripDetail !== null) {
+                $tripDetailCode = $tripDetail->vehicle_trip_detail_code;
+            }
+            $trackingDetail = ['visibility_status' => 0, 'module_code' => $tripDetailCode, 'module_type' => 'tbl_vehicle_trip_detail'];
+            Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
         }
     }
 
@@ -380,12 +392,15 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
     }
 
     public function validateQualityRange($attribute, $params) {
-        if (!empty($this->bmc_code) && $this->is_clr_input != '') {
+        if ($this->is_clr_input != '') {
+            $for = $this->bmc_code ? 'BMC' : 'PLANT';
+            $processName = $this->bmc_code ? 'BMC_MILK_DISPATCH' : 'PLANT_MILK_DISPATCH';
+            $orgCode = $this->bmc_code ? $this->bmc_code : $this->plant_code;
             $milkQualityParamRangeModel = new TblMilkQualityParamRange();
             $milkQualityParamRangeModel->union_code = $this->union_code;
-            $milkQualityParamRangeModel->process_name = 'BMC_MILK_DISPATCH';
-            $milkQualityParamRangeModel->org_type = 'BMC';
-            $milkQualityParamRangeModel->org_code = $this->bmc_code;
+            $milkQualityParamRangeModel->process_name = $processName;
+            $milkQualityParamRangeModel->org_type = $for;
+            $milkQualityParamRangeModel->org_code = $orgCode;
             $milkQualityParamRangeModel->animal_type_code = $this->milk_type_code;
             $range = $milkQualityParamRangeModel->getQualityRange();
             if (!empty($range)) {
@@ -400,6 +415,43 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 }
             }
         }
+    }
+
+    public function getLastDispatchDetailChamberWise() {
+        $dispatchData = $this->find()
+                ->alias('t')
+                ->select(['t.chamber_no', 'd.source_org_code', 'd.source_org_type', 't.created_at', 'p.name as plant_name', 'b.bmc_name as bmc_name', 'p.ref_code as plant_ref_code', 'b.ref_code as bmc_ref_code', 'p.ref_code as plant_ref_code'])
+                ->innerJoin('tbl_bmc_milk_dispatch d', 'd.bmc_milk_dispatch_code = t.bmc_milk_dispatch_code')
+                ->leftJoin('tbl_plant p', "p.plant_code = d.source_org_code AND LOWER(d.source_org_type) = 'plant'")
+                ->leftJoin('tbl_bmc b', "b.bmc_code = d.source_org_code AND LOWER(d.source_org_type) = 'bmc'")
+                ->where(['d.trip_code' => $this->trip_code])
+                ->orderBy(['t.chamber_no' => SORT_ASC, 't.created_at' => SORT_DESC])
+                ->asArray()
+                ->all();
+        $result = [];
+        $processedChambers = [];
+
+        foreach ($dispatchData as $row) {
+            if (in_array($row['chamber_no'], $processedChambers)) {
+                continue;
+            }
+            $processedChambers[] = $row['chamber_no'];
+            $type = strtolower($row['source_org_type']);
+            if ($type == 'bmc') {
+                $refCode = $row['bmc_ref_code'];
+                $name = $row['bmc_name'];
+            } elseif ($type == 'plant') {
+                $refCode = $row['plant_ref_code'];
+                $name = $row['plant_name'];
+            }
+
+            $result[] = [
+                'fromLocation' => trim(($refCode ?? '') . ' - ' . ($name ?? '') . ' - ' . strtoupper($row['source_org_type'] ?? '')),
+                'compartmentNo' => (int) $row['chamber_no']
+            ];
+        }
+
+        return $result;
     }
 
 }

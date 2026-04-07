@@ -41,7 +41,7 @@ class TblDepartment extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
             [['department', 'department_id', 'local_name', 'created_by', 'updated_by'], 'string'],
             [['is_active'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'seq_no'], 'safe'],
             [['is_active'], 'default', 'value' => 1]
         ];
     }
@@ -67,6 +67,14 @@ class TblDepartment extends \app\models\ChildModel {
                 ->select(['department_id'])
                 ->all();
         return ArrayHelper::map($data, 'department_id', 'department_id');
+    }
+
+    public function getActiveDepartments() {
+        $data = $this->find()
+                ->select(['department_id', 'department'])
+                ->where(['is_active' => 1])
+                ->all();
+        return ArrayHelper::map($data, 'department_id', 'department');
     }
 
 }

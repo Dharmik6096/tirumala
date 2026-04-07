@@ -23,7 +23,9 @@ class AlertNotification {
                 //if {msg} found in value then replace it with actual text message     
                 $value = (strpos($a['key_value'], '{mobileno}') !== false) ? str_replace('{mobileno}', $mob_no, $a['key_value']) : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
                 $value = ($a['key_value'] == '{timeStamp}') ? date('dmYHms') : $value;
-                if (!empty($a['header_flag']) && $a['header_flag'] == 1) {
+                if (!empty($a['url_append'])) {
+                    $url = $url.$a['url_append'].$value;
+                } elseif (!empty($a['header_flag']) && $a['header_flag'] == 1) {
                     $headers[$a['parameter_key']] = $value; // Add to headers
                 } elseif (!empty($a['parent_tag'])) {
                     if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
@@ -134,13 +136,18 @@ class AlertNotification {
         return $response;
     }
 
-    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '', $bcc = '') {
+    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '', $bcc = '', $pwd = '') {
         try {
             $to_mail = explode(',', $to_mail);
             $to_mail = array_filter($to_mail, function ($s) {
                 return filter_var($s, FILTER_VALIDATE_EMAIL);
             });
-            $email = Yii::$app->mailer->compose()
+            $mailer = Yii::$app->mailer;
+            if (!empty($pwd)) {
+                $transport = $mailer->getTransport();
+                $transport->setPassword($pwd);
+            }
+            $email = $mailer->compose()
                     ->setTo($to_mail)
                     ->setFrom($from)
                     ->setSubject($subject)

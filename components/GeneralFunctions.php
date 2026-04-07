@@ -53,6 +53,9 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\product\models\TblDispatchCenter;
+use app\modules\product\models\TblDispatchCenterApplicability;
+use app\modules\product\models\TblProduct;
 use app\modules\product\models\TblGeneralPartyMaster;
 use yii\db\Expression;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
@@ -236,9 +239,19 @@ class GeneralFunctions extends Component {
             }
     }
 
-    public function validateDiscriptiveField($model, $attribute) {
+    public function validateDiscriptiveField($model, $attribute, $has_strict_address_validation = TRUE) {
         if (!empty($model->$attribute)) {
-            if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+            $validationFailed = FALSE;
+            if ($has_strict_address_validation) {
+                if (!preg_match('/^[a-z0-9 .,\-]+$/i', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            } else {
+                if (preg_match('/[<>&"\']/', $model->$attribute)) {
+                    $validationFailed = TRUE;
+                }
+            }
+            if ($validationFailed) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '.'));
                 return false;
             }
@@ -516,7 +529,18 @@ class GeneralFunctions extends Component {
 
     public function getforeignkey($value, $field) {
         return !empty($value) ? $value->$field : '';
-// return '';
+    }
+
+    public function getforeignkeyWithArray($value, $field) {
+        $returnValue = '';
+        if (!empty($value[0])) {
+            foreach ($value as $val) {
+                $returnValue = !empty($returnValue) ? $returnValue . ', ' . $val->$field : $val->$field;
+            }
+        } else {
+            $returnValue = !empty($value) ? $value->$field : '';
+        }
+        return $returnValue;
     }
 
     public function valiadteUnique($model, $field, $value, $msg = '') {
@@ -704,26 +728,12 @@ class GeneralFunctions extends Component {
             }
             $tablename = $model->tableSchema->fullName;
 
-            if (in_array('f_union_code', $filters)) {
-                $union_table = !empty($union_table) ? $union_table : $tablename;
-                if (Yii::$app->session->get('Unions') !== '')
-                    $query->andFilterWhere([$union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-                if (!empty($model->f_union_code))
-                    $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
-            }
-
-            if (in_array('f_plant_code', $filters)) {
-                if (Yii::$app->session->get('Plant') !== '')
-                    $query->andFilterWhere([$plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
-                if (!empty($model->f_plant_code))
-                    $query->andFilterWhere([$plant_table . '.plant_code' => $model->f_plant_code]);
-            }
-
-            if (in_array('f_mcc_code', $filters)) {
-                if (Yii::$app->session->get('MCC') !== '')
-                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
-                if (!empty($model->f_mcc_code))
-                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => $model->f_mcc_code]);
+            if (in_array('f_dcs_code', $filters)) {
+                $dcsTable = !empty($dcs_table) ? $dcs_table : $tablename;
+                if (Yii::$app->session->get('Dcs') !== '')
+                    $query->andFilterWhere([$dcsTable . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+                if (!empty($model->f_dcs_code))
+                    $query->andFilterWhere([$dcsTable . '.dcs_code' => $model->f_dcs_code]);
             }
 
             if (in_array('f_bmc_code', $filters)) {
@@ -733,12 +743,26 @@ class GeneralFunctions extends Component {
                     $query->andFilterWhere([$bmc_table . '.bmc_code' => $model->f_bmc_code]);
             }
 
-            if (in_array('f_dcs_code', $filters)) {
-                $dcsTable = !empty($dcs_table) ? $dcs_table : $tablename;
-                if (Yii::$app->session->get('Dcs') !== '')
-                    $query->andFilterWhere([$dcsTable . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
-                if (!empty($model->f_dcs_code))
-                    $query->andFilterWhere([$dcsTable . '.dcs_code' => $model->f_dcs_code]);
+            if (in_array('f_mcc_code', $filters)) {
+                if (Yii::$app->session->get('MCC') !== '')
+                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+                if (!empty($model->f_mcc_code))
+                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => $model->f_mcc_code]);
+            }
+
+            if (in_array('f_plant_code', $filters)) {
+                if (Yii::$app->session->get('Plant') !== '')
+                    $query->andFilterWhere([$plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+                if (!empty($model->f_plant_code))
+                    $query->andFilterWhere([$plant_table . '.plant_code' => $model->f_plant_code]);
+            }
+
+            if (in_array('f_union_code', $filters)) {
+                $union_table = !empty($union_table) ? $union_table : $tablename;
+                if (Yii::$app->session->get('Unions') !== '')
+                    $query->andFilterWhere([$union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+                if (!empty($model->f_union_code))
+                    $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
             }
         }
     }
@@ -1380,8 +1404,9 @@ class GeneralFunctions extends Component {
         foreach ($model->attributes as $key => $a) {
             if (!empty($a)) {
                 $type = $scema->columns[$key]->type;
-                if ($type == 'datetime') {
-                    $a = Yii::$app->controls->save_datetime($a);
+                if ($type == 'datetime' || $type == 'date') {
+                    $format = ($type == 'date') ? 'php:Y-m-d' : 'php:Y-m-d H:i:s';
+                    $a = Yii::$app->controls->save_datetime($a, $format);
                 }
                 $model->{$key} = $a;
             }
@@ -1702,12 +1727,29 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getKeyPattern($table_name) {
-        return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
+    public function getKeyPattern($table_name, $union_code = null) {
+
+        if (isset(Yii::$app->user) && !Yii::$app->user->isGuest) {
+            return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
+        }
+
+        static $localCache = [];
+        $cacheKey = $table_name . ($union_code ? '_' . $union_code : '');
+        if (array_key_exists($cacheKey, $localCache)) {
+            return $localCache[$cacheKey];
+        }
+
+        $query = TblKeyPattern::find()->where(['pattern_for' => $table_name]);
+        if (!empty($union_code)) {
+            $query->andWhere(['union_code' => $union_code]);
+        }
+        $localCache[$cacheKey] = $query->one();
+        return $localCache[$cacheKey];
     }
 
     public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '', $conacte = true) {
-        $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name);
+        $union_code = !empty($model->union_code) ? $model->union_code : NULL;
+        $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name, $union_code);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
             $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
@@ -2412,7 +2454,7 @@ class GeneralFunctions extends Component {
                 $value = 'Create';
             } elseif ($model->{$field} == 1) {
                 $value = 'Import';
-            } elseif (in_array($model->{$field}, [11, 12, 21, 23])) {
+            } elseif (in_array($model->{$field}, [2, 11, 12, 21, 23, 24])) {
                 $value = 'Sync';
             } elseif ($model->{$field} == 3) {
                 $value = 'Auto Entry';
@@ -2536,22 +2578,24 @@ class GeneralFunctions extends Component {
             $unionData = TblUnions::find()->where(['is_active' => 1])->one();
             $eiplCode = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
         }
-        $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
-        $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
-        $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
-        $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
-        $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
-        $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
-        if (file_exists($check_client_css_file_path)) {
-            if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
-                unset($layout->css[$key]);
-                $layout->css[] = $client_css_file_path;
+        if (!empty($eiplCode)) {
+            $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
+            $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
+            $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
+            $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
+            $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
+            $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
+            if (file_exists($check_client_css_file_path)) {
+                if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
+                    unset($layout->css[$key]);
+                    $layout->css[] = $client_css_file_path;
+                }
             }
-        }
-        if (file_exists($check_client_js_file_path)) {
-            if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
-                unset($layout->js[$key]);
-                $layout->js[] = $client_js_file_path;
+            if (file_exists($check_client_js_file_path)) {
+                if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
+                    unset($layout->js[$key]);
+                    $layout->js[] = $client_js_file_path;
+                }
             }
         }
     }
@@ -2746,7 +2790,7 @@ class GeneralFunctions extends Component {
         return !empty($data) ? $data : '';
     }
 
-    public function getDisplayDocumentLink($module_code, $module_name, $doc_key) {
+    public function getDisplayDocumentLink($module_code, $module_name, $doc_key, $type = 'link') {
         $attchmentModel = new \app\modules\document\models\TblAttachment();
 
         $records = $attchmentModel->find()
@@ -2760,7 +2804,11 @@ class GeneralFunctions extends Component {
             if ($links != '') {
                 $class = 'icon-set-right';
             }
-            $links .= ' ' . Html::a('<i class="fa fa-picture-o"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
+            if ($type == 'image') {
+                $links .= ' ' . Html::img($record['attachment'], ['class' => 'img-responsive img-thumbnail image-preview-click', 'style' => 'height: 100px; width: auto; cursor: pointer;', 'data-src' => $record['attachment']]);
+            } else {
+                $links .= ' ' . Html::a('<i class="fa fa-picture-o"></i>', $record['attachment'], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank', 'class' => $class]);
+            }
         }
         return $links;
     }
@@ -2950,13 +2998,85 @@ class GeneralFunctions extends Component {
         return [$fromDate, $toDate];
     }
 
-    public function setVehicleTripTrackingDetail($trip, $remarks = '') {
+    public function getDispCenterProducts($dispatch_center_code = "") {
+        $product_array = [];
+        $product_array['product_list'] = [];
+        $product_array['pass_where_close'] = 'Yes';
+        $user_dispatch_center_code = User::find()->select('dispatch_center_code')->where(['id' => Yii::$app->session->get('UserCode')])->one();
+
+        $getDataUsingDisCenter = false;
+        $dispCenterCode = '0';
+        if (!empty($user_dispatch_center_code) && !empty($user_dispatch_center_code->dispatch_center_code)) {
+            if (empty($dispatch_center_code) || $user_dispatch_center_code->dispatch_center_code == $dispatch_center_code) {
+                $getDataUsingDisCenter = true;
+                $dispCenterCode = $user_dispatch_center_code['dispatch_center_code'];
+            }
+        } else {
+            if (empty($dispatch_center_code)) {
+                $product_array['pass_where_close'] = 'No';
+            } else {
+                $getDataUsingDisCenter = true;
+                $dispCenterCode = $dispatch_center_code;
+            }
+        }
+        if ($getDataUsingDisCenter) {
+            $dispatch_center_type_code = TblDispatchCenter::find()->select('dispatch_center_type_code')->where(['dispatch_center_code' => $dispCenterCode])->one();
+            if (!empty($dispatch_center_type_code) && !empty($dispatch_center_type_code->dispatch_center_type_code)) {
+                $groupIds = explode(',', $dispatch_center_type_code['dispatch_center_type_code']);
+                $productData = TblProduct::find()->select(['product_code'])->where(['product_group_code' => $groupIds])->all();
+                $product_list = \yii\helpers\ArrayHelper::map($productData, 'product_code', 'product_code');
+                $product_array['product_list'] = $product_list;
+            }
+        }
+        return $product_array;
+    }
+
+    public function maskAadhar($aadhar_no) {
+        if (!empty($aadhar_no)) {
+            $maskedAadhar = 'xxxx-xxxx-' . substr($aadhar_no, 8);
+            return $maskedAadhar;
+        } else {
+            return '';
+        }
+    }
+
+    public function getCodeMax($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
+        $prefix = 'PORTAL-' . $organizations_code . '-';
+        $prefixLen = strlen($prefix);
+
+        $result = $model->find()
+                ->select(["MAX(CAST(SUBSTRING(" . $primaryKey . ", " . ($prefixLen + 1) . ", LEN(" . $primaryKey . ") - " . $prefixLen . ") AS INT)) AS max_code"])
+                ->where(['like', $primaryKey, $prefix])
+                ->asArray()
+                ->one();
+
+        $highestNumber = isset($result['max_code']) ? (int) $result['max_code'] + $autoInc : $autoInc;
+        $value = $prefix . $highestNumber;
+
+        return $value;
+    }
+
+    public function getDispatchCenter($applicable_code, $for, $product_code) {
+        return TblDispatchCenterApplicability::find()->select(['tbl_dispatch_center_applicability.dispatch_center_code'])
+                        ->join('INNER JOIN', 'tbl_dispatch_center', 'tbl_dispatch_center.dispatch_center_code=tbl_dispatch_center_applicability.dispatch_center_code')
+                        ->join('INNER JOIN', 'tbl_product', 'tbl_product.product_group_code in (SELECT code from SplitToTable (tbl_dispatch_center.dispatch_center_type_code,\',\'))')
+                        ->where(['tbl_dispatch_center_applicability.applicable_code' => $applicable_code, 'tbl_dispatch_center_applicability.applicable_for' => $for, 'tbl_product.product_code' => $product_code])
+                        ->asArray()
+                        ->one();
+    }
+
+    public function setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks = '') {
         if (!empty($trip)) {
             $tripTrackingModel = new TblVehicleTripTracking();
             $tripTrackingModel->attributes = $trip->attributes;
             $tripTrackingModel->trip_date = $trip->transaction_date;
             $tripTrackingModel->remarks = !empty($remarks) ? $remarks : '';
             $tripTrackingModel->created_at = $tripTrackingModel->updated_at = $tripTrackingModel->created_by = $tripTrackingModel->updated_by = $tripTrackingModel->originating_type = $tripTrackingModel->originating_org_code = $tripTrackingModel->originating_org_type = '';
+            $tripTrackingModel->visibility_status = $trackingDetail['visibility_status'];
+            $tripTrackingModel->module_code = $trackingDetail['module_code'];
+            $tripTrackingModel->module_type = $trackingDetail['module_type'];
             $tripTrackingModel->save(TRUE, FALSE);
         }
     }
@@ -2982,11 +3102,11 @@ class GeneralFunctions extends Component {
         return ['rel' => $rel, 'ref_code' => $ref_code, 'name' => $name];
     }
 
-    public function calculateData($config, $union = '', $bmcCode = '', $fat = '', $snf = '', $clr = '', $customer_type = '', $is_clr_input = '') {
+    public function calculateData($config, $union = '', $orgCode = '', $fat = '', $snf = '', $clr = '', $orgType = '', $is_clr_input = '') {
         $response = [];
 
-        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $bmcCode, $customer_type, $config);
-        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $bmcCode, $customer_type, $config);
+        $lr1 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant1', $orgCode, $orgType, $config);
+        $lr2 = (float) $this->getCheckBmcConfiguration($union, 'clr_constant2', $orgCode, $orgType, $config);
         if ($lr1 == '' || $lr2 == '') {
             $lr1 = (float) $this->getUnionConfiguration($union, 'clr_constant1', 'PORTAL');
             $lr2 = (float) $this->getUnionConfiguration($union, 'clr_constant2', 'PORTAL');
@@ -2995,9 +3115,35 @@ class GeneralFunctions extends Component {
         $lr1 = empty($lr1) ? 1 : $lr1;
         $lr2 = empty($lr2) ? 0 : $lr2;
 
-        $response['clr'] = $is_clr_input == 0 ? ($snf - ($fat * $lr1) - $lr2) * 4 : number_format(floor((($clr / 4) + ($fat * $lr1) + $lr2) * 100) / 100, 2);
+        $response['clr'] = $is_clr_input == 0 ? number_format(($snf - ($fat * $lr1) - $lr2) * 4, 2) : number_format((($clr / 4) + ($fat * $lr1) + $lr2), 2);
 
         return $response;
+    }
+
+    public static function generateDepartmentId($model, $autoIncrement = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $tableName = $model->tableName();
+        $maxValue = (new Query())
+                ->select([("ISNULL(MAX({$primaryKey}), 0) AS max_value")])
+                ->from($tableName)
+                ->where("ISNUMERIC({$primaryKey}) = 1")
+                ->scalar();
+
+        $newId = (int) $maxValue + $autoIncrement;
+        return (string) $newId;
+    }
+
+    public function getDeactivateRecords($code, $modelClass, $columnName, $type = '') {
+        $date = date('Y-m-d');
+
+        $query = $modelClass::find()
+                ->where(['<=', 'from_date', $date])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]])
+                ->andWhere([$columnName => $code]);
+        if (!empty($type)) {
+            $query->andWhere(['customer_type' => $type]);
+        }
+        return $query->one();
     }
 
 }

@@ -224,7 +224,17 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                             $destData = $this->model->{$response['rel'] . 'Dest'};
                             $remarks = $destData->{$response['ref_code']} . '-' . $destData->{$response['name']};
                         }
-                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $remarks);
+                        $trackingDetail = ['visibility_status' => 1, 'module_code' => NULL, 'module_type' => NULL];
+                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+                        if (!empty($tripModel)) {
+                            $tripModel->trip_sub_status = 'milk_receipt';
+                            $tripModel->sub_status_time = date('Y-m-d H:i:s', strtotime($txn_model->created_at . ' +1 second'));
+                        }
+                        $trackingDetail = ['visibility_status' => 2, 'module_code' => $this->model->milk_vehicle_entry_code, 'module_type' => 'tbl_milk_vehicle_entry'];
+                        Yii::$app->general->setVehicleTripTrackingDetail($tripModel, $trackingDetail, $remarks);
+                        if (!empty($tripModel)) {
+                            $tripModel->addAutoQaCleaning($remarks);
+                        }
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
                         $record = ['status' => 'success', 'msg' => $msg, 'milk_vehicle_entry_code' => $key, 'gross_weight' => $this->model->gross_weight, 'tare_weight' => $this->model->tare_weight, 'tare_weight_time' => $this->model->tare_weight_time];
                     } else {
@@ -646,9 +656,11 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $union = Yii::$app->request->post('union_code');
         $org_code = Yii::$app->request->post('receiptAtCode');
         $is_clr_input = Yii::$app->request->post('is_clr_input');
-
-        $result = Yii::$app->general->calculateData('PLANT_RECEIPT_CONFIG', $union, $org_code, $fat, $snf, $clr, 'PLANT', $is_clr_input);
-
+        $tripCode = Yii::$app->request->post('tripCode');
+        $chamberNo = Yii::$app->request->post('chamberNo');
+        $BmcMilkDispatchModel = new TblBmcMilkDispatch();
+        $dispatchData = $BmcMilkDispatchModel->getDispatchData($union, $tripCode, $chamberNo, $org_code);
+        $result = Yii::$app->general->calculateData($dispatchData['config'], $union, $dispatchData['orgCode'], $fat, $snf, $clr, $dispatchData['orgType'], $is_clr_input);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode(['status' => 'success', 'data' => $result['clr']]);
     }
@@ -663,6 +675,13 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $data = $model->getQualityRange();
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => !empty($data) ? 'success' : 'error', 'data' => !empty($data) ? $data : []]);
+    }
+
+    public function actionChallan($id) {
+        $controls = [];
+        $controls['p_milk_vehicle_entry_code'] = $id;
+        $controls['p_report_name'] = 'Tanker Milk Receipt Challan';
+        $this->printDocument($controls, 'vsp/ReceiptChallan', 'TankerMilkReceiptChallan', 'pdf');
     }
 
 }

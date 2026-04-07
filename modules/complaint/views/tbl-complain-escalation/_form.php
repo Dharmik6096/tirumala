@@ -41,7 +41,10 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Complain Escalation Transaction</h4>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $txnModel, $form, 'form-group', $txnModel->getAttributeLabel('user_type'), false, 'user_type', false, true); ?>     
+            <?= Yii::$app->dropdown->dropdownStatic('route_login_type', $txnModel, $form, 'form-group', $txnModel->getAttributeLabel('user_type'), false, 'user_type'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('department', $txnModel, $form, 'form-group', $model->getAttributeLabel('department'), false, 'department'); ?>
         </div>
         <div class="col-sm-2 number-validate">
             <?= $form->field($txnModel, 'escalation_time')->textInput() ?>
@@ -61,6 +64,7 @@ $form = ActiveForm::begin([
         <thead>
             <tr>
                 <th>User Type</th>
+                <th>Department</th>
                 <th>Escalation Time</th>
                 <th>Level</th>
             </tr> 
@@ -149,6 +153,8 @@ function addBtnEnable(){
         var escalation_name = $('#tblcomplainescalation-escalation_name').val();
         var user_type = $('#tblcomplainescalationtxn-user_type option:selected').val();
         var user_type_name = $('#tblcomplainescalationtxn-user_type option:selected').text();
+        var department = $('#tblcomplainescalationtxn-department option:selected').val();
+        var department_name = $('#tblcomplainescalationtxn-department option:selected').text();
         var escalation_time = $('#tblcomplainescalationtxn-escalation_time').val();
         var level = $('#tblcomplainescalationtxn-level').val();
         
@@ -158,6 +164,10 @@ function addBtnEnable(){
     
         if(user_type == ''){
             err += '\\nUser Type can not be Blank.';
+        }
+        
+        if(department == ''){
+            err += '\\nDepartment can not be Blank.';
         }
         
         if(escalation_time == ''){
@@ -171,7 +181,7 @@ function addBtnEnable(){
         if(err == ''){
             var tr_class;
             var level_tr_class;
-            tr_class = user_type;
+            tr_class = user_type+'-'+department;
             level_tr_class = level;
             
             if($('.'+tr_class).length > 0){
@@ -185,12 +195,14 @@ function addBtnEnable(){
             }else {                
                 var append_data = '<tr class='+tr_class+' id='+level_tr_class+'>';              
                 append_data += '<td>'+user_type_name+'<input type=\'hidden\' name=\'TblComplainEscalationTxn['+tr_count+'][user_type]\' value=\''+user_type+'\'></td>';
+                append_data += '<td>'+department_name+'<input type=\'hidden\' name=\'TblComplainEscalationTxn['+tr_count+'][department]\' value=\''+department+'\'></td>';
                 append_data += '<td>'+escalation_time+'<input type=\'hidden\' name=\'TblComplainEscalationTxn['+tr_count+'][escalation_time]\' value=\''+escalation_time+'\'></td>';
                 append_data += '<td>'+level+'<input type=\'hidden\' name=\'TblComplainEscalationTxn['+tr_count+'][level]\' value=\''+level+'\'></td>';
                 append_data += '<td class=\'pb8\'><a href=\'javascript:void(0);\' class=\'remove_product btn btn-default btn-raised\' title=\'Remove\'>Remove</a></td>';
                 append_data += '</tr>';
                 $('#complain_escalation_list').append(append_data);
                 $('#tblcomplainescalationtxn-user_type').val(null).trigger('change');
+                $('#tblcomplainescalationtxn-department').val(null).trigger('change');
                 $('#tblcomplainescalationtxn-escalation_time').val('');
                 $('#tblcomplainescalationtxn-level').val('');
                 $('.btn-save-txn').removeClass('disabled no_pointer');

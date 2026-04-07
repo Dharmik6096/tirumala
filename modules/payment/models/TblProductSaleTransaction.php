@@ -10,7 +10,6 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductStockHistory;
-use app\modules\product\models\TblProductStockTransactionHistory;
 
 /**
  * This is the model class for table "tbl_product_sale_details".
@@ -36,7 +35,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     public $is_sentbox = TRUE;
     public $saveDeleteChildRecords = TRUE;
     public $available_stock;
-    public $union_code;
+    public $union_code, $mcc_plant_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -51,18 +50,18 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync', 'androidsyncsplit', 'saleProductOnDispatch']],
-                [['product_code'], 'validProduct', 'on' => ['saleProductOnDispatch']],
-                [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct', 'saleProductOnDispatch']],
+            [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync', 'androidsyncsplit', 'saleProductOnDispatch']],
+            [['product_code'], 'validProduct', 'on' => ['saleProductOnDispatch']],
+            [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct', 'saleProductOnDispatch']],
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
             [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync', 'androidsyncsplit']],
-                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
-                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks'], 'safe'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
+            [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
+            [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks', 'mcc_plant_code', 'bmc_code'], 'safe'],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
-            [['quantity'], 'validateQty', 'on' => ['saleProduct', 'saleProductOnDispatch']],
-                [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
-                [['sap_batch_no'], 'required', 'when' => function ($model) {
+            [['quantity'], 'validateQty', 'on' => ['saleProduct']],
+            [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
+            [['sap_batch_no'], 'required', 'when' => function ($model) {
                     $product = $model->productCode;
                     $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfigResult($product->union_code, 'batch_no_wise_inventory', $this) : '';
                     // $batchNoWiseInventory = !empty($product) ? Yii::$app->general->getUnionConfiguration($product->union_code, 'batch_no_wise_inventory', 'PORTAL') : '';
@@ -70,8 +69,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                     return ($batchNoWiseInventory == 1 && $product_type == 2);
                 },
                 'on' => ['saleProduct', 'SaleImport', 'saleProductOnDispatch']],
-                [['data_lock'], 'default', 'value' => 0],
-                [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
+            [['data_lock'], 'default', 'value' => 0],
+            [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
             //   [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
             [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
@@ -436,9 +435,9 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         }
     }
 
-    public function validProduct($attribute, $param){
+    public function validProduct($attribute, $param) {
         $product = TblProduct::find()->where(['product_code' => $this->product_code, 'is_active' => 1])->one();
-        if(!empty($product)){
+        if (!empty($product)) {
             $this->unit_code = $product->unit_code;
             return true;
         }

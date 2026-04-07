@@ -139,4 +139,5 @@ return [
     'Qty Diff' => 'Qty( ltr) Diff',
     'Actual Qty' => 'Actual Qty In Ltr',
     'Composite Qty' => 'Composite Qty In Ltr',
+    'DCS Code Ex' => 'Society Code Ex',
 ];

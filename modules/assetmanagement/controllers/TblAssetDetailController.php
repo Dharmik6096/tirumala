@@ -20,6 +20,8 @@ use app\modules\assetmanagement\models\TblAssetSetHistory;
 use yii\widgets\ActiveForm;
 use app\models\ChildModel;
 use yii\base\UserException;
+use app\modules\document\models\TblAttachment;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblAssetDetailController implements the CRUD actions for TblAssetDetail model.
@@ -56,11 +58,17 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         $searchModel = new TblAssetTransactionSearch();
         $searchModel->asset_detail_code = $id;
         $searchModel->is_search = 1;
+        $attachment = new TblAttachment();
+        $attachmentDataProvider = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => (string)$id, 'module_name' => 'asset']),
+        ]);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id), 'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'attachment' => $attachment,
+                    'attachmentDataProvider' => $attachmentDataProvider,
         ]);
     }
 

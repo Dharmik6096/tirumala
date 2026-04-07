@@ -37,7 +37,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblallowdcsmanualcollectionrange-bmc_code', 'dcs_code', Yii::t('app', 'DCS'), false, '', $readonly); ?>         
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, date('d-m-Y'), $readonly); ?> 
+        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, FALSE, $readonly); ?> 
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift', true, $readonly, 'from_shift'); ?>

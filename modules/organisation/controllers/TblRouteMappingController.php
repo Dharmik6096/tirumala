@@ -36,7 +36,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['route-list', 'all-route-list', 'get-bmc-route', 'all-route-transporter-list'];
+    public $freeAccessActions = ['route-list', 'all-route-list', 'get-bmc-route', 'all-route-transporter-list', 'user-list'];
 
     /**
      * @inheritdoc
@@ -525,7 +525,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 $model = new TblRouteMapping();
                 $data = $model->getUserList($parents[0]);
                 foreach ($data as $key => $val) {
-                    $out[] = array('id' => $val['user_code'], 'name' => $val['name']);
+                    $out[] = array('id' => $val['user_code'], 'name' => $val['name'] . (!empty($val['employee_id']) ? ' - ' . $val['employee_id'] : ''));
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }

@@ -1,84 +1,185 @@
 <?php
 
-use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
 use kartik\grid\GridView;
 
 $attribute = [
-    ['label' => Yii::t('app', 'Org. Type'), 'attribute' => 'organization_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
-        }, 'filter' => TRUE],
-    ['label' => Yii::t('app', 'Org. Code'), 'attribute' => 'code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
-        }, 'filter' => true],
-    ['label' => Yii::t('app', 'Org. Ref Code'), 'attribute' => 'refCode', 'value' => function($model) {
-            $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
-            $code = '';
-            if ($type == 'MCC') {
-                $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'ref_code');
-            } elseif ($type == 'BMC') {
-                $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'ref_code');
-            } elseif ($type == 'VLC') {
-                $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'ref_code');
-            }
-            return $code;
-        }, 'filter' => true],
-    ['label' => Yii::t('app', 'Org. Name'), 'attribute' => 'organization_code', 'value' => function($model) {
-            $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
-            $name = '';
-            if ($type == 'MCC') {
-                $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'name');
-            } elseif ($type == 'BMC') {
-                $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'bmc_name');
-            } elseif ($type == 'VLC') {
-                $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'dcs_name');
-            }
-            return $name;
-        }, 'filter' => TRUE],
-//    ['attribute' => 'organization_type', 'value' => function($model) {
-//            return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
-//        }, 'filter' => TRUE],
+    ['label' => Yii::t('app', 'Union'), 'filter' => false, 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'MCC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode', 'unionCode'], 'union_name');
+        } elseif ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode', 'unionCode'], 'union_name');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode', 'unionCode'], 'union_name');
+        }
+        return $code;
+    }, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'PLANT'), 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'MCC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode', 'plantCode'], 'name');
+        } elseif ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode', 'plantCode'], 'name');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode', 'plantCode'], 'name');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'MCC'), 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'MCC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'name');
+        } elseif ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode', 'tblMccPlant'], 'name');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode', 'mccPlantCode'], 'name');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => TRUE],
+    ['label' => Yii::t('app', 'MCC') . ' Code', 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'MCC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'mcc_plant_code');
+        } elseif ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'mcc_plant_code');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'mcc_plant_code');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => TRUE],
+    ['label' => Yii::t('app', 'MCC') . ' Ref Code', 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'MCC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'ref_code');
+        } elseif ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode', 'tblMccPlant'], 'ref_code');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode', 'mccPlantCode'], 'ref_code');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => TRUE],
+    ['label' => Yii::t('app', 'BMC'), 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'bmc_name');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode', 'bmcCode'], 'bmc_name');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'BMC') . ' Code', 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'bmc_code');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'bmc_code');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'ref_code');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode', 'bmcCode'], 'ref_code');
+        }
+        return $code;
+    }, 'filter' => FALSE, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'Org. Type'), 'attribute' => 'organization_type', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+    }, 'filter' => TRUE],
+    ['label' => Yii::t('app', 'Org. Code'), 'attribute' => 'code', 'value' => function ($model) {
+        return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
+    }, 'filter' => true],
+    ['label' => Yii::t('app', 'Org. Ref Code'), 'attribute' => 'refCode', 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $code = '';
+        if ($type == 'MCC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'ref_code');
+        } elseif ($type == 'BMC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'ref_code');
+        } elseif ($type == 'VLC') {
+            $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'ref_code');
+        }
+        return $code;
+    }, 'filter' => true],
+    ['label' => Yii::t('app', 'Org. Name'), 'attribute' => 'organization_code', 'value' => function ($model) {
+        $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        $name = '';
+        if ($type == 'MCC') {
+            $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'name');
+        } elseif ($type == 'BMC') {
+            $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'bmc_name');
+        } elseif ($type == 'VLC') {
+            $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'dcs_name');
+        }
+        return $name;
+    }, 'filter' => TRUE],
     ['attribute' => 'mobile_no'],
     ['attribute' => 'password'],
     [
         'attribute' => 'password_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
+            'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
+                'autoclose' => true
+            ]
         ],
-        'value' => function($model) {
+        'value' => function ($model) {
             return Yii::$app->controls->view_date($model->password_date);
-        }, 'visible' => FALSE],
+        },
+        'visible' => FALSE
+    ],
     ['attribute' => 'device_id'],
     ['attribute' => 'version_no'],
-    ['attribute' => 'db_version', 'label' => Yii::t('app', 'DB Version'),
+    [
+        'attribute' => 'db_version',
+        'label' => Yii::t('app', 'DB Version'),
         'filter' => FALSE,
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version]) ? Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version] : $model->db_version;
-        },],
+        },
+    ],
     [
         'attribute' => 'created_at',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
+            'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
+                'autoclose' => true
+            ]
         ],
-        'value' => function($model) {
+        'value' => function ($model) {
             return Yii::$app->controls->view_datetime($model->created_at);
-        }],
-    ['attribute' => 'installation_type',
+        }
+    ],
+    [
+        'attribute' => 'installation_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('installation_type', $searchModel, 'installation_type'),
         'value' => function ($model) {
             return isset($model->installation_type) ? Yii::$app->dropdown->getRecords('installation_type')['data'][$model->installation_type] : '';
-        },],
-    ['attribute' => 'sync_active', 'label' => Yii::t('app', 'Sync status'),
+        },
+    ],
+    [
+        'attribute' => 'sync_active',
+        'label' => Yii::t('app', 'Sync status'),
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('status', $searchModel, 'sync_active'),
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('status')['data'][$model->sync_active]) ? Yii::$app->dropdown->getRecords('status')['data'][$model->sync_active] : $model->sync_active;
-        },],
+        },
+    ],
 ];
 
 $grid_option = [
@@ -86,12 +187,16 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-//        'view' => true,
         'download' => function ($url, $model) {
             $class = $model->installation_type == 1 ? '' : ' disabled ';
             $options = ['title' => Yii::t('app', 'Download'), 'class' => $class];
             $path = $model->db_path;
             return GhostHtml::a('<i class="fa fa-download"></i>', ['/installation/tbl-android-installation/download', 'id' => Yii::$app->basePath . $path], $options);
+        },
+        'activation-key' => function ($url, $model) {
+            $androidInstallationData = $model->androidInstallationCode;
+            $options = ['title' => Yii::t('app', 'Activation Details'), 'class' => 'activation-key-popup', 'data-hash-key' => $model->hash_key, 'data-sync-key' => $model->sync_key, 'data-title' => $androidInstallationData->organization_type . ' - ' . $androidInstallationData->organization_code];
+            return GhostHtml::a('<i class="fa fa-life-ring"></i>', 'javascript:void(0)', $options);
         },
         'deactive' => function ($url, $model) {
             $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
@@ -127,10 +232,22 @@ $grid_option = [
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<div id='activation-key-detail'></div>
 <?php
 
 $script = "
 $(document).ready(function(){
+    $(document).on('click','.activation-key-popup',function(e){
+       $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/installation/tbl-android-installation/activation-key-details']) . "',
+            data: {hash_key: $(this).attr('data-hash-key'), sync_key: $(this).attr('data-sync-key'), title: $(this).attr('data-title')},
+            success: function(data) {
+                $('#activation-key-detail').html(data);
+                $('#activation-key-content').modal('toggle');
+            },
+        });
+    });
     $(document).on('click','.deactivate-identity',function(e){
     var id= $(this).attr('data-val');
     var name = $(this).attr('data-name');

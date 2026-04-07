@@ -10,7 +10,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblMccPlant;
-use app\modules\document\models\TblAttachment;
+use app\modules\assetmanagement\models\TblAssetClusterVendorInfo;
 
 /**
  * This is the model class for table "tbl_asset_transaction".
@@ -256,16 +256,18 @@ class TblAssetTransaction extends \app\models\ChildModel {
         return $this->find()->where(['from_type' => $this->from_type, 'asset_detail_code' => $this->asset_detail_code])->count();
     }
 
-    public function getSrNoAssets($ref_code, $slocType, $concatSrNo = false, $is_spare = false) {
+    public function getSrNoAssets($ref_code, $slocType, $concatSrNo = false, $is_spare = false, $complainScreen = false) {
         $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.asset_code', 'tbl_asset_transaction.serial_number'])
                 ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_transaction.asset_code')
                 ->joinWith(['toStoreLocCode', 'assetDetail'])
-                ->where(['tbl_asset_transaction.status' => [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code]);
+                ->where(['tbl_asset_transaction.status' => $complainScreen ? [0,2] : [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code]);
+        if($complainScreen) {
+            $details = $details->andWhere(['tbl_asset_detail.is_verified' => 1]);
+        }
         if ($is_spare) {
             $details = $details->andWhere(['tbl_asset_master.is_spare' => 0]);
         }
-        $details = $details->orderBy(['tbl_asset_detail.put_to_use_date' => SORT_DESC])
-                ->all();
+        $details = $details->orderBy(['tbl_asset_detail.put_to_use_date' => SORT_DESC])->all();
 
         if ($concatSrNo) {
             $value = ArrayHelper::map($details, function ($value) {
@@ -325,11 +327,6 @@ class TblAssetTransaction extends \app\models\ChildModel {
                         ->asArray()->all();
     }
 
-    public function getAttachment() {
-        $this->asset_transaction_code = (string) $this->asset_transaction_code;
-        return $this->hasOne(TblAttachment::className(), ['module_code' => 'asset_transaction_code']);
-    }
-
     public function getDetailCode() {
         $storeLocationData = TblStoreLocation::find()->select(['store_location_type', 'reference_code'])->where(['store_location_code' => $this->to_dest, 'is_active' => '1'])->one();
         $moduleMapping = ['1' => 'plant', '2' => 'bmc', '3' => 'society'];
@@ -339,6 +336,10 @@ class TblAssetTransaction extends \app\models\ChildModel {
                 $this->detail_code = $detailCode;
             }
         }
+    }
+    
+    public function getAssetClusterVendorInfo() {
+        return $this->hasOne(TblAssetClusterVendorInfo::className(), ['asset_code' => 'asset_code', 'serial_number' => 'serial_number']);
     }
 
 }

@@ -58,7 +58,7 @@ class TblBannerSearch extends TblBanner {
         if (!empty($this->login_type)) {
             $query->joinWith(['bannerApplicabilityCode']);
 
-            $query->andFilterWhere(['tbl_banner_applicability.login_type' => $this->login_type]);
+            $query->andFilterWhere(['tbl_banner_applicability.department' => $this->department]);
         }
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));

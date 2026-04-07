@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 <div class="col-sm-12 farmer_rmrd_block">
 
-    <?php $url = Url::to(['site/get-installed-mpps', 'date' => $date]); ?>
+    <?php $url = Url::to(['site/get-installed-mpps', 'date' => $date, 'union' => $union]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion col-sm-2">
@@ -16,7 +16,7 @@ use yii\helpers\Url;
             </div>
         </div>
     </a>
-    <?php $url = Url::to(['site/get-installed-members', 'date' => $date]); ?>
+    <?php $url = Url::to(['site/get-installed-members', 'date' => $date, 'union' => $union]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion">
@@ -27,7 +27,7 @@ use yii\helpers\Url;
             </div>
         </div>
     </a>
-    <?php $url = Url::to(['site/get-installed-employees', 'date' => $date]); ?>
+    <?php $url = Url::to(['site/get-installed-employees', 'date' => $date, 'union' => $union]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion">
@@ -38,7 +38,7 @@ use yii\helpers\Url;
             </div>
         </div>
     </a>
-    <?php $url = Url::to(['site/get-installed-supervisors', 'date' => $date]); ?>
+    <?php $url = Url::to(['site/get-installed-supervisors', 'date' => $date, 'union' => $union]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion">
@@ -49,7 +49,7 @@ use yii\helpers\Url;
             </div>
         </div>
     </a>
-    <?php $url = Url::to(['site/get-installed-managers', 'date' => $date]); ?>
+    <?php $url = Url::to(['site/get-installed-managers', 'date' => $date, 'union' => $union]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion">
@@ -60,7 +60,7 @@ use yii\helpers\Url;
             </div>
         </div>
     </a>
-    <?php $url = Url::to(['site/get-installed-other-staff', 'date' => $date]); ?>
+    <?php $url = Url::to(['site/get-installed-other-staff', 'date' => $date, 'union' => $union]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="link_hover_effect">
             <div class="div_dash_block dashboardWidgetDetailPortion">

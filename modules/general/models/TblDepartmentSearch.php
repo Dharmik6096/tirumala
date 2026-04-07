@@ -5,6 +5,7 @@ namespace app\modules\general\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 use app\modules\general\models\TblDepartment;
 
 /**
@@ -17,8 +18,8 @@ class TblDepartmentSearch extends TblDepartment {
      */
     public function rules() {
         return [
-            [['department_id', 'department', 'local_name', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['is_active'], 'integer'],
+            [['department_id', 'department', 'local_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'seq_no'], 'safe'],
+            [['is_active', 'seq_no'], 'integer'],
         ];
     }
 
@@ -53,6 +54,7 @@ class TblDepartmentSearch extends TblDepartment {
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->andWhere(['or', ['seq_no' => null], ['!=', 'seq_no', 0]]);
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -61,7 +63,12 @@ class TblDepartmentSearch extends TblDepartment {
 
         $query->andFilterWhere(['like', 'department_id', $this->department_id])
                 ->andFilterWhere(['like', 'department', $this->department])
-                ->andFilterWhere(['like', 'local_name', $this->local_name]);
+                ->andFilterWhere(['like', 'local_name', $this->local_name])
+                ->andFilterWhere(['seq_no' => $this->seq_no]);
+        $query->orderBy([
+            new Expression('CASE WHEN seq_no IS NULL THEN 1 ELSE 0 END'),
+            'seq_no' => SORT_ASC,
+        ]);
 
 
         return $dataProvider;

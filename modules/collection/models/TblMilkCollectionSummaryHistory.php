@@ -56,7 +56,7 @@ class TblMilkCollectionSummaryHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['milk_collection_summary_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by', 'operation_type', 'data_post_status', 'pick_datetime'], 'safe'],
+            [['milk_collection_summary_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by', 'operation_type', 'data_post_status', 'pick_datetime', 'response_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['date_time_of_collection', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['shift_code', 'sample_count', 'auto_count', 'manual_count', 'originating_type'], 'safe'],
             [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount', 'received_timestamp','data_inserted_from'], 'safe'],

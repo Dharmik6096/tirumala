@@ -117,11 +117,13 @@ class DefaultController extends Controller {
         $field_name = Yii::$app->request->post('field');
         $field_code = Yii::$app->request->post('fcode');
         $login_type = Yii::$app->request->post('login_type');
+        $department = !empty(Yii::$app->request->post('department')) ? Yii::$app->request->post('department') : '';
         $model = new $model_name();
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
         $isCheck = Yii::$app->request->post('checkdate');
         $periodic_applicability = Yii::$app->request->post('periodic_applicability');
         $is_bulk_notification = Yii::$app->request->post('is_bulk_notification');
+        $check_applicability_with_field_name = Yii::$app->request->post('check_applicability_with_field_name');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
             if ($model->hasAttribute('wef_date')) {
@@ -137,8 +139,20 @@ class DefaultController extends Controller {
             if (!empty($from_date) && !empty($to_date)) {
                 $condition = '((\'' . $from_date . '\' between from_date  and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))';
             }
+            if ($model->hasAttribute('is_active')) {
+                $condition = !empty($condition) ? $condition . ' AND is_active = 1' : 'is_active = 1';
+            }
         }
-        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where)->andWhere($condition);
+        $modelQuery = $model->find()->select(['applicable_code'])->where(['applicable_for' => $filter]);
+        if ($check_applicability_with_field_name) {
+            $modelQuery->andWhere([$field_name => $field_code]);
+        } else {
+            if ($model->hasAttribute('is_member_rate')) {
+                $is_member_rate = isset(Yii::$app->request->post()['is_member_rate']) ? Yii::$app->request->post()['is_member_rate'] : '';
+                $condition = !empty($condition) ? $condition . ' AND is_member_rate = ' . (int) $is_member_rate : 'is_member_rate = ' . (int) $is_member_rate;
+            }
+        }
+        $modelQuery->andWhere($where)->andWhere($condition);
         $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
         $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];
         $routeCodes = !empty(Yii::$app->request->post('selected_route')) ? json_decode(Yii::$app->request->post('selected_route')) : [];
@@ -170,7 +184,7 @@ class DefaultController extends Controller {
             case in_array($filter, ['USER']):
                 $userModel = new User();
                 if (isset($is_bulk_notification) && ($is_bulk_notification == TRUE)) {
-                    $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes);
+                    $filter_data['applicable_code'] = $userModel->getAppUserLists($login_type, $mccCodes, $department);
                 } else {
                     $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
                 }
@@ -215,34 +229,33 @@ class DefaultController extends Controller {
         $bmcList = [];
         if (!empty($post['selected_apply_to'])) {
             $selectedApplyTo = json_decode($post['selected_apply_to']);
-                $query = (new Query())
+            $query = (new Query())
                     ->select('B.*')
                     ->from(['B' => 'tbl_bmc'])
                     ->innerJoin(
-                        ['ct' => (new Query())
-                            ->select(['customer_type', 'union_code'])
-                            ->from('tbl_customer_type')
-                            ->where(['is_applicability' => 1])
-                            ->andWhere(['union_code' => $unionCode])
-                            ->andWhere(['in', 'customer_type', $selectedApplyTo])
-                        ],
-                        'ct.union_code = B.union_code'
+                            ['ct' => (new Query())
+                        ->select(['customer_type', 'union_code'])
+                        ->from('tbl_customer_type')
+                        ->where(['is_applicability' => 1])
+                        ->andWhere(['union_code' => $unionCode])
+                        ->andWhere(['in', 'customer_type', $selectedApplyTo])
+                            ], 'ct.union_code = B.union_code'
                     )
                     ->leftJoin(
-                        ['A' => $tableName],
-                        'B.bmc_code = A.applicable_code AND A.' . $post['field_name'] . ' = \'' . addslashes($post['field_code']) . '\' AND A.applicable_type = ct.customer_type'
+                            ['A' => $tableName], 'B.bmc_code = A.applicable_code AND A.' . $post['field_name'] . ' = \'' . addslashes($post['field_code']) . '\' AND A.applicable_type = ct.customer_type'
                     )
                     ->where(['A.applicable_code' => null]);
-                    foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
-                        if ($value = Yii::$app->session->get($sessionKey)) {
-                            $query->andWhere(["B.$column" => explode(',', $value)]);
-                        }
-                    }
-                    $bmcList = $query->all();
-                    $bmcList = ArrayHelper::map($bmcList, 'bmc_code', function($bmcList) {
+            foreach (['Plant' => 'plant_code', 'MCC' => 'mcc_plant_code', 'BMC' => 'bmc_code'] as $sessionKey => $column) {
+                if ($value = Yii::$app->session->get($sessionKey)) {
+                    $query->andWhere(["B.$column" => explode(',', $value)]);
+                }
+            }
+            $bmcList = $query->all();
+            $bmcList = ArrayHelper::map($bmcList, 'bmc_code', function($bmcList) {
                         return ($bmcList['ref_code'] . ' - ') . $bmcList['bmc_name'];
                     });
         }
         return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
+
 }

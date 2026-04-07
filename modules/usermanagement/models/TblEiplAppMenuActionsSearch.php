@@ -19,7 +19,7 @@ class TblEiplAppMenuActionsSearch extends TblEiplAppMenuActions
     {
         return [
             [['action_code', 'is_active', 'sequence_no', 'parent_code'], 'integer'],
-            [['action_name', 'service_url', 'description', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+            [['action_name', 'service_url', 'description', 'created_at', 'created_by', 'updated_at', 'updated_by', 'app_type'], 'safe'],
         ];
     }
 

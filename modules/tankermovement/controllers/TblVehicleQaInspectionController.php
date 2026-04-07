@@ -98,6 +98,7 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                 foreach ($qaInspectionData as $key => $inspectionData) {
                     $historyModel = new TblVehicleQaInspectionHistory();
                     Yii::$app->operation->history($inspectionData, $historyModel, UPDATE);
+                    $inspectionData->scenario = 'qaInspection';
                     $inspectionData->status = 'closed';
                     $saveModel[] = $historyModel;
                     $saveModel[] = $inspectionData;
@@ -119,7 +120,8 @@ class TblVehicleQaInspectionController extends \app\controllers\ChildController 
                     if ($hasFailedConfig) {
                         $tripDetail->trip_sub_status = 'qa_rejected';
                     }
-                    Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $model->remarks);
+                    $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                    Yii::$app->general->setVehicleTripTrackingDetail($tripDetail, $trackingDetail, $model->remarks);
                 }
                 return $this->redirect(['index']);
             }

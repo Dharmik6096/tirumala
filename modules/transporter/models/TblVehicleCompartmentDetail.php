@@ -6,6 +6,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\base\UserException;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCapacity;
 
 /**
  * This is the model class for table "tbl_vehicle_compartment_detail".
@@ -41,13 +42,14 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vehicle_code', 'compartment_no', 'capacity', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
-            [['vehicle_code'], 'required', 'on' => 'importCsv'],
-            [['vehicle_code'], 'importData'],
-            [['vehicle_code'], 'unique', 'targetAttribute' => ['vehicle_code', 'compartment_no'], 'message' => 'The combination of Vehicle Code and Compartment No has already been taken.'],
-            [['compartment_no', 'capacity'], 'required'],
-            [['capacity'], 'integer'],
-            ['compartment_no', 'integer', 'min' => 1, 'max' => 5, 'message' => 'Compartment number must be between 1 and 5.'],
+                [['vehicle_code', 'compartment_no', 'capacity', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
+                [['vehicle_code'], 'required', 'on' => 'importCsv'],
+                [['vehicle_code'], 'importData'],
+                [['vehicle_code'], 'unique', 'targetAttribute' => ['vehicle_code', 'compartment_no'], 'message' => 'The combination of Vehicle Code and Compartment No has already been taken.'],
+                [['compartment_no', 'capacity'], 'required'],
+                [['capacity'], 'integer'],
+                ['compartment_no', 'integer', 'min' => 1, 'max' => 5, 'message' => 'Compartment number must be between 1 and 5.'],
+                [['capacity'], 'validateCompartmentCapacity']
         ];
     }
 
@@ -77,20 +79,21 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
 
     public function importData($attribute, $params) {
         $member_model = new TblVehicleMaster();
-        $vehicleCode = $member_model->find()->select('vehicle_code')->where(['or', ['vehicle_code' => $this->vehicle_code], ['parsing_no' => $this->vehicle_code]])->scalar();
-        if (!empty($vehicleCode)) {
-            $this->vehicle_code = $vehicleCode;
+        $vehicleData = $member_model->find()->select(['union_code','vehicle_code'])->where(['or', ['vehicle_code' => $this->vehicle_code], ['parsing_no' => $this->vehicle_code]])->one();
+        if (!empty($vehicleData)) {
+            $this->union_code = $vehicleData->union_code;
+            $this->vehicle_code = $vehicleData->vehicle_code;
         } else {
             $this->addError('vehicle_code', Yii::t('app/validation', Yii::t('app', 'Vehicle Code') . ' is invalid'));
         }
     }
 
     public function getChamberList() {
-        $compartmentNoCount = $this->find()->select('vehicle_code')->where(['vehicle_code' => (int) $this->vehicle_code])->count();
-        if ($compartmentNoCount > 0) {
-            return ArrayHelper::map(array_map(function ($comp) {
-                                return ['id' => $comp, 'value' => $comp];
-                            }, range(1, $compartmentNoCount)), 'id', 'value');
+        $compartmentData = $this->find()->where(['vehicle_code' => (int) $this->vehicle_code])->all();
+        if (!empty($compartmentData)) {
+            return ArrayHelper::map($compartmentData, 'compartment_no', function($model) {
+                        return $model->compartment_no . ' - ' . $model->capacity;
+                    });
         }
         return [];
     }
@@ -114,6 +117,25 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
             $sentbox->source_org_id = $this->union_code;
             if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
                 throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+    }
+
+    public function validateCompartmentCapacity($attribute, $params) {
+        if (!empty($this->vehicle_code) && !empty($this->capacity)) {
+            $existingCompartmentCapacity = $this->find()->where(['vehicle_code' => $this->vehicle_code])->sum('capacity');
+            $oldCapacity = !empty($existingCompartmentCapacity) ? $existingCompartmentCapacity : 0;
+            $totalCapacity = $oldCapacity + $this->capacity;
+            $vehicleCapacity = TblCapacity::find()->select(['tbl_capacity.value'])
+                    ->innerJoin('tbl_vehicle_master', 'tbl_vehicle_master.capacity_code = tbl_capacity.capacity_code')
+                    ->where(['tbl_vehicle_master.vehicle_code' => $this->vehicle_code])
+                    ->one();
+            if (!empty($vehicleCapacity)) {
+                if ($totalCapacity > $vehicleCapacity['value']) {
+                    $this->addError($attribute, 'Vehicle Capacity must not be more than ' . $vehicleCapacity['value'] . '.');
+                }
+            } else {
+                $this->addError($attribute, 'Please define vehicle capacity in master.');
             }
         }
     }

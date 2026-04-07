@@ -16,7 +16,7 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
 
     public function rules() {
         return [
-                [['uuid', 'date', 'code', 'requested_by', 'approved_by', 'approve_date', 'allow_till_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code', 'collection_type', 'from_date', 'to_date'], 'safe'],
+                [['uuid', 'date', 'code', 'requested_by', 'approved_by', 'approve_date', 'allow_till_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code', 'collection_type', 'from_date', 'to_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'], 'safe'],
                 [['shift_code', 'collection_type', 'is_approve', 'valid_hours', 'originating_type'], 'integer'],
         ];
     }
@@ -44,7 +44,7 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $query->joinWith(['userAndroidCode', 'userCode']);
+        $query->joinWith(['userAndroidCode', 'userCode', 'dcsCode', 'bmcCode']);
 
         $this->load($params);
 
@@ -53,6 +53,29 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        $unions = !empty($this->f_union_code) ? $this->f_union_code : (!empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : '');
+        $plants = !empty($this->f_plant_code) ? $this->f_plant_code : (!empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : '');
+        $mccs = !empty($this->f_mcc_code) ? $this->f_mcc_code : (!empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : '');
+        $bmcs = !empty($this->f_bmc_code) ? $this->f_bmc_code : (!empty(Yii::$app->session->get('BMC')) ? explode(',', Yii::$app->session->get('BMC')) : '');
+        $dcss = !empty($this->f_dcs_code) ? $this->f_dcs_code : (!empty(Yii::$app->session->get('Dcs')) ? explode(',', Yii::$app->session->get('Dcs')) : '');
+    
+        if (!empty($unions)) {
+            $query->andFilterWhere(['or', ['tbl_bmc.union_code' => $unions, 'tbl_collection_approval.collection_type' => 2], ['tbl_dcs.union_code' => $unions, 'tbl_collection_approval.collection_type' => 1]]);
+        }
+        if (!empty($plants)) {
+            $query->andFilterWhere(['or', ['tbl_bmc.plant_code' => $plants, 'tbl_collection_approval.collection_type' => 2], ['tbl_dcs.plant_code' => $plants, 'tbl_collection_approval.collection_type' => 1]]);
+        }
+        if (!empty($mccs)) {
+            $query->andFilterWhere(['or', ['tbl_bmc.mcc_plant_code' => $mccs, 'tbl_collection_approval.collection_type' => 2], ['tbl_dcs.mcc_plant_code' => $mccs, 'tbl_collection_approval.collection_type' => 1]]);
+        }
+        if (!empty($bmcs)) {
+            $query->andFilterWhere(['or', ['tbl_bmc.bmc_code' => $bmcs, 'tbl_collection_approval.collection_type' => 2], ['tbl_dcs.bmc_code' => $bmcs, 'tbl_collection_approval.collection_type' => 1]]);
+        }
+        if (!empty($dcss)) {
+            $query->andFilterWhere(['tbl_dcs.dcs_code' => $dcss, 'tbl_collection_approval.collection_type' => 1]);
+        }
+
         if (!empty($this->collection_type)) {
             $query->andFilterWhere(['collection_type' => (int) $this->collection_type]);
         }
