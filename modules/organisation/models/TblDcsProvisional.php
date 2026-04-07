@@ -742,6 +742,9 @@ class TblDcsProvisional extends ChildModel {
             if (!empty($this->dcs_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
             }
+            if (!empty($this->dcs_code)) {
+                $existsInProvisional->andWhere(['<>', 'dcs_code', $this->dcs_code]);
+            }
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {

@@ -632,7 +632,8 @@ class TblDcsProvisionalController extends ChildController {
 
             if (!in_array(FALSE, $master)) {
                 if (!empty($model->auto_member_create)) {
-                    $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
+                    $unionValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'no_of_auto_member_create', 'PORTAL');
+                    $config = !empty($unionValue) ? $unionValue : 100;
                     for ($x = 1; $x <= $config; $x += 1) {
                         $memberModel = new TblMember();
                         $memberModel->attributes = $model->attributes;
