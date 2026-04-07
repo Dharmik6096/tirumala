@@ -90,9 +90,9 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             $this->model->customer_code = $this->model->getCode();
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
 
-            if (empty($this->model->getErrors())) {
-                $this->model->data_post_id = Yii::$app->general->getUuid();
-                $this->model->customer_code_ex = !empty($this->model->prefix . $exCode) ? $this->model->prefix . $exCode : $this->model->customer_code_ex;
+            $this->model->data_post_id = Yii::$app->general->getUuid();
+            $this->model->customer_code_ex = !empty($this->model->prefix . $exCode) ? $this->model->prefix . $exCode : $this->model->customer_code_ex;
+            if($this->model->validate()){
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
@@ -118,7 +118,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         $module_code = $model->customer_provisional_code;
         $module_name = 'tbl_customer_master_provisional';
         $val = new TblAttachmentController($this->id, $this->module);
-        return $val->actiondocumentUpload('provisional_customer', $id, $model, $module_code, $module_name, true);
+        return $val->actionDocumentUpload('provisional_customer', $id, $model, $module_code, $module_name, true);
     }
 
     /**
@@ -151,12 +151,14 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             $exCode = $this->model->customer_code_ex;
             $this->model->customer_code_ex = $prefix . $exCode;
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
-            if ($transaction == 'customRedirect') {
-                if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
-                    return $this->redirect(['document-upload', 'id' => $this->model->customer_provisional_code]);
-                } else {
-                    return $this->redirect(['pending-customer-approval']);
+            if($this->model->validate()){
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
+                        return $this->redirect(['document-upload', 'id' => $this->model->customer_provisional_code]);
+                    } else {
+                        return $this->redirect(['pending-customer-approval']);
+                    }
                 }
             }
             $this->model->customer_code_ex = $exCode;
@@ -234,6 +236,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 $model_save[] = $historyModel;
                 $customerModel->status = $status;
                 $customerModel->remarks = $model->remarks;
+                $customerModel->scenario = 'approve';
 
                 $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL') == '1';
                 $customerModel->customer_status = 0;
@@ -257,7 +260,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 }
                 if (!empty($message)) {
                     foreach ($message as $msg) {
-                        $customer_error .= $msg;
+                        $customer_error .= !empty($customer_error) ? '<br>' . $msg : $msg;
                     }
                 }
                 if (empty($customer_error)) {
@@ -287,7 +290,8 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => $customer_error . ' in Customer Master']);
+                            'message' => $customer_error . ' in Customer Master.']);
+                    return $this->redirect(['update', 'id' => $model->process_code]);
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', [
