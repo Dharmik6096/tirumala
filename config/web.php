@@ -309,4 +309,7 @@ if (YII_ENV_DEV) {
 if (!empty($params ['trustedHosts'])) {
     $config['components']['request']['trustedHosts'] = $params ['trustedHosts'];
 }
+if (!empty($params['queueInbox'])) {
+    $config['components']['queueInbox'] = $params ['queueInbox'];
+}
 return $config;

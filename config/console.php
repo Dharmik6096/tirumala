@@ -81,5 +81,8 @@ if (YII_ENV_DEV) {
         'class' => 'yii\gii\Module',
     ];
 }
-
+if (!empty($params['queueInbox'])) {
+    $config['components']['queueInbox'] = $params ['queueInbox'];
+    $config['bootstrap'] = array_merge($config['bootstrap'], ['queueInbox']);
+}
 return $config;
