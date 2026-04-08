@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use common\services\DataExchangeService;
 use common\services\InboxParseService;
 use common\services\ImportFilesService;
 use common\services\ImportFilesBackgroudService;
@@ -33,6 +34,17 @@ class SchedulerController extends \yii\console\Controller {
         $importFilesBackgroundService = new ImportFilesBackgroudService();
         while (true) {
             $importFilesBackgroundService->ProcessImportFilesBackground() ? sleep(20) : sleep(120);
+        }
+    }
+
+    public function actionProcessComfedDataExchange() {
+        $dataExchangeService = new DataExchangeService();
+        while (true) {
+            try {
+                $dataExchangeService->processComfedCollection() ? sleep(20) : sleep(120);
+            } catch (\Throwable $ex) {
+                sleep(120);
+            }
         }
     }
 
