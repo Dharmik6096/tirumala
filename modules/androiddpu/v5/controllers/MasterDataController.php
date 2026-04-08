@@ -9,11 +9,9 @@ use app\modules\syncutility\models\TblInbox;
 use app\modules\androiddpu\components\HttpRequest;
 use app\modules\syncutility\models\TblSentboxDesktop;
 
-class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController
-{
+class MasterDataController extends \app\modules\androiddpu\v4\controllers\MasterDataController {
 
-    public function actionInbox()
-    {
+    public function actionInbox() {
         $res_data = [];
         $message = 'Unable to save!';
         $success_id = [];
@@ -39,6 +37,8 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
                             }
                         } catch (Exception $e) {
                             $error_id[] = $transaction_data['uuid'];
+                        } catch (\Throwable $e) {
+                            $error_id[] = $transaction_data['uuid'];
                         }
                     } else {
                         $request = Yii::$app->get('androidHttpRequest');
@@ -51,7 +51,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
                             $message = 'Successfully Saved!';
                             $success_id[] = $transaction_data['uuid'];
                         } else {
-                            $errorData = !empty($transaction) ? (string)$transaction : 'error_occured';
+                            $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
                             if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
                                 $success_id[] = $transaction_data['uuid'];
                             } else {
@@ -70,9 +70,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         return $this->response;
     }
 
-
-    public function actionSentboxDesktop()
-    {
+    public function actionSentboxDesktop() {
         $res_data = [];
         $data = $this->post_data;
         $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
@@ -87,8 +85,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         return $this->response;
     }
 
-    public function actionSentboxCountDesktop()
-    {
+    public function actionSentboxCountDesktop() {
         $response = [];
         $data = $this->post_data;
         $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
@@ -103,8 +100,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         return $this->response;
     }
 
-    public function actionAcknowledgementDesktop()
-    {
+    public function actionAcknowledgementDesktop() {
         $res_data = [];
         $res_data['message'] = 'Sentbox Not Updated.';
         $data = $this->post_data;
@@ -117,4 +113,5 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $this->response['data'] = $res_data;
         return $this->response;
     }
+
 }
