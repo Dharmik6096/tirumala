@@ -31,11 +31,21 @@ class InboxJob extends BaseObject implements JobInterface {
                     $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
                     if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
                         return true;
+                    } else {
+                        \Yii::info("Re-processing with inbox job for UUID: " . $this->transaction_data['uuid'], 'queue-processing');
+                        $queue->push(new self([
+                            'transaction_data' => $this->transaction_data,
+                            'sync_timestamp'   => $this->sync_timestamp,
+                        ]));
                     }
-                    throw new \Exception("Database Error in Queue: " . $errorData);
                 }
             }
         } catch (\Exception $e) {
+            $queue->push(new self([
+                'transaction_data' => $this->transaction_data,
+                'sync_timestamp'   => $this->sync_timestamp,
+            ]));
+            \Yii::info("Exception in InboxJob: " . $e->getMessage(), 'queue-processing');
             throw $e;
         }
     }
