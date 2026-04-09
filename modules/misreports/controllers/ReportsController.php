@@ -2305,6 +2305,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBankVerificationReport() {
+        $this->report = 'BankVerificationReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5107,6 +5112,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Complaint Status Report',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
             ],
+            'BankVerificationReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:string,master_type:static:master_type',
+                'to_decrypt' => ['aadhaar_no'],
+                'sp_name' => 'portal_master_data_verification',
+                'scenario' => 'BankVerificationReport',
+                'title' => 'Bank Verification Report',
+                'excel_readonly' => TRUE,
+                'editable_columns' => ['is_verified'],
+                'extension' => 'xlsx',
+            ],
         ];
         return $label[$l];
     }
@@ -5417,9 +5432,11 @@ class ReportsController extends \app\controllers\ChildController {
     }
 
     public static function downloadDataReadonly($output, $data, $label = '') {
+        $ext = !empty($data['extension']) ? $data['extension'] : 'xls';
+        $mime = ($ext == 'xlsx') ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.ms-excel';
         $header = [
-            'mime' => 'application/vnd.ms-excel',
-            'extension' => 'xls',
+            'mime' => $mime,
+            'extension' => $ext,
             'writer' => 'Excel2007',
         ];
 
@@ -5430,15 +5447,19 @@ class ReportsController extends \app\controllers\ChildController {
         $sheet->fromArray($file_header, NULL, 'A1');
         $sheet->fromArray($output, NULL, 'A2');
 
-        $sheet->getProtection()->setSheet(true)->setSelectLockedCells(true)->setPassword('MyStrongPassword2025');
+        $excelPassword = 'MyStrongPassword2025';
+        $sheet->getProtection()->setSheet(true)->setSelectLockedCells(true)->setPassword($excelPassword);
         $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$sheet->getHighestRow()}")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
         foreach ($file_header as $i => $key) {
             $colLetter = \PHPExcel_Cell::stringFromColumnIndex($i);
             $columnData = array_column($output, $key);
             $columnData[] = $key;
-            $maxLength = max(array_map('strlen', $columnData));
+            $maxLength = !empty($columnData) ? max(array_map('strlen', $columnData)) : 10;
             $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
+            if (isset($data['editable_columns']) && in_array($key, $data['editable_columns'])) {
+                $sheet->getStyle($colLetter . '2:' . $colLetter . $sheet->getHighestRow())->getProtection()->setLocked(\PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+            }
         }
         $labelT = !empty($label) ? $label : $data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
