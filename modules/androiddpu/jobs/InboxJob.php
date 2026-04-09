@@ -30,23 +30,35 @@ class InboxJob extends BaseObject implements JobInterface {
                 if ($transaction !== 'customRedirect') {
                     $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
                     if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
+                        \Yii::info("Discard Duplicate with inbox job for UUID: " . $this->transaction_data['uuid'] . " : " . $errorData, 'queue-processing');
                         return true;
                     } else {
-                        \Yii::info("Re-processing with inbox job for UUID: " . $this->transaction_data['uuid'], 'queue-processing');
+                        \Yii::info("Re-processing with inbox job for UUID: " . $this->transaction_data['uuid'] . " : " . $errorData, 'queue-processing');
                         $queue->push(new self([
                             'transaction_data' => $this->transaction_data,
-                            'sync_timestamp'   => $this->sync_timestamp,
+                            'sync_timestamp' => $this->sync_timestamp,
                         ]));
                     }
                 }
+            } else {
+                \Yii::info("uuid missing in InboxJob", 'queue-processing');
+                $queue->push(new self([
+                    'transaction_data' => $this->transaction_data,
+                    'sync_timestamp' => $this->sync_timestamp,
+                ]));
             }
         } catch (\Exception $e) {
+            \Yii::info("Exception in InboxJob: " . $this->transaction_data['uuid'] . " : " . $e->getMessage(), 'queue-processing');
             $queue->push(new self([
                 'transaction_data' => $this->transaction_data,
-                'sync_timestamp'   => $this->sync_timestamp,
+                'sync_timestamp' => $this->sync_timestamp,
             ]));
-            \Yii::info("Exception in InboxJob: " . $e->getMessage(), 'queue-processing');
-            throw $e;
+        } catch (\Throwable $e) {
+            \Yii::info("Exception in InboxJob: " . $this->transaction_data['uuid'] . " : " . $e->getMessage(), 'queue-processing');
+            $queue->push(new self([
+                'transaction_data' => $this->transaction_data,
+                'sync_timestamp' => $this->sync_timestamp,
+            ]));
         }
     }
 
