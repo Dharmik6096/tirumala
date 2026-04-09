@@ -50,7 +50,7 @@ class InboxParseService {
                         $process_record = TRUE;
                         $delete = [];
                         $childModel = [];
-                        $delete [] = $transaction_data;
+                        $delete[] = $transaction_data;
                         $syncLogModel = new TblSyncLog();
                         $syncLogModel->setAttributes($transaction_data->attributes);
                         $childModel[] = $syncLogModel;
@@ -126,6 +126,14 @@ class InboxParseService {
                                 if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
                                     $model->scenario = 'androidsync_coll';
                                     if (!$model->validate()) {
+                                        if ($is_delete) {
+                                            $errorCount++;
+                                            $transaction_data->error_log = Json::encode($model->getErrors());
+                                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                            $transaction_data->data_post_status = 3;
+                                            $transaction_data->save();
+                                            continue;
+                                        }
                                         $setData = $model;
                                         if ($transaction_data->table_name == 'tbl_bmc_collection') {
                                             $model = new TblBmcCollectionNotExist();
@@ -137,8 +145,6 @@ class InboxParseService {
                                             $model->send_status = 0;
                                             $model->data_inserted_from = 'androidsync';
                                         }
-                                        $delete = [];
-                                        $delete[] = $transaction_data;
                                     } else {
                                         if ($transaction_data->table_name == 'tbl_bmc_collection') {
                                             if ($model->hasAttribute('vehicle_no') && !empty($model->vehicle_no)) {
