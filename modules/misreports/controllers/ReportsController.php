@@ -21,6 +21,8 @@ use PHPExcel_Cell_DataType;
  */
 class ReportsController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['download-data-readonly'];
+
     /**
      * Renders the index view for the module
      * @return string
@@ -1270,6 +1272,8 @@ class ReportsController extends \app\controllers\ChildController {
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
+            } else if (isset($this->data['excel_readonly'])) {
+                $this->downloadDataReadonly($this->output, $this->data, $this->label);
             } else {
                 $this->downloadData($controls);
             }
@@ -2306,6 +2310,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBankVerificationReport() {
+        $this->report = 'BankVerificationReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2318,7 +2327,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'excel_readonly' => TRUE
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2327,7 +2337,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'excel_readonly' => TRUE
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2336,7 +2347,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
 //                'download_day_differe' => '15'
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'excel_readonly' => TRUE
             ],
             'MemberConsolidatedWithBank' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2346,7 +2358,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'to_decrypt' => ['aadhar_no'],
                 'to_text' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-                'bkg_export' => TRUE
+                'bkg_export' => TRUE,
+                'excel_readonly' => TRUE
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -5111,6 +5124,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Complaint Status Report',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
             ],
+            'BankVerificationReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:string,master_type:static:master_type',
+                'to_decrypt' => ['aadhaar_no'],
+                'sp_name' => 'portal_master_data_verification',
+                'scenario' => 'BankVerificationReport',
+                'title' => 'Bank Verification Report',
+                'excel_readonly' => TRUE,
+                'editable_columns' => ['is_verified'],
+                'extension' => 'xlsx',
+            ],
         ];
         return $label[$l];
     }
@@ -5470,6 +5493,47 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMisLiveReportGeneration() {
         
+    }
+
+    public static function downloadDataReadonly($output, $data, $label = '') {
+        $ext = !empty($data['extension']) ? $data['extension'] : 'xls';
+        $mime = ($ext == 'xlsx') ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.ms-excel';
+        $header = [
+            'mime' => $mime,
+            'extension' => $ext,
+            'writer' => 'Excel2007',
+        ];
+
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $file_header = !empty($output) ? array_keys($output[0]) : [];
+
+        $sheet->fromArray($file_header, NULL, 'A1');
+        $sheet->fromArray($output, NULL, 'A2');
+
+        $excelPassword = 'MyStrongPassword2025';
+        $sheet->getProtection()->setSheet(true)->setSelectLockedCells(true)->setPassword($excelPassword);
+        $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$sheet->getHighestRow()}")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+        foreach ($file_header as $i => $key) {
+            $colLetter = \PHPExcel_Cell::stringFromColumnIndex($i);
+            $columnData = array_column($output, $key);
+            $columnData[] = $key;
+            $maxLength = !empty($columnData) ? max(array_map('strlen', $columnData)) : 10;
+            $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
+            if (isset($data['editable_columns']) && in_array($key, $data['editable_columns'])) {
+                $sheet->getStyle($colLetter . '2:' . $colLetter . $sheet->getHighestRow())->getProtection()->setLocked(\PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+            }
+        }
+        $labelT = !empty($label) ? $label : $data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'];
+        header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
 }

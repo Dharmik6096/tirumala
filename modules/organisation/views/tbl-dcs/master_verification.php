@@ -1,5 +1,7 @@
 <?php
 $this->title = Yii::t('app', 'Bank Verification');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Bank Verification Report', '//misreports/reports/bank-verification-report', '', 'btn btn-danger btn-block', '<i class="fa fa-file-pdf-o"></i>');
+$this->params['menu'][] = Yii::$app->controls->import('bank-verification', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

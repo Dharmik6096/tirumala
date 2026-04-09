@@ -63,9 +63,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
     if (!empty($result) && isset($data['kartik_grid_view'])) {
         $reportClass = '';
     }
+    $disableCopyClass = '';
+    if (!empty($data) && !empty($data['excel_readonly'])) {
+        $disableCopyClass = 'disable-copy-class';
+    }
     ?>
     <div class="panel-body padding-0">
-        <div class="<?= $reportClass ?> not_ellipsis">
+        <div class="<?= $reportClass ?> not_ellipsis <?= $disableCopyClass ?>">
             <div class="modal modal-default fade" id="mis_report_search_filter" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -299,7 +303,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -637,7 +641,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
             <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class ?>">
                 <div class="btn-login btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php if (!empty($result) && $model->output_type != 'BACKGROUND') {
+                <?php if (!empty($result) && $model->output_type != 'BACKGROUND' && empty($data['excel_readonly'])) {
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="far fa-file-excel"></i></div>
                     <?php }
