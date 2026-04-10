@@ -31,9 +31,9 @@ class DataExchangeService {
                     if (!isset($groups[$eventId])) {
                         $groups[$eventId] = [
                             'metadata' => [
-                                "dcsNo" => (string) $record['dcsNo'],
-                                "collectionDate" => (string) $record['collectionDate'],
-                                "shift" => (string) $record['shift'],
+                                "dcsNo" => (string)$record['dcsNo'],
+                                "collectionDate" => (string)$record['collectionDate'],
+                                "shift" => (string)$record['shift'],
                                 "entity" => "COLLECTION",
                                 "eventId" => (string) $record['eventId']
                             ],
@@ -112,4 +112,61 @@ class DataExchangeService {
         }
     }
 
+    public function processFarmerDataSync()
+    {
+        try {
+            $configModel = new TblDataExchangeConfig();
+            $configModel->api_type = 'FARMER_SYNC';
+
+            $configs = $configModel->getDataExchangeConfig();
+            if (empty($configs) || !isset($configs[0])) {
+                return false;
+            }
+            $config = $configs[0];
+            $currentDate =  strtotime(date('Y-m-d H:i:s'));
+            $futureDate = $currentDate + ($config['interval'] * 60);
+            $formatDate = date("Y-m-d H:i:s", $futureDate);
+            $config->updateAll(['last_execution' => date('Y-m-d H:i:s'), 'next_execution' => $formatDate],['data_exchange_code' => $config->data_exchange_code]);
+            $params = [];
+            $records = Yii::$app->general->getSpData($config->sp_name, $params, FALSE);
+            if (empty($records)) {
+                return false;
+            }
+            foreach ($records as $record) {
+                $sapVendorCode = isset($record['sap_vendor_code']) ? $record['sap_vendor_code'] : null;
+                $dcsCode = isset($record['dcs_code']) ? $record['dcs_code'] : null;
+                try {
+                    $api = new WebApi();
+                    $api->serverUrl = $config->request_url;
+                    $api->authentication = false;
+                    $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
+                    $api->body = json_encode(["dcsNo" => (string)$sapVendorCode]);
+
+                    $responseData = $api->ExchangeData();
+                    if (isset($responseData->status) && $responseData->status == 'success' && !empty($responseData->data)) {
+                        foreach ($responseData->data as $farmer) {
+                            $frNo = $farmer->frNo;
+                            $frNoLastDigits = substr($frNo, -4);
+                            $generatedFarmerCode = $dcsCode . $frNoLastDigits;
+
+                            $updateParams = [
+                                $generatedFarmerCode,
+                                $farmer->frName,
+                                $farmer->frPhoneNo,
+                                $sapVendorCode
+                            ];
+                            Yii::$app->general->getSpData('sp_data_exchange_update_member_info', $updateParams, TRUE);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    Yii::error("Farmer Sync Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
+                    return false;
+                }
+            }
+            return true;
+        } catch (\Throwable $e) {
+            Yii::error("Farmer Sync Fatal Error: " . $e->getMessage());
+            return false;
+        }
+    }
 }
