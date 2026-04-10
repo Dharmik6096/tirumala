@@ -90,6 +90,8 @@ echo GhostMenu::widget([
 //                            ['label' => Yii::t('app', 'SubLedger Opening Balance'), 'url' => ['/dcsaccounting/tbl-sub-ledger-opening-balance/index'], 'active' => ($cntrl == 'tbl-sub-ledger-opening-balance')],
                         ['label' => Yii::t('app', 'Dcs Year Closing'), 'url' => ['/dcsaccounting/tbl-dcs-year-closing/index'], 'active' => ($cntrl == 'tbl-dcs-year-closing')],
                             ['label' => Yii::t('app', 'Account Posting'), 'url' => ['/dcsaccounting/tbl-account-posting/index'], 'active' => ($cntrl == 'tbl-account-posting')],
+                            ['label' => Yii::t('app', 'Coupon Balance'), 'url' => ['/dcsaccounting/tbl-coupon-balance/index'], 'active' => ($cntrl == 'tbl-coupon-balance')],
+                            ['label' => Yii::t('app', 'Coupon Issue'), 'url' => ['/dcsaccounting/tbl-coupon-issue/index'], 'active' => ($cntrl == 'tbl-coupon-issue')],
                     ]
                 ],
                     ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],

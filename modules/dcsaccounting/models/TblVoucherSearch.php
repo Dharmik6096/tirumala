@@ -17,7 +17,7 @@ class TblVoucherSearch extends TblVoucher {
      */
     public function rules() {
         return [
-                [['auto_posted', 'cancelled', 'originating_type', 'voucher_code', 'bill_date', 'voucher_type_code', 'voucher_date', 'bill_no', 'remarks', 'dock_code', 'financial_year_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['auto_posted', 'cancelled', 'originating_type', 'voucher_code', 'bill_date', 'voucher_type_code', 'voucher_date', 'bill_no', 'remarks', 'dock_code', 'financial_year_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'originating_org_code', 'originating_org_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'process_reference', 'process_name'], 'safe'],
         ];
     }
 
@@ -69,7 +69,9 @@ class TblVoucherSearch extends TblVoucher {
                 ->andFilterWhere(['like', 'tbl_voucher.bill_no', $this->bill_no])
                 ->andFilterWhere(['like', 'tbl_voucher.remarks', $this->remarks])
                 ->andFilterWhere(['like', 'tbl_voucher.dock_code', $this->dock_code])
-                ->andFilterWhere(['like', 'tbl_voucher.financial_year_code', $this->financial_year_code]);
+                ->andFilterWhere(['like', 'tbl_voucher.financial_year_code', $this->financial_year_code])
+                ->andFilterWhere(['like', 'tbl_voucher.process_reference', $this->process_reference])
+                ->andFilterWhere(['like', 'tbl_voucher.process_name', $this->process_name]);
 
         return $dataProvider;
     }
