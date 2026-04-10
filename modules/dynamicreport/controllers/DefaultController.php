@@ -10,6 +10,7 @@ use yii\data\ArrayDataProvider;
 use yii\helpers\Json;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use app\modules\usermanagement\models\User;
+use app\modules\misreports\controllers\ReportsController;
 
 /**
  * Default controller for the `dynamicreport` module
@@ -133,7 +134,11 @@ class DefaultController extends \app\controllers\ChildController {
             }
         }
         if (isset($model->output_type) && $model->output_type == 'DOWNLOAD') {
-            $this->downloadData();
+            if (isset($config['excel_readonly']) && $config['excel_readonly']) {
+                ReportsController::downloadDataReadonly($this->output, $this->data);
+            } else {
+                $this->downloadData();
+            }
         }
     }
 
