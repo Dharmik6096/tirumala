@@ -15,11 +15,14 @@ use app\modules\bkgprocess\models\TblFtpTxnLog;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use app\modules\usermanagement\models\User;
 use PHPExcel_Cell_DataType;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 /**
  * Default controller for the `JasperReports` module
  */
 class ReportsController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['download-data-readonly'];
 
     /**
      * Renders the index view for the module
@@ -1021,7 +1024,7 @@ class ReportsController extends \app\controllers\ChildController {
         $ftp_model = new TblFtpTxnLog();
 
         $ftp_model->exportData($data_array, $title, $output, $bmc);
-//        }
+        //        }
     }
 
     /* MIS Call */
@@ -1131,8 +1134,10 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if ($invalid) {
                 $this->message = !empty($this->data['message']) ? $this->data['message'] : '';
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => $this->message]);
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => $this->message
+                ]);
             }
         }
 
@@ -1183,12 +1188,12 @@ class ReportsController extends \app\controllers\ChildController {
             ];
 
             if (!empty($this->data['kartik_grid_view'])) {
-//                $dataPro['pagination'] = ['pageSize' => 500, 'defaultPageSize' => 500];
+                //                $dataPro['pagination'] = ['pageSize' => 500, 'defaultPageSize' => 500];
             } else {
                 $dataPro['pagination'] = false;
             }
             $this->dataProvider = new ArrayDataProvider($dataPro);
-//            $this->dataProvider->refresh();
+            //            $this->dataProvider->refresh();
 //            if (!empty($this->data['kartik_grid_view'])) {
 //                $this->dataProvider->pagination->pageSize = 10;
 //            }
@@ -1270,6 +1275,8 @@ class ReportsController extends \app\controllers\ChildController {
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
+            } else if (isset($this->data['excel_readonly'])) {
+                $this->downloadDataReadonly($this->output, $this->data, $this->label);
             } else {
                 $this->downloadData($controls);
             }
@@ -2306,11 +2313,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBankVerificationReport() {
+        $this->report = 'BankVerificationReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
         $label = [
-//101
+            //101
             'MemberDailyCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_collection_day_wise_report',
@@ -2799,7 +2811,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'to_text' => ['bank_account_no', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
-//                'output_type' => FALSE
+            //                'output_type' => FALSE
             ],
             'MemberMaster' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,dcs_code:route_code,member_code',
@@ -2810,7 +2822,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'to_text' => ['bank_account_no', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
-//                'output_type' => FALSE
+            //                'output_type' => FALSE
             ],
             'SapStatusReport' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3172,7 +3184,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_milk_collection_list',
                 'scenario' => 'MilkCollectionData',
                 'title' => '108 - Milk Collection Data',
-//                'download_day_differe' => '15'
+            //                'download_day_differe' => '15'
             ],
             'BmcCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -3471,14 +3483,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'VmReportSap' => [
-//                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
+                //                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
                 'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
                 'sp_name' => 'mis_bmc_collection_vm',
                 'scenario' => 'SapReport',
                 'title' => 'SAP VM Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
                 'export_title' => true,
-//                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                //                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
                 'output_type' => false,
             ],
@@ -3489,7 +3501,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'SAP WQ Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
                 'export_title' => true,
-//                'message' => Yii::t('app', 'Sync of data is pending from device.'),
+                //                'message' => Yii::t('app', 'Sync of data is pending from device.'),
 //                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
                 'output_type' => false,
@@ -3915,21 +3927,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_are_wise_member_collection_passbook',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-//                'download_day_differe' => '15'
+            //                'download_day_differe' => '15'
             ],
             'MemberDailyCollectionRegion' => [
                 'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_are_wise_member_collection_day_report',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-//                'download_day_differe' => '15'
+            //                'download_day_differe' => '15'
             ],
             'MemberConsolidatedRegion' => [
                 'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_are_wise_member_collection_summary',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-//                'download_day_differe' => '15'
+            //                'download_day_differe' => '15'
             ],
             //102
             'DcsCollDateShiftSummaryRegion' => [
@@ -4128,7 +4140,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollectionCommon',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-//                'download_day_differe' => '15'
+                //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
             'MemberPassbookCommon' => [
@@ -4137,7 +4149,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollectionCommon',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-//                'download_day_differe' => '15'
+                //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
             'MemberConsolidatedCommon' => [
@@ -4146,7 +4158,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollectionCommon',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-//                'download_day_differe' => '15'
+                //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
             'DcsCollDateShiftSummaryCommon' => [
@@ -4288,7 +4300,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'to_text' => ['aadhaar_no', 'adhar_no', 'bank_account_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
-//                'output_type' => FALSE
+            //                'output_type' => FALSE
             ],
             'FieldStaffActivity' => [
                 'param' => 'union_code,state_code,region_code,area_code,user_code,from_date:string,to_date:string',
@@ -4490,7 +4502,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'ApprovedAttachmentDetails',
                 'report_type' => [Yii::t('app', 'tbl_member_provisional'), Yii::t('app', 'tbl_dcs_provisional'), Yii::t('app', 'tbl_customer_master_provisional')],
                 'title' => 'Approved Attachment Details',
-//                'append_link' => TRUE
+            //                'append_link' => TRUE
             ],
             'BmcCollectionRouteWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -5017,7 +5029,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollectionSecond',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-//                'download_day_differe' => '15'
+                //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
             'MemberPassbookSecond' => [
@@ -5026,7 +5038,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollectionSecond',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-//                'download_day_differe' => '15'
+                //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
             'MemberConsolidatedSecond' => [
@@ -5035,7 +5047,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollectionSecond',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-//                'download_day_differe' => '15'
+                //                'download_day_differe' => '15'
                 'bkg_export' => TRUE
             ],
             'MemberConsolidatedWithBankSecond' => [
@@ -5111,12 +5123,22 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Complaint Status Report',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
             ],
+            'BankVerificationReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,date:string,master_type:static:master_type',
+                'to_decrypt' => ['aadhaar_no'],
+                'sp_name' => 'portal_master_data_verification',
+                'scenario' => 'BankVerificationReport',
+                'title' => 'Bank Verification Report',
+                'excel_readonly' => TRUE,
+                'editable_columns' => ['is_verified'],
+                'extension' => 'xlsx',
+            ],
         ];
         return $label[$l];
     }
 
     public function downloadData($controls) {
-//        $extention = 'xls';
+        //        $extention = 'xls';
 //        $header = [
 //            'mime' => 'application/ms-excel',
 //            'extension' => $extention,
@@ -5211,7 +5233,7 @@ class ReportsController extends \app\controllers\ChildController {
         $objPHPExcel->removeSheetByIndex(0);
         $customWorksheet->fromArray($file_header, NULL, 'A1');
         $customWorksheet->fromArray($this->output, NULL, 'A2');
-//         $objPHPExcel = new Spreadsheet();
+        //         $objPHPExcel = new Spreadsheet();
 //         $sheet = $objPHPExcel->getActiveSheet();
 //         /* $objPHPExcel->getDefaultStyle()
 //           ->getNumberFormat()
@@ -5314,7 +5336,7 @@ class ReportsController extends \app\controllers\ChildController {
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
-//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+        //        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
@@ -5332,7 +5354,7 @@ class ReportsController extends \app\controllers\ChildController {
         ];
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
-//        header('Content-Type: ' . $header['mime']);
+        //        header('Content-Type: ' . $header['mime']);
 //        $str = "http://stagging.emilkpro.in:8199/export.aspx?q=sp_sap_milk_collection_data ";
         $str = "http://10.10.20.196:8199/export.aspx?q=sp_sap_milk_collection_data ";
         $str .= "'" . $model->union_code . "', ";
@@ -5349,19 +5371,19 @@ class ReportsController extends \app\controllers\ChildController {
         $savePath = '/web/sapFiles';
         Yii::$app->general->checkDirectory($dirPath . $savePath);
         $fp = fopen($dirPath . $savePath . '/' . $fileName, 'w+');
-//Here is the file we are downloading, replace spaces with %20
+        //Here is the file we are downloading, replace spaces with %20
         $ch = curl_init(str_replace(" ", "%20", $str));
         curl_setopt($ch, CURLOPT_TIMEOUT, 50);
-// write curl response to file
+        // write curl response to file
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-// get curl response
+        // get curl response
         curl_exec($ch);
         curl_close($ch);
         fclose($fp);
         header('Location: ' . $serverUrl . $savePath . '/' . $fileName);
         exit();
-//        $curl = curl_init();
+        //        $curl = curl_init();
 //
 //        curl_setopt_array($curl, array(
 //            CURLOPT_URL => $str,
@@ -5470,6 +5492,50 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMisLiveReportGeneration() {
         
+    }
+
+    public static function downloadDataReadonly($output, $data, $label = '') {
+        $ext = !empty($data['extension']) ? $data['extension'] : 'xls';
+        $mime = ($ext == 'xlsx') ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.ms-excel';
+        $header = [
+            'mime' => $mime,
+            'extension' => $ext,
+            'writer' => ($ext == 'xlsx') ? IOFactory::WRITER_XLSX : IOFactory::WRITER_XLS,
+        ];        
+        $objPHPExcel = new Spreadsheet();
+        $sheet = new Worksheet($objPHPExcel, 'Sheet1');
+        $file_header = !empty($output) ? array_keys($output[0]) : [];
+        $objPHPExcel->addSheet($sheet);
+        $objPHPExcel->removeSheetByIndex(0);
+        $sheet->fromArray($file_header, NULL, 'A1');
+        $sheet->fromArray($output, NULL, 'A2');
+        
+        $protection = $sheet->getProtection();
+        $protection->setPassword('MyStrongPassword2026');
+        $protection->setSheet(true);
+        $protection->setSelectLockedCells(true);
+        $protection->setSelectUnlockedCells(false);
+        $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$sheet->getHighestRow()}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
+        foreach ($file_header as $i => $key) {
+            $colLetter = Coordinate::stringFromColumnIndex($i + 1);
+            $columnData = array_column($output, $key);
+            $columnData[] = $key;
+            $maxLength = !empty($columnData) ? max(array_map('strlen', $columnData)) : 10;
+            $sheet->getColumnDimension($colLetter)->setWidth($maxLength + 6);
+            if (isset($data['editable_columns']) && in_array($key, $data['editable_columns'])) {
+                $sheet->getStyle($colLetter . '2:' . $colLetter . $sheet->getHighestRow())->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_UNPROTECTED);
+            }
+        }
+        $labelT = !empty($label) ? $label : $data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'];
+        header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
 }
