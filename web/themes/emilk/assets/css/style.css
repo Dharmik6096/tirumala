@@ -6395,4 +6395,10 @@ div#dashboardFarmerPopup {
     .doc-preview-card { flex: 1 0 100%; }
     .doc-preview-container { gap: 10px; padding: 10px; }
 }
-
+.disable-copy-class {
+    user-select: none;    
+    -webkit-user-select: none;
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    -webkit-touch-callout: none; 
+}
