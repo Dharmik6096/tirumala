@@ -41,7 +41,6 @@ class SchedulerController extends \yii\console\Controller {
         $dataExchangeService = new DataExchangeService();
         while (true) {
             try {
-                $dataExchangeService->processFarmerDataSync() ? sleep(20) : sleep(120);
                 $dataExchangeService->processComfedCollection() ? sleep(20) : sleep(120);
             } catch (\Throwable $ex) {
                 sleep(120);
