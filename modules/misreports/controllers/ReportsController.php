@@ -2329,9 +2329,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-                //                'download_day_differe' => '15'
-                'bkg_export' => TRUE,
-                'excel_readonly' => TRUE
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2339,9 +2338,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-                //                'download_day_differe' => '15'
-                'bkg_export' => TRUE,
-                'excel_readonly' => TRUE
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2349,9 +2347,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-                //                'download_day_differe' => '15'
-                'bkg_export' => TRUE,
-                'excel_readonly' => TRUE
+//                'download_day_differe' => '15'
+                'bkg_export' => TRUE
             ],
             'MemberConsolidatedWithBank' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2361,8 +2358,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'to_decrypt' => ['aadhar_no'],
                 'to_text' => ['aadhar_no'],
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated'), Yii::t('app', 'Consolidated With Bank')],
-                'bkg_export' => TRUE,
-                'excel_readonly' => TRUE
+                'bkg_export' => TRUE
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -5515,7 +5511,7 @@ class ReportsController extends \app\controllers\ChildController {
         $sheet->fromArray($output, NULL, 'A2');
         
         $protection = $sheet->getProtection();
-        $protection->setPassword('MyStrongPassword2025');
+        $protection->setPassword('MyStrongPassword2026');
         $protection->setSheet(true);
         $protection->setSelectLockedCells(true);
         $protection->setSelectUnlockedCells(false);
