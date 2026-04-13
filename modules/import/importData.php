@@ -208,6 +208,7 @@ class importData extends \yii\base\Module {
             'aadesh_master_applicability' => ['table_name' => 'tbl_aadesh_master_applicability', 'import_main_class' => 'BackGroundDataImportStrategy', 'fields' => 'bmc_code,applicable_for,applicable_code,aadesh_master_code,wef_date', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'importCsv', 'validate_length' => false],
             'member-payment-shortage-recovery-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,dcs_code,member_code,payment_cycle_from_date,recovery_amount', 'scenario' => 'member_payment_shortage_recovery', 'bkg_scenario' => 'member_payment_shortage_recovery', 'validate_length' => FALSE],
             'excess-fat-snf-master' => ['table_name' => 'tbl_excess_fat_snf_master', 'fields' => 'bmc_code,dcs_code,from_date,from_shift,to_date,to_shift,fat,snf', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
+            'sub-project-applicability' => ['table_name' => 'tbl_sub_project_applicability', 'fields' => 'bmc_code,dcs_code,sub_project_code,wef_date', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv', 'validate_length' => false],
         ];
         return $label[$l];
     }

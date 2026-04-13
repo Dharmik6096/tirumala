@@ -405,7 +405,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                                 </div>
                                                 <?php
                                             }
-                                            if (in_array($value, array('p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to'))) {
+                                            if (in_array($value, array('p_qty_from', 'p_qty_to', 'p_fat_from', 'p_fat_to', 'p_snf_from', 'p_snf_to', 'p_receipt_sequence_no'))) {
                                                 ?>
                                                 <div class="col-sm-3">
                                                     <?= $form->field($model, $value)->textInput(['maxlength' => true]) ?>
