@@ -22,7 +22,7 @@ class TblDataExchangeLogSearch extends TblDataExchangeLog {
     public function rules() {
         return [
                 [['f_union_code', 'f_plant_code', 'f_mcc_plant_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date', 'update_key', 'data_post_status', 'originating_type', 'process_name', 'process_code', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'resp_status', 'resp_desc', 'resp_msg', 'resp_param_1', 'resp_param_2', 'resp_param_3', 'resp_param_4', 'resp_param_5', 'resp_param_6'], 'safe'],
-                [['f_mcc_plant_code', 'f_plant_code', 'f_union_code', 'process_name', 'from_date', 'to_date', 'data_post_status'], 'required', 'on' => ['dataExcahnge']],
+                [['f_plant_code', 'f_union_code', 'process_name', 'from_date', 'to_date', 'data_post_status'], 'required', 'on' => ['dataExcahnge']],
                 [['to_date'], 'validateToDate', 'on' => ['dataExcahnge']],
         ];
     }

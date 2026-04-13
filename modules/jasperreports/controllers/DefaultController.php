@@ -1409,7 +1409,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'WeighSlip' => [
-                'param' => 'p_union_code,p_plant_code,p_from_date:string,p_to_date:string,p_product_type',
+                'param' => 'p_union_code,p_plant_code,p_from_date:string,p_to_date:string,p_product_type,p_receipt_sequence_no',
                 'path' => 'vsp/WeighSlip',
                 'scenario' => 'WeighSlip',
                 'title' => 'Weighment Slip',
