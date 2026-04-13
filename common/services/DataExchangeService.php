@@ -161,7 +161,7 @@ class DataExchangeService {
                                 'MemberCode'    => $generatedFarmerCode,
                                 'MemberName'    => $farmer->frName,
                                 'MobileNo'      => $farmer->frPhoneNo,
-                                'SapVendorCode' => $sapVendorCode
+                                'SapVendorCode' => $farmer->frNo
                             ];
                         }
                         if (!empty($farmerCollection)) {
@@ -170,13 +170,13 @@ class DataExchangeService {
                         }
                     }
                 } catch (Throwable $e) {
-                    Yii::error("API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
+                    \Yii::error("API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
                     continue;
                 }
             }
             return true;
         } catch (Throwable $e) {
-            Yii::error("Farmer Sync Fatal Error: " . $e->getMessage());
+            \Yii::error("Farmer Sync Fatal Error: " . $e->getMessage());
             return false;
         }
     }
