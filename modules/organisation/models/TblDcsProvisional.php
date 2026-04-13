@@ -317,7 +317,6 @@ class TblDcsProvisional extends ChildModel {
             }, 'skipOnEmpty' => false, 'on' => ['approveDcs']],
             [['dcs_code_ex'], 'required', 'on' => ['approveDcs']],
             [['gst_no'], 'unique'],
-            [['is_bmc'], 'unique', 'targetAttribute' => ['is_bmc', 'bmc_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) { return $model->is_bmc && $model->isAttributeChanged('is_bmc', FALSE); }],
             [['gst_no', 'sap_vendor_code', 'ref_code', 'is_bmc'], 'validateDcsUniqueness'],
             [['dcs_code_ex'], 'checkValid'],
             [['aadhaar_no'], 'validateAdharNo'],
@@ -711,7 +710,7 @@ class TblDcsProvisional extends ChildModel {
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code, Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInProvisional->dcs_provisional_code . ', Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
                 return false;
             }
         }
@@ -748,7 +747,7 @@ class TblDcsProvisional extends ChildModel {
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code, Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
+                $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Provisional ' . Yii::t('app', 'DCS') . ' - Provisional ' . Yii::t('app', 'DCS') . ' Code : ' . $existsInProvisional->dcs_provisional_code . ', Provisional ' . Yii::t('app', 'DCS') . ' Name : ' . $existsInProvisional->dcs_name));
                 return false;
             }
         }
@@ -774,7 +773,7 @@ class TblDcsProvisional extends ChildModel {
             }
             $existsInProvisional = $this->find()->where(['is_active' => 1])
                     ->andWhere(['or', ['aadhaar_no' => $this->$attribute], ['aadhaar_no' => $encryptedAdharNo]])
-                    ->andWhere(['not in', 'lower(status)', ['reject']]);
+                    ->andWhere(['not in', 'lower(status)', ['reject','pending']]);
             if (!empty($this->dcs_provisional_code)) {
                 $existsInProvisional->andWhere(['<>', 'dcs_provisional_code', $this->dcs_provisional_code]);
             }
@@ -832,7 +831,7 @@ class TblDcsProvisional extends ChildModel {
 
     public function validateDcsUniqueness($attribute, $params) {
         if (!empty($this->$attribute)) {
-            $queryProv = TblDcsProvisional::find()->where([$attribute => $this->$attribute]);
+            $queryProv = TblDcsProvisional::find()->where([$attribute => $this->$attribute])->andWhere(['not in', 'lower(status)', ['reject', 'pending']]);
 
             if ($attribute == 'sap_vendor_code' || $attribute == 'ref_code') {
                 $queryProv->andWhere(['union_code' => $this->union_code]);

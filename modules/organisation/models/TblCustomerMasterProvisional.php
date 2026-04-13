@@ -210,6 +210,7 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
                 [['aadhaar_no'], 'validateAdharNo', 'on' => ['createFront', 'updateFront', 'approve']],
                 [['customer_code_ex'], 'checkExistingExCode', 'on' => ['createFront', 'updateFront', 'approve']],
+                [['ref_code'], 'checkExistingRefCode', 'on' => ['createFront', 'updateFront', 'approve']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblCustomerMaster', $this->form_validation_type);
         $client_rules1 = Yii::$app->customvalidation->getRules('TblContactDetails', 'customer-create');
@@ -422,7 +423,7 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
             $existsInProvisional = $existsInProvisional->one();
 
             if ($existsInProvisional) {
-                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code, Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Provisional ' . Yii::t('app', 'Customer') . ' - Provisional ' . Yii::t('app', 'Customer') . ' Code : ' . $existsInProvisional->customer_provisional_code . ', Provisional ' . Yii::t('app', 'Customer') . ' Name : ' . $existsInProvisional->customer_name));
                 return false;
             }
 
@@ -588,6 +589,39 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
 
             if ($existsInProvisional) {
                 $this->addError($attribute, Yii::t('app/validation', 'Customer Code Ex already exists in Provisional Customer - Provisional Code : ' . $existsInProvisional->customer_provisional_code . ', Name : ' . $existsInProvisional->customer_name));
+                return false;
+            }
+        }
+    }
+
+    public function checkExistingRefCode($attribute, $params) {
+        $code = $this->$attribute;
+        if (!empty($code)) {
+            $existsInCustomer = TblCustomerMaster::find()->select(['customer_code', 'customer_name'])->where(['is_active' => 1])
+                    ->andWhere(['ref_code' => $code]);
+            if (!empty($this->customer_code)) {
+                $existsInCustomer->andWhere(['<>', 'customer_code', $this->customer_code]);
+            }
+            $existsInCustomer = $existsInCustomer->one();
+
+            if ($existsInCustomer) {
+                $this->addError($attribute, Yii::t('app/validation', 'Code already exists in Customer Master - Customer Code : ' . $existsInCustomer->customer_code . ', Name : ' . $existsInCustomer->customer_name));
+                return false;
+            }
+
+            $existsInProvisional = $this->find()
+                    ->andWhere(['ref_code' => $code])
+                    ->andWhere(['not in', 'lower(status)', ['reject', 'pending']]);
+            if (!empty($this->customer_provisional_code)) {
+                $existsInProvisional->andWhere(['<>', 'customer_provisional_code', $this->customer_provisional_code]);
+            }
+            if (!empty($this->customer_code)) {
+                $existsInProvisional->andWhere(['<>', 'customer_code', $this->customer_code]);
+            }
+            $existsInProvisional = $existsInProvisional->one();
+
+            if ($existsInProvisional) {
+                $this->addError($attribute, Yii::t('app/validation', 'Code already exists in Provisional Customer - Provisional Code : ' . $existsInProvisional->customer_provisional_code . ', Name : ' . $existsInProvisional->customer_name));
                 return false;
             }
         }
