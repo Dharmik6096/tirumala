@@ -13,7 +13,7 @@ class DataExchangeService {
         try {
             $configModel = new TblDataExchangeConfig();
             $configModel->api_type = 'COMFED';
-            $configs = $configModel->getDataExchangeConfig(1);
+            $configs = $configModel->getDataExchangeConfig();
 
             if (empty($configs)) {
                 return false;
@@ -164,15 +164,15 @@ class DataExchangeService {
                                 'SapVendorCode' => $sapVendorCode
                             ];
                         }
+                        if (!empty($farmerCollection)) {
+                            $farmerData[] = json_encode($farmerCollection);
+                            Yii::$app->general->getSpData('sp_data_exchange_update_member_info', $farmerData, TRUE);
+                        }
                     }
                 } catch (Throwable $e) {
                     Yii::error("API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
                     continue;
                 }
-            }
-            if (!empty($farmerCollection)) {
-                $farmerData[] = json_encode($farmerCollection);
-                Yii::$app->general->getSpData('sp_data_exchange_update_member_info', $farmerData, TRUE);
             }
             return true;
         } catch (Throwable $e) {
