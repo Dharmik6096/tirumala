@@ -23,7 +23,7 @@ class Path extends Component {
             'TblBlocksHistory', 'TblBlocks', 'TblBlocksSearch',
             'TblSubDistrictsHistory', 'TblSubDistricts', 'TblSubDistrictsSearch',
             'TblHamletsHistory', 'TblHamlets', 'TblHamletsSearch',
-            'TblDistrictsHistory', 'TblDistricts', 'TblDistrictsSearch', 'HamletImport', 'TblArea', 'TblRegion', 'TblAreaBmcMapping'],
+            'TblDistrictsHistory', 'TblDistricts', 'TblDistrictsSearch', 'HamletImport', 'TblArea', 'TblRegion', 'TblAreaBmcMapping', 'TblProject', 'TblProjectHistory', 'TblSubProject', 'TblSubProjectHistory', 'TblProjectSearch', 'TblSubProjectSearch', 'TblSubProjectApplicability', 'TblSubProjectApplicabilityHistory', 'TblSubProjectApplicabilitySearch'],
         '\\app\modules\globalmaster\models\\' =>
             ['TblDcsTypes', 'TblDcsTypesHistory',
             'TblCasteCategory', 'TblCasteCategoryHistory', 'TblCapacity',
