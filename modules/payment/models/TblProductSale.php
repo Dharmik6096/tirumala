@@ -443,7 +443,7 @@ class TblProductSale extends \app\models\ChildModel {
             $model->amount_due = !empty($model->amount_due) ? $model->amount_due : 0;
             $instAmount = floatval($model->amount_due / $no);
             $ai = 1;
-            if (!empty($model->hasAttribute('originating_type') && $model->originating_type == 25)) {
+            if (!empty($model->originating_type) && ($model->originating_type != 25)) {
                 for ($i = 0; $i < $no; $i++) {
                     $installmentModel = new TblSaleInstallments();
                     $installmentModel->product_sale_code = $model->product_sale_code;
