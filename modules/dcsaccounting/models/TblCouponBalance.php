@@ -69,7 +69,7 @@ class TblCouponBalance extends \app\models\ChildModel {
             'balance' => Yii::t('app', 'Balance'),
             'consumer_code' => Yii::t('app', 'Consumer Code'),
             'consumer_type' => Yii::t('app', 'Consumer Type'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
