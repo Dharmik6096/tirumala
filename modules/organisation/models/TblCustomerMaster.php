@@ -141,6 +141,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
+                ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'bmc_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblCustomerMaster', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

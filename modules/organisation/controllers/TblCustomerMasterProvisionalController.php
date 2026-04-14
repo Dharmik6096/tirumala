@@ -244,6 +244,8 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                     $customerModel->approved_at = date('Y-m-d H:i:s');
                     $customerModel->approved_by = Yii::$app->user->identity->user_code;
                     $customerModel->customer_status = $customerCreationPendingForSapApproval ? 0 : 1;
+                } else if(strtolower($status) === 'reject'){
+                    $customerModel->scenario = 'reject';
                 }
 
                 $model_save[] = $customerModel;
@@ -269,8 +271,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
 
                     if ($transaction == 'customRedirect') {
 
-                        // if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
-                        if ($status == 'Approve') {
+                        if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
                             $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                             $customerDir = $baseDir . 'customer';
                             $proCustomerDir = $baseDir . 'provisional_customer';
