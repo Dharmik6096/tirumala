@@ -85,13 +85,12 @@ class InboxParseService {
                                         $history = $model_name . 'History';
                                         $historyModel = new $history();
                                         Yii::$app->operation->history($model, $historyModel, $is_delete ? 'DELETE' : 'UPDATE');
-                                        if (!empty($historyModel)) {
-                                            $childModel[] = $historyModel;
+                                        $childModel[] = $historyModel;
 
-                                            if ($is_delete) {
-                                                $delete[] = $model;
-                                            }
+                                        if ($is_delete) {
+                                            $delete[] = $model;
                                         }
+
                                         $model->setAttributes($json);
                                     }
                                 } else if ($is_delete) {
@@ -122,18 +121,6 @@ class InboxParseService {
 
                                 if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
                                     $model->setTransactionData($model, $json, $childModel);
-                                    if ($model->hasErrors()) {
-                                        $errorCount++;
-                                        $errors = [];
-                                        foreach ($model->getErrors() as $attr => $err) {
-                                            $errors[] = implode(", ", $err);
-                                        }
-                                        $transaction_data->error_log = implode("; ", $errors);
-                                        $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                                        $transaction_data->data_post_status = 3;
-                                        $transaction_data->save();
-                                        continue;
-                                    }
                                 }
                                 if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
                                     $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
