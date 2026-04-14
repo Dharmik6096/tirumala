@@ -6407,3 +6407,11 @@ div#dashboardFarmerPopup {
 .checkbox_padding_0 .form-check{
     padding-left: 0px !important
 }
+
+.disable-copy-class {
+    user-select: none;    
+    -webkit-user-select: none;
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    -webkit-touch-callout: none; 
+}

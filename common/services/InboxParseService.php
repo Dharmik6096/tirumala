@@ -50,7 +50,7 @@ class InboxParseService {
                         $process_record = TRUE;
                         $delete = [];
                         $childModel = [];
-                        $delete [] = $transaction_data;
+                        $delete[] = $transaction_data;
                         $syncLogModel = new TblSyncLog();
                         $syncLogModel->setAttributes($transaction_data->attributes);
                         $childModel[] = $syncLogModel;
@@ -72,7 +72,9 @@ class InboxParseService {
                             $model->setAttributes($json);
                             $unique_key = isset($tableWiseUniqueKeys[$transaction_data->table_name]) ? $tableWiseUniqueKeys[$transaction_data->table_name] : $unique_key;
 
-                            /* update record if already available */
+                            $is_delete = (strtoupper($transaction_data->operation) == 'DELETE');
+
+                            /* find record based on operation type */
                             if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
                                 $unique_value = $model->$unique_key;
                                 $model_count = $model->find()->where([$unique_key => $unique_value])->count();
@@ -83,12 +85,25 @@ class InboxParseService {
                                         $model = $model_data;
                                         $history = $model_name . 'History';
                                         $historyModel = new $history();
-                                        Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                        Yii::$app->operation->history($model, $historyModel, $is_delete ? 'DELETE' : 'UPDATE');
                                         $childModel[] = $historyModel;
+
+                                        if ($is_delete) {
+                                            $delete[] = $model;
+                                        }
                                         $model->setAttributes($json);
                                     }
+                                } else if ($is_delete) {
+                                    /* Record NOT found for delete */
+                                    $errorCount++;
+                                    $transaction_data->error_log = "Delete failed: Record not found for {$transaction_data->table_name} ({$unique_key} = {$unique_value})";
+                                    $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                    $transaction_data->data_post_status = 3;
+                                    $transaction_data->save();
+                                    continue;
                                 }
                             }
+
                             /* update record if already available */
                             $model->scenario = 'androidsync';
                             $model = Yii::$app->general->SetDataType($model);
@@ -111,6 +126,14 @@ class InboxParseService {
                                 if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
                                     $model->scenario = 'androidsync_coll';
                                     if (!$model->validate()) {
+                                        if ($is_delete) {
+                                            $errorCount++;
+                                            $transaction_data->error_log = Json::encode($model->getErrors());
+                                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                            $transaction_data->data_post_status = 3;
+                                            $transaction_data->save();
+                                            continue;
+                                        }
                                         $setData = $model;
                                         if ($transaction_data->table_name == 'tbl_bmc_collection') {
                                             $model = new TblBmcCollectionNotExist();
@@ -195,11 +218,12 @@ class InboxParseService {
                                 $masterSave = [];
                                 if ($process_record) {
                                     $masterSave[] = $model;
-                                    if(!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL'.$transaction_data->source_org_id.'AMCS'){
+                                    if (!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL' . $transaction_data->source_org_id . 'AMCS') {
                                         $transaction_data->generateSentBox($masterSave);
                                     }
                                 }
-                                $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
+                                $msg = $is_delete ? ['transactional data', 'delete'] : ['transactional data', 'create'];
+                                $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, $msg, true);
                                 if ($transaction != 'customRedirect') {
                                     $errorCount++;
                                     $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
@@ -240,10 +264,14 @@ class InboxParseService {
                         }
                     } catch (\Throwable $ex) {
                         $errorCount++;
-                        $transaction_data->error_log = 'Throwable Exception';
-                        $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                        $transaction_data->data_post_status = 3;
-                        $transaction_data->save();
+                        try {
+                            $transaction_data->error_log = 'Throwable Exception';
+                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->data_post_status = 3;
+                            $transaction_data->save();
+                        } catch (\Throwable $e) {
+                            
+                        }
                     }
                     $i++;
                 }
@@ -264,6 +292,7 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
+                
             }
         } catch (\Throwable $e) {
             try {
@@ -275,6 +304,7 @@ class InboxParseService {
                     $verifyCountModel->save();
                 }
             } catch (\Throwable $e) {
+                
             }
         }
         return true;

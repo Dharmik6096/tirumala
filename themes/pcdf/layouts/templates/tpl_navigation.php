@@ -1147,6 +1147,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Blocks'), 'url' => ['/geo/tbl-blocks/index'], 'active' => ($cntrl == 'tbl-blocks')],
                             ['label' => Yii::t('app', 'Region Master'), 'url' => ['/geo/tbl-region/index'], 'active' => ($cntrl == 'tbl-region')],
                             ['label' => Yii::t('app', 'Area Master'), 'url' => ['/geo/tbl-area/index'], 'active' => ($cntrl == 'tbl-area')],
+                            ['label' => Yii::t('app', 'Project'), 'url' => ['/geo/tbl-project/index'], 'active' => ($cntrl == 'tbl-project')],
+                            ['label' => Yii::t('app', 'Sub Project'), 'url' => ['/geo/tbl-sub-project/index'], 'active' => ($cntrl == 'tbl-sub-project')],
                     ],
                 ],
                     [
