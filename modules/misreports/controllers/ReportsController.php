@@ -5529,6 +5529,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         $labelT = !empty($label) ? $label : $data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
+        ob_start();
         header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
