@@ -29,7 +29,6 @@ class InboxParseService {
             $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
-            $configIndex = 0;
             $i = 1;
             if (!empty($modelData)) {
                 $version_ignore_tables = ['tbl_product_sale', 'tbl_product_sale_transaction'];
@@ -54,7 +53,6 @@ class InboxParseService {
                         $syncLogModel = new TblSyncLog();
                         $syncLogModel->setAttributes($transaction_data->attributes);
                         $childModel[] = $syncLogModel;
-                        $configIndex++;
                         if (in_array($transaction_data->table_name, $ignore_tables)) {
                             $process_record = FALSE;
                         } else if (in_array($transaction_data->table_name, $version_ignore_tables)) {
@@ -89,7 +87,6 @@ class InboxParseService {
                                         Yii::$app->operation->history($model, $historyModel, $is_delete ? 'DELETE' : 'UPDATE');
                                         if (!empty($historyModel)) {
                                             $childModel[] = $historyModel;
-                                            $configIndex++;
 
                                             if ($is_delete) {
                                                 $delete[] = $model;
@@ -118,17 +115,13 @@ class InboxParseService {
                                 }
                                 if ($model->hasAttribute('originating_type')) {
                                     $model->originating_type = 23;
+                                    if ($transaction_data->device_id == 'AMUL' . $transaction_data->source_org_id . 'AMCS') {
+                                        $model->originating_type = 25;
+                                    }
                                 }
 
                                 if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
-                                    if ($transaction_data->table_name == 'tbl_product_sale') {
-                                        $model->is_amcs_sale = ($transaction_data->device_id == 'AMUL' . $transaction_data->source_org_id . 'AMCS');
-                                    }
-                                    if ($transaction_data->table_name == 'tbl_dcs_payment_cycle_applicability') {
-                                        $model->setTransactionData($model, $json, $childModel, $configIndex);
-                                    } else {
-                                        $model->setTransactionData($model, $json, $childModel);
-                                    }
+                                    $model->setTransactionData($model, $json, $childModel);
                                     if ($model->hasErrors()) {
                                         $errorCount++;
                                         $errors = [];
@@ -239,7 +232,6 @@ class InboxParseService {
                                 }
                                 $generalModel = new GeneralModel();
                                 $masterSave = [];
-                                $autoKeyConfig = !empty($model->autoKeyConfig) ? $model->autoKeyConfig : [];
                                 if ($process_record) {
                                     $masterSave[] = $model;
                                     if (!empty($transaction_data->syncPriority) && $transaction_data->syncPriority->is_sentbox_entry == 1 && $transaction_data->device_id != 'AMUL' . $transaction_data->source_org_id . 'AMCS') {
@@ -247,12 +239,7 @@ class InboxParseService {
                                     }
                                 }
                                 $msg = $is_delete ? ['transactional data', 'delete'] : ['transactional data', 'create'];
-                                if (!empty($autoKeyConfig)) {
-                                    $allModels = array_merge($childModel, $masterSave);
-                                    $transaction = $generalModel->saveTransactionAutoIncForeignKey($allModels, $msg, $autoKeyConfig, $delete);
-                                } else {
-                                    $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, $msg, true);
-                                }
+                                $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, $msg, true);
                                 if ($transaction != 'customRedirect') {
                                     $errorCount++;
                                     $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';

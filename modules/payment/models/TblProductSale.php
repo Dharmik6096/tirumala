@@ -60,7 +60,6 @@ class TblProductSale extends \app\models\ChildModel {
     public $saveChildRecords = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock, $sap_batch_no, $product_stock_rate, $operation, $error_desc;
     public $calculateTax = TRUE;
-    public $is_amcs_sale = false;
 
     /**
      * @inheritdoc
@@ -93,14 +92,14 @@ class TblProductSale extends \app\models\ChildModel {
                 [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate', 'operation', 'error_desc', 'is_amcs_sale'], 'safe'],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit', 'sap_batch_no', 'is_cash_sale', 'product_stock_rate', 'operation', 'error_desc'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
                 [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
                 [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync', 'saleProductOnDispatch', 'productSaleImport', 'productSaleMemberImport']],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due', 'is_cash_sale'], 'default', 'value' => 0],
-//            [['is_installment'], 'integer'],
+            //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
 //            },'tooSmall'=>'You must check pay in installment to pay the due'],
@@ -120,7 +119,7 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-customer_type').val() == 'Member'; 
           }"],
-//            [['no_of_installment'], 'required','on'=>'payment','when'=>function(){
+            //            [['no_of_installment'], 'required','on'=>'payment','when'=>function(){
 //                return ($this->is_installment==1);
 //            },'message'=>'You must have atleast 1 installment to pay the due'],
             //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
@@ -243,7 +242,7 @@ class TblProductSale extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-//    public function getMemberCredit() {
+    //    public function getMemberCredit() {
 //        return $this->hasOne(TblMemberCreditLimit::className(), ['member_code' => 'member_code']);
 //    }
 //    public function getMemberCode() {
@@ -272,7 +271,7 @@ class TblProductSale extends \app\models\ChildModel {
         return new TblProductSaleQuery(get_called_class());
     }
 
-//    public function getCode() {
+    //    public function getCode() {
 //        $data = $this->find()->select(["MAX(CAST(product_sale_code AS INT)) as product_sale_code"])->where(['union_code' => $this->union_code])->one();
 //        return $data['product_sale_code'] + 1;
 //    }
@@ -282,7 +281,7 @@ class TblProductSale extends \app\models\ChildModel {
         $this->attributes = $jsonData;
         $this->product_sale_code = (string) Yii::$app->general->getCodeAutoIncrement($this);
         $this->dcs_code = $jsonData['dcs_code'];
-//        $this->member_code = $jsonData['member_code'];
+        //        $this->member_code = $jsonData['member_code'];
         $this->invoice_date = date('Y-m-d H:i:s');
         $this->other_amount = 0;
         $this->discount = 0;
@@ -311,7 +310,7 @@ class TblProductSale extends \app\models\ChildModel {
         return $this->find()->select(['product_sale_code', 'amount', 'amount_due', 'invoice_date',
                             'no_of_installment', 'is_installment',
                             'dcs_code', 'union_code'])
-//                        ->where(['member_code' => $this->member_code])
+                        //                        ->where(['member_code' => $this->member_code])
                         ->andWhere("invoice_date between '$from_date' and '$to_date' ")->asArray()->all();
     }
 
@@ -439,12 +438,12 @@ class TblProductSale extends \app\models\ChildModel {
         $appCycleAppModelData = $appCycleAppModel->getApplicablePaymentCycle($saleDate);
         if (!empty($model->payment_mode)) {
             $no = !empty($model->no_of_installment) ? ($model->no_of_installment) : 1;
-//            $cycle = !empty($appCycleAppModelData->payment_cycle_code) ? $appCycleAppModelData->payment_cycle_code : NULL;
+            //            $cycle = !empty($appCycleAppModelData->payment_cycle_code) ? $appCycleAppModelData->payment_cycle_code : NULL;
 //            $appCode = !empty($appCycleAppModelData->payment_cycle_applicabilty_code) ? $appCycleAppModelData->payment_cycle_applicabilty_code : NULL;
             $model->amount_due = !empty($model->amount_due) ? $model->amount_due : 0;
             $instAmount = floatval($model->amount_due / $no);
             $ai = 1;
-            if (empty($this->is_amcs_sale)) {
+            if (!empty($model->hasAttribute('originating_type') && $model->originating_type == 25)) {
                 for ($i = 0; $i < $no; $i++) {
                     $installmentModel = new TblSaleInstallments();
                     $installmentModel->product_sale_code = $model->product_sale_code;
@@ -465,7 +464,7 @@ class TblProductSale extends \app\models\ChildModel {
                     $paymentCycleDate = !empty($paymentCycleDate) && $paymentCycleDate != 'N/A' ? date('Y-m-d', strtotime($paymentCycleDate)) : NULL;
                     $installmentModel->installment_date = NULL; //$paymentCycleDate;
                     $childModel[] = $installmentModel;
-//                if (!empty($installmentModel->payment_cycle_code)) {
+                    //                if (!empty($installmentModel->payment_cycle_code)) {
 //                    $appCycleAppModel = new TblPaymentCycle();
 //                    $cycle = $appCycleAppModel->getNextCycleCode($installmentModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC', $appCode);
 //                }
@@ -531,7 +530,7 @@ class TblProductSale extends \app\models\ChildModel {
         $detailModel->quantity = $model->quantity;
         $detailModel->discount = $model->discount;
         $detailModel->import_union_config = $model->import_union_config;
-//        $this->loadRate($model, $detailModel);
+        //        $this->loadRate($model, $detailModel);
         if (!empty($detailModel->product_code) && !empty($model->customer_type) && !empty($model->customer_code)) {
             $date = !empty($model->invoice_date) ? date('Y-m-d', strtotime($model->invoice_date)) : date('Y-m-d');
             $memberRate = 0;
@@ -603,7 +602,7 @@ class TblProductSale extends \app\models\ChildModel {
         $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
         $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
         $this->createProductSaleData($model, $detailModel, $modelSave, $configModelData, $data, true);
-//        $data = $detailModel->productSaleCode;
+        //        $data = $detailModel->productSaleCode;
         $detailModel->scenario = 'SaleImport';
         if (!$detailModel->validate()) {
             $errors[] = $detailModel->getErrors();
@@ -682,7 +681,7 @@ class TblProductSale extends \app\models\ChildModel {
                     $rateWithTax = !empty($configModelData->sale_rate_with_tax) ? $configModelData->sale_rate_with_tax : 0;
                 }
                 $records[$key]['tax_code'] = $d->basic_tax_code;
-//                $records[$key]['tax_name'] = Yii::$app->general->getforeignkey($d->basicTaxCode, 'basic_tax_name');
+                //                $records[$key]['tax_name'] = Yii::$app->general->getforeignkey($d->basicTaxCode, 'basic_tax_name');
                 $records[$key]['tax_val'] = $d->percentage;
                 $records[$key]['operation'] = ($d->type == 0) ? 'Addition' : 'Substraction';
 
@@ -727,7 +726,7 @@ class TblProductSale extends \app\models\ChildModel {
                 (float) $totalAmount = $changeamount + $taxAmt; // var totalAmount = parseFloat(changeamount) + parseFloat(taxAmount);
                 $model->amount_due = $totalAmount; //$('#tblproductsale-amount_due').val(totalAmount.toFixed(0));
             } else {
-//                $totalAmt = $total; //var totalAmt = obj1 . total;
+                //                $totalAmt = $total; //var totalAmt = obj1 . total;
                 $taxAmt = $detailModel->tax_amount;
                 $discountValue = $model->discount;
                 $diffAmt = $total - $discountValue; //var diffAmt = totalAmt - discountValue;
