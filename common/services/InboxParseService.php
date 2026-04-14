@@ -29,7 +29,6 @@ class InboxParseService {
             $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
-
             $i = 1;
             if (!empty($modelData)) {
                 $version_ignore_tables = ['tbl_product_sale', 'tbl_product_sale_transaction'];
@@ -91,6 +90,7 @@ class InboxParseService {
                                         if ($is_delete) {
                                             $delete[] = $model;
                                         }
+
                                         $model->setAttributes($json);
                                     }
                                 } else if ($is_delete) {
@@ -114,6 +114,9 @@ class InboxParseService {
                                 }
                                 if ($model->hasAttribute('originating_type')) {
                                     $model->originating_type = 23;
+                                    if ($transaction_data->device_id == 'AMUL' . $transaction_data->source_org_id . 'AMCS') {
+                                        $model->originating_type = 25;
+                                    }
                                 }
 
                                 if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {

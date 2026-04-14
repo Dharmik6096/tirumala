@@ -14,6 +14,7 @@ $attribute = [
         ['attribute' => 'voucher_type_code', 'visible' => false, 'filter' => false],
         ['attribute' => 'voucher_type_name'],
         ['attribute' => 'local_name', 'filter' => false],
+        ['attribute' => 'ref_code'],
         ['attribute' => 'ledger_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->ledgerCode, 'ledger_name');
         }],

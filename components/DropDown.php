@@ -2442,6 +2442,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['Milk' => Yii::t('app', 'Milk'), 'Material' => Yii::t('app', 'Material')],
             ],
+            'account_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => [1 => Yii::t('app', 'Draft'), 2 => Yii::t('app', 'Posted')],
+            ],
+            'account_posting_type' => [
+                'name' => 'posting_type',
+                'prompt' => Yii::t('app', 'Select Posting Type'),
+                'data' => [1 => Yii::t('app', 'Consolidate'), 2 => Yii::t('app', 'Day'), 3 => Yii::t('app', 'Payment Cycle')],
+            ],
         ];
         return $records[$l];
     }
@@ -2604,6 +2614,7 @@ class DropDown extends Component {
             'Ledger_type' => ['name' => 'ledger_type_code', 'fields' => 'ledger_type_code,ledger_type_name,local_name', 'prompt' => 'Select Ledger Type', 'model' => 'TblLedgerTypes'],
             'Ledger_groups' => ['name' => 'ledger_group_code', 'fields' => 'ledger_group_code,ledger_group_name,local_name', 'prompt' => 'Select Ledger Group', 'model' => 'TblLedgerGroups'],
             'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
+            'voucher_types' => ['name' => 'voucher_type_code', 'fields' => 'voucher_type_code,voucher_type_name,local_name', 'prompt' => 'Select Voucher Types', 'model' => 'TblVoucherTypes'],
             'project' => ['name' => 'project_code', 'fields' => 'project_code,project_name', 'prompt' => 'Select Project', 'model' => 'TblProject'],
         ];
         return $label[$l];

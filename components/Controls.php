@@ -86,12 +86,12 @@ class Controls extends Component {
 //        echo $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
 //    }
 
-    public function checkTemplateBootstrap5($model, $form, $attribute = 'is_active', $class = '', $label = true, $inputClass = '') {
+    public function checkTemplateBootstrap5($model, $form, $attribute = 'is_active', $class = '', $label = true, $inputClass = '', $index = '') {
         $checkboxValue = (isset($model->{$attribute}) && $model->{$attribute} == 1) ? true : false;
-
-        echo $form->field($model, $attribute, ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",
-            'options' => ['class' => $class],
-        ])->checkbox(['checked' => $checkboxValue, 'class' => $inputClass, 'label' => !empty($label) ? $model->getAttributeLabel($attribute) : false]);
+        $attribute_name = !empty($index) ? "[$index]$attribute" : $attribute;
+        return $form->field($model, $attribute_name, ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",
+                    'options' => ['class' => $class],
+                ])->checkbox(['checked' => $checkboxValue, 'class' => $inputClass, 'label' => !empty($label) ? $model->getAttributeLabel($attribute) : false]);
     }
 
     public function import($flag, $view, $text = '', $fields = [], $appendId = 'SingleFile', $urlPermission = '') {

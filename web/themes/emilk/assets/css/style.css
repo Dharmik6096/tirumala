@@ -6395,6 +6395,19 @@ div#dashboardFarmerPopup {
     .doc-preview-card { flex: 1 0 100%; }
     .doc-preview-container { gap: 10px; padding: 10px; }
 }
+
+.mt5 {
+    margin-top: 5px !important;
+}
+
+.alignment_mapping .table > tbody > tr > td {
+    vertical-align: top !important;
+}
+
+.checkbox_padding_0 .form-check{
+    padding-left: 0px !important
+}
+
 .disable-copy-class {
     user-select: none;    
     -webkit-user-select: none;

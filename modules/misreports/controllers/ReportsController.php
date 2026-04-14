@@ -4779,7 +4779,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'ProcMisLotWiseDetails' => [
-                'param' => 'vehicle_code,trip_code:vehicle_code,trip_status,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'vehicle_code,trip_code:vehicle_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'proc_mis_lot_wise_details',
                 'scenario' => 'ProcMisLotWiseDetails',
                 'title' => 'Vehicle wise Quality Report',
@@ -5529,6 +5529,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         $labelT = !empty($label) ? $label : $data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
+        ob_start();
         header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');

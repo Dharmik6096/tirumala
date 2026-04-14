@@ -43,7 +43,7 @@ class TblVoucherSubLedger extends \app\models\ChildModel {
         return [
                 [['created_by', 'updated_by', 'sub_ledger_code', 'originating_org_code', 'originating_org_type', 'voucher_sub_ledger_code', 'narration', 'voucher_code', 'voucher_transaction_code', 'created_at', 'updated_at', 'credit_debit', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['voucher_sub_ledger_code'], 'required'],
-                [['amount'], 'number'],
+                [['amount'], 'number', 'except' => ['androidsync']],
         ];
     }
 

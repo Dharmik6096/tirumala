@@ -2,6 +2,9 @@
 
 use kartik\grid\GridView;
 use app\modules\usermanagement\components\GhostHtml;
+
+$grid_id = isset($grid_id) ? $grid_id : 'debit-voucher-transaction-list';
+$label = (isset($grid_id) && $grid_id == 'credit-voucher-transaction-list') ? 'Credit' : 'Debit';
 ?>
 
 <?php
@@ -9,18 +12,18 @@ use app\modules\usermanagement\components\GhostHtml;
 $attribute = [
         ['attribute' => 'ledger_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->ledgerCode, 'ledger_name');
-        }],
-    'amount',
-        ['attribute' => 'credit_debit',
+        }, 'filter' => false],
+        ['attribute' => 'amount', 'filter' => false],
+        ['attribute' => 'credit_debit', 'label' => $label,
         'value' => function ($model) {
             $data = Yii::$app->dropdown->getRecords('credit_debit')['data'];
             return isset($data[$model->credit_debit]) ? $data[$model->credit_debit] : '';
-        }],
-    'narration',
+        }, 'filter' => false],
+        ['attribute' => 'narration', 'filter' => false],
 ];
 
 $grid_option = [
-    'id' => 'voucher-transaction-list',
+    'id' => $grid_id,
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [

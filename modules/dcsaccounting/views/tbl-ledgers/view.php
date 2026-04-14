@@ -70,6 +70,14 @@ $this->title = Yii::$app->label->title('view', 'Ledger Detail');
                             ],
                         ],
                     ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget

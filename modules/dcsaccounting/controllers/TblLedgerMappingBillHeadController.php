@@ -45,33 +45,44 @@ class TblLedgerMappingBillHeadController extends ChildController {
             $postData = Yii::$app->request->post()['TblBillHead'];
             foreach ($postData as $billHeadCode => $data) {
                 $mapping_model = TblLedgerMappingBillHead::find()->where(['bill_head_code' => $billHeadCode])->one();
-                $isNew = false;
+                $isChanged = false;
+                $hasSubLedger = !empty($data['has_sub_ledger']) ? 1 : 0;
 
                 if (!empty($mapping_model)) {
-                    $isChanged = (
-                            $mapping_model->ledger_code != $data['ledger_code'] ||
-                            $mapping_model->has_sub_ledger != (!empty($data['has_sub_ledger']) ? 1 : 0) ||
-                            $mapping_model->credit_debit != $data['credit_debit']
-                            );
+                    $newLedgerCode = (string) ($data['ledger_code'] ?? '');
+                    $newCreditDebit = (string) ($data['credit_debit'] ?? '');
+                    $newHasSubLedger = (int) ($data['has_sub_ledger'] ?? 0);
 
-                    if ($isChanged) {
+                    $oldLedgerCode = (string) ($mapping_model->ledger_code ?? '');
+                    $oldCreditDebit = (string) ($mapping_model->credit_debit ?? '');
+                    $oldHasSubLedger = (int) ($mapping_model->has_sub_ledger ?? 0);
+
+                    if (
+                            $oldLedgerCode !== $newLedgerCode ||
+                            $oldHasSubLedger !== $newHasSubLedger ||
+                            $oldCreditDebit !== $newCreditDebit
+                    ) {
+                        $isChanged = true;
                         $mapingHistory = new TblLedgerMappingBillHeadHistory();
                         Yii::$app->operation->history($mapping_model, $mapingHistory, 'UPDATE');
                         $historyModel[] = $mapingHistory;
                     }
                 } else {
-                    $mapping_model = new TblLedgerMappingBillHead();
-                    $mapping_model->bill_head_code = $billHeadCode;
-                    $incCount++;
-                    $mapping_model->ledger_mapping_bill_head_code = Yii::$app->general->getCodeAutoIncrement($mapping_model, $incCount);
-                    $mapping_model->union_code = $data['union_code'];
-                    $isNew = true;
+                    if ((isset($data['ledger_code']) && $data['ledger_code'] !== '') || $hasSubLedger == 1 || (isset($data['credit_debit']) && $data['credit_debit'] !== '')) {
+                        $mapping_model = new TblLedgerMappingBillHead();
+                        $mapping_model->bill_head_code = $billHeadCode;
+                        $incCount++;
+                        $mapping_model->ledger_mapping_bill_head_code = Yii::$app->general->getCodeAutoIncrement($mapping_model, $incCount);
+                        $mapping_model->union_code = $data['union_code'];
+                    }
                 }
-                $mapping_model->has_sub_ledger = !empty($data['has_sub_ledger']) ? 1 : 0;
-                $mapping_model->credit_debit = $data['credit_debit'];
-                $mapping_model->ledger_code = $data['ledger_code'];
 
-                $save_model[] = $mapping_model;
+                if ($mapping_model && ($mapping_model->isNewRecord || $isChanged)) {
+                    $mapping_model->ledger_code = $data['ledger_code'];
+                    $mapping_model->has_sub_ledger = $hasSubLedger;
+                    $mapping_model->credit_debit = $data['credit_debit'];
+                    $save_model[] = $mapping_model;
+                }
             }
 
             if (!empty($save_model)) {
@@ -79,6 +90,9 @@ class TblLedgerMappingBillHeadController extends ChildController {
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
+            } else {
+                Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => 'No changes detected. Please update at least one mapping before saving.']);
+                return $this->redirect(Yii::$app->request->referrer);
             }
         }
 
