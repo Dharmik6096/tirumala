@@ -51,7 +51,6 @@ class GeneralModel {
         } else if ($name == 'saveTransactionAutoIncForeignKey') {
             switch (count($arguments)) {
                 case 3 : return $this->save3AutoIncForeignKey($arguments[0], $arguments[1], $arguments[2]);
-                case 4 : return $this->save3AutoIncForeignKeyWithDelete($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
             }
         } else if ($name == 'saveTransactionWithSp') {
             switch (count($arguments)) {
@@ -724,61 +723,6 @@ class GeneralModel {
             $transaction->rollback();
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
-            return false;
-        }
-    }
-
-    public function save3AutoIncForeignKeyWithDelete($model, $message, $auto_key_config, $deleteChild) {
-        $transaction = \Yii::$app->db->beginTransaction();
-        try {
-            $master = [];
-            foreach ($model as $m) {
-                $m_name = $m::className();
-                $m_name = explode("\\", $m_name);
-                $m_name = $m_name[count($m_name) - 1];
-                if (!empty($auto_key_config[$m_name])) {
-                    foreach ($auto_key_config[$m_name] as $key_config) {
-                        $m->{$key_config['self_key']} = $model[$key_config['parent_index']]->{$key_config['parent_key']};
-                    }
-                }
-                $master[] = $m->save();
-            }
-            if (!in_array(FALSE, $master)) {
-                foreach ($deleteChild as $m) {
-                    $master[] = $m->delete();
-                }
-            }
-            if (!in_array(FALSE, $master)) {
-                $transaction->commit();
-                if (!Yii::$app->request->isConsoleRequest) {
-                    Yii::$app->display->message(true, $message[0], $message[1]);
-                }
-                return 'customRedirect';
-            } else {
-                $child = new ChildModel();
-                foreach ($model as $m) {
-                    $child->decryptModel($m);
-                }
-                $transaction->rollback();
-                if (!Yii::$app->request->isConsoleRequest) {
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'Your transaction is not saved successfully']);
-                }
-                return 'customRender';
-            }
-        } catch (UserException $e) {
-            $transaction->rollback();
-            if (!Yii::$app->request->isConsoleRequest) {
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => $e->getMessage()]);
-            }
-            return false;
-        } catch (\yii\db\Exception $e) {
-            $transaction->rollback();
-            if (!Yii::$app->request->isConsoleRequest) {
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
-            }
             return false;
         }
     }
