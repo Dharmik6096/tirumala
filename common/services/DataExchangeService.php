@@ -139,8 +139,8 @@ class DataExchangeService {
             if (empty($records)) {
                 return false;
             }
-            $farmerCollection = [];
             foreach ($records as $record) {
+                $farmerCollection = [];
                 $sapVendorCode = isset($record['sap_vendor_code']) ? $record['sap_vendor_code'] : null;
                 $dcsCode = isset($record['dcs_code']) ? $record['dcs_code'] : null;
                 try {
