@@ -8,6 +8,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\dcsoperation\models\TblRateType;
 use app\modules\dcsoperation\models\TblRateGenerateMethod;
 use app\modules\collection\models\TblMilkCollection;
+use app\modules\payment\models\TblPaymentCycle;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 /**
  * This is the model class for table "tbl_dcs_payment_cycle_applicability".
@@ -32,6 +34,8 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
     public $rate_type;
     public $max_to_date;
     public $union_code;
+    public $saveChildRecords = TRUE;
+    public $autoKeyConfig = [];
 
     public static function tableName() {
         return 'tbl_dcs_payment_cycle_applicability';
@@ -42,12 +46,12 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code'], 'safe'],
-            [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
-            [['from_date', 'to_date', 'dcs_name', 'created_by', 'created_date'], 'safe'],
-            [['is_lock', 'data_lock'], 'integer'],
-            [['dcs_payment_cycle_code', 'data_lock_vsp'], 'safe'],
-            [['dcs_code'], 'required']
+                [['dcs_code', 'payment_cycle_code'], 'safe'],
+                [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
+                [['from_date', 'to_date', 'dcs_name', 'created_by', 'created_date'], 'safe'],
+                [['is_lock', 'data_lock'], 'integer'],
+                [['dcs_payment_cycle_code', 'data_lock_vsp'], 'safe'],
+                [['dcs_code'], 'required', 'on' => ['androidsync']]
         ];
     }
 
@@ -122,7 +126,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
     public function getPaymentCycleDcs($id) {
         $cycle = TblDcsPaymentCycle::findOne($id);
         $dcs = $this->find()->select(['dcs_code', 'dcs_payment_cycle_code'])->where(['or', ['between', 'from_date', $cycle->from_date, $cycle->to_date],
-                    ['between', 'to_date', $cycle->from_date, $cycle->to_date]])->all();
+                        ['between', 'to_date', $cycle->from_date, $cycle->to_date]])->all();
         return $dcs;
     }
 
@@ -142,7 +146,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
      * @return applicablity date for dropdown     * 
      */
     public function societyList($cycle) {
-//        $collection_data = TblMilkCollection::find()->select(['dcs_code'])->distinct()->all();
+        //        $collection_data = TblMilkCollection::find()->select(['dcs_code'])->distinct()->all();
 //        $collection_data = ArrayHelper::getColumn($collection_data, 'dcs_code');
         $condition = ['dcs_payment_cycle_code' => $cycle, 'tbl_dcs.is_active' => 1];
         $list = $this->find()->select(['tbl_dcs_payment_cycle_applicability.dcs_code as dcs_code', 'dcs_name', 'data_lock', 'data_lock_vsp'])
@@ -151,7 +155,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
                 ->asArray()
                 ->all();
 
-//        $processed = new TblMemberPayment();
+        //        $processed = new TblMemberPayment();
 //        $processed= $processed->find()->select(['dcs_code'])->where(['dcs_payment_cycle_code' => $cycle])->all();
 //        $processed = ArrayHelper::getColumn($processed, 'dcs_code');
         $processed = [];
@@ -166,7 +170,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
         ]);
         return ['processed' => $processed, 'list' => $list];
 
-//        return \yii\helpers\ArrayHelper::map($list, 'dcs_code', 'dcs_name');
+        //        return \yii\helpers\ArrayHelper::map($list, 'dcs_code', 'dcs_name');
     }
 
     /**
@@ -194,6 +198,59 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
                         ->andFilterWhere(['<=', 'from_date', $date])
                         ->andFilterWhere(['>=', 'to_date', $date])
                         ->one();
+    }
+
+    public function setTransactionData(&$model, $json, &$childModel, &$configIndex) {
+        $dcs = TblDcs::findOne(['dcs_code' => $model->dcs_code]);
+        if (!$dcs) {
+            $model->addError('dcs_code', "DCS not found.");
+            return;
+        }
+
+        $cycleModel = TblPaymentCycle::find()->where(['union_code' => $dcs->union_code, 'from_date' => $model->from_date, 'to_date' => $model->to_date])->one();
+
+        if (!$cycleModel) {
+            $cycleModel = new TblPaymentCycle();
+            $cycleModel->from_date = $model->from_date;
+            $cycleModel->to_date = $model->to_date;
+            $cycleModel->union_code = $dcs->union_code;
+            $cycleModel->is_active = 1;
+            $cycleModel->interval_value = 1;
+            $cycleModel->from_shift = isset($json['from_shift']) ? $json['from_shift'] : 1;
+            $cycleModel->to_shift = isset($json['to_shift']) ? $json['to_shift'] : 2;
+            $isNewCycle = true;
+        }
+        $appRecord = TblPaymentCycleApplicability::find()->where(['applicable_code' => $dcs->bmc_code, 'applicable_for' => 'BMC', 'applicable_type' => 'DCS'])
+                ->andWhere('((\'' . $model->from_date . '\' between from_date and to_date) OR (\'' . $model->to_date . '\' between from_date and to_date) OR (from_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\') OR (to_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\'))')
+                ->one();
+        if ($appRecord) {
+            $existingFrom = date('d-m-Y', strtotime($appRecord->from_date));
+            $existingTo = date('d-m-Y', strtotime($appRecord->to_date));
+            $errorMessage = "Already exists: The selected dates conflict with the period $existingFrom to $existingTo.";
+            $model->addError('dcs_code', $errorMessage);
+            return;
+        }
+
+        $newApp = new TblPaymentCycleApplicability();
+        $newApp->from_date = $model->from_date;
+        $newApp->to_date = $model->to_date;
+        $newApp->applicable_code = $dcs->bmc_code;
+        $newApp->applicable_for = 'BMC';
+        $newApp->applicable_type = 'DCS';
+
+        if (isset($isNewCycle)) {
+            $childModel[] = $cycleModel;
+            $this->autoKeyConfig = [
+                'TblPaymentCycleApplicability' => [['self_key' => 'payment_cycle_code', 'parent_index' => $configIndex, 'parent_key' => 'payment_cycle_code']],
+                'TblDcsPaymentCycleApplicability' => [['self_key' => 'payment_cycle_code', 'parent_index' => $configIndex, 'parent_key' => 'payment_cycle_code']]
+            ];
+            $configIndex++;
+            $childModel[] = $newApp;
+            $configIndex++;
+        } else {
+            $newApp->payment_cycle_code = $model->payment_cycle_code = $cycleModel->payment_cycle_code;
+            $childModel[] = $newApp;
+        }
     }
 
 }

@@ -112,6 +112,18 @@ $this->title = 'Voucher Detail View';
                             ],
                         ],
                     ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'process_reference',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
+                                'attribute' => 'process_name',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget
