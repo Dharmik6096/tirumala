@@ -35,7 +35,6 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
     public $max_to_date;
     public $union_code;
     public $saveChildRecords = TRUE;
-    public $autoKeyConfig = [];
 
     public static function tableName() {
         return 'tbl_dcs_payment_cycle_applicability';
@@ -200,7 +199,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function setTransactionData(&$model, $json, &$childModel, &$configIndex) {
+    public function setTransactionData(&$model, $json, &$childModel) {
         $dcs = TblDcs::findOne(['dcs_code' => $model->dcs_code]);
         if (!$dcs) {
             $model->addError('dcs_code', "DCS not found.");
@@ -218,7 +217,19 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
             $cycleModel->interval_value = 1;
             $cycleModel->from_shift = isset($json['from_shift']) ? $json['from_shift'] : 1;
             $cycleModel->to_shift = isset($json['to_shift']) ? $json['to_shift'] : 2;
-            $isNewCycle = true;
+            try {
+                if (!$cycleModel->save()) {
+                    $errors = [];
+                    foreach ($cycleModel->getErrors() as $attr => $err) {
+                        $errors[] = implode(", ", $err);
+                    }
+                    $model->addError('dcs_code', "Error saving Payment Cycle: " . implode("; ", $errors));
+                    return;
+                }
+            } catch (\Throwable $e) {
+                $model->addError('dcs_code', "Exception saving Payment Cycle: " . $e->getMessage());
+                return;
+            }
         }
         $appRecord = TblPaymentCycleApplicability::find()->where(['applicable_code' => $dcs->bmc_code, 'applicable_for' => 'BMC', 'applicable_type' => 'DCS'])
                 ->andWhere('((\'' . $model->from_date . '\' between from_date and to_date) OR (\'' . $model->to_date . '\' between from_date and to_date) OR (from_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\') OR (to_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\'))')
@@ -237,20 +248,9 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
         $newApp->applicable_code = $dcs->bmc_code;
         $newApp->applicable_for = 'BMC';
         $newApp->applicable_type = 'DCS';
-
-        if (isset($isNewCycle)) {
-            $childModel[] = $cycleModel;
-            $this->autoKeyConfig = [
-                'TblPaymentCycleApplicability' => [['self_key' => 'payment_cycle_code', 'parent_index' => $configIndex, 'parent_key' => 'payment_cycle_code']],
-                'TblDcsPaymentCycleApplicability' => [['self_key' => 'payment_cycle_code', 'parent_index' => $configIndex, 'parent_key' => 'payment_cycle_code']]
-            ];
-            $configIndex++;
-            $childModel[] = $newApp;
-            $configIndex++;
-        } else {
-            $newApp->payment_cycle_code = $model->payment_cycle_code = $cycleModel->payment_cycle_code;
-            $childModel[] = $newApp;
-        }
+        $newApp->payment_cycle_code = $model->payment_cycle_code = $cycleModel->payment_cycle_code;
+        $newApp->union_code = $cycleModel->union_code;
+        $childModel[] = $newApp;
     }
 
 }
