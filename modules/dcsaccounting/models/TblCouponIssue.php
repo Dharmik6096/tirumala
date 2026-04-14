@@ -76,7 +76,7 @@ class TblCouponIssue extends \app\models\ChildModel {
             'amount' => Yii::t('app', 'Amount'),
             'consumer_code' => Yii::t('app', 'Consumer Code'),
             'consumer_type' => Yii::t('app', 'Consumer Type'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
             'is_active' => Yii::t('app', 'Is Active'),
             'is_delete' => Yii::t('app', 'Is Delete'),
             'issue_date' => Yii::t('app', 'Issue Date'),
