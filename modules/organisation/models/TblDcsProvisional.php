@@ -190,7 +190,7 @@ class TblDcsProvisional extends ChildModel {
             [['status', 'dcs_code', 'milk_type_code', 'allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code', 'mapped_village_no', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'rate_flag', 'is_name_request', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'dpu_type', 'member_rate_code', 'is_live', 'is_single_farmer', 'default_milk_type', 'credit_sale_allow', 'auto_code', 'mfile_digit', 'is_chiller', 'antibiotic_check', 'is_security_cheque', 'originating_type', 'effective_date', 'registration_date', 'valid_from', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'DPUVersionNo', 'morning_kms', 'evening_kms', 'cheque_amount', 'address', 'dcs_name', 'gender_code', 'cheque_bank', 'security_return_date', 'security_return_amt', 'security_return_mode'], 'safe'],
             [['bank_account_no', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'upi_no', 'ccenter_code', 'center_code', 'vendor_code', 'sap_center_code', 'rate_chart_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'ts_code_m', 'ts_code_e', 'dob', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'provisional_from', 'is_aadhar_verify', 'is_bank_verify', 'is_approved', 'approved_at', 'approved_by'], 'safe'],
             [['contact_person', 'dcs_short_name', 'beneficiary_name', 'punch_line', 'department', 'firstname', 'lastname', 'surname', 'password', 'gender', 'account_type', 'cheque_number', 'dcs_code_ex', 'route_code', 'old_route_code', 'cutoff', 'lower_milk_type', 'cutoff_val', 'destination_code', 'branch_code', 'email', 'pincode', 'village_code', 'mcc_plant_code', 'plant_code', 'old_mcc_plant_code', 'registration_code', 'service_tax', 'tin_no', 'gst_no', 'fssi', 'fssi_expiry_date'], 'safe'],
-            [['bank_code', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'block_code', 'local_name', 'local_short_name', 'local_contact_person', 'logo_path', 'secretory_info', 'bank_name', 'branch_name', 'local_address', 'bmc_code', 'old_bmc_code', 'local_firstname', 'local_lastname', 'local_surname', 'ref_code', 'originating_org_code', 'originating_org_type', 'data_post_id', 'sap_vendor_code', 'voter_id', 'created_by', 'updated_by', 'ref_code'], 'safe'],
+            [['bank_code', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'block_code', 'local_name', 'local_short_name', 'local_contact_person', 'logo_path', 'secretory_info', 'bank_name', 'branch_name', 'local_address', 'bmc_code', 'old_bmc_code', 'local_firstname', 'local_lastname', 'local_surname', 'ref_code', 'originating_org_code', 'originating_org_type', 'data_post_id', 'sap_vendor_code', 'voter_id', 'created_by', 'updated_by'], 'safe'],
             [['street1', 'street2'], 'safe'],
             [['ifsc', 'pan_no', 'beneficiary_name', 'address'], 'trim'],
             [['is_security_cheque', 'is_approved', 'is_dispatch_mandate', 'is_live', 'credit_sale_allow', 'is_chiller', 'cutoff', 'morning_kms', 'evening_kms', 'is_bank_verify', 'is_aadhar_verify'], 'default', 'value' => 0],
@@ -200,33 +200,33 @@ class TblDcsProvisional extends ChildModel {
             [['is_active'], 'default', 'value' => 1],
             [['x_col1'], 'default', 'value' => '1#1'],
             [['cutoff_val'], 'default', 'value' => 0.1],
-            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'pincode', 'firstname', 'mobile_no', 'is_dispatch_mandate', 'union_code', 'dcs_name', 'bmc_code', 'ref_code', 'dcs_short_name', 'is_bmc', 'destination_type', 'dpu_type', 'plant_code', 'mcc_plant_code', 'dcs_type_code'], 'required'],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'pincode', 'firstname', 'mobile_no', 'is_dispatch_mandate', 'union_code', 'dcs_name', 'bmc_code', 'ref_code', 'dcs_short_name', 'is_bmc', 'destination_type', 'dpu_type', 'plant_code', 'mcc_plant_code', 'dcs_type_code'], 'required', 'except' => ['reject']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
             [['milk_type_code'], 'required', 'on' => ['importCsv']],
-            [['vendor'], 'required', 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload']],
-            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
-            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank')],
+            [['vendor'], 'required', 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload', 'reject']],
+            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['reject']],
+            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['reject']],
             [['fssi_expiry_date'], 'required', 'when' => function ($model) { 
                 return !empty($model->fssi); 
-            }, 'whenClient' => "function (attribute, value) {return $('#tbldcsprovisional-fssi').val() !== '';}"],
+            }, 'whenClient' => "function (attribute, value) {return $('#tbldcsprovisional-fssi').val() !== '';}", 'except' => ['reject']],
             [['milk_type_code'], 'required', 'when' => function ($model) { 
                 return empty($model->milk_type_auto); 
-            }, 'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload']],
+            }, 'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload', 'reject']],
             [['registration_code', 'registration_date'], 'required', 'when' => function ($model) { 
                 return $model->is_registered == 1; 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_registered').is(':checked') }"],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_registered').is(':checked') }", 'except' => ['reject']],
             [['bank_account_no', 'bank_code', 'branch_code', 'ifsc'], 'required', 'when' => function ($model) { 
                 return ($model->is_bank_verify == 1); 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_bank_verify').prop('checked') == true; }"],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_bank_verify').prop('checked') == true; }", 'except' => ['reject']],
             [['aadhaar_no'], 'required', 'when' => function ($model) { 
                 return ($model->is_aadhar_verify == 1); 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_aadhar_verify').prop('checked') == true; }"],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_aadhar_verify').prop('checked') == true; }", 'except' => ['reject']],
             [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) { 
                 return $model->cutoff == 1; 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-cutoff').is(':checked') }"],
-            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow', 'is_chiller'], 'boolean'],
-            [['allow_multi_family_member', 'dcs_type_code'], 'integer'],
-            [['ts_code_m', 'ts_code_e'], 'number'],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-cutoff').is(':checked') }", 'except' => ['reject']],
+            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow', 'is_chiller'], 'boolean', 'except' => ['reject']],
+            [['allow_multi_family_member', 'dcs_type_code'], 'integer', 'except' => ['reject']],
+            [['ts_code_m', 'ts_code_e'], 'number', 'except' => ['reject']],
             [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true],
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['dcs_name', 'firstname'], 'string', 'max' => 25],
@@ -237,20 +237,20 @@ class TblDcsProvisional extends ChildModel {
             [['password'], 'string', 'min' => 8, 'max' => 8],
             [['ts_code_m', 'ts_code_e', 'dcs_short_name'], 'string', 'max' => 25],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
-            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code']],
-            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code']],
-            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id']],
-            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
-            [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'except' => ['reject']],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'except' => ['reject']],
+            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'except' => ['reject']],
+            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'except' => ['reject']],
+            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code'], 'except' => ['reject']],
+            [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code'], 'except' => ['reject']],
             [['vendor'], function ($attribute, $params) { 
                 Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type'); 
-            }],
+            }, 'except' => ['reject']],
             [['dpu_type'], function ($attribute, $params) { 
                 if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor)) { 
                     Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type'); 
                 } 
-            }, 'except' => ['approveDcs']],
+            }, 'except' => ['approveDcs','reject']],
             [['dpu_type'], function ($attribute, $params) { 
                 if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor_code)) { 
                     Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor_code . '_dpu_type'); 
@@ -258,70 +258,72 @@ class TblDcsProvisional extends ChildModel {
             }, 'on' => ['approveDcs']],
             [['mobile_no'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['phone_no'], function ($attribute, $params) { 
                 Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['gst_no'], function ($attribute, $params) { 
                 $this->validateGstNo($attribute, $params); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['pan_no'], function ($attribute, $params) { 
                 Yii::$app->general->validatePancard($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) { 
+                Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            [['local_contact_person', 'local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateLocalField($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false],
-            [['local_contact_person', 'local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) { Yii::$app->general->vaildateLocalField($this, $attribute, $params); }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['registration_code'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateNumericField($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['is_dispatch_mandate'], function ($attribute, $params) { 
                 Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate'); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['voter_id'], function ($attribute, $params) { 
                 Yii::$app->general->validateAadharcard($this, $attribute, $params); 
-            }, 'skipOnEmpty' => true],
+            }, 'skipOnEmpty' => true, 'except' => ['reject']],
             [['cutoff_val'], function ($attribute, $params) { 
                 if (!empty($this->cutoff) && $this->cutoff != '0000') { 
                     $this->validOneDigitDecimal($this, $attribute, $params); 
                 } 
-            }],
+            }, 'except' => ['reject']],
             [['ifsc'], 'required', 'when' => function ($model) {
                 return !empty($model->bank_account_no);
             }, 'whenClient' => "function (attribute, value) {
                 return $('#tbldcsprovisional-bank_account_no').val() != '';
-            }"],
+            }", 'except' => ['reject']],
             [['beneficiary_name'], function ($attribute, $params) { 
                 $error = Yii::$app->general->validateBeneficiary($this, $attribute, $params); 
                 if ($error != NULL) { 
                     $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid')); 
                 } 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['ifsc'], function ($attribute, $params) { 
                 Yii::$app->general->validateIfsc($this, $attribute, $params); 
-            }, 'skipOnEmpty' => true],
+            }, 'skipOnEmpty' => true, 'except' => ['reject']],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['bank_account_no'], function ($attribute, $params) { 
                 $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute); 
                 if ($error !== TRUE) { 
                     $this->addError($attribute, $error); 
                 } 
-            }],
+            }, 'except' => ['reject']],
             [['street1', 'street2'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
-            }, 'skipOnEmpty' => false],
+            }, 'skipOnEmpty' => false, 'except' => ['reject']],
             [['address'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
             }, 'skipOnEmpty' => false, 'on' => ['approveDcs']],
             [['dcs_code_ex'], 'required', 'on' => ['approveDcs']],
-            [['gst_no'], 'unique'],
-            [['gst_no', 'sap_vendor_code', 'ref_code', 'is_bmc'], 'validateDcsUniqueness'],
-            [['dcs_code_ex'], 'checkValid'],
-            [['aadhaar_no'], 'validateAdharNo'],
-            [['mobile_no'], 'validateMobileNo'],
-            [['bank_account_no'], 'validateBankAccNo'],
+            [['gst_no'], 'unique', 'except' => ['reject']],
+            [['gst_no', 'sap_vendor_code', 'ref_code', 'is_bmc'], 'validateDcsUniqueness', 'except' => ['reject']],
+            [['dcs_code_ex'], 'checkValid', 'except' => ['reject']],
+            [['aadhaar_no'], 'validateAdharNo', 'except' => ['reject']],
+            [['mobile_no'], 'validateMobileNo', 'except' => ['reject']],
+            [['bank_account_no'], 'validateBankAccNo', 'except' => ['reject']],
             [['is_active'], 'checkActive', 'on' => 'beforeDocUpload'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsProvisional', $this->form_validation_type);
@@ -869,45 +871,47 @@ class TblDcsProvisional extends ChildModel {
     }
 
     public function CheckDuplicate($attribute, $params) {
-        if ($attribute == 'mobile_no') {
-            $mobile = $this->$attribute;
-            if (!empty($mobile)) {
-                $encryptedMobile = Yii::$app->general->encryptData($mobile);
-                $existsInContact = TblContactDetails::find()
-                        ->select(['module_code', 'module_name'])
-                        ->where(['is_active' => 1])
-                        ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
-                if (!empty($this->dcs_code)) {
-                    $existsInContact->andWhere(['not', ['and', ['module_code' => $this->dcs_code], ['module_name' => 'society']]]);
+        if($this->scenario != 'reject'){
+            if ($attribute == 'mobile_no') {
+                $mobile = $this->$attribute;
+                if (!empty($mobile)) {
+                    $encryptedMobile = Yii::$app->general->encryptData($mobile);
+                    $existsInContact = TblContactDetails::find()
+                            ->select(['module_code', 'module_name'])
+                            ->where(['is_active' => 1])
+                            ->andWhere(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]]);
+                    if (!empty($this->dcs_code)) {
+                        $existsInContact->andWhere(['not', ['and', ['module_code' => $this->dcs_code], ['module_name' => 'society']]]);
+                    }
+                    if (!empty($this->detail_code)) {
+                        $existsInContact->andWhere(['<>', 'detail_code', $this->detail_code]);
+                    }
+                    $existsInContact = $existsInContact->one();
+                    if ($existsInContact) {
+                        $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Contact Details - Module Code : ' . $existsInContact->module_code . ', Module Name : ' . $existsInContact->module_name));
+                        return false;
+                    }
                 }
-                if (!empty($this->detail_code)) {
-                    $existsInContact->andWhere(['<>', 'detail_code', $this->detail_code]);
-                }
-                $existsInContact = $existsInContact->one();
-                if ($existsInContact) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No already exists in Contact Details - Module Code : ' . $existsInContact->module_code . ', Module Name : ' . $existsInContact->module_name));
-                    return false;
-                }
-            }
-        } elseif ($attribute == 'bank_account_no') {
-            $bankAccNo = $this->$attribute;
-            if (!empty($bankAccNo)) {
-                $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
-                $existsInBank = TblBankDetails::find()
-                        ->select(['module_code', 'module_name'])
-                        ->where(['is_active' => 1])
-                        ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
-                        ->andWhere(['or', ['ifsc' => $this->ifsc], ['ifsc' => \Yii::$app->general->encryptData($this->ifsc)]]);
-                if (!empty($this->dcs_code)) {
-                    $existsInBank->andWhere(['not', ['and', ['module_code' => $this->dcs_code], ['module_name' => 'society']]]);
-                }
-                if (!empty($this->detail_code)) {
-                    $existsInBank->andWhere(['<>', 'detail_code', $this->detail_code]);
-                }
-                $existsInBank = $existsInBank->one();
-                if ($existsInBank) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Bank Details - Module Code : ' . $existsInBank->module_code . ', Module Name : ' . $existsInBank->module_name));
-                    return false;
+            } elseif ($attribute == 'bank_account_no') {
+                $bankAccNo = $this->$attribute;
+                if (!empty($bankAccNo)) {
+                    $encryptedBankAccNo = Yii::$app->general->encryptData($bankAccNo);
+                    $existsInBank = TblBankDetails::find()
+                            ->select(['module_code', 'module_name'])
+                            ->where(['is_active' => 1])
+                            ->andWhere(['or', ['bank_account_no' => $bankAccNo], ['bank_account_no' => $encryptedBankAccNo]])
+                            ->andWhere(['or', ['ifsc' => $this->ifsc], ['ifsc' => \Yii::$app->general->encryptData($this->ifsc)]]);
+                    if (!empty($this->dcs_code)) {
+                        $existsInBank->andWhere(['not', ['and', ['module_code' => $this->dcs_code], ['module_name' => 'society']]]);
+                    }
+                    if (!empty($this->detail_code)) {
+                        $existsInBank->andWhere(['<>', 'detail_code', $this->detail_code]);
+                    }
+                    $existsInBank = $existsInBank->one();
+                    if ($existsInBank) {
+                        $this->addError($attribute, Yii::t('app/validation', 'Bank Account No already exists in Bank Details - Module Code : ' . $existsInBank->module_code . ', Module Name : ' . $existsInBank->module_name));
+                        return false;
+                    }
                 }
             }
         }
