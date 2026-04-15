@@ -367,11 +367,13 @@ class TblDcsProvisionalController extends ChildController {
                     $dcsModel->approved_at = date('Y-m-d H:i:s');
                     $dcsModel->approved_by = Yii::$app->user->identity->user_code;
                     $dcsModel->dcs_status = $dcsCreationPendingForSapApproval ? 0 : 1;
+                } else if(strtolower($status) === 'reject'){
+                    $dcsModel->scenario = 'reject';
                 }
                 $model_save[] = $dcsModel;
                 $all_doc = [];
                 $dcsdoc = [];
-                $message = '';
+                $message = [];
                 $dcs_error = '';
                 if($dcsModel->validate()){
                     if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
@@ -427,7 +429,7 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false, $isWeb = true) {
         if (!empty($dcsProvisional)) {
             $dcsProvisional->is_approved = 1;
             $this->model = new TblDcs();
@@ -554,38 +556,37 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsProvisionalCode = (string) $dcsProvisional->dcs_provisional_code;
                 $tblAttachment->AttachmentSave($dcsProvisionalCode, 'tbl_dcs_provisional', 'dcs', $this->model->dcs_code, 'tbl_dcs', $all_attachment, $model_save, $dcsdoc);
 
-                $transaction = $this->saveDcs($this->model, $mapList, $model_save, ['society', 'create']);
-                if ($transaction !== FALSE) {
-                    if ($transaction == 'customRedirect') {
-                        if (!empty($vendorModel)) {
-                            $orgMap = [];
-                            $userModel = new User();
-                            $users = $userModel->findByRole([$vendorModel->vendor_code]);
-                            foreach ($users as $user) {
-                                if (empty($user->user_type_id) || $user->user_type_id == 7) {
-                                    if (empty($user->user_type_id)) {
-                                        $user->user_type_id = 7;
-                                        array_push($orgMap, $user);
-                                    }
-                                    $modelNew = new TblUserOrganizationMapping();
-                                    $modelNew->organization_code = $vendorModel->dcs_code;
-                                    $modelNew->organization_type = 'DCS';
-                                    $modelNew->user_id = $user->id;
-                                    $modelNew->is_active = $user->is_active;
-                                    Yii::$app->operation->defaults($modelNew, INSERT);
-                                    array_push($orgMap, $modelNew);
+                $saveError = '';
+                $transaction = $this->saveDcs($this->model, $mapList, $model_save, ['society', 'create'], $isWeb, $saveError);
+                    if ($transaction == 'customRedirect' && !empty($vendorModel)) {
+                        $orgMap = [];
+                        $userModel = new User();
+                        $users = $userModel->findByRole([$vendorModel->vendor_code]);
+                        foreach ($users as $user) {
+                            if (empty($user->user_type_id) || $user->user_type_id == 7) {
+                                if (empty($user->user_type_id)) {
+                                    $user->user_type_id = 7;
+                                    array_push($orgMap, $user);
                                 }
+                                $modelNew = new TblUserOrganizationMapping();
+                                $modelNew->organization_code = $vendorModel->dcs_code;
+                                $modelNew->organization_type = 'DCS';
+                                $modelNew->user_id = $user->id;
+                                $modelNew->is_active = $user->is_active;
+                                Yii::$app->operation->defaults($modelNew, INSERT);
+                                array_push($orgMap, $modelNew);
                             }
-                            if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                                $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
-                                if (!file_exists($path) || !is_dir($path)) {
-                                    FileHelper::createDirectory($path);
-                                }
-                            }
-                            $this->generalModel->saveTransaction($orgMap, ['society', 'create']);
                         }
+                        if (strtolower($vendorModel->vendor_code) == 'eipl') {
+                            $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
+                            if (!file_exists($path) || !is_dir($path)) {
+                                FileHelper::createDirectory($path);
+                            }
+                        }
+                        $this->generalModel->saveTransaction($orgMap, ['society', 'create']);
+                    } else if (!empty($saveError)) {
+                        $message[] = $saveError;
                     }
-                }
                 return $transaction;
             } else {
                 foreach ($this->model->getErrors() as $errorkey => $value) {
@@ -603,17 +604,28 @@ class TblDcsProvisionalController extends ChildController {
         $modelMapping->is_active = $this->model->is_active;
     }
 
-    public function saveDcs($model, $childModel, $provisionalModel, $message) {
+    public function saveDcs($model, $childModel, $provisionalModel, $message, $isWeb, &$errorMsg = '') {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             $master = [];
+            $allErrors = [];
             foreach ($provisionalModel as $m) {
                 if (!in_array(FALSE, $master)) {
                     $master[] = $m->save();
+                    if (in_array(FALSE, $master) && $m->hasErrors()) {
+                        foreach ($m->getErrors() as $errVals) {
+                            $allErrors[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                        }
+                    }
                 }
             }
             if (!in_array(FALSE, $master)) {
                 $master[] = $model->save();
+                if (in_array(FALSE, $master) && $model->hasErrors()) {
+                    foreach ($model->getErrors() as $errVals) {
+                        $allErrors[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                    }
+                }
             }
             if (!in_array(FALSE, $master)) {
                 foreach ($childModel as $key => $m) {
@@ -625,6 +637,11 @@ class TblDcsProvisionalController extends ChildController {
                             $master[] = $m->save();
                         } else {
                             $master[] = $m->save(FALSE);
+                        }
+                        if (in_array(FALSE, $master) && $m->hasErrors()) {
+                            foreach ($m->getErrors() as $errVals) {
+                                $allErrors[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                            }
                         }
                     }
                 }
@@ -660,12 +677,19 @@ class TblDcsProvisionalController extends ChildController {
                         $memberModel->mobile_no = NULL;
                         $memberModel->vendor_code = NULL;
                         $master[] = $memberModel->save();
+                        if (in_array(FALSE, $master) && $memberModel->hasErrors()) {
+                            foreach ($memberModel->getErrors() as $errVals) {
+                                $allErrors[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                            }
+                        }
                     }
                 }
             }
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
-                Yii::$app->display->message(true, $message[0], $message[1]);
+                if ($isWeb) {
+                    Yii::$app->display->message(true, $message[0], $message[1]);
+                }
                 return 'customRedirect';
             }
             $child = new ChildModel();
@@ -684,24 +708,33 @@ class TblDcsProvisionalController extends ChildController {
                 $child->decryptModel($m);
             }
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', [
-                'type' => 'error',
-                'message' => 'Your transaction is not saved successfully'
-            ]);
+            $errorMsg = !empty($allErrors) ? substr(implode(' | ', $allErrors), 0, 500) : 'Your transaction is not saved successfully';
+            if ($isWeb) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => $errorMsg
+                ]);
+            }
             return 'customRender';
         } catch (UserException $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', [
-                'type' => 'error',
-                'message' => $e->getMessage()
-            ]);
+            $errorMsg = $e->getMessage();
+            if ($isWeb) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => $errorMsg
+                ]);
+            }
             return false;
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', [
-                'type' => 'error',
-                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')
-            ]);
+            $errorMsg = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+            if ($isWeb) {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => $errorMsg
+                ]);
+            }
             return false;
         }
     }

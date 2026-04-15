@@ -189,6 +189,7 @@ class TblMember extends ChildModel {
                 [['member_code', 'federation_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'mobile_no', 'received_timestamp', 'employee_code', 'employee_name', 'region_code', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour'], 'safe'],
             //  [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
             [['ex_member_code'], 'setExMember', 'on' => ['androidsync']],
+                [['member_code'], 'refCodeValidate', 'on' => ['androidsync']],
                 ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['specialCodeImportCsv']],
                 [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
@@ -212,7 +213,6 @@ class TblMember extends ChildModel {
                 [['x_col5'], 'exist', 'skipOnError' => true, 'targetClass' => TblMemberSpecialCode::className(), 'targetAttribute' => ['x_col5' => 'special_code'], 'on' => ['specialCodeImportCsv']],
                 [['ifsc', 'bank_account_no', 'bank_code', 'branch_code', 'beneficiary_name'], 'required', 'on' => 'kycVerify'],
                 [['rate_class'], 'validateRateClass', 'on' => ['androidsync']],
-                [['member_code'], 'refCodeValidate', 'on' => ['androidsync']],
                 [['member_code'], 'resetDefaultValue']
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
