@@ -375,9 +375,11 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsdoc = [];
                 $message = [];
                 $dcs_error = '';
+                $unlink_files = [];
+                $attachments = [];
                 if($dcsModel->validate()){
                     if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
-                        $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message);
+                        $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message, false, true, $unlink_files, $attachments);
                         if (!empty($message)) {
                             foreach ($message as $msg) {
                                 $dcs_error .= $msg;
@@ -388,20 +390,8 @@ class TblDcsProvisionalController extends ChildController {
                     }
                     if ($transaction == 'customRedirect' && empty($dcs_error)) {
 
-                        if ($status == 'Approve') {
-                            $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
-                            $dcsDir = $baseDir . 'dcs';
-                            $proDcsDir = $baseDir . 'provisional_dcs';
-                            for ($i = 0; $i < count($all_doc); $i++) {
-                                $fileName = basename($dcsdoc[$i]);
-                                $file = $dcsDir . '/' . $fileName;
-                                if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
-                                    $upload = copy($proDcsDir . '/' . $all_doc[$i], $file);
-                                    if ($upload) {
-                                        unlink($proDcsDir . '/' . $all_doc[$i]);
-                                    }
-                                }
-                            }
+                        if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
+                            \Yii::$app->general->moveAttachments($all_doc, $dcsdoc, $attachments, 'dcs', 'provisional_dcs');
                         }
 
                         return $this->redirect(['pending-approval']);
@@ -429,7 +419,7 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false, $isWeb = true) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message, $skipUniqueValidation = false, $isWeb = true, &$unlink_files = [], &$attachments = []) {
         if (!empty($dcsProvisional)) {
             $dcsProvisional->is_approved = 1;
             $this->model = new TblDcs();
@@ -554,7 +544,9 @@ class TblDcsProvisionalController extends ChildController {
                 }
                 $tblAttachment = new TblAttachment();
                 $dcsProvisionalCode = (string) $dcsProvisional->dcs_provisional_code;
-                $tblAttachment->AttachmentSave($dcsProvisionalCode, 'tbl_dcs_provisional', 'dcs', $this->model->dcs_code, 'tbl_dcs', $all_attachment, $model_save, $dcsdoc);
+                $deleteModel = [];
+                $deleteAttachment = [];
+                $tblAttachment->AttachmentSave($dcsProvisionalCode, 'tbl_dcs_provisional', 'dcs', $this->model->dcs_code, 'tbl_dcs', $all_attachment, $model_save, $dcsdoc, $deleteModel, $deleteAttachment, $unlink_files, $attachments);
 
                 $saveError = '';
                 $transaction = $this->saveDcs($this->model, $mapList, $model_save, ['society', 'create'], $isWeb, $saveError);

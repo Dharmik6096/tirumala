@@ -251,9 +251,11 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 $model_save[] = $customerModel;
                 $all_doc = [];
                 $customerdoc = [];
+                $unlink_files = [];
+                $attachments = [];
                 if ($customerModel->validate()) {
                     if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
-                        $this->createCustomer($customerModel, $model_save, $all_doc, $customerdoc, $message);
+                        $this->createCustomer($customerModel, $model_save, $all_doc, $customerdoc, $message, $unlink_files, $attachments);
                     }
                 } else {
                     foreach ($customerModel->getErrors() as $errorkey => $value) {
@@ -272,19 +274,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                     if ($transaction == 'customRedirect') {
 
                         if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
-                            $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
-                            $customerDir = $baseDir . 'customer';
-                            $proCustomerDir = $baseDir . 'provisional_customer';
-                            for ($i = 0; $i < count($all_doc); $i++) {
-                                $fileName = basename($customerdoc[$i]);
-                                $file = $customerDir . '/' . $fileName;
-                                if (file_exists($proCustomerDir . '/' . $all_doc[$i])) {
-                                    $upload = copy($proCustomerDir . '/' . $all_doc[$i], $file);
-                                    if ($upload) {
-                                        unlink($proCustomerDir . '/' . $all_doc[$i]);
-                                    }
-                                }
-                            }
+                            \Yii::$app->general->moveAttachments($all_doc, $customerdoc, $attachments, 'customer', 'provisional_customer');
                         }
 
                         return $this->redirect(['pending-customer-approval']);
@@ -306,7 +296,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         ]);
     }
 
-    public function createCustomer($customerProvisional, &$model_save, &$all_attachment, &$customerdoc, &$message) {
+    public function createCustomer($customerProvisional, &$model_save, &$all_attachment, &$customerdoc, &$message, &$unlink_files = [], &$attachments = []) {
         if (!empty($customerProvisional)) {
             $customerProvisional->is_approved = 1;
             $customerModel = new TblCustomerMaster();
@@ -364,7 +354,9 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
 
                     $tblAttachment = new TblAttachment();
                     $customerProvisionalCode = (string) $customerProvisional->customer_provisional_code;
-                    $tblAttachment->AttachmentSave($customerProvisionalCode, 'tbl_customer_master_provisional', 'customer', $customerModel->customer_code, 'tbl_customer_master', $all_attachment, $model_save, $customerdoc);
+                    $deleteModel = [];
+                    $deleteAttachment = [];
+                    $tblAttachment->AttachmentSave($customerProvisionalCode, 'tbl_customer_master_provisional', 'customer', $customerModel->customer_code, 'tbl_customer_master', $all_attachment, $model_save, $customerdoc, $deleteModel, $deleteAttachment, $unlink_files, $attachments);
                 }
             } else {
                 foreach ($customerModel->getErrors() as $errorkey => $value) {

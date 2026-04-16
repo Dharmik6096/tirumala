@@ -3146,4 +3146,26 @@ class GeneralFunctions extends Component {
         return $query->one();
     }
 
+    public function moveAttachments($allDoc, $newDoc, $attachments, $masterDirName, $provisionalDirName) {
+        $baseDirPath = Yii::$app->params['document_upload'];
+        $baseDir = Yii::getAlias('@webroot') . '/' . $baseDirPath;
+        $masterDir = $baseDir . $masterDirName;
+        $provisionalDir = $baseDir . $provisionalDirName;
+        $this->checkDirectory($masterDir);
+        for ($i = 0; $i < count($allDoc); $i++) {
+            $docFileName = basename($newDoc[$i]);
+            $file = $masterDir . '/' . $docFileName;
+            if (!empty($attachments[$i])) {
+                try {
+                    file_put_contents($file, file_get_contents($attachments[$i]));
+                } catch (\Throwable $ex) {
+                    \Yii::error("Failed to move attachment for {$masterDirName}: " . $ex->getMessage());
+                }
+            }
+            if (file_exists($provisionalDir . '/' . $allDoc[$i])) {
+                unlink($provisionalDir . '/' . $allDoc[$i]);
+            }
+        }
+    }
+
 }
