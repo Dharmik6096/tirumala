@@ -58,7 +58,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                             [$class, $condition, $historyClass] = $map[$model->verify_for];
                             $modelData = $class::findOne($condition);
 
-                            if (!empty($modelData) && $modelData->is_verified == '0') {
+                            if (!empty($modelData) && $modelData->is_verified != 1) {
                                 $historyModel = new $historyClass();
                                 Yii::$app->operation->history($modelData, $historyModel, UPDATE);
                                 $modelData->is_verified = $modelData->is_kyc_verified = $model->is_verified;
