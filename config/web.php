@@ -137,7 +137,10 @@ $config = [
             'targets' => [
                     [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning', 'trace', 'info'],
+                    'levels' => ['error', 'warning', 'info'],
+                    'logVars' => [],
+                    'maxFileSize' => 20480,
+                    'maxLogFiles' => 20,
                 ],
             ],
         ],
