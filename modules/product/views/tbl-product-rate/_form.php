@@ -48,6 +48,10 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'commission')->textInput() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'rdo_commission')->textInput() ?>
+    </div>
+    <div class="clearfix"></div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
@@ -69,9 +73,12 @@ $script = "
     function dispVsp(){
         if($('#tblproductsalerate-is_member_rate').is(':checked')){
             $('.field-tblproductsalerate-commission').show();
+            $('.field-tblproductsalerate-rdo_commission').show();
         } else {
             $('.field-tblproductsalerate-commission').hide();
+            $('.field-tblproductsalerate-rdo_commission').hide();
             $('#tblproductsalerate-commission').val(0);
+            $('#tblproductsalerate-rdo_commission').val(0);
         }
     }
     function setMinDate() {
