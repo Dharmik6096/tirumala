@@ -162,36 +162,46 @@ class TblDcsProvisionalController extends ChildController {
         }
         $this->model->gender_code = $this->model->gender;
         if (Yii::$app->request->post()) {
-            $historyModel = new TblDcsProvisionalHistory();
-            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            $this->model->load(Yii::$app->request->post());
-            if ($this->model->validate()) {
-                $this->setModel();
-                if ($this->model->street1 != '' && $this->model->street2 != '') {
-                    $this->model->address = $this->model->fullAddress();
-                } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
-                    $this->model->address = $this->model->street2;
-                } else {
-                    $this->model->address = $this->model->street1;
+            $postData = Yii::$app->request->post();
+            if (isset($postData['operation']) && $postData['operation'] == 'reroute') {
+                $remarks = !empty($postData['TblDcsProvisional']['remarks']) ? $postData['TblDcsProvisional']['remarks'] : '';
+                $processModel = new TblProcessApproval();
+                $res = $processModel->handleReroute($this->model, 'society', $remarks);
+                if ($res == 'customRedirect') {
+                    return $this->redirect(['update', 'id' => $this->model->dcs_provisional_code]);
                 }
-                if (!empty($this->model->milk_type_auto)) {
-                    $this->model->milk_type_code = [1, 2, 3];
-                }
-                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
-                    $val = str_replace('.', '', $this->model->cutoff_val);
-                    $val = str_pad($val, 3, '0', STR_PAD_LEFT);
-                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
-                    $cutOffVal = $val . strtoupper($milkType);
-                    $this->model->cutoff = substr($cutOffVal, -4);
-                }
-                $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
-                $this->model->vendor_code = $this->model->vendor;
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
-                if ($transaction == 'customRedirect') {
-                    if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
-                        return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
+            } else {
+                $historyModel = new TblDcsProvisionalHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $this->model->load(Yii::$app->request->post());
+                if ($this->model->validate()) {
+                    $this->setModel();
+                    if ($this->model->street1 != '' && $this->model->street2 != '') {
+                        $this->model->address = $this->model->fullAddress();
+                    } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
+                        $this->model->address = $this->model->street2;
                     } else {
-                        return $this->redirect(['pending-approval']);
+                        $this->model->address = $this->model->street1;
+                    }
+                    if (!empty($this->model->milk_type_auto)) {
+                        $this->model->milk_type_code = [1, 2, 3];
+                    }
+                    if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                        $val = str_replace('.', '', $this->model->cutoff_val);
+                        $val = str_pad($val, 3, '0', STR_PAD_LEFT);
+                        $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                        $cutOffVal = $val . strtoupper($milkType);
+                        $this->model->cutoff = substr($cutOffVal, -4);
+                    }
+                    $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
+                    $this->model->vendor_code = $this->model->vendor;
+                    $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
+                    if ($transaction == 'customRedirect') {
+                        if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
+                            return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
+                        } else {
+                            return $this->redirect(['pending-approval']);
+                        }
                     }
                 }
             }
@@ -343,77 +353,90 @@ class TblDcsProvisionalController extends ChildController {
 
     public function actionApproveDcs($id) {
         $model = TblProcessApproval::findOne($id);
-        $model->scenario = 'approve';
         $historyApproval = new TblProcessApprovalHistory();
         Yii::$app->operation->history($model, $historyApproval, UPDATE);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model_save = [];
-            $model_save[] = $historyApproval;
-            $model_save[] = $model;
-            $status = '';
-            if (!empty($model_save)) {
-                $model->ApprovalList($model, $model_save, $status);
+        if ($model->load(Yii::$app->request->post())) {
+            $postData = Yii::$app->request->post();
+            if (isset($postData['operation']) && $postData['operation'] == 'reroute') {
                 $dcsModel = $this->findModel($model->process_code);
-                $historyModel = new TblDcsProvisionalHistory();
-                Yii::$app->operation->history($dcsModel, $historyModel, UPDATE);
-                $model_save[] = $historyModel;
-                $dcsModel->status = $status;
-                $dcsModel->remarks = $model->remarks;
-                $dcsModel->scenario = 'approveDcs';
-
-                $dcsCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($dcsModel->union_code, 'dcs_creation_pending_for_sap_approval', 'PORTAL');
-                $dcsModel->dcs_status = 0;
-                if (strtolower($status) === 'approve') {
-                    $dcsModel->approved_at = date('Y-m-d H:i:s');
-                    $dcsModel->approved_by = Yii::$app->user->identity->user_code;
-                    $dcsModel->dcs_status = $dcsCreationPendingForSapApproval ? 0 : 1;
-                } else if(strtolower($status) === 'reject'){
-                    $dcsModel->scenario = 'reject';
-                }
-                $model_save[] = $dcsModel;
-                $all_doc = [];
-                $dcsdoc = [];
-                $message = [];
-                $dcs_error = '';
-                $unlink_files = [];
-                $attachments = [];
-                if($dcsModel->validate()){
-                    if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
-                        $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message, false, true, $unlink_files, $attachments);
-                        if (!empty($message)) {
-                            foreach ($message as $msg) {
-                                $dcs_error .= $msg;
-                            }
-                        }
-                    } else {
-                        $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
-                    }
-                    if ($transaction == 'customRedirect' && empty($dcs_error)) {
-
-                        if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
-                            \Yii::$app->general->moveAttachments($all_doc, $dcsdoc, $attachments, 'dcs', 'provisional_dcs');
-                        }
-
-                        return $this->redirect(['pending-approval']);
-                    }
-                } else {
-                    if (!empty($dcs_error)) {
-                    } else if(!empty($dcsModel->getErrors())){
-                        foreach($dcsModel->getErrors() as $error) {
-                            $dcs_error = !empty($dcs_error) ? $dcs_error.'<br> '.$error[0] : $error[0];
-                        }
-                    }
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                            'message' => $dcs_error . ' in DCS.']);
+                $remarks = $model->remarks ?? '';
+                $res = $model->handleReroute($dcsModel, 'society', $remarks);
+                if ($res == 'customRedirect') {
                     return $this->redirect(['update', 'id' => $dcsModel->dcs_provisional_code]);
                 }
             } else {
-                Yii::$app->getSession()->setFlash('success', [
-                    'type' => 'error',
-                    'message' => 'Dcs provisional already approved by other user.'
-                ]);
+                $model->scenario = 'approve';
+                if ($model->validate()) {
+                    $model_save = [];
+                    $model_save[] = $historyApproval;
+                    $model_save[] = $model;
+                    $status = '';
+                    if (!empty($model_save)) {
+                        $model->ApprovalList($model, $model_save, $status);
+                        $dcsModel = $this->findModel($model->process_code);
+                        $historyModel = new TblDcsProvisionalHistory();
+                        Yii::$app->operation->history($dcsModel, $historyModel, UPDATE);
+                        $model_save[] = $historyModel;
+                        $dcsModel->status = $status;
+                        $dcsModel->remarks = $model->remarks;
+                        $dcsModel->scenario = 'approveDcs';
+
+                        $dcsCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($dcsModel->union_code, 'dcs_creation_pending_for_sap_approval', 'PORTAL');
+                        $dcsModel->dcs_status = 0;
+                        if (strtolower($status) === 'approve') {
+                            $dcsModel->approved_at = date('Y-m-d H:i:s');
+                            $dcsModel->approved_by = Yii::$app->user->identity->user_code;
+                            $dcsModel->dcs_status = $dcsCreationPendingForSapApproval ? 0 : 1;
+                        } else if(strtolower($status) === 'reject'){
+                            $dcsModel->scenario = 'reject';
+                        }
+                        $model_save[] = $dcsModel;
+                        $all_doc = [];
+                        $dcsdoc = [];
+                        $message = [];
+                        $dcs_error = '';
+                        $unlink_files = [];
+                        $attachments = [];
+                        if($dcsModel->validate()){
+                            if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
+                                $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message, false, true, $unlink_files, $attachments);
+                                if (!empty($message)) {
+                                    foreach ($message as $msg) {
+                                        $dcs_error .= $msg;
+                                    }
+                                }
+                            } else {
+                                $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
+                            }
+                            if ($transaction == 'customRedirect' && empty($dcs_error)) {
+
+                                if ($status == 'Approve' && $dcsCreationPendingForSapApproval != '1') {
+                                    \Yii::$app->general->moveAttachments($all_doc, $dcsdoc, $attachments, 'dcs', 'provisional_dcs');
+                                }
+
+                                return $this->redirect(['pending-approval']);
+                            }
+                        } else {
+                            if (!empty($dcs_error)) {
+                            } else if(!empty($dcsModel->getErrors())){
+                                foreach($dcsModel->getErrors() as $error) {
+                                    $dcs_error = !empty($dcs_error) ? $dcs_error.'<br> '.$error[0] : $error[0];
+                                }
+                            }
+                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                    'message' => $dcs_error . ' in DCS.']);
+                            return $this->redirect(['update', 'id' => $dcsModel->dcs_provisional_code]);
+                        }
+                    } else {
+                        Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'error',
+                            'message' => 'Dcs provisional already approved by other user.'
+                        ]);
+                    }
+                }
             }
         }
+        $model->scenario = 'default';
         return $this->render('approve_dcs', [
                     'model' => $model,
         ]);

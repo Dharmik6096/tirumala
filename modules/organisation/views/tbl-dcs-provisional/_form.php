@@ -461,15 +461,23 @@ $form = ActiveForm::begin([
     <div class="row">
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
-                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?php
+                if ($type == 'edit') {
+                    echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
+                    echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                } ?>
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut saveBtn', 'name' => 'submitBtn', 'value' => 'save']) ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
         </div>
     </div>
-    <?php ActiveForm::end(); ?>
-
     <?php
+    if ($type == 'edit') {
+        echo $this->render('@app/modules/document/views/tbl-attachment/_reroute', ['model' => $model]);
+    }
+    ActiveForm::end();
+
     $script = "
     var supervisorId = '$model->supervisor_employee_id';
     var supervisorName = '$model->supervisor_employee_name';

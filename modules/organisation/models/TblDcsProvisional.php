@@ -200,33 +200,33 @@ class TblDcsProvisional extends ChildModel {
             [['is_active'], 'default', 'value' => 1],
             [['x_col1'], 'default', 'value' => '1#1'],
             [['cutoff_val'], 'default', 'value' => 0.1],
-            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'pincode', 'firstname', 'mobile_no', 'is_dispatch_mandate', 'union_code', 'dcs_name', 'bmc_code', 'ref_code', 'dcs_short_name', 'is_bmc', 'destination_type', 'dpu_type', 'plant_code', 'mcc_plant_code', 'dcs_type_code'], 'required', 'except' => ['reject']],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'pincode', 'firstname', 'mobile_no', 'is_dispatch_mandate', 'union_code', 'dcs_name', 'bmc_code', 'ref_code', 'dcs_short_name', 'is_bmc', 'destination_type', 'dpu_type', 'plant_code', 'mcc_plant_code', 'dcs_type_code'], 'required', 'except' => ['reject', 'reroute']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
             [['milk_type_code'], 'required', 'on' => ['importCsv']],
-            [['vendor'], 'required', 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload', 'reject']],
-            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['reject']],
-            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['reject']],
+            [['vendor'], 'required', 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload', 'reject', 'reroute']],
+            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['reject', 'reroute']],
+            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['reject', 'reroute']],
             [['fssi_expiry_date'], 'required', 'when' => function ($model) { 
                 return !empty($model->fssi); 
-            }, 'whenClient' => "function (attribute, value) {return $('#tbldcsprovisional-fssi').val() !== '';}", 'except' => ['reject']],
+            }, 'whenClient' => "function (attribute, value) {return $('#tbldcsprovisional-fssi').val() !== '';}", 'except' => ['reject', 'reroute']],
             [['milk_type_code'], 'required', 'when' => function ($model) { 
                 return empty($model->milk_type_auto); 
-            }, 'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload', 'reject']],
+            }, 'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc', 'approveDcs', 'beforeDocUpload', 'reject', 'reroute']],
             [['registration_code', 'registration_date'], 'required', 'when' => function ($model) { 
                 return $model->is_registered == 1; 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_registered').is(':checked') }", 'except' => ['reject']],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_registered').is(':checked') }", 'except' => ['reject', 'reroute']],
             [['bank_account_no', 'bank_code', 'branch_code', 'ifsc'], 'required', 'when' => function ($model) { 
                 return ($model->is_bank_verify == 1); 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_bank_verify').prop('checked') == true; }", 'except' => ['reject']],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_bank_verify').prop('checked') == true; }", 'except' => ['reject', 'reroute']],
             [['aadhaar_no'], 'required', 'when' => function ($model) { 
                 return ($model->is_aadhar_verify == 1); 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_aadhar_verify').prop('checked') == true; }", 'except' => ['reject']],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-is_aadhar_verify').prop('checked') == true; }", 'except' => ['reject', 'reroute']],
             [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) { 
                 return $model->cutoff == 1; 
-            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-cutoff').is(':checked') }", 'except' => ['reject']],
-            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow', 'is_chiller'], 'boolean', 'except' => ['reject']],
-            [['allow_multi_family_member', 'dcs_type_code'], 'integer', 'except' => ['reject']],
-            [['ts_code_m', 'ts_code_e'], 'number', 'except' => ['reject']],
+            }, 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-cutoff').is(':checked') }", 'except' => ['reject', 'reroute']],
+            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow', 'is_chiller'], 'boolean', 'except' => ['reject', 'reroute']],
+            [['allow_multi_family_member', 'dcs_type_code'], 'integer', 'except' => ['reject', 'reroute']],
+            [['ts_code_m', 'ts_code_e'], 'number', 'except' => ['reject', 'reroute']],
             [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true],
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['dcs_name', 'firstname'], 'string', 'max' => 25],
@@ -237,94 +237,95 @@ class TblDcsProvisional extends ChildModel {
             [['password'], 'string', 'min' => 8, 'max' => 8],
             [['ts_code_m', 'ts_code_e', 'dcs_short_name'], 'string', 'max' => 25],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'except' => ['reject']],
-            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'except' => ['reject']],
-            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'except' => ['reject']],
-            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'except' => ['reject']],
-            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code'], 'except' => ['reject']],
-            [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code'], 'except' => ['reject']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'except' => ['reject', 'reroute']],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'except' => ['reject', 'reroute']],
+            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'except' => ['reject', 'reroute']],
+            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'except' => ['reject', 'reroute']],
+            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code'], 'except' => ['reject', 'reroute']],
+            [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code'], 'except' => ['reject', 'reroute']],
             [['vendor'], function ($attribute, $params) { 
                 Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type'); 
-            }, 'except' => ['reject']],
+            }, 'except' => ['reject', 'reroute']],
             [['dpu_type'], function ($attribute, $params) { 
-                if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor)) { 
+                if (empty($this->getErrors()) && $this->dpu_type !== '' && $this->dpu_type !== null && !empty($this->vendor)) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type'); 
                 } 
-            }, 'except' => ['approveDcs','reject']],
+            }, 'except' => ['approveDcs','reject', 'reroute']],
             [['dpu_type'], function ($attribute, $params) { 
-                if (empty($this->getErrors()) && !empty($this->dpu_type) && !empty($this->vendor_code)) { 
+                if (empty($this->getErrors()) && $this->dpu_type !== '' && $this->dpu_type !== null && !empty($this->vendor_code)) { 
                     Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor_code . '_dpu_type'); 
                 } 
-            }, 'on' => ['approveDcs']],
+            }, 'on' => ['approveDcs', 'beforeDocUpload']],
             [['mobile_no'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['phone_no'], function ($attribute, $params) { 
                 Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['gst_no'], function ($attribute, $params) { 
                 $this->validateGstNo($attribute, $params); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['pan_no'], function ($attribute, $params) { 
                 Yii::$app->general->validatePancard($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['local_contact_person', 'local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateLocalField($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['registration_code'], function ($attribute, $params) { 
                 Yii::$app->general->vaildateNumericField($this, $attribute, $params); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['is_dispatch_mandate'], function ($attribute, $params) { 
                 Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate'); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['voter_id'], function ($attribute, $params) { 
                 Yii::$app->general->validateAadharcard($this, $attribute, $params); 
-            }, 'skipOnEmpty' => true, 'except' => ['reject']],
+            }, 'skipOnEmpty' => true, 'except' => ['reject', 'reroute']],
             [['cutoff_val'], function ($attribute, $params) { 
                 if (!empty($this->cutoff) && $this->cutoff != '0000') { 
                     $this->validOneDigitDecimal($this, $attribute, $params); 
                 } 
-            }, 'except' => ['reject']],
+            }, 'except' => ['reject', 'reroute']],
             [['ifsc'], 'required', 'when' => function ($model) {
                 return !empty($model->bank_account_no);
             }, 'whenClient' => "function (attribute, value) {
                 return $('#tbldcsprovisional-bank_account_no').val() != '';
-            }", 'except' => ['reject']],
+            }", 'except' => ['reject', 'reroute']],
             [['beneficiary_name'], function ($attribute, $params) { 
                 $error = Yii::$app->general->validateBeneficiary($this, $attribute, $params); 
                 if ($error != NULL) { 
                     $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid')); 
                 } 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['ifsc'], function ($attribute, $params) { 
                 Yii::$app->general->validateIfsc($this, $attribute, $params); 
-            }, 'skipOnEmpty' => true, 'except' => ['reject']],
+            }, 'skipOnEmpty' => true, 'except' => ['reject', 'reroute']],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['bank_account_no'], function ($attribute, $params) { 
                 $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute); 
                 if ($error !== TRUE) { 
                     $this->addError($attribute, $error); 
                 } 
-            }, 'except' => ['reject']],
+            }, 'except' => ['reject', 'reroute']],
             [['street1', 'street2'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
-            }, 'skipOnEmpty' => false, 'except' => ['reject']],
+            }, 'skipOnEmpty' => false, 'except' => ['reject', 'reroute']],
             [['address'], function ($attribute, $params) { 
                 Yii::$app->general->validateDiscriptiveField($this, $attribute, true); 
             }, 'skipOnEmpty' => false, 'on' => ['approveDcs']],
             [['dcs_code_ex'], 'required', 'on' => ['approveDcs']],
-            [['gst_no'], 'unique', 'except' => ['reject']],
-            [['gst_no', 'sap_vendor_code', 'ref_code', 'is_bmc'], 'validateDcsUniqueness', 'except' => ['reject']],
-            [['dcs_code_ex'], 'checkValid', 'except' => ['reject']],
-            [['aadhaar_no'], 'validateAdharNo', 'except' => ['reject']],
-            [['mobile_no'], 'validateMobileNo', 'except' => ['reject']],
-            [['bank_account_no'], 'validateBankAccNo', 'except' => ['reject']],
+            [['gst_no'], 'unique', 'except' => ['reject', 'reroute']],
+            [['gst_no', 'sap_vendor_code', 'ref_code', 'is_bmc'], 'validateDcsUniqueness', 'except' => ['reject', 'reroute']],
+            [['dcs_code_ex'], 'checkValid', 'except' => ['reject', 'reroute']],
+            [['aadhaar_no'], 'validateAdharNo', 'except' => ['reject', 'reroute']],
+            [['mobile_no'], 'validateMobileNo', 'except' => ['reject', 'reroute']],
+            [['bank_account_no'], 'validateBankAccNo', 'except' => ['reject', 'reroute']],
             [['is_active'], 'checkActive', 'on' => 'beforeDocUpload'],
+            [['remarks'], 'required', 'message' => 'Reroute remarks cannot be blank.', 'on' => ['reroute']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsProvisional', $this->form_validation_type);
         $client_rules1 = Yii::$app->customvalidation->getRules('TblContactDetails', 'dcs-create');
@@ -871,7 +872,7 @@ class TblDcsProvisional extends ChildModel {
     }
 
     public function CheckDuplicate($attribute, $params) {
-        if($this->scenario != 'reject'){
+        if($this->scenario != 'reject' && $this->scenario != 'reroute'){
             if ($attribute == 'mobile_no') {
                 $mobile = $this->$attribute;
                 if (!empty($mobile)) {

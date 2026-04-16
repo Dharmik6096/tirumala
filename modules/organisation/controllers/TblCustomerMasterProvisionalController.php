@@ -145,23 +145,33 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             }
         }
         if (Yii::$app->request->post()) {
-            $historyModel = new TblCustomerMasterProvisionalHistory();
-            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            $this->model->load(Yii::$app->request->post());
-            $exCode = $this->model->customer_code_ex;
-            $this->model->customer_code_ex = $prefix . $exCode;
-            $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
-            if($this->model->validate()){
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
-                if ($transaction == 'customRedirect') {
-                    if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
-                        return $this->redirect(['document-upload', 'id' => $this->model->customer_provisional_code]);
-                    } else {
-                        return $this->redirect(['pending-customer-approval']);
+            $postData = Yii::$app->request->post();
+            if (isset($postData['operation']) && $postData['operation'] == 'reroute') {
+                $remarks = !empty($postData['TblCustomerMasterProvisional']['remarks']) ? $postData['TblCustomerMasterProvisional']['remarks'] : '';
+                $processModel = new TblProcessApproval();
+                $res = $processModel->handleReroute($this->model, 'tbl_customer_master_provisional', $remarks);
+                if ($res == 'customRedirect') {
+                    return $this->redirect(['update', 'id' => $this->model->customer_provisional_code]);
+                }
+            } else {
+                $historyModel = new TblCustomerMasterProvisionalHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $this->model->load(Yii::$app->request->post());
+                $exCode = $this->model->customer_code_ex;
+                $this->model->customer_code_ex = $prefix . $exCode;
+                $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
+                if($this->model->validate()){
+                    $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
+                    if ($transaction == 'customRedirect') {
+                        if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
+                            return $this->redirect(['document-upload', 'id' => $this->model->customer_provisional_code]);
+                        } else {
+                            return $this->redirect(['pending-customer-approval']);
+                        }
                     }
                 }
+                $this->model->customer_code_ex = $exCode;
             }
-            $this->model->customer_code_ex = $exCode;
         }
         return $this->customRender();
     }
@@ -218,79 +228,92 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
 
     public function actionApproveCustomerMaster($id) {
         $model = TblProcessApproval::findOne($id);
-        $model->scenario = 'approve';
         $historyApproval = new TblProcessApprovalHistory();
         Yii::$app->operation->history($model, $historyApproval, UPDATE);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model_save = [];
-            $customer_error = '';
-            $message = '';
-            $status = '';
-            $model_save[] = $historyApproval;
-            $model_save[] = $model;
-            if (!empty($model_save)) {
-                $model->ApprovalList($model, $model_save, $status);
+        if ($model->load(Yii::$app->request->post())) {
+            $postData = Yii::$app->request->post();
+            if (isset($postData['operation']) && $postData['operation'] == 'reroute') {
                 $customerModel = $this->findModel($model->process_code);
-                $historyModel = new TblCustomerMasterProvisionalHistory();
-                Yii::$app->operation->history($customerModel, $historyModel, UPDATE);
-                $model_save[] = $historyModel;
-                $customerModel->status = $status;
-                $customerModel->remarks = $model->remarks;
-                $customerModel->scenario = 'approve';
-
-                $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL') == '1';
-                $customerModel->customer_status = 0;
-                if (strtolower($status) === 'approve') {
-                    $customerModel->approved_at = date('Y-m-d H:i:s');
-                    $customerModel->approved_by = Yii::$app->user->identity->user_code;
-                    $customerModel->customer_status = $customerCreationPendingForSapApproval ? 0 : 1;
-                } else if(strtolower($status) === 'reject'){
-                    $customerModel->scenario = 'reject';
-                }
-
-                $model_save[] = $customerModel;
-                $all_doc = [];
-                $customerdoc = [];
-                $unlink_files = [];
-                $attachments = [];
-                if ($customerModel->validate()) {
-                    if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
-                        $this->createCustomer($customerModel, $model_save, $all_doc, $customerdoc, $message, $unlink_files, $attachments);
-                    }
-                } else {
-                    foreach ($customerModel->getErrors() as $errorkey => $value) {
-                        $message = $value;
-                    }
-                }
-                if (!empty($message)) {
-                    foreach ($message as $msg) {
-                        $customer_error .= !empty($customer_error) ? '<br>' . $msg : $msg;
-                    }
-                }
-                if (empty($customer_error)) {
-
-                    $transaction = $this->generalModel->saveTransaction($model_save, ['Customer Provisional Approval', 'edit']);
-
-                    if ($transaction == 'customRedirect') {
-
-                        if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
-                            \Yii::$app->general->moveAttachments($all_doc, $customerdoc, $attachments, 'customer', 'provisional_customer');
-                        }
-
-                        return $this->redirect(['pending-customer-approval']);
-                    }
-                } else {
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                            'message' => $customer_error . ' in Customer Master.']);
-                    return $this->redirect(['update', 'id' => $model->process_code]);
+                $remarks = $model->remarks ?? '';
+                $res = $model->handleReroute($customerModel, 'tbl_customer_master_provisional', $remarks);
+                if ($res == 'customRedirect') {
+                    return $this->redirect(['update', 'id' => $customerModel->customer_provisional_code]);
                 }
             } else {
-                Yii::$app->getSession()->setFlash('success', [
-                    'type' => 'error',
-                    'message' => 'Customer Master provisional already approved by other user.'
-                ]);
+                $model->scenario = 'approve';
+                if ($model->validate()) {
+                    $model_save = [];
+                    $customer_error = '';
+                    $message = '';
+                    $status = '';
+                    $model_save[] = $historyApproval;
+                    $model_save[] = $model;
+                    if (!empty($model_save)) {
+                        $model->ApprovalList($model, $model_save, $status);
+                        $customerModel = $this->findModel($model->process_code);
+                        $historyModel = new TblCustomerMasterProvisionalHistory();
+                        Yii::$app->operation->history($customerModel, $historyModel, UPDATE);
+                        $model_save[] = $historyModel;
+                        $customerModel->status = $status;
+                        $customerModel->remarks = $model->remarks;
+                        $customerModel->scenario = 'approve';
+
+                        $customerCreationPendingForSapApproval = Yii::$app->general->getUnionConfiguration($customerModel->union_code, 'customer_creation_pending_for_sap_approval', 'PORTAL') == '1';
+                        $customerModel->customer_status = 0;
+                        if (strtolower($status) === 'approve') {
+                            $customerModel->approved_at = date('Y-m-d H:i:s');
+                            $customerModel->approved_by = Yii::$app->user->identity->user_code;
+                            $customerModel->customer_status = $customerCreationPendingForSapApproval ? 0 : 1;
+                        } else if(strtolower($status) === 'reject'){
+                            $customerModel->scenario = 'reject';
+                        }
+
+                        $model_save[] = $customerModel;
+                        $all_doc = [];
+                        $customerdoc = [];
+                        $unlink_files = [];
+                        $attachments = [];
+                        if ($customerModel->validate()) {
+                            if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
+                                $this->createCustomer($customerModel, $model_save, $all_doc, $customerdoc, $message, $unlink_files, $attachments);
+                            }
+                        } else {
+                            foreach ($customerModel->getErrors() as $errorkey => $value) {
+                                $message = $value;
+                            }
+                        }
+                        if (!empty($message)) {
+                            foreach ($message as $msg) {
+                                $customer_error .= !empty($customer_error) ? '<br>' . $msg : $msg;
+                            }
+                        }
+                        if (empty($customer_error)) {
+
+                            $transaction = $this->generalModel->saveTransaction($model_save, ['Customer Provisional Approval', 'edit']);
+
+                            if ($transaction == 'customRedirect') {
+
+                                if ($status == 'Approve' && $customerCreationPendingForSapApproval != '1') {
+                                    \Yii::$app->general->moveAttachments($all_doc, $customerdoc, $attachments, 'customer', 'provisional_customer');
+                                }
+
+                                return $this->redirect(['pending-customer-approval']);
+                            }
+                        } else {
+                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                    'message' => $customer_error . ' in Customer Master.']);
+                            return $this->redirect(['update', 'id' => $model->process_code]);
+                        }
+                    } else {
+                        Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'error',
+                            'message' => 'Customer Master provisional already approved by other user.'
+                        ]);
+                    }
+                }
             }
         }
+        $model->scenario = 'default';
         return $this->render('approve_provisional_customer', [
                     'model' => $model,
         ]);

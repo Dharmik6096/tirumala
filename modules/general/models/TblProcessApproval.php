@@ -10,6 +10,7 @@ use yii\db\Expression;
 use app\modules\configuration\models\TblShiftTimeExceed;
 use app\modules\organisation\models\TblCustomerMasterProvisional;
 use app\modules\details\models\TblContactDetails;
+use app\models\GeneralModel;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -236,6 +237,48 @@ class TblProcessApproval extends \app\models\ChildModel {
 
     public function getDepartmentId() {
         return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
+    }
+
+    public function handleReroute($model, $process_name, $remarks) {
+        $saveModel = [];
+        $historyClass = get_class($model) . 'History';
+        $historyModel = new $historyClass();
+        Yii::$app->operation->history($model, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
+
+        $model->status = 'Reroute';
+        $model->remarks = $remarks;
+        $model->scenario = 'reroute';
+        $saveModel[] = $model;
+        if (!$model->validate()) {
+            $errors = [];
+            foreach ($model->getErrors() as $attrErrors) {
+                foreach ($attrErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
+            Yii::$app->getSession()->setFlash('error', ['type' => 'error', 'message' => implode('<br/>', $errors)]);
+            return false;
+        }
+        $workflowRequired = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
+        if ($workflowRequired == 1) {
+            $primaryKey = (string)$model->getPrimaryKey();
+            $approvals = TblProcessApproval::find()->where(['process_code' => $primaryKey, 'process_name' => $process_name])->all();
+            if(!empty($approvals)){
+                foreach ($approvals as $approval) {
+                    $approvalHistory = new TblProcessApprovalHistory();
+                    Yii::$app->operation->history($approval, $approvalHistory, UPDATE);
+                    $saveModel[] = $approvalHistory;
+                    $approval->status = 0;
+                    $approval->remarks = NULL;
+                    $saveModel[] = $approval;
+                }
+            }
+        }
+        $removedTbl = str_replace('tbl_', '', $process_name);
+        $msg_string = str_replace('_', ' ', $removedTbl);
+        $generalModel = new GeneralModel();
+        return $generalModel->saveTransaction($saveModel, [$msg_string.' Reroute', 'edit']);
     }
 
 }
