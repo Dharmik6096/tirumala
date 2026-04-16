@@ -29,7 +29,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblBankDetails extends \app\models\ChildModel {
 
-    public $reference_id, $name_at_bank, $bank_name, $city, $branch, $micr, $name_match_result, $name_match_score, $account_status, $account_status_code, $utr, $ifsc_code, $has_available_branch_info, $branch_address, $branch_name, $beneficiary_id, $verify_for, $code;
+    public $reference_id, $name_at_bank, $bank_name, $city, $branch, $micr, $name_match_result, $name_match_score, $account_status, $account_status_code, $utr, $ifsc_code, $has_available_branch_info, $branch_address, $branch_name, $beneficiary_id, $verify_for, $code, $parent_ref_code;
 
     /**
      * @inheritdoc
@@ -50,7 +50,7 @@ class TblBankDetails extends \app\models\ChildModel {
               }, 'whenClient' => "function (attribute, value) { return $('#tblbankdetails-bank_code').val()!==''}"], */
                 [['detail_code'], 'integer'],
                 [['module_name', 'module_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at', 'is_default', 'is_active', 'beneficiary_name', 'is_verified', 'remarks', 'reference_id', 'name_at_bank', 'bank_name', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address', 'branch_name', 'beneficiary_id', 'verify_for', 'code'], 'safe'],
+                [['created_at', 'updated_at', 'is_default', 'is_active', 'beneficiary_name', 'is_verified', 'remarks', 'reference_id', 'name_at_bank', 'bank_name', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address', 'branch_name', 'beneficiary_id', 'verify_for', 'code','parent_ref_code'], 'safe'],
 //            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
 //            return $model->module_name == $this->module_name;
 //        }],
