@@ -33,12 +33,15 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
                                 $message = 'Successfully Saved!';
                                 $success_id[] = $transaction_data['uuid'];
                             } else {
+                                \Yii::info("AMCS Inbox Queue : failed to push " . $transaction_data['uuid']);
                                 $error_id[] = $transaction_data['uuid'];
                             }
                         } catch (Exception $e) {
                             $error_id[] = $transaction_data['uuid'];
+                            \Yii::info("AMCS Inbox Queue : Exception " . $transaction_data['uuid'] . " : " . $e->getMessage());
                         } catch (\Throwable $e) {
                             $error_id[] = $transaction_data['uuid'];
+                            \Yii::info("AMCS Inbox Queue : Throwable " . $transaction_data['uuid'] . " : " . $e->getMessage());
                         }
                     } else {
                         $request = Yii::$app->get('androidHttpRequest');
@@ -67,6 +70,7 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $res_data['error_id'] = implode(',', $error_id);
         $this->response['message'] = [$message];
         $this->response['data'] = $res_data;
+        \Yii::info("AMCS Inbox Queue: Processing without queue");
         return $this->response;
     }
 
