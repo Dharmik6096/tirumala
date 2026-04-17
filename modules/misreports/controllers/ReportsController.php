@@ -5117,7 +5117,6 @@ class ReportsController extends \app\controllers\ChildController {
                 // 'excel_readonly' => TRUE,
                 // 'editable_columns' => ['is_verified'],
                 // 'extension' => 'xlsx',
-                'writer' => 'Excel5',
             ],
         ];
         return $label[$l];
@@ -5202,11 +5201,10 @@ class ReportsController extends \app\controllers\ChildController {
             fclose($output);
             exit();
         } else {
-            $writer = isset($this->data['writer']) ? $this->data['writer'] : 'Excel2007';
             $header = [
                 'mime' => 'application/vnd.ms-excel',
                 'extension' => 'xls',
-                'writer' => $writer,
+                'writer' => 'Excel2007',
             ];
 
             $objPHPExcel = new PHPExcel();
