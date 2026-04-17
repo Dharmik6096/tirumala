@@ -28,6 +28,7 @@ $kyc_config = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get(
                 }],
                 ['attribute' => 'verify_for'],
                 ['attribute' => 'code'],
+                ['attribute' => 'parent_ref_code'],
                 ['attribute' => 'name', 'value' => 'name'],
                 ['attribute' => 'ex_code'],
                 ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
