@@ -1491,7 +1491,7 @@ class SchedulerController extends ChildController {
                                     if (!empty($dcsErrParts)) {
                                         $dcsErrParts = $model->response_msg . ' | ' . implode(' | ', $dcsErrParts);
                                         TblDcsProvisional::updateAll(
-                                            ['data_post_status' => 3, 'response_msg' => substr($dcsErrParts, 0, 800)],
+                                            ['data_post_status' => 3, 'is_sap_approved' => 1, 'response_msg' => substr($dcsErrParts, 0, 800)],
                                             ['dcs_provisional_code' => $model->dcs_provisional_code]
                                         );
                                     }
@@ -1533,7 +1533,7 @@ class SchedulerController extends ChildController {
                                     if (!empty($memberErrParts)) {
                                         $memberErrParts = $model->response_msg . ' | ' . implode(' | ', $memberErrParts);
                                         TblMemberProvisional::updateAll(
-                                            ['data_post_status' => 3, 'response_msg' => substr($memberErrParts, 0, 800)],
+                                            ['data_post_status' => 3, 'is_sap_approved' => 1, 'response_msg' => substr($memberErrParts, 0, 800)],
                                             ['provisional_member_code' => $model->provisional_member_code]
                                         );
                                     }
@@ -1577,7 +1577,7 @@ class SchedulerController extends ChildController {
                                     if (!empty($custErrParts)) {
                                         $custErrParts = $model->response_msg . ' | ' . implode(' | ', $custErrParts);
                                         TblCustomerMasterProvisional::updateAll(
-                                            ['data_post_status' => 3, 'response_msg' => substr($custErrParts, 0, 800)],
+                                            ['data_post_status' => 3, 'is_sap_approved' => 1, 'response_msg' => substr($custErrParts, 0, 800)],
                                             ['customer_provisional_code' => $model->customer_provisional_code]
                                         );
                                     }
