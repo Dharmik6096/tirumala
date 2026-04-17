@@ -17,7 +17,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
         $errors = [];
         $count = 0;
 
-        $data = array_filter($data, function($var) {
+        $data = array_filter($data, function ($var) {
             return !empty($var[0]) && !is_null($var);
         });
         $data = array_filter($data);
@@ -48,7 +48,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                     $modelSave = [];
 
                     if ($model->validate()) {
-                        if ($model->is_verified == '1') {
+                        if ($model->is_verified == '1' && in_array(strtoupper($model->verify_for), ['MEMBER', 'DCS', 'CUSTOMER'])) {
                             $map = [
                                 'MEMBER' => [TblMember::class, ['member_code' => $model->code], TblMemberHistory::class],
                                 'DCS' => [TblBankDetails::class, ['module_name' => 'society', 'module_code' => $model->code, 'is_default' => 1, 'is_active' => 1], TblBankDetailsHistory::class],
@@ -58,7 +58,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                             [$class, $condition, $historyClass] = $map[$model->verify_for];
                             $modelData = $class::findOne($condition);
 
-                            if (!empty($modelData) && $modelData->is_verified != 1) {
+                            if (!empty($modelData) && $modelData->is_verified != 1 && $modelData->bank_account_no == $model->bank_account_no && $modelData->ifsc == $model->ifsc) {
                                 $historyModel = new $historyClass();
                                 Yii::$app->operation->history($modelData, $historyModel, UPDATE);
                                 $modelData->is_verified = $modelData->is_kyc_verified = $model->is_verified;
