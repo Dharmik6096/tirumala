@@ -49,8 +49,9 @@ class TblLedgerMappingTaxDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ledger_code', 'tax_detail_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at', 'ledger_mapping_tax_detail_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'purchase_ledger_code', 'tax_detail_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at', 'ledger_mapping_tax_detail_code', 'sale_ledger_code'], 'safe'],
                 [['ledger_mapping_tax_detail_code'], 'required'],
+                [['sale_ledger_code', 'purchase_ledger_code'], 'validateLedgerMapping'],
         ];
     }
 
@@ -60,7 +61,7 @@ class TblLedgerMappingTaxDetail extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'ledger_mapping_tax_detail_code' => Yii::t('app', 'Ledger Mapping Tax Detail Code'),
-            'ledger_code' => Yii::t('app', 'Ledger'),
+            'purchase_ledger_code' => Yii::t('app', 'Purchase Ledger'),
             'tax_detail_code' => Yii::t('app', 'Tax'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
@@ -79,6 +80,7 @@ class TblLedgerMappingTaxDetail extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'sale_ledger_code' => Yii::t('app', 'Sale Ledger'),
         ];
     }
 
@@ -102,8 +104,12 @@ class TblLedgerMappingTaxDetail extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getLedgerCode() {
-        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'ledger_code']);
+    public function getPurchaseLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'purchase_ledger_code']);
+    }
+
+    public function getSaleLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'sale_ledger_code']);
     }
 
     public function getTaxDetailCode() {
@@ -123,6 +129,16 @@ class TblLedgerMappingTaxDetail extends \app\models\ChildModel {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
+        }
+    }
+
+    public function validateLedgerMapping($attribute, $params) {
+        if (!empty($this->sale_ledger_code) && empty($this->purchase_ledger_code)) {
+            $this->addError('purchase_ledger_code', 'Purchase Ledger is required when Sale Ledger is selected.');
+        }
+
+        if (!empty($this->purchase_ledger_code) && empty($this->sale_ledger_code)) {
+            $this->addError('sale_ledger_code', 'Sale Ledger is required when Purchase Ledger is selected.');
         }
     }
 

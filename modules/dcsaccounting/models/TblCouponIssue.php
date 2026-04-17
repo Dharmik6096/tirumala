@@ -10,6 +10,8 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblBanks;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_coupon_issue".
@@ -124,6 +126,14 @@ class TblCouponIssue extends \app\models\ChildModel {
 
     public function getBankCode() {
         return $this->hasOne(TblBanks::className(), ['bank_code' => 'bank_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'consumer_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'consumer_code']);
     }
 
 }

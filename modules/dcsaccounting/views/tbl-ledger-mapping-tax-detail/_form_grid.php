@@ -27,8 +27,11 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
-        ['attribute' => 'ledger_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->ledgerCode, 'ledger_name');
+        ['attribute' => 'purchase_ledger_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->purchaseLedgerCode, 'ledger_name');
+        }],
+        ['attribute' => 'sale_ledger_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->saleLedgerCode, 'ledger_name');
         }],
         ['attribute' => 'tax_detail_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->taxDetailCode, ['taxCode'], 'tax_name');
