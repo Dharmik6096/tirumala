@@ -33,7 +33,7 @@ class TblProductSaleRateHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['product_sale_rate_code', 'product_code', 'sale_rate', 'wef_date', 'created_at', 'history_created_at', 'updated_at', 'created_by', 'operation_type', 'updated_by', 'union_code', 'is_member_rate', 'commission'], 'safe'],
+                [['product_sale_rate_code', 'product_code', 'sale_rate', 'wef_date', 'created_at', 'history_created_at', 'updated_at', 'created_by', 'operation_type', 'updated_by', 'union_code', 'is_member_rate', 'commission','rdo_commission'], 'safe'],
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
