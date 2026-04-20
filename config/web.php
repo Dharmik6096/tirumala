@@ -137,7 +137,10 @@ $config = [
             'targets' => [
                     [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning', 'trace', 'info'],
+                    'levels' => ['error', 'warning', 'info'],
+                    'logVars' => [],
+                    'maxFileSize' => 20480,
+                    'maxLogFiles' => 20,
                 ],
             ],
         ],
@@ -308,5 +311,8 @@ if (YII_ENV_DEV) {
 }
 if (!empty($params ['trustedHosts'])) {
     $config['components']['request']['trustedHosts'] = $params ['trustedHosts'];
+}
+if (!empty($params['queueInbox'])) {
+    $config['components']['queueInbox'] = $params ['queueInbox'];
 }
 return $config;

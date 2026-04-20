@@ -3,7 +3,7 @@
         'name' => 'yiisoft/yii2-app-basic',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'c3a7761c994d3d3c7082b5dcf041857a3b7d502d',
+        'reference' => 'e9bf5795a04407017c5c40455a3397a861964768',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -884,9 +884,9 @@
             'dev_requirement' => false,
         ),
         'paragonie/constant_time_encoding' => array(
-            'pretty_version' => 'v2.6.3',
-            'version' => '2.6.3.0',
-            'reference' => '58c3f47f650c94ec05a151692652a868995d2938',
+            'pretty_version' => 'v3.1.3',
+            'version' => '3.1.3.0',
+            'reference' => 'd5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77',
             'type' => 'library',
             'install_path' => __DIR__ . '/../paragonie/constant_time_encoding',
             'aliases' => array(),
@@ -931,9 +931,9 @@
             'dev_requirement' => true,
         ),
         'php-amqplib/php-amqplib' => array(
-            'pretty_version' => 'v2.10.1',
-            'version' => '2.10.1.0',
-            'reference' => '6e2b2501e021e994fb64429e5a78118f83b5c200',
+            'pretty_version' => 'v3.7.0',
+            'version' => '3.7.0.0',
+            'reference' => '91fd00e74cd2eea624fd50a321d926b1c124bb99',
             'type' => 'library',
             'install_path' => __DIR__ . '/../php-amqplib/php-amqplib',
             'aliases' => array(),
@@ -949,9 +949,9 @@
             'dev_requirement' => false,
         ),
         'phpseclib/phpseclib' => array(
-            'pretty_version' => '3.0.20',
-            'version' => '3.0.20.0',
-            'reference' => '543a1da81111a0bfd6ae7bbc2865c5e89ed3fc67',
+            'pretty_version' => '3.0.50',
+            'version' => '3.0.50.0',
+            'reference' => 'aa6ad8321ed103dc3624fb600a25b66ebf78ec7b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpseclib/phpseclib',
             'aliases' => array(),
@@ -1558,7 +1558,7 @@
         'videlalvaro/php-amqplib' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => 'v2.10.1',
+                0 => 'v3.7.0',
             ),
         ),
         'wbraganca/yii2-dynamicform' => array(
@@ -1654,7 +1654,7 @@
         'yiisoft/yii2-app-basic' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'c3a7761c994d3d3c7082b5dcf041857a3b7d502d',
+            'reference' => 'e9bf5795a04407017c5c40455a3397a861964768',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1715,9 +1715,9 @@
             'dev_requirement' => false,
         ),
         'yiisoft/yii2-queue' => array(
-            'pretty_version' => '2.3.5',
-            'version' => '2.3.5.0',
-            'reference' => 'c1bf0ef5dbe107dc1cf692c1349b9ddd2485a399',
+            'pretty_version' => '2.3.8',
+            'version' => '2.3.8.0',
+            'reference' => 'e0f935e5b868d53347acfb14ec19faaf16085005',
             'type' => 'yii2-extension',
             'install_path' => __DIR__ . '/../yiisoft/yii2-queue',
             'aliases' => array(),

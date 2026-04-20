@@ -2,6 +2,8 @@
 
 namespace app\modules\androiddpu\v5\controllers;
 
+use app\modules\androiddpu\jobs\InboxJob;
+use Exception;
 use Yii;
 use app\modules\syncutility\models\TblInbox;
 use app\modules\androiddpu\components\HttpRequest;
@@ -15,25 +17,49 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $success_id = [];
         $error_id = [];
         $data = $this->post_data;
+
         if (!empty($data['content'])) {
             foreach ($data['content'] as $transaction_data) {
                 if (!empty($transaction_data['uuid'])) {
-                    $request = Yii::$app->get('androidHttpRequest');
-                    $transaction_data = $request->camelCaseToUnderscore($transaction_data);
-                    $model = new TblInbox();
-                    $model->setAttributes($transaction_data);
-                    $model->sync_timestamp = date('Y-m-d H:i:s');
-                    // $model->posting_timestamp = date('Y-m-d H:i:s');
-                    $transaction = $this->generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
-                    if ($transaction == 'customRedirect') {
-                        $message = 'Successfully Saved!';
-                        $success_id[] = $transaction_data['uuid'];
+                    $sync_timestamp = date('Y-m-d H:i:s');
+                    if (Yii::$app->has('queueInbox')) {
+                        try {
+                            $jobId = Yii::$app->queueInbox->push(new InboxJob([
+                                'transaction_data' => $transaction_data,
+                                'sync_timestamp' => $sync_timestamp,
+                            ]));
+
+                            if ($jobId) {
+                                $message = 'Successfully Saved!';
+                                $success_id[] = $transaction_data['uuid'];
+                            } else {
+                                \Yii::info("AMCS Inbox Queue Fill : failed to push " . $transaction_data['uuid']);
+                                $error_id[] = $transaction_data['uuid'];
+                            }
+                        } catch (Exception $e) {
+                            $error_id[] = $transaction_data['uuid'];
+                            \Yii::info("AMCS Inbox Queue Fill : Exception " . $transaction_data['uuid'] . " : " . $e->getMessage());
+                        } catch (\Throwable $e) {
+                            $error_id[] = $transaction_data['uuid'];
+                            \Yii::info("AMCS Inbox Queue Fill : Throwable " . $transaction_data['uuid'] . " : " . $e->getMessage());
+                        }
                     } else {
-                        $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
-                        if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
+                        $request = Yii::$app->get('androidHttpRequest');
+                        $model = new TblInbox();
+                        $model->setAttributes($transaction_data);
+                        $model->sync_timestamp = date('Y-m-d H:i:s');
+                        // $model->posting_timestamp = date('Y-m-d H:i:s');
+                        $transaction = $this->generalModel->saveDeleteTransaction([$model], [], [], ['transactional data', 'create'], true);
+                        if ($transaction == 'customRedirect') {
+                            $message = 'Successfully Saved!';
                             $success_id[] = $transaction_data['uuid'];
                         } else {
-                            $error_id[] = $transaction_data['uuid'];
+                            $errorData = !empty($transaction) ? (string) $transaction : 'error_occured';
+                            if (strstr(strtolower($errorData), 'cannot insert duplicate key')) {
+                                $success_id[] = $transaction_data['uuid'];
+                            } else {
+                                $error_id[] = $transaction_data['uuid'];
+                            }
                         }
                     }
                 }
@@ -90,4 +116,5 @@ class MasterDataController extends \app\modules\androiddpu\v4\controllers\Master
         $this->response['data'] = $res_data;
         return $this->response;
     }
+
 }

@@ -526,7 +526,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                             }
                             $MappedMilkType = $model_data->tblDcsMilkType;
                             $collectionIncentive = $model_data->collectionIncentive;
-                            $output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'DCS', $org_code]);
+                            $output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'DCS', $org_code]); //cache
                         } else if ($org_type == 'BMC') {
                             $detailType = 'bmc';
                             $MappedMilkType = $model_data->tblBmcMilkType;
@@ -633,6 +633,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                         $qualityParamConfig['snf'] = $snf;
                         $qualityParamConfig['clr'] = $clr;
                         $res_data['collectionConfig']['qualityParam'] = $qualityParamConfig;
+
                         $model = new TblUnionConfigResult();
                         $model->union_code = $model_data->union_code;
                         $model->config_for = $org_type;
@@ -671,12 +672,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v4\controllers\Androi
                                 $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
                             }
                         }
-
-                        $shiftTimigData = Yii::$app->general->getSpData('sp_app_amcs_v2_collection_shift_time', [$org_type, $org_code]);
+                       $shiftTimigData = Yii::$app->general->getSpData('sp_app_amcs_v2_collection_shift_time', [$org_type, $org_code]); //cache
                         if (!empty($shiftTimigData)) {
                             $res_data['shift_timing'] = $shiftTimigData;
                         }
-                        $shiftTimeExceedData = Yii::$app->general->getSpData('sp_app_amcs_v4_collection_shift_time_exceed', [$org_type, $org_code]);
+                        $shiftTimeExceedData = Yii::$app->general->getSpData('sp_app_amcs_v4_collection_shift_time_exceed', [$org_type, $org_code]); //cache
                         if (!empty($shiftTimeExceedData)) {
                             $res_data['shift_time_exceed'] = $shiftTimeExceedData;
                         }

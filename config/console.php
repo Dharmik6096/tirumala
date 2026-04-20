@@ -31,7 +31,10 @@ $config = [
             'targets' => [
                     [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'],
+                    'logVars' => [],
+                    'maxFileSize' => 20480,
+                    'maxLogFiles' => 20,
                 ],
             ],
         ],
@@ -81,5 +84,8 @@ if (YII_ENV_DEV) {
         'class' => 'yii\gii\Module',
     ];
 }
-
+if (!empty($params['queueInbox'])) {
+    $config['components']['queueInbox'] = $params ['queueInbox'];
+    $config['bootstrap'] = array_merge($config['bootstrap'], ['queueInbox']);
+}
 return $config;

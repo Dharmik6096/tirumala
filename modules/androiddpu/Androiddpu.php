@@ -5,8 +5,11 @@ namespace app\modules\androiddpu;
 /**
  * androiddpu module definition class
  */
+
+use app\modules\androiddpu\components\CaseConverterFilter;
 use app\modules\androiddpu\components\HttpRequest;
 use app\modules\androiddpu\components\HttpResponse;
+use Yii;
 
 class Androiddpu extends \yii\base\Module {
 
@@ -40,6 +43,14 @@ class Androiddpu extends \yii\base\Module {
         // custom initialization code goes here
     }
 
+    public function behaviors()
+    {
+        return [
+            'caseConverter' => [
+                'class' => CaseConverterFilter::class,
+            ],
+        ];
+    }
     /**
      * Module-scoped singletons for request/response helpers
      */
