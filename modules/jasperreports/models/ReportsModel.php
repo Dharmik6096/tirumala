@@ -114,6 +114,7 @@ class ReportsModel extends Model {
                 [['p_union_code', 'p_login_type', 'p_from_date', 'p_to_date'], 'required', 'on' => ['UserAttendanceReport']],
                 [['p_union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code', 'p_bank_type'], 'required', 'on' => ['MemberBankPaymentReport']],
                 [['p_union_code', 'p_product_type', 'p_from_date', 'p_to_date'], 'required', 'on' => ['WeighSlip']],
+                [['p_union_code', 'state_code', 'region_code', 'p_type', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['VlccTransactionDataPercentageWise']],
         ];
     }
 

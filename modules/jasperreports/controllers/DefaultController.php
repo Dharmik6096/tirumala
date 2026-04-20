@@ -599,6 +599,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVlccTransactionDataPercentageWise() {
+        $this->report = 'VlccTransactionDataPercentageWise';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -1415,6 +1420,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'Weighment Slip',
                 'bkg_export' => TRUE,
             ],
+            'VlccTransactionDataPercentageWise' => [
+                'param' => 'p_union_code,state_code,region_code,area_code,p_bmc_code,p_type,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'vsp/AreaWiseMisFTPCrossTab',
+                'scenario' => 'VlccTransactionDataPercentageWise',
+                'title' => 'VLCC Transaction Data Percentage Wise ',
+                'bkg_export' => TRUE
+            ]
         ];
         return $label[$l];
     }

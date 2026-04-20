@@ -910,6 +910,7 @@ echo GhostMenu::widget([
                                             ['label' => '113 -' . Yii::t('app', 'VLCs comparison details'), 'url' => ['/misreports/reports/milk-collection-proc-detail-region']],
                                             ['label' => Yii::t('app', 'VLCC Transaction Data Report'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report-region']],
                                             ['label' => Yii::t('app', 'VLCC Transaction Data Report 1'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report-region-all']],
+                                            ['label' => Yii::t('app', 'VLCC Transaction Data Percentage Wise'), 'url' => ['/jasperreports/default/vlcc-transaction-data-percentage-wise']],
                                     ]
                                 ],
                                     [
