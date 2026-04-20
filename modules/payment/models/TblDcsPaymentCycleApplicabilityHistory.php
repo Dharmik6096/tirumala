@@ -33,7 +33,7 @@ class TblDcsPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord {
 //            [['payment_cycle_applicabilty_code', 'dcs_code'], 'required'],
 //            [['payment_cycle_applicabilty_code', 'is_lock'], 'integer'],
 //            [['dcs_code', 'operation_type'], 'string'],
-            [['payment_cycle_applicabilty_code', 'dcs_payment_cycle_code', 'dcs_code', 'from_date', 'to_date', 'is_lock', 'operation_type', 'history_created_at', 'data_lock', 'data_lock_vsp'], 'safe'],
+                [['payment_cycle_applicabilty_code', 'dcs_payment_cycle_code', 'dcs_code', 'from_date', 'to_date', 'is_lock', 'operation_type', 'history_created_at', 'data_lock', 'data_lock_vsp', 'payment_cycle_code'], 'safe'],
         ];
     }
 

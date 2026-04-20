@@ -17,6 +17,7 @@ $attribute = [
         ['attribute' => 'tax_group_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taxGroupCode, 'tax_group_name');
         }, 'visible' => true,],
+        ['attribute' => 'ref_code'],
 ];
 
 $grid_option = [
@@ -36,6 +37,11 @@ $grid_option = [
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-name' => $model->tax_name, 'data-val' => $model->tax_code, 'class' => $disable, 'title' => Yii::t('app', "Tax Detail")];
             return GhostHtml::a('<span><i class="glyphicon glyphicon-plus"></i></span>', ['/dcsaccounting/tbl-tax-detail/index', 'id' => $model->tax_code], $options);
+        },
+        'tax_mapping' => function ($url, $model) {
+            $disable = ($model->is_active == 0) ? 'disabled' : '';
+            $options = ['data-name' => $model->tax_name, 'data-val' => $model->tax_code, 'class' => $disable, 'title' => Yii::t('app', "Tax Master Ledger Mapping")];
+            return GhostHtml::a('<span><i class="fa fa-link"></i></span>', ['/dcsaccounting/tbl-tax/tax-ledger-mapping', 'id' => $model->tax_code], $options);
         }
     ]
 ];

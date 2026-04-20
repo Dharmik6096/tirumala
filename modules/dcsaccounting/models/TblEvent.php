@@ -41,6 +41,8 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblEvent extends \app\models\ChildModel {
 
+    public $credit_ledger_code, $debit_ledger_code, $credit_sub_ledger, $debit_sub_ledger, $voucher_type_code, $voucher_narration, $voucher_txn_credit_narration, $voucher_txn_debit_narration, $voucher_narration_local, $voucher_txn_credit_narration_local, $voucher_txn_debit_narration_local;
+
     /**
      * @inheritdoc
      */
@@ -53,7 +55,7 @@ class TblEvent extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['event_code', 'ledger_credit', 'ledger_debit', 'event_code_default', 'sub_ledger_credit', 'sub_ledger_debit', 'is_active', 'originating_type', 'created_at', 'updated_at', 'description', 'event_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
+                [['event_code', 'ledger_credit', 'ledger_debit', 'event_code_default', 'sub_ledger_credit', 'sub_ledger_debit', 'is_active', 'originating_type', 'created_at', 'updated_at', 'description', 'event_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'credit_ledger_code', 'debit_ledger_code', 'credit_sub_ledger', 'debit_sub_ledger', 'voucher_type_code', 'voucher_narration', 'voucher_txn_credit_narration', 'voucher_txn_debit_narration', 'voucher_narration_local', 'voucher_txn_credit_narration_local', 'voucher_txn_debit_narration_local'], 'safe'],
                 [['event_code'], 'required'],
         ];
     }
@@ -89,6 +91,8 @@ class TblEvent extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'credit_sub_ledger' => Yii::t('app', 'Credit Sub ledger ?'),
+            'debit_sub_ledger' => Yii::t('app', 'Debit Sub ledger ?'),
         ];
     }
 

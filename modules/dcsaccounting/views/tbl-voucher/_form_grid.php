@@ -67,6 +67,8 @@ $attribute = [
         }],
     'dock_code',
     'remarks',
+        ['attribute' => 'process_reference'],
+        ['attribute' => 'process_name'],
 ];
 
 $grid_option = [

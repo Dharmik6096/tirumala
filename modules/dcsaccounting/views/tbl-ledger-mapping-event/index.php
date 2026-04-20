@@ -1,5 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Ledger Mapping Event'));
+$this->params['menu'][] = Yii::$app->controls->add('Ledger Mapping Event');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

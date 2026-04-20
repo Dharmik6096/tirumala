@@ -16,6 +16,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\product\models\TblDispatchCenter;
 use app\modules\usermanagement\models\TblUserDispatchCenterMapping;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\dcsaccounting\models\TblLedgers;
 
 /**
  * This is the model class for table "tbl_product".
@@ -50,7 +52,7 @@ class TblProduct extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['product_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'product_type');
                 }, 'on' => 'importCsv'],
@@ -68,7 +70,7 @@ class TblProduct extends \app\models\ChildModel {
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'product_type', 'item_code', 'min_stock'], 'safe'],
+                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'product_type', 'item_code', 'min_stock', 'is_milk', 'milk_type', 'purchase_ledger', 'sale_ledger', 'stock_ledger', 'local_sale_ledger', 'other_state_tax_code', 'coupon_ledger'], 'safe'],
                 [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code'], 'except' => ['androidsync']],
                 [['tax_code'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->productGroupCode, 'union_code');
@@ -93,6 +95,9 @@ class TblProduct extends \app\models\ChildModel {
                 [['min_stock'], 'double', 'min' => 0],
                 [['min_stock'], 'default', 'value' => 0],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblProduct', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -125,6 +130,7 @@ class TblProduct extends \app\models\ChildModel {
             'is_dpu_product' => Yii::t('app', 'Is DPU Product'),
             'dpu_product_code' => Yii::t('app', 'DPU Product Code'),
             'x_col3' => Yii::t('app', 'Product Type'),
+            'other_state_tax_code' => Yii::t('app', 'Other State Tax'),
         ];
     }
 
@@ -254,6 +260,11 @@ class TblProduct extends \app\models\ChildModel {
     public function setImport($attribute, $params) {
         if (empty($this->getErrors())) {
             $this->unit_code = Yii::$app->general->getforeignkey($this->productGroupCode, 'unit_code');
+            if (empty($this->is_milk) || $this->is_milk == 0) {
+                $this->milk_type = null;
+                $this->local_sale_ledger = null;
+                $this->coupon_ledger = null;
+            }
         }
     }
 
@@ -302,6 +313,34 @@ class TblProduct extends \app\models\ChildModel {
                 return false;
             }
         }
+    }
+
+    public function getMilkType() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type']);
+    }
+
+    public function getPurchaseLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'purchase_ledger']);
+    }
+
+    public function getSaleLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'sale_ledger']);
+    }
+
+    public function getStockLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'stock_ledger']);
+    }
+
+    public function getLocalSaleLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'local_sale_ledger']);
+    }
+
+    public function getStateTaxCode() {
+        return $this->hasOne(TblTax::className(), ['tax_code' => 'other_state_tax_code']);
+    }
+
+    public function getCouponLedgerCode() {
+        return $this->hasOne(TblLedgers::className(), ['ledger_code' => 'coupon_ledger']);
     }
 
 }

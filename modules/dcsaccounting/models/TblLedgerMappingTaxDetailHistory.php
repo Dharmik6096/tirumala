@@ -46,7 +46,7 @@ class TblLedgerMappingTaxDetailHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['history_created_at', 'originating_type', 'history_created_by', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ledger_code', 'tax_detail_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at', 'ledger_mapping_tax_detail_code'], 'safe'],
+                [['history_created_at', 'originating_type', 'history_created_by', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'purchase_ledger_code', 'tax_detail_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'updated_at', 'ledger_mapping_tax_detail_code', 'sale_ledger_code'], 'safe'],
         ];
     }
 

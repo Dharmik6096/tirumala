@@ -25,6 +25,9 @@ $readonly = $type == 'create' ? FALSE : TRUE;
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
     <div class="col-sm-2">
+        <?= $form->field($model, 'ref_code')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('payment_mode_member', $model, $form, '', $model->getAttributeLabel('voucher_type'), false, 'voucher_type'); ?>
     </div>
     <div class="col-sm-2 hide-ledger">

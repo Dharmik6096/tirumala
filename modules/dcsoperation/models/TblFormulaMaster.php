@@ -7,6 +7,7 @@ use webvimark\modules\UserManagement\models\User;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblUnions;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_formula_master".
@@ -42,14 +43,14 @@ class TblFormulaMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['formula_code', 'formula_description', 'wef_date', 'milk_type_code', 'rate_type_code', 'union_code'], 'required'],
-            [['wef_date', 'dcs_code', 'milk_type_code', 'rate_type_code', 'union_code', 'created_at', 'updated_at'], 'safe'],
-            [['is_active'], 'integer'],
-            [['formula_code', 'formula_description', 'formula'], 'string', 'max' => 500],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['formula'], 'required', 'on' => ['TextFormula']],
-            [['is_active'], 'default', 'value' => 1]
+                [['formula_code', 'formula_description', 'wef_date', 'milk_type_code', 'rate_type_code', 'union_code'], 'required'],
+                [['wef_date', 'dcs_code', 'milk_type_code', 'rate_type_code', 'union_code', 'created_at', 'updated_at'], 'safe'],
+                [['is_active'], 'integer'],
+                [['formula_code', 'formula_description', 'formula'], 'string', 'max' => 500],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['formula'], 'required', 'on' => ['TextFormula']],
+                [['is_active'], 'default', 'value' => 1]
         ];
     }
 
@@ -135,6 +136,22 @@ class TblFormulaMaster extends \app\models\ChildModel {
 
     public function getSameTypeData() {
         return $this->find()->where(['union_code' => $this->union_code, 'milk_type_code' => $this->milk_type_code, 'rate_type_code' => $this->rate_type_code, 'is_active' => 1])->one();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
+                $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
     }
 
 }

@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_ledger_mapping_event".
@@ -52,8 +53,11 @@ class TblLedgerMappingEvent extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['credit_ledger_code', 'debit_ledger_code', 'originating_org_code', 'originating_org_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ledger_mapping_event_code', 'credit_sub_ledger', 'debit_sub_ledger', 'event_code', 'event_code_default', 'voucher_type_code', 'originating_type', 'created_at', 'updated_at'], 'safe'],
+                [['credit_ledger_code', 'debit_ledger_code', 'originating_org_code', 'originating_org_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ledger_mapping_event_code', 'credit_sub_ledger', 'debit_sub_ledger', 'event_code', 'event_code_default', 'voucher_type_code', 'originating_type', 'created_at', 'updated_at', 'voucher_narration', 'voucher_txn_credit_narration', 'voucher_txn_debit_narration', 'voucher_narration_local', 'voucher_txn_credit_narration_local', 'voucher_txn_debit_narration_local'], 'safe'],
                 [['ledger_mapping_event_code'], 'required'],
+                [['voucher_narration_local', 'voucher_txn_credit_narration_local', 'voucher_txn_debit_narration_local'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
         ];
     }
 
@@ -82,6 +86,12 @@ class TblLedgerMappingEvent extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'voucher_narration' => Yii::t('app', 'Voucher Narration'),
+            'voucher_txn_credit_narration' => Yii::t('app', 'Voucher Txn Credit Narration'),
+            'voucher_txn_debit_narration' => Yii::t('app', 'Voucher Txn Debit Narration'),
+            'voucher_narration_local' => Yii::t('app', 'Voucher Narration Local'),
+            'voucher_txn_credit_narration_local' => Yii::t('app', 'Voucher Txn Credit Narration Local'),
+            'voucher_txn_debit_narration_local' => Yii::t('app', 'Voucher Txn Debit Narration Local'),
             'x_col1' => Yii::t('app', 'X Col1'),
             'x_col2' => Yii::t('app', 'X Col2'),
             'x_col3' => Yii::t('app', 'X Col3'),
@@ -124,6 +134,22 @@ class TblLedgerMappingEvent extends \app\models\ChildModel {
 
     public function getVoucherTypeCode() {
         return $this->hasOne(TblVoucherTypes::className(), ['voucher_type_code' => 'voucher_type_code']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
+                $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
     }
 
 }

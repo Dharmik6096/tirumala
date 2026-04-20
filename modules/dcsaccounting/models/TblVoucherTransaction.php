@@ -43,7 +43,7 @@ class TblVoucherTransaction extends \app\models\ChildModel {
         return [
                 [['created_at', 'updated_at', 'credit_debit', 'originating_type', 'voucher_transaction_code', 'narration', 'voucher_code', 'ledger_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['voucher_transaction_code'], 'required'],
-                [['amount'], 'number'],
+                [['amount'], 'number', 'except' => ['androidsync']],
         ];
     }
 

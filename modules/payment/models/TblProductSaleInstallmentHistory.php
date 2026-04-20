@@ -58,7 +58,7 @@ class TblProductSaleInstallmentHistory extends \yii\db\ActiveRecord {
                 [['union_code'], 'safe'],
                 [['created_by', 'updated_by', 'history_created_by'], 'safe'],
                 [['operation_type'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'previous_pending_amount', 'type', 'x_col1', 'x_col2', 'x_col3'], 'safe'],
         ];
     }
 
