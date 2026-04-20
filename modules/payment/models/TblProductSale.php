@@ -6,7 +6,6 @@ use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblMember;
-use app\modules\payment\models\TblMemberCreditLimit;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use app\modules\globalmaster\models\TblCustomerType;
@@ -520,8 +519,8 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function setChildTable(&$model, &$modelSave, &$errors) {
         $model->product_sale_code = Yii::$app->general->getUuid();
-        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'vendor_product_sale_rate', 'PORTAL');
-        $batchNoWiseProductRate = Yii::$app->general->getUnionConfiguration($model->union_code, 'batch_no_wise_product_rate', 'PORTAL');
+        $config = Yii::$app->general->getUnionConfigResult($model->union_code, 'vendor_product_sale_rate', $this);
+        $batchNoWiseProductRate = Yii::$app->general->getUnionConfigResult($model->union_code, 'batch_no_wise_product_rate', $this);
         $detailModel = new TblProductSaleTransaction();
         $detailModel->attributes = $model->attributes;
         $detailModel->sap_batch_no = $model->sap_batch_no;
@@ -531,6 +530,8 @@ class TblProductSale extends \app\models\ChildModel {
         $detailModel->discount = $model->discount;
         $detailModel->import_union_config = $model->import_union_config;
         //        $this->loadRate($model, $detailModel);
+        $productData = $detailModel->productCode;
+        $productType = !empty($productData) ? $productData->x_col3 : '';
         if (!empty($detailModel->product_code) && !empty($model->customer_type) && !empty($model->customer_code)) {
             $date = !empty($model->invoice_date) ? date('Y-m-d', strtotime($model->invoice_date)) : date('Y-m-d');
             $memberRate = 0;
@@ -539,7 +540,7 @@ class TblProductSale extends \app\models\ChildModel {
             }
             $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : (strtoupper($this->customer_type) == 'PARTY' ? $this->bmc_code : $this->customer_code);
             $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : (strtoupper($this->customer_type) == 'PARTY' ? 'BMC' : $this->customer_type);
-            if ($batchNoWiseProductRate == 0 || $batchNoWiseProductRate == '') {
+            if ($batchNoWiseProductRate == 0 || $batchNoWiseProductRate == '' || $productType == 1) {
                 if ($config != '1' || $this->scenario != 'productSaleImport') {
                     $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                             ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
@@ -547,7 +548,7 @@ class TblProductSale extends \app\models\ChildModel {
                             ->where(['tbl_product_sale_rate.product_code' => $detailModel->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
                     $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
                     if (empty($app)) {
-                        $detailModel->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
+                        $model->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
                     } else {
                         $detailModel->product_sale_rate_applicability_code = $app['product_sale_rate_applicability_code'];
                         $detailModel->rate = $app['sale_rate'];
@@ -569,16 +570,14 @@ class TblProductSale extends \app\models\ChildModel {
             } else {
                 $detailModel->rate = $model->product_stock_rate;
                 $detailModel->x_col1 = $model->product_stock_rate;
-                $detailModel->unit_code = Yii::$app->general->getforeignkey($this->productCode, 'unit_code');
+                $detailModel->unit_code = !empty($productData) ? $productData->unit_code : '';
                 $model->amount = $detailModel->quantity * $detailModel->rate;
                 $model->amount_due = $model->amount - $model->discount;
             }
         } else {
             $this->loadRate($model, $detailModel);
         }
-        //$detailModel->tax_code = NULL;
-        $productTax = $detailModel->productCode;
-        $detailModel->tax_code = !empty($productTax->tax_code) ? $productTax->tax_code : NULL;
+        $detailModel->tax_code = (!empty($productData) && !empty($productData->tax_code)) ? $productData->tax_code : NULL;
 
         if ($this->calculateTax) {
             $configModel = new TblDcsGeneralConfig();
@@ -601,7 +600,7 @@ class TblProductSale extends \app\models\ChildModel {
         $model->paid_amount = $model->payment_mode == 1 ? 0 : $model->amount_due;
         $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
         $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
-        $this->createProductSaleData($model, $detailModel, $modelSave, $configModelData, $data, true);
+        $this->createProductSaleData($model, $detailModel, $modelSave, $productType, $configModelData, $data, true);
         //        $data = $detailModel->productSaleCode;
         $detailModel->scenario = 'SaleImport';
         if (!$detailModel->validate()) {
@@ -739,7 +738,7 @@ class TblProductSale extends \app\models\ChildModel {
         }
     }
 
-    public function createProductSaleData($model, $detailModel, &$modelSave, $configModelData = '', $taxdata = '', $taxModelDataCheck = true) {
+    public function createProductSaleData($model, $detailModel, &$modelSave, $productType, $configModelData = '', $taxdata = '', $taxModelDataCheck = true) {
         if (!empty($model->payment_mode)) {
             $no = !empty($model->no_of_installment) ? ($model->no_of_installment) : 1;
             $cycle = NULL; //$appCycleAppModelData->payment_cycle_code;
@@ -840,7 +839,7 @@ class TblProductSale extends \app\models\ChildModel {
         }
         // $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
         $config = Yii::$app->general->getUnionConfigResult($this->union_code, 'stock_check_on_sale', $this);
-        if ($config == 1) {
+        if ($config == 1 && $productType != 1) {
             $fstockModel = new TblProductStock();
             $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
             $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;

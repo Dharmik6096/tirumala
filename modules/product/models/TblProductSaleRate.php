@@ -42,25 +42,26 @@ class TblProductSaleRate extends \app\models\ChildModel {
             [['product_code', 'sale_rate', 'wef_date', 'union_code'], 'required', 'except' => ['androidsync']],
 //                [['product_code'], 'integer'],
             [['sale_rate'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
-            [['wef_date', 'created_at', 'updated_at', 'product_sale_rate_code', 'union_code', 'is_member_rate', 'commission'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'product_sale_rate_code', 'union_code', 'is_member_rate', 'commission','rdo_commission'], 'safe'],
             [['created_by', 'updated_by'], 'string'],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
             ['wef_date', 'unique', 'message' => Yii::t('app/validation', 'Rate is already taken on this WEF Date.'), 'when' => function($model) {
                     $data = $this->find()->where(['union_code' => $model->union_code, 'product_code' => $model->product_code, 'wef_date' => date('Y-m-d', strtotime($this->wef_date)), 'is_member_rate' => $model->is_member_rate])->andWhere(['<>', 'product_sale_rate_code', $model->product_sale_rate_code])->count();
                     return ($data == 1) ? true : false;
                 }],
-            [['commission'], 'required', 'when' => function ($model) {
+            [['commission', 'rdo_commission'], 'required', 'when' => function ($model) {
                     return $model->is_member_rate == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsalerate-is_member_rate').is(':checked'); 
                }"
             ],
-            [['commission'], 'number', 'min' => 0, 'when' => function ($model) {
+
+            [['commission', 'rdo_commission'], 'number', 'min' => 0, 'when' => function ($model) {
                     return $model->is_member_rate == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsalerate-is_member_rate').is(':checked'); 
                }"],
-            [['is_member_rate', 'commission'], 'default', 'value' => 0],
+            [['is_member_rate', 'commission', 'rdo_commission'], 'default', 'value' => 0],
             [['commission'], 'validateCommission', 'skipOnEmpty' => false],
             [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'rate_wharehouse'], 'safe'],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
@@ -90,7 +91,8 @@ class TblProductSaleRate extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'commission' => Yii::t('app', 'Commission'),
+            'commission' => Yii::t('app', 'Society Commission'),
+            'rdo_commission' => Yii::t('app', 'RDO Commission'),
             'is_member_rate' => Yii::t('app', 'Is Member Rate'),
         ];
     }
