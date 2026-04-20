@@ -1043,7 +1043,7 @@ class DropDown extends Component {
         if ($model->hasAttribute('is_active')) {
             $where['is_active'] = 1;
         }
-// if (isset($labelData['whereCondition'])) {
+        // if (isset($labelData['whereCondition'])) {
 //     $where = array_merge($labelData['whereCondition'], $where);
 // }
         $whereCondition = [];
@@ -1066,7 +1066,7 @@ class DropDown extends Component {
             $select_fields[] = $tablename . '.' . $fields[1];
         }
 
-// $select_fields[] = $fields[0];
+        // $select_fields[] = $fields[0];
 // $select_fields[] = $fields[1];
 
         if (!empty($fields[2])) {
@@ -1126,7 +1126,7 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
-//client wise dropdown option remove
+        //client wise dropdown option remove
         $client_code = \Yii::$app->session->get('eiplCode');
         if (isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])) {
             foreach ($data['client_wise_rmv'][$client_code] as $value) {
@@ -2239,7 +2239,7 @@ class DropDown extends Component {
             'consumer_type' => [
                 'name' => 'consumer_type',
                 'prompt' => Yii::t('app', 'Select Type'),
-                'data' => [1 => Yii::t('app', 'Member'), 2 => Yii::t('app', 'Non-Member'), 3 => Yii::t('app', 'Vendor'), 4 => Yii::t('app', 'Institute'), 5 => Yii::t('app', 'Retail Sale'), 6 => Yii::t('app', 'Customer'), 7 => Yii::t('app', 'Other')],
+                'data' => [1 => Yii::t('app', 'DCS Member'), 2 => Yii::t('app', 'Non-Member'), 3 => Yii::t('app', 'Vendor'), 4 => Yii::t('app', 'Institute'), 5 => Yii::t('app', 'Retail Sale'), 6 => Yii::t('app', 'Consumer'), 7 => Yii::t('app', 'Other')],
             ],
             'credit_debit' => [
                 'name' => 'credit_debit',

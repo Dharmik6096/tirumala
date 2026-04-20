@@ -207,18 +207,18 @@ class TblTaxController extends \app\controllers\ChildController {
             $save_model = [];
             $historyModel = [];
             $postData = Yii::$app->request->post()['TblTaxDetail'];
-
+            $message = '';
             foreach ($postData as $taxDetailCode => $data) {
 
                 $mapping_model = TblLedgerMappingTaxDetail::find()->where(['tax_detail_code' => $taxDetailCode])->one();
                 $isChange = false;
 
                 if ($mapping_model) {
-                    if ($mapping_model->ledger_code != $data['ledger_code']) {
+                    if ($mapping_model->sale_ledger_code != $data['sale_ledger_code'] || $mapping_model->purchase_ledger_code != $data['purchase_ledger_code']) {
                         $isChange = true;
                     }
                 } else {
-                    if (!empty($data['ledger_code'])) {
+                    if (!empty($data['purchase_ledger_code']) || !empty($data['sale_ledger_code'])) {
                         $mapping_model = new TblLedgerMappingTaxDetail();
                         $incCount++;
                         $mapping_model->ledger_mapping_tax_detail_code = Yii::$app->general->getCodeAutoIncrement($mapping_model, $incCount);
@@ -233,9 +233,21 @@ class TblTaxController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($mapping_model, $mapingHistory, 'UPDATE');
                         $historyModel[] = $mapingHistory;
                     }
-                    $mapping_model->ledger_code = $data['ledger_code'];
-                    $save_model[] = $mapping_model;
+                    $mapping_model->purchase_ledger_code = $data['purchase_ledger_code'];
+                    $mapping_model->sale_ledger_code = $data['sale_ledger_code'];
+                    if ($mapping_model->validate()) {
+                        $save_model[] = $mapping_model;
+                    } else {
+                        foreach ($mapping_model->getErrors() as $value) {
+                            $taxName = $data['basic_tax_name'] ? $data['basic_tax_name'] : '';
+                            $message .= "Tax Name : $taxName - " . $value[0] . '<br/>';
+                        }
+                    }
                 }
+            }
+            if ($message != '') {
+                Yii::$app->session->setFlash('success', ['type' => 'error', 'message' => $message]);
+                return $this->redirect(Yii::$app->request->referrer);
             }
             if (!empty($save_model)) {
                 $transaction = $this->generalModel->saveTransaction($save_model, $historyModel, ['Tax Detail Ledger Mapping', 'edit']);

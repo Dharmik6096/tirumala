@@ -26,13 +26,18 @@ $this->title = Yii::t('app', 'Tax Details Ledger Mapping');
                     echo Html::activeHiddenInput($model, "[$model->tax_detail_code]union_code", ['value' => $model->union_code, 'id' => "union_code_$model->tax_detail_code"]);
                     return $model->tax_name;
                 }, 'filter' => false],
-                ['attribute' => 'tax_detail_code', 'label' => Yii::t('app', 'Tax Details'), 'value' => function($model) {
-                    return $model->basic_tax_name . ' (' . $model->percentage . '%)';
+                ['attribute' => 'tax_detail_code', 'label' => Yii::t('app', 'Tax Details'), 'format' => 'raw', 'value' => function($model) {
+                    $hiddenName = Html::hiddenInput("TblTaxDetail[$model->tax_detail_code][basic_tax_name]", $model->basic_tax_name);
+                    return $hiddenName . $model->basic_tax_name . ' (' . $model->percentage . '%)';
                 }, 'filter' => false],
-                ['attribute' => 'ledger_code', 'label' => Yii::t('app', 'Ledger'), 'format' => 'raw', 'value' => function ($model) use ($form) {
-                    return Yii::$app->dropdown->dropdown('ledger_mapping', $model, $form, 'col-sm-3', FALSE, false, "[$model->tax_detail_code]ledger_code");
-                }, 'filter' => false
-            ],
+                ['attribute' => 'purchase_ledger_code', 'label' => Yii::t('app', 'Purchase Ledger'), 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    $hidden = Html::hiddenInput("TblTaxDetail[$model->tax_detail_code][ledger_type_purchase]", 'purchase', ['id' => 'ledger_type_purchase_' . $model->tax_detail_code]);
+                    return $hidden . Yii::$app->dropdown->ledgerList($model, $form, "union_code_$model->tax_detail_code,ledger_type_purchase_$model->tax_detail_code", "purchase_ledger_code", false, false, false, true, "[$model->tax_detail_code]purchase_ledger_code");
+                }, 'filter' => false],
+                ['attribute' => 'sale_ledger_code', 'label' => Yii::t('app', 'Sale Ledger'), 'format' => 'raw', 'value' => function ($model) use ($form) {
+                    $hidden = Html::hiddenInput("TblTaxDetail[$model->tax_detail_code][ledger_type_sale]", 'sale', ['id' => 'ledger_type_sale_' . $model->tax_detail_code]);
+                    return $hidden . Yii::$app->dropdown->ledgerList($model, $form, "union_code_$model->tax_detail_code,ledger_type_sale_$model->tax_detail_code", "sale_ledger_code", false, false, false, true, "[$model->tax_detail_code]sale_ledger_code");
+                }, 'filter' => false],
         ];
 
         $grid_option = [

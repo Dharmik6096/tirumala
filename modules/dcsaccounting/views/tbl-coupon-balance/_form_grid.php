@@ -19,15 +19,19 @@ $attribute = [
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => false],
-        ['label' => Yii::t('app', 'DCS Ref. Code'), 'attribute' => 'dcs_code',
+        ['label' => Yii::t('app', 'DCS') . ' Ref. Code', 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
         }, 'filter' => false],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Name'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
-        ['attribute' => 'consumer_type'],
-        ['attribute' => 'consumer_code'],
+        ['attribute' => 'consumer_type', 'value' => function($model) {
+            return isset($model->consumer_type) ? Yii::$app->dropdown->getRecords('consumer_type')['data'][$model->consumer_type] : '';
+        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('consumer_type', $searchModel, 'consumer_type'),],
+        ['attribute' => 'consumer_code', 'label' => Yii::t('app', 'Consumer Name'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->consumer_type, FALSE, FALSE, FALSE, FALSE, TRUE);
+        }],
         ['attribute' => 'balance'],
         ['attribute' => 'milk_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');

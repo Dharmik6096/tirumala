@@ -46,7 +46,7 @@ class TblCouponIssueSearch extends TblCouponIssue {
         ]);
 
         $this->load($params);
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'milkTypeCode']);
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'milkTypeCode', 'memberCode', 'mainCustomerCode', 'bankCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_coupon_issue', 'tbl_coupon_issue', 'tbl_coupon_issue', 'tbl_coupon_issue');
 
@@ -61,17 +61,19 @@ class TblCouponIssueSearch extends TblCouponIssue {
         $query->andFilterWhere([
             'tbl_coupon_issue.is_active' => $this->is_active,
             'tbl_coupon_issue.is_delete' => $this->is_delete,
-            'tbl_coupon_issue.issue_date' => $this->issue_date,
             'tbl_coupon_issue.payment_mode' => $this->payment_mode,
+            'tbl_coupon_issue.milk_type_code' => $this->milk_type_code,
         ]);
+        $query->andFilterWhere(['or', ['like', 'tbl_member.member_name', $this->consumer_code], ['like', 'tbl_customer_master.customer_name', $this->consumer_code]]);
 
+        if (!empty($this->issue_date)) {
+            $query->andFilterWhere(['CAST(tbl_coupon_issue.issue_date as date)' => date('Y-m-d', strtotime($this->issue_date))]);
+        }
         $query->andFilterWhere(['like', 'tbl_coupon_issue.coupon_issue_code', $this->coupon_issue_code])
-                ->andFilterWhere(['like', 'tbl_coupon_issue.consumer_code', $this->consumer_code])
-                ->andFilterWhere(['like', 'tbl_animal_type.animal_type_name', $this->milk_type_code])
+                ->andFilterWhere(['like', 'tbl_coupon_issue.consumer_type', $this->consumer_type])
                 ->andFilterWhere(['like', 'tbl_coupon_issue.voucher_code', $this->voucher_code])
                 ->andFilterWhere(['like', 'tbl_coupon_issue.amount', $this->amount])
-                ->andFilterWhere(['like', 'tbl_coupon_issue.consumer_type', $this->consumer_type])
-                ->andFilterWhere(['like', 'tbl_coupon_issue.bank_code', $this->bank_code]);
+                ->andFilterWhere(['like', 'tbl_banks.bank_name', $this->bank_code]);
 
         return $dataProvider;
     }

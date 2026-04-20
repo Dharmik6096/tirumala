@@ -1444,8 +1444,9 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false, $consumerCode = false) {
         $type = !empty($type) ? $type : '';
+        $name = '';
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1479,6 +1480,12 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'sap_vendor_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'sap_vendor_code');
+            }
+        } else if ($consumerCode) {
+            if (strtolower($type) == 'dcsmember' || strtolower($type) == 'nonmember') {
+                $name = $this->getforeignkey($model->memberCode, 'member_name');
+            } else {
+                $name = $this->getforeignkey($model->mainCustomerCode, 'customer_name');
             }
         } else {
             if (strtolower($type) == 'dcs') {

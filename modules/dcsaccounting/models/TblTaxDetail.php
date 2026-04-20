@@ -33,7 +33,7 @@ use app\modules\dcsaccounting\models\TblTax;
  */
 class TblTaxDetail extends \app\models\ChildModel {
 
-    public $basic_tax_name, $ledger_code, $tax_name;
+    public $basic_tax_name, $purchase_ledger_code, $tax_name, $sale_ledger_code;
 
     /**
      * @inheritdoc
@@ -51,7 +51,7 @@ class TblTaxDetail extends \app\models\ChildModel {
                 [['percentage'], 'number', 'max' => 100],
                 [['tax_detail_code', 'tax_group_code', 'type', 'basic_tax_code', 'tax_code', 'is_active', 'originating_type'], 'safe'],
                 [['percentage'], 'number'],
-                [['union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'basic_tax_name', 'ledger_code', 'tax_name'], 'safe'],
+                [['union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'basic_tax_name', 'purchase_ledger_code', 'tax_name', 'sale_ledger_code'], 'safe'],
                 [['created_at', 'updated_at'], 'safe'],
         ];
     }
