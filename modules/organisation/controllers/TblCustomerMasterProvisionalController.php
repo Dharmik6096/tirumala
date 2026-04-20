@@ -92,7 +92,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
 
             $this->model->data_post_id = Yii::$app->general->getUuid();
             $this->model->customer_code_ex = !empty($this->model->prefix . $exCode) ? $this->model->prefix . $exCode : $this->model->customer_code_ex;
-            if($this->model->validate()){
+            if ($this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
@@ -160,7 +160,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 $exCode = $this->model->customer_code_ex;
                 $this->model->customer_code_ex = $prefix . $exCode;
                 $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
-                if($this->model->validate()){
+                if ($this->model->validate()) {
                     $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master Provisional', 'edit']);
                     if ($transaction == 'customRedirect') {
                         if ($this->model->status == 'Pending' || $this->model->status == 'Reroute') {
@@ -264,7 +264,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                             $customerModel->approved_at = date('Y-m-d H:i:s');
                             $customerModel->approved_by = Yii::$app->user->identity->user_code;
                             $customerModel->customer_status = $customerCreationPendingForSapApproval ? 0 : 1;
-                        } else if(strtolower($status) === 'reject'){
+                        } else if (strtolower($status) === 'reject') {
                             $customerModel->scenario = 'reject';
                         }
 
@@ -301,7 +301,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                             }
                         } else {
                             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                                    'message' => $customer_error . ' in Customer Master.']);
+                                'message' => $customer_error . ' in Customer Master.']);
                             return $this->redirect(['update', 'id' => $model->process_code]);
                         }
                     } else {
@@ -344,6 +344,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                 }
             } else {
                 $customerModel->attributes = $customerProvisional->attributes;
+                unset($customerModel->created_at, $customerModel->created_by, $customerModel->updated_at, $customerModel->updated_by);
                 $customerModel->customer_code = $customerModel->getCode();
             }
 
@@ -424,6 +425,7 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
     public function actionSapErrorDataList() {
         $searchModel = new TblCustomerMasterProvisionalSearch();
         $searchModel->data_post_status = 3;
+        $searchModel->status = 'Approve';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false);
 
         return $this->render('index_sap', [
@@ -448,6 +450,51 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
             }
         }
         return $this->customRender();
+    }
+
+    public function actionCreateSapErrorData($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        $this->model->scenario = 'updateFront';
+        $x_col1 = explode('#', $this->model->x_col1);
+        $prefix = Yii::$app->general->getforeignkey($this->model->customerTypePre, 'code_prefix');
+        $exCode = str_replace($prefix, '', $this->model->customer_code_ex);
+        if ($exCode != $this->model->customer_code_ex) {
+            $this->model->prefix = $prefix;
+            $this->model->customer_code_ex = $exCode;
+        }
+        if (isset($x_col1)) {
+            if (isset($x_col1[0]) && isset($x_col1[1])) {
+                $this->model->same_milk_type = $x_col1[0];
+                $this->model->diff_milk_type = $x_col1[1];
+            }
+        }
+        $model_save = $all_doc = $customerdoc = $unlink_files = $attachments = [];
+        $message = '';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblCustomerMasterProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $model_save[] = $historyModel;
+
+            $this->model->load(Yii::$app->request->post());
+            $exCode = $this->model->customer_code_ex;
+            $this->model->customer_code_ex = $prefix . $exCode;
+            $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
+            if ($this->model->validate()) {
+                $model_save[] = $this->model;
+                $this->createCustomer($this->model, $model_save, $all_doc, $customerdoc, $message, $unlink_files, $attachments);
+                $transaction = $this->generalModel->saveTransaction($model_save, ['Customer Master Provisional', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['sap-error-data-list']);
+                }
+            }
+            $this->model->customer_code_ex = $exCode;
+        }
+
+        return $this->render($this->viewFile, [
+                    'model' => $this->model,
+                    'createSapErrorData' => 'createSapErrorData'
+        ]);
     }
 
 }

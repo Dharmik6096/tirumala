@@ -5,7 +5,8 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
-$readonly = $type == 'create' ? FALSE : TRUE;
+$createSapErrorData = !empty($createSapErrorData) ? true : false;
+$readonly = ($type == 'create' || !$createSapErrorData) ? FALSE : TRUE;
 $model->ref_code = ($type != 'create' && empty($model->ref_code)) ? $model->customer_code_ex : $model->ref_code;
 $nameWarning = 0;
 $nameWarning = !empty($_POST['warning']) ? $_POST['warning'] : 0;
@@ -49,7 +50,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'supervisor_employee_name')->textInput() ?>
         </div>
         <div class="col-sm-4 ">
-            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type')); ?>
+            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $createSapErrorData); ?>
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
@@ -60,17 +61,17 @@ $form = ActiveForm::begin([
                     <?= $form->field($model, 'prefix')->textInput(['readOnly' => true]) ?>
                 </div>
                 <div class="col-sm-3 number-validate"> 
-                    <?= $form->field($model, 'customer_code_ex')->textInput() ?>
+                    <?= $form->field($model, 'customer_code_ex')->textInput(['readonly' => $createSapErrorData]) ?>
                 </div>
             <?php } ?>
             <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
                 <div class="col-sm-4 number-validate">  
-                    <?= $form->field($model, 'ref_code')->textInput() ?>
+                    <?= $form->field($model, 'ref_code')->textInput(['readonly' => $createSapErrorData]) ?>
                 </div>
             <?php } ?>
         <?php } ?>
         <div class="col-sm-4">
-            <?= $form->field($model, 'customer_name')->textInput() ?>
+            <?= $form->field($model, 'customer_name')->textInput(['readonly' => $createSapErrorData]) ?>
         </div>
 
         <div class="col-sm-4">
@@ -207,18 +208,18 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
-                if ($type == 'edit') {
+                if ($type == 'edit' && !$createSapErrorData) {
                     echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
                     echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
                 } ?>
-                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut saveBtn', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : ($createSapErrorData ? Yii::t('app', 'UPDATE & CREATE') : Yii::t('app', 'Update')), ['class' => 'btn btn-primary apply-shortcut saveBtn', 'name' => 'submitBtn', 'value' => 'save']) ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
         </div>
     </div>
     <?php
-    if ($type == 'edit') {
+    if ($type == 'edit' && !$createSapErrorData) {
         echo $this->render('@app/modules/document/views/tbl-attachment/_reroute', ['model' => $model]);
     }
     ActiveForm::end();
