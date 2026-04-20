@@ -42,12 +42,15 @@ class TblLedgerGroups extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['ledger_group_name', 'ledger_group_code', 'ledger_type_code', 'is_active', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_type', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['ledger_type_code', 'ledger_group_name', 'union_code'], 'required'],
-            [['local_name'], function ($attribute, $params) {
+                [['ledger_group_name', 'ledger_group_code', 'ledger_type_code', 'is_active', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_type', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'ref_code'], 'safe'],
+                [['ledger_type_code', 'ledger_group_name', 'union_code'], 'required'],
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-            [['ledger_group_name'], 'unique'],
+                [['ledger_group_name'], 'unique'],
+                [['ref_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
@@ -74,6 +77,7 @@ class TblLedgerGroups extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -86,38 +90,34 @@ class TblLedgerGroups extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
-        foreach ($sentboxArray as $sent) {
-            $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new \yii\base\UserException("SentBox Entry is not created so transaction is rollback!");
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
+                $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, $flag, $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
         }
     }
 
     public function afterDelete() {
-        $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
-        foreach ($sentboxArray as $sent) {
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, 'DELETE'))) {
-                    throw new \yii\base\UserException("SentBox Entry is not created so transaction is rollback!");
+        if (!isset($this->is_sentbox) || $this->is_sentbox === TRUE) {
+            $unions = TblUnions::findAll(['is_active' => 1]);
+            foreach ($unions as $union) {
+                $union_code = $union->union_code;
+                $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $union_code);
+                $sentbox = new TblSentbox();
+                $sentbox->source_org_id = $union_code;
+                if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
         }
-    }
-
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
     }
 
 }

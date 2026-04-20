@@ -5114,9 +5114,9 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_master_data_verification',
                 'scenario' => 'BankVerificationReport',
                 'title' => 'Bank Verification Report',
-                'excel_readonly' => TRUE,
-                'editable_columns' => ['is_verified'],
-                'extension' => 'xlsx',
+                // 'excel_readonly' => TRUE,
+                // 'editable_columns' => ['is_verified'],
+                // 'extension' => 'xlsx',
             ],
         ];
         return $label[$l];

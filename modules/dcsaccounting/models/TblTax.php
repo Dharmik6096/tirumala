@@ -47,8 +47,11 @@ class TblTax extends \app\models\ChildModel {
                 [['tax_name'], 'string', 'max' => 100],
                 [['tax_code', 'tax_group_code', 'is_active', 'originating_type'], 'integer'],
                 [['tax_name', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-                [['created_at', 'updated_at'], 'safe'],
+                [['created_at', 'updated_at', 'ref_code'], 'safe'],
                 [['tax_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTaxGroup::className(), 'targetAttribute' => ['tax_group_code' => 'tax_group_code']],
+                [['ref_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
@@ -74,6 +77,7 @@ class TblTax extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 

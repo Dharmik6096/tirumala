@@ -51,7 +51,7 @@ class TblSaleInstallments extends \app\models\ChildModel {
                 [['dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
                 [['main_amount', 'installment_amount'], 'number'],
                 [['created_at', 'updated_at', 'dcs_payment_cycle_code', 'payment_cycle_code', 'installment_date', 'product_sale_installment_code', 'product_sale_code'], 'safe'],
-                [['customer_type','customer_code','dcs_code','bmc_code','mcc_plant_code','plant_code','union_code'], 'safe'],
+                [['customer_type', 'customer_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'previous_pending_amount', 'type', 'x_col1', 'x_col2', 'x_col3'], 'safe'],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
                 //[['payment_cycle_applicability_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicability_code' => 'payment_cycle_applicability_code']],
@@ -114,7 +114,7 @@ class TblSaleInstallments extends \app\models\ChildModel {
         return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
-//    public function getMemberCode() {
+    //    public function getMemberCode() {
 //        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
 //    }
 

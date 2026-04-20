@@ -51,7 +51,7 @@ class TblLedgerMappingEventHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['credit_ledger_code', 'debit_ledger_code', 'originating_org_code', 'originating_org_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ledger_mapping_event_code', 'credit_sub_ledger', 'debit_sub_ledger', 'event_code', 'event_code_default', 'voucher_type_code', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
+                [['credit_ledger_code', 'debit_ledger_code', 'originating_org_code', 'originating_org_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ledger_mapping_event_code', 'credit_sub_ledger', 'debit_sub_ledger', 'event_code', 'event_code_default', 'voucher_type_code', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'history_created_by', 'operation_type', 'voucher_narration', 'voucher_txn_credit_narration', 'voucher_txn_debit_narration', 'voucher_narration_local', 'voucher_txn_credit_narration_local', 'voucher_txn_debit_narration_local'], 'safe'],
         ];
     }
 

@@ -53,7 +53,7 @@ class TblLedgerMappingBillHeadSearch extends TblLedgerMappingBillHead {
         if (!empty($unions)) {
             $query->andFilterWhere(['tbl_ledger_mapping_bill_head.union_code' => explode(',', $unions)]);
         }
-        
+
         $query->joinWith(['ledgerCode', 'billHeadCode', 'billCriteriaCode']);
 
 
@@ -66,8 +66,8 @@ class TblLedgerMappingBillHeadSearch extends TblLedgerMappingBillHead {
 
         $query->andFilterWhere(['like', 'tbl_ledger_mapping_bill_head.ledger_mapping_bill_head_code', $this->ledger_mapping_bill_head_code])
                 ->andFilterWhere(['like', 'tbl_ledgers.ledger_name', $this->ledger_code])
-                ->andFilterWhere(['like', 'tbl_member_bill_head.bill_head_name', $this->bill_head_code])
-                ->andFilterWhere(['like', 'tbl_member_bill_criteria.criteria', $this->bill_criteria_code]);
+                ->andFilterWhere(['like', 'tbl_bill_head.bill_head_name', $this->bill_head_code])
+                ->andFilterWhere(['like', 'tbl_vsp_bill_head_criteria.criteria', $this->bill_criteria_code]);
 
         return $dataProvider;
     }
