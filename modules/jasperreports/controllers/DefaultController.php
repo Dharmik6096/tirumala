@@ -1308,7 +1308,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE,
             ],
             'CompleteTrip' => [
-                'param' => 'p_vehicle_code,p_trip_code:p_vehicle_code,p_from_date:string,p_to_date:string',
+                'param' => 'p_vehicle_code,trip_code:p_vehicle_code,p_from_date:string,p_to_date:string',
                 'path' => 'vsp/CompleteTrip',
                 'scenario' => 'CompleteTrip',
                 'title' => 'Complete Trip Details',

@@ -22,7 +22,7 @@ class ReportsModel extends Model {
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty, $p_qty_from, $p_qty_to, $p_fat_from, $p_fat_to, $p_snf_from, $p_snf_to;
     public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg, $p_customer_code, $p_customer_type, $p_payment_cycle_code, $p_staff_member_code, $p_month, $p_dcsc_code, $p_billing_for;
     public $region_code, $area_code, $p_transporter_code, $p_party_master_code;
-    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id, $p_trip_code, $p_vehicle_code, $trip_code, $p_login_type, $p_bank_type, $p_product_type, $p_receipt_sequence_no;
+    public $locale, $digit_config, $p_provisional_member_code, $p_lang_code, $p_lr_no, $p_vehicle_no, $p_mpp_survey_id, $p_VCG_M_Id, $p_vehicle_code, $trip_code, $p_login_type, $p_bank_type, $p_product_type, $p_receipt_sequence_no;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -39,7 +39,7 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-                [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code', 'p_mpp_survey_id', 'p_VCG_M_Id', 'p_type', 'p_trip_code', 'p_vehicle_code', 'p_login_type', 'p_bank_type', 'p_product_type', 'p_plant_code', 'p_receipt_sequence_no'], 'safe'],
+                [['locale', 'digit_config', 'p_provisional_member_code', 'p_language_code', 'p_lang_code', 'p_mpp_survey_id', 'p_VCG_M_Id', 'p_type', 'trip_code', 'p_vehicle_code', 'p_login_type', 'p_bank_type', 'p_product_type', 'p_plant_code', 'p_receipt_sequence_no'], 'safe'],
                 [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_route_code', 'p_billing_for', 'route_code'], 'default', 'value' => '0'],
                 [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
                 [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
@@ -181,7 +181,7 @@ class ReportsModel extends Model {
             'p_lang_code' => \Yii::t('app', 'Language'),
             'p_lr_no' => \Yii::t('app', 'LR No'),
             'p_vehicle_no' => \Yii::t('app', 'Vehicle No'),
-            'p_trip_code' => \Yii::t('app', 'Trip Code'),
+            'trip_code' => \Yii::t('app', 'Trip Code'),
             'p_qty_from' => \Yii::t('app', 'Qty From'),
             'p_qty_to' => \Yii::t('app', 'Qty To'),
             'p_fat_from' => \Yii::t('app', 'Fat From'),
