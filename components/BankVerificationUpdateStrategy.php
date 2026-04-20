@@ -17,7 +17,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
         $errors = [];
         $count = 0;
 
-        $data = array_filter($data, function($var) {
+        $data = array_filter($data, function ($var) {
             return !empty($var[0]) && !is_null($var);
         });
         $data = array_filter($data);
@@ -34,7 +34,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                     $model = new $this->className;
                     if (!empty($this->scenario))
                         $model->scenario = $this->scenario;
-                    
+
                     foreach ($this->configs as $config) {
                         $value = call_user_func($config['value'], $row);
                         if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
@@ -48,17 +48,17 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                     $modelSave = [];
 
                     if ($model->validate()) {
-                        if ($model->is_verified == '1') {
-                           $map = [
-                                'MEMBER'   => [TblMember::class, ['member_code' => $model->code], TblMemberHistory::class],
-                                'DCS'      => [TblBankDetails::class, ['module_name' => 'society', 'module_code' => $model->code], TblBankDetailsHistory::class],
-                                'CUSTOMER' => [TblBankDetails::class, ['module_name' => 'customer', 'module_code' => $model->code], TblBankDetailsHistory::class],
+                        if ($model->is_verified == '1' && in_array(strtoupper($model->verify_for), ['MEMBER', 'DCS', 'CUSTOMER'])) {
+                            $map = [
+                                'MEMBER' => [TblMember::class, ['member_code' => $model->code], TblMemberHistory::class],
+                                'DCS' => [TblBankDetails::class, ['module_name' => 'society', 'module_code' => $model->code, 'is_default' => 1, 'is_active' => 1], TblBankDetailsHistory::class],
+                                'CUSTOMER' => [TblBankDetails::class, ['module_name' => 'customer', 'module_code' => $model->code, 'is_default' => 1, 'is_active' => 1], TblBankDetailsHistory::class],
                             ];
 
                             [$class, $condition, $historyClass] = $map[$model->verify_for];
                             $modelData = $class::findOne($condition);
 
-                            if (!empty($modelData) && $modelData->is_verified == '0') {
+                            if (!empty($modelData) && $modelData->is_verified != 1 && $modelData->bank_account_no == $model->bank_account_no && $modelData->ifsc == $model->ifsc) {
                                 $historyModel = new $historyClass();
                                 Yii::$app->operation->history($modelData, $historyModel, UPDATE);
                                 $modelData->is_verified = $modelData->is_kyc_verified = $model->is_verified;
@@ -66,7 +66,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                                 $modelSave[] = $modelData;
                             }
                         }
-                    } else{
+                    } else {
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
                             $message .= $value[0] . '<br>';
@@ -77,7 +77,7 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                     foreach ($modelSave as $modelRow) {
                         $is_saved = $modelRow instanceof ChildModel ? $modelRow->save(true, false) : $modelRow->save(false);
                         $master[] = $is_saved;
-                        if (!$is_saved) {       
+                        if (!$is_saved) {
                             $errors[] = $modelRow->getErrors();
                         }
                     }
@@ -86,9 +86,9 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                         $master[] = true;
                     }
 
-                    if (!in_array(FALSE, $master, true) && !in_array(FALSE, $master, false)) { 
-                         $trans->commit();
-                         $count++;
+                    if (!in_array(FALSE, $master, true) && !in_array(FALSE, $master, false)) {
+                        $trans->commit();
+                        $count++;
                     } else {
                         $trans->rollback();
                         $message = '';
@@ -101,18 +101,18 @@ class BankVerificationUpdateStrategy extends ARImportStrategy {
                     }
 
                     $importedPks[] = $model->code;
-
                 } catch (\Exception $e) {
                     $trans->rollback();
                     return ['total' => 0, 'status' => 'error', 'msg' => $e->getMessage(), 'pk' => 0];
                 }
             }
         }
-        
+
         if ($count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)];
         }
 
         return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . (count($data) - 1) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)];
     }
+
 }

@@ -1471,7 +1471,7 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
-                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true) === 'customRedirect');
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true, false) === 'customRedirect');
                                 if ($processed) {
                                     $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
                                     $dcsDir = $baseDir . 'dcs';
@@ -1484,6 +1484,25 @@ class SchedulerController extends ChildController {
                                                 unlink($proDcsDir . '/' . $all_doc[$i]);
                                             }
                                         }
+                                    }
+                                } else {
+                                    $dcsErrParts = [];
+                                    if (!empty($msgArr)) {
+                                        foreach ((array) $msgArr as $msgItem) {
+                                            $dcsErrParts[] = is_array($msgItem) ? implode('; ', $msgItem) : $msgItem;
+                                        }
+                                    }
+                                    if (!empty($model->getErrors())) {
+                                        foreach ($model->getErrors() as $errVals) {
+                                            $dcsErrParts[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                                        }
+                                    }
+                                    if (!empty($dcsErrParts)) {
+                                        $dcsErrParts = $model->response_msg . ' | ' . implode(' | ', $dcsErrParts);
+                                        TblDcsProvisional::updateAll(
+                                            ['data_post_status' => 3, 'response_msg' => substr($dcsErrParts, 0, 800)],
+                                            ['dcs_provisional_code' => $model->dcs_provisional_code]
+                                        );
                                     }
                                 }
                                 break;
@@ -1508,6 +1527,25 @@ class SchedulerController extends ChildController {
                                 $processed = !empty($modelSave) && ($this->generalModel->saveDeleteTransaction([$model], $modelSave, $deleteModelList, ['Member Creation', 'create']) === 'customRedirect');
                                 if ($processed) {
                                     $model->moveFiles($unlink_files, $attachments, $masterdoc);
+                                } else {
+                                    $memberErrParts = [];
+                                    if (!empty($errors)) {
+                                        foreach ((array) $errors as $errItem) {
+                                            $memberErrParts[] = is_array($errItem) ? implode('; ', $errItem) : $errItem;
+                                        }
+                                    }
+                                    if (!empty($model->getErrors())) {
+                                        foreach ($model->getErrors() as $errVals) {
+                                            $memberErrParts[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                                        }
+                                    }
+                                    if (!empty($memberErrParts)) {
+                                        $memberErrParts = $model->response_msg . ' | ' . implode(' | ', $memberErrParts);
+                                        TblMemberProvisional::updateAll(
+                                            ['data_post_status' => 3, 'response_msg' => substr($memberErrParts, 0, 800)],
+                                            ['provisional_member_code' => $model->provisional_member_code]
+                                        );
+                                    }
                                 }
                                 break;
 
@@ -1527,7 +1565,7 @@ class SchedulerController extends ChildController {
                                 $customerdoc = [];
                                 $msgArr = [];
                                 $custCtrl->createCustomer($model, $saveArr, $all_doc, $customerdoc, $msgArr);
-                                $processed = !empty($saveArr) && ($this->generalModel->saveTransaction($saveArr, ['Customer Creation', 'create']) === 'customRedirect');
+                                $processed = empty($msgArr) && !empty($saveArr) && ($this->generalModel->saveTransaction($saveArr, ['Customer Creation', 'create']) === 'customRedirect');
                                 if ($processed) {
                                     $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
                                     $customerDir = $baseDir . 'customer';
@@ -1540,6 +1578,25 @@ class SchedulerController extends ChildController {
                                                 unlink($proCustomerDir . '/' . $all_doc[$i]);
                                             }
                                         }
+                                    }
+                                } else {
+                                    $custErrParts = [];
+                                    if (!empty($msgArr)) {
+                                        foreach ((array) $msgArr as $msgItem) {
+                                            $custErrParts[] = is_array($msgItem) ? implode('; ', $msgItem) : $msgItem;
+                                        }
+                                    }
+                                    if (!empty($model->getErrors())) {
+                                        foreach ($model->getErrors() as $errVals) {
+                                            $custErrParts[] = is_array($errVals) ? implode('; ', $errVals) : $errVals;
+                                        }
+                                    }
+                                    if (!empty($custErrParts)) {
+                                        $custErrParts = $model->response_msg . ' | ' . implode(' | ', $custErrParts);
+                                        TblCustomerMasterProvisional::updateAll(
+                                            ['data_post_status' => 3, 'response_msg' => substr($custErrParts, 0, 800)],
+                                            ['customer_provisional_code' => $model->customer_provisional_code]
+                                        );
                                     }
                                 }
                                 break;
