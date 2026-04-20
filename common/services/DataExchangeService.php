@@ -8,8 +8,8 @@ use app\components\WebApi;
 use app\modules\bkgprocess\models\TblDataExchangeConfig;
 
 class DataExchangeService {
-    public function processComfedCollection()
-    {
+
+    public function processComfedCollection() {
         try {
             $configModel = new TblDataExchangeConfig();
             $configModel->api_type = 'COMFED';
@@ -36,8 +36,9 @@ class DataExchangeService {
             return false;
         }
     }
+
     public function handleCollectionData($config) {
-        try{
+        try {
             $records = Yii::$app->general->getSpData($config->sp_name, [], FALSE);
             if (empty($records)) {
                 return false;
@@ -50,9 +51,9 @@ class DataExchangeService {
                     if (!isset($groups[$eventId])) {
                         $groups[$eventId] = [
                             'metadata' => [
-                                "dcsNo" => (string)$record['dcsNo'],
-                                "collectionDate" => (string)$record['collectionDate'],
-                                "shift" => (string)$record['shift'],
+                                "dcsNo" => (string) $record['dcsNo'],
+                                "collectionDate" => (string) $record['collectionDate'],
+                                "shift" => (string) $record['shift'],
                                 "entity" => "COLLECTION",
                                 "eventId" => (string) $record['eventId']
                             ],
@@ -112,7 +113,7 @@ class DataExchangeService {
                             $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
                             $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
                         } catch (\Throwable $e) {
-
+                            
                         }
                     }
                 }
@@ -131,8 +132,7 @@ class DataExchangeService {
         }
     }
 
-    public function handleFarmerSync($config)
-    {
+    public function handleFarmerSync($config) {
         try {
             $params = [];
             $records = Yii::$app->general->getSpData($config->sp_name, $params, FALSE);
@@ -148,7 +148,7 @@ class DataExchangeService {
                     $api->serverUrl = $config->request_url;
                     $api->authentication = false;
                     $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
-                    $api->body = json_encode(["dcsNo" => (string)$sapVendorCode]);
+                    $api->body = json_encode(["dcsNo" => (string) $sapVendorCode]);
 
                     $responseData = $api->ExchangeData();
                     if (isset($responseData->status) && $responseData->status == 'success' && !empty($responseData->data)) {
@@ -158,13 +158,14 @@ class DataExchangeService {
                             $generatedFarmerCode = $dcsCode . $frNoLastDigits;
 
                             $farmerCollection[] = [
-                                'MemberCode'    => $generatedFarmerCode,
-                                'MemberName'    => $farmer->frName,
-                                'MobileNo'      => $farmer->frPhoneNo,
+                                'MemberCode' => $generatedFarmerCode,
+                                'MemberName' => $farmer->frName,
+                                'MobileNo' => $farmer->frPhoneNo,
                                 'SapVendorCode' => $farmer->frNo
                             ];
                         }
                         if (!empty($farmerCollection)) {
+                            $farmerData = [];
                             $farmerData[] = json_encode($farmerCollection);
                             Yii::$app->general->getSpData('sp_data_exchange_update_member_info', $farmerData, TRUE);
                         }
@@ -180,4 +181,5 @@ class DataExchangeService {
             return false;
         }
     }
+
 }
