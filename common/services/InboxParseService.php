@@ -268,7 +268,7 @@ class InboxParseService {
                     } catch (\Throwable $ex) {
                         $errorCount++;
                         try {
-                            $transaction_data->error_log = 'Throwable Exception';
+                            $transaction_data->error_log = substr($ex->getMessage(), 0, 7900);
                             $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                             $transaction_data->data_post_status = 3;
                             $transaction_data->save();

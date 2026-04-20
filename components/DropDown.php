@@ -216,7 +216,7 @@ class DropDown extends Component {
     }
 
     public function route_dcs($model, $form, $depends, $name = '', $islable = false, $multiple = false, $multiselect = false, $id = '', $readonly = false) {
-//$this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
+        //$this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), $multiple, '', $readonly, '', true, TRUE);
         } else if ($multiselect) {
@@ -825,14 +825,14 @@ class DropDown extends Component {
         if (isset($searchable) && $searchable) {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
-//        $name = ($name == '') ? $data['name'] : $name;
+        //        $name = ($name == '') ? $data['name'] : $name;
 
         $selected = '';
         if ($session == 'session_union' && !empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) {
             $selected = Yii::$app->session->get('Unions');
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
-//         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
+        //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
         $selfId = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
@@ -1000,7 +1000,7 @@ class DropDown extends Component {
         if ($model->hasAttribute('is_active')) {
             $where['is_active'] = 1;
         }
-// if (isset($labelData['whereCondition'])) {
+        // if (isset($labelData['whereCondition'])) {
 //     $where = array_merge($labelData['whereCondition'], $where);
 // }
         $whereCondition = [];
@@ -1023,7 +1023,7 @@ class DropDown extends Component {
             $select_fields[] = $tablename . '.' . $fields[1];
         }
 
-// $select_fields[] = $fields[0];
+        // $select_fields[] = $fields[0];
 // $select_fields[] = $fields[1];
 
         if (!empty($fields[2])) {
@@ -1083,7 +1083,7 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
-//client wise dropdown option remove
+        //client wise dropdown option remove
         $client_code = \Yii::$app->session->get('eiplCode');
         if (isset($data['client_wise_rmv']) && isset($data['client_wise_rmv'][$client_code])) {
             foreach ($data['client_wise_rmv'][$client_code] as $value) {
@@ -2193,7 +2193,7 @@ class DropDown extends Component {
             'consumer_type' => [
                 'name' => 'consumer_type',
                 'prompt' => Yii::t('app', 'Select Type'),
-                'data' => [1 => Yii::t('app', 'Member'), 2 => Yii::t('app', 'Non-Member'), 3 => Yii::t('app', 'Vendor'), 4 => Yii::t('app', 'Institute'), 5 => Yii::t('app', 'Retail Sale'), 6 => Yii::t('app', 'Customer'), 7 => Yii::t('app', 'Other')],
+                'data' => [1 => Yii::t('app', 'DCS Member'), 2 => Yii::t('app', 'Non-Member'), 3 => Yii::t('app', 'Vendor'), 4 => Yii::t('app', 'Institute'), 5 => Yii::t('app', 'Retail Sale'), 6 => Yii::t('app', 'Consumer'), 7 => Yii::t('app', 'Other')],
             ],
             'credit_debit' => [
                 'name' => 'credit_debit',
@@ -2511,7 +2511,7 @@ class DropDown extends Component {
             'penalty_type' => ['name' => 'penalty_type', 'fields' => 'penalty_type_code,penalty_type,', 'prompt' => Yii::t('app', 'Select Penalty Type'), 'model' => 'TblCollectionPenaltyType', 'depend' => 'union_code'],
             'product_group' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name,local_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup', 'depend' => 'union_code'],
             'device_code' => ['name' => 'weight_device_code', 'fields' => 'interfacing_device_code,device_name,', 'prompt' => Yii::t('app', 'Select Device'), 'model' => 'TblInterfacingDevice', 'depend' => 'union_code', 'dependArray' => ['device_type']],
-//            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
+            //            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
             'mcc_bill_head' => ['name' => 'mcc_bill_head_code', 'fields' => 'mcc_bill_head_code,bill_head_name', 'prompt' => 'Select Bill head ', 'model' => 'TblMccBillHead', 'whereCondition' => ['has_slab' => 1]],
@@ -2714,7 +2714,7 @@ class DropDown extends Component {
             'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]]
         )->label($label);
 
-//        return $form->field($model, $flag)->dropDownList($value, ['prompt' => 'Select ' . $label])->label($label);
+        //        return $form->field($model, $flag)->dropDownList($value, ['prompt' => 'Select ' . $label])->label($label);
     }
 
     public function sp_dep_dropdown($model, $form, $depends, $name = '', $islable = false, $session) {

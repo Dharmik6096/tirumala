@@ -46,7 +46,7 @@ class TblCouponBalanceSearch extends TblCouponBalance {
         ]);
 
         $this->load($params);
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'milkTypeCode']);
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'milkTypeCode', 'memberCode', 'mainCustomerCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_coupon_balance', 'tbl_coupon_balance', 'tbl_coupon_balance', 'tbl_coupon_balance');
 
@@ -57,15 +57,12 @@ class TblCouponBalanceSearch extends TblCouponBalance {
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'balance' => $this->balance,
-            'consumer_type' => $this->consumer_type,
-        ]);
+        $query->andFilterWhere(['or', ['like', 'tbl_member.member_name', $this->consumer_code], ['like', 'tbl_customer_master.customer_name', $this->consumer_code]]);
 
         $query->andFilterWhere(['like', 'coupon_balance_code', $this->coupon_balance_code])
                 ->andFilterWhere(['like', 'tbl_animal_type.animal_type_name', $this->milk_type_code])
-                ->andFilterWhere(['like', 'consumer_code', $this->consumer_code]);
+                ->andFilterWhere(['like', 'consumer_type', $this->consumer_type])
+                ->andFilterWhere(['like', 'balance', $this->balance]);
 
         return $dataProvider;
     }
