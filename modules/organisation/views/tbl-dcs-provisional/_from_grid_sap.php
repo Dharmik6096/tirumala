@@ -30,7 +30,6 @@ $attribute = [
     ['attribute' => 'pincode', 'filter' => false],
     ['attribute' => 'mobile_no', 'filter' => false],
     ['attribute' => 'aadhaar_no', 'filter' => false],
-
     ['attribute' => 'pan_no', 'filter' => false],
     ['attribute' => 'address', 'filter' => FALSE],
     // Bank Detail
@@ -74,6 +73,12 @@ $attribute = [
     ],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'response_msg', 'filter' => FALSE],
+    [
+        'attribute' => 'is_sap_approved',
+        'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_sap_approved');
+        }, 'filter' => FALSE, 'visible' => true,
+    ],
 ];
 $gridId = 'sap-dcs-provisional-list';
 $grid_option = [
@@ -84,6 +89,11 @@ $grid_option = [
         'update' => function ($url, $model) {
             $url = ['/organisation/tbl-dcs-provisional/update-sap-error-data', 'id' => $model->dcs_provisional_code];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->dcs_provisional_code, 'data-name' => $model->dcs_name]);
+        },
+        'create-sap-error-data' => function ($url, $model) {
+            $class = ($model->is_sap_approved != 1) ? 'link-disable' : '';
+            $url = ['/organisation/tbl-dcs-provisional/create-sap-error-data', 'id' => $model->dcs_provisional_code];
+            return GhostHtml::a('<i class="fa fa-edit"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Create', 'class' => $class, 'data-val' => $model->dcs_provisional_code, 'data-name' => $model->dcs_name]);
         }
     ]
 ];

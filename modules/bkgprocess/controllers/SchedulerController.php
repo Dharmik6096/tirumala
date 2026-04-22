@@ -1470,20 +1470,12 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $dcsdoc = [];
                                 $msgArr = [];
-                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true, false) === 'customRedirect');
+                                $unlink_files = [];
+                                $attachments = [];
+
+                                $processed = ($dcsCtrl->createDcs($model, [$model, $historyModel], $all_doc, $dcsdoc, $msgArr, true, false, $unlink_files, $attachments) === 'customRedirect');
                                 if ($processed) {
-                                    $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
-                                    $dcsDir = $baseDir . 'dcs';
-                                    $proDcsDir = $baseDir . 'provisional_dcs';
-                                    for ($i = 0; $i < count($all_doc); $i++) {
-                                        $docFileName = basename($dcsdoc[$i]);
-                                        $file = $dcsDir . '/' . $docFileName;
-                                        if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
-                                            if (copy($proDcsDir . '/' . $all_doc[$i], $file)) {
-                                                unlink($proDcsDir . '/' . $all_doc[$i]);
-                                            }
-                                        }
-                                    }
+                                    \Yii::$app->general->moveAttachments($all_doc, $dcsdoc, $attachments, 'dcs', 'provisional_dcs');
                                 } else {
                                     $dcsErrParts = [];
                                     if (!empty($msgArr)) {
@@ -1499,7 +1491,7 @@ class SchedulerController extends ChildController {
                                     if (!empty($dcsErrParts)) {
                                         $dcsErrParts = $model->response_msg . ' | ' . implode(' | ', $dcsErrParts);
                                         TblDcsProvisional::updateAll(
-                                            ['data_post_status' => 3, 'response_msg' => substr($dcsErrParts, 0, 800)],
+                                            ['data_post_status' => 3, 'is_sap_approved' => 1, 'response_msg' => substr($dcsErrParts, 0, 800)],
                                             ['dcs_provisional_code' => $model->dcs_provisional_code]
                                         );
                                     }
@@ -1541,7 +1533,7 @@ class SchedulerController extends ChildController {
                                     if (!empty($memberErrParts)) {
                                         $memberErrParts = $model->response_msg . ' | ' . implode(' | ', $memberErrParts);
                                         TblMemberProvisional::updateAll(
-                                            ['data_post_status' => 3, 'response_msg' => substr($memberErrParts, 0, 800)],
+                                            ['data_post_status' => 3, 'is_sap_approved' => 1, 'response_msg' => substr($memberErrParts, 0, 800)],
                                             ['provisional_member_code' => $model->provisional_member_code]
                                         );
                                     }
@@ -1563,21 +1555,13 @@ class SchedulerController extends ChildController {
                                 $all_doc = [];
                                 $customerdoc = [];
                                 $msgArr = [];
-                                $custCtrl->createCustomer($model, $saveArr, $all_doc, $customerdoc, $msgArr);
+                                $unlink_files = [];
+                                $attachments = [];
+
+                                $custCtrl->createCustomer($model, $saveArr, $all_doc, $customerdoc, $msgArr, $unlink_files, $attachments);
                                 $processed = empty($msgArr) && !empty($saveArr) && ($this->generalModel->saveTransaction($saveArr, ['Customer Creation', 'create']) === 'customRedirect');
                                 if ($processed) {
-                                    $baseDir = \Yii::$app->basePath . '/' . \Yii::$app->params['document_upload'];
-                                    $customerDir = $baseDir . 'customer';
-                                    $proCustomerDir = $baseDir . 'provisional_customer';
-                                    for ($i = 0; $i < count($all_doc); $i++) {
-                                        $docFileName = basename($customerdoc[$i]);
-                                        $file = $customerDir . '/' . $docFileName;
-                                        if (file_exists($proCustomerDir . '/' . $all_doc[$i])) {
-                                            if (copy($proCustomerDir . '/' . $all_doc[$i], $file)) {
-                                                unlink($proCustomerDir . '/' . $all_doc[$i]);
-                                            }
-                                        }
-                                    }
+                                    \Yii::$app->general->moveAttachments($all_doc, $customerdoc, $attachments, 'customer', 'provisional_customer');
                                 } else {
                                     $custErrParts = [];
                                     if (!empty($msgArr)) {
@@ -1593,7 +1577,7 @@ class SchedulerController extends ChildController {
                                     if (!empty($custErrParts)) {
                                         $custErrParts = $model->response_msg . ' | ' . implode(' | ', $custErrParts);
                                         TblCustomerMasterProvisional::updateAll(
-                                            ['data_post_status' => 3, 'response_msg' => substr($custErrParts, 0, 800)],
+                                            ['data_post_status' => 3, 'is_sap_approved' => 1, 'response_msg' => substr($custErrParts, 0, 800)],
                                             ['customer_provisional_code' => $model->customer_provisional_code]
                                         );
                                     }

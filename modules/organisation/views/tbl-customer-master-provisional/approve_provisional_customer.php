@@ -159,6 +159,7 @@ $approval_detail = $customer_provisional->customerPrivisionalApproval;
                 <div class="col-sm-12">
                     <?php
                     $form = ActiveForm::begin([
+                                'id' => 'approve-customer-form',
                                 'validateOnBlur' => false,
                                 'validateOnChange' => FALSE,
                                 'enableClientValidation' => true,
@@ -176,13 +177,20 @@ $approval_detail = $customer_provisional->customerPrivisionalApproval;
                         </div>
                         <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">
-                                <?= Yii::$app->controls->save('save', $model); ?>
+                                <?php
+                                echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
+                                echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                                ?>
+                                <?= Yii::$app->controls->save('save', $model, 'saveBtn'); ?>
                                 <?= Yii::$app->controls->reset(); ?>
                                 <?= Yii::$app->controls->custombutton('cancel', 'pending-customer-approval'); ?>
                             </div>  
                         </div>
                     </div>
-                    <?php ActiveForm::end(); ?>
+                    <?php
+                    echo $this->render('@app/modules/document/views/tbl-attachment/_reroute', ['model' => $model,]);
+                    ActiveForm::end();
+                    ?>
                 </div>
             </div>
         </div>
