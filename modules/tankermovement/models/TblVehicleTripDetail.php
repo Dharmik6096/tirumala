@@ -241,6 +241,9 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             if (!empty($plants)) {
                 $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
             }
+        } else if ($trip_process == 'replace_tanker') {
+            $query->andWhere(['vt.trip_status' => ['generated', 'open', 'tankerfull']]);
+            $query->andWhere(['vt.trip_sub_status' => ['gate_out', 'gate_in']]);
         }
 
         if (!empty($vehicle_code)) {
