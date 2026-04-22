@@ -74,6 +74,12 @@ $attribute = [
     ],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'response_msg', 'filter' => FALSE],
+    [
+        'attribute' => 'is_sap_approved',
+        'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_sap_approved');
+        }, 'filter' => FALSE, 'visible' => true,
+    ],
 ];
 $gridId = 'sap-member-provisional-list';
 $grid_option = [
@@ -84,6 +90,11 @@ $grid_option = [
         'update' => function ($url, $model) {
             $url = ['/dcsoperation/tbl-member-provisional/update-sap-error-data', 'id' => $model->provisional_member_code];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->provisional_member_code, 'data-name' => $model->member_name]);
+        },
+        'create-sap-error-data' => function ($url, $model) {
+            $class = ($model->is_sap_approved != 1) ? 'link-disable' : '';
+            $url = ['/dcsoperation/tbl-member-provisional/create-sap-error-data', 'id' => $model->provisional_member_code];
+            return GhostHtml::a('<i class="fa fa-edit"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Create', 'class' => $class, 'data-val' => $model->provisional_member_code, 'data-name' => $model->member_name]);
         }
     ]
 ];

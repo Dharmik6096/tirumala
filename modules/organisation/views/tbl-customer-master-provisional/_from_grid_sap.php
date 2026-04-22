@@ -74,6 +74,12 @@ $attribute = [
     ],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'response_msg', 'filter' => FALSE],
+    [
+        'attribute' => 'is_sap_approved',
+        'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_sap_approved');
+        }, 'filter' => FALSE, 'visible' => true,
+    ],
 ];
 $gridId = 'sap-customer-master-list';
 $grid_option = [
@@ -84,6 +90,11 @@ $grid_option = [
         'update' => function ($url, $model) {
             $url = ['/organisation/tbl-customer-master-provisional/update-sap-error-data', 'id' => $model->customer_provisional_code];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '', 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
+        },
+        'create-sap-error-data' => function ($url, $model) {
+            $class = ($model->is_sap_approved != 1) ? 'link-disable' : '';
+            $url = ['/organisation/tbl-customer-master-provisional/create-sap-error-data', 'id' => $model->customer_provisional_code];
+            return GhostHtml::a('<i class="fa fa-edit"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Create', 'class' => $class, 'data-val' => $model->customer_provisional_code, 'data-name' => $model->customer_name]);
         }
     ]
 ];

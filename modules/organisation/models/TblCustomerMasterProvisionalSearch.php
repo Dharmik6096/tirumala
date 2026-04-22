@@ -56,7 +56,6 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_customer_master_provisional', 'tbl_customer_master_provisional', 'tbl_customer_master_provisional');
 
         if ($pending_approval) {
             $approvalModel = new TblProcessApproval();
@@ -71,7 +70,7 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_customer_master_provisional', 'tbl_customer_master_provisional', 'tbl_customer_master_provisional');
         if (!$pending_approval) {
             $query->andFilterWhere(['tbl_customer_master_provisional.status' => $this->status]);
         }

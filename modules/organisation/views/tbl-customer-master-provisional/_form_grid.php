@@ -115,7 +115,7 @@ $attribute = [
         }],
     ['attribute' => 'is_approved', 'value' => function($model) {
             return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_approved');
-        }, 'visible' => false, 'filter' => false],
+        }, 'visible' => true, 'filter' => false],
     ['attribute' => 'provisional_from', 'visible' => true, 'filter' => true],
     ['attribute' => 'approved_at', 'filter' => true,
         'value' => function($model) {
@@ -136,6 +136,8 @@ $attribute = [
         }, 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'resp_status', 'filter' => false, 'visible' => true],
+    ['attribute' => 'response_msg', 'filter' => false, 'visible' => true],
 ];
 $gridId = 'customer-master-list';
 $grid_option = [
