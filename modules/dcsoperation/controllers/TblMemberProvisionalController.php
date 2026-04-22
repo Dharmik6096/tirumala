@@ -11,7 +11,6 @@ use Yii;
 use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\dcsoperation\models\TblMemberProvisionalSearch;
 use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
-use \app\modules\organisation\models\TblDcs;
 use yii\web\NotFoundHttpException;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\document\models\TblAttachment;
@@ -615,6 +614,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     }
                 } else {
                     $tblMember->attributes = $memberModel->attributes;
+                    unset($tblMember->created_at, $tblMember->created_by, $tblMember->updated_at, $tblMember->updated_by);
                 }
                 $tblMember->scenario = 'ApprovalMember';
 
@@ -1808,16 +1808,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     private function getValidationConfig($memberModel) {
         return [
             'approval-member-detail' => [
-                    ['model' => $memberModel, 'scenario' => 'approval_member_detail']
+                ['model' => $memberModel, 'scenario' => 'approval_member_detail']
             ],
             'approval-address-detail' => [
-                    ['model' => $memberModel, 'scenario' => 'approval_address_detail']
+                ['model' => $memberModel, 'scenario' => 'approval_address_detail']
             ],
             'approval-adhar-detail' => [
-                    ['model' => $memberModel, 'scenario' => 'approval_adhar_detail']
+                ['model' => $memberModel, 'scenario' => 'approval_adhar_detail']
             ],
             'approval-bank-detail' => [
-                    ['model' => $memberModel, 'scenario' => 'approval_bank_detail'],
+                ['model' => $memberModel, 'scenario' => 'approval_bank_detail'],
             ],
         ];
     }
@@ -1999,6 +1999,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     public function actionSapErrorDataList() {
         $searchModel = new TblMemberProvisionalSearch();
         $searchModel->data_post_status = 3;
+        $searchModel->provisional_status = 'Approve';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, false);
 
         return $this->render('index_sap', [
@@ -2024,4 +2025,34 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
         return $this->customRender();
     }
+
+    public function actionCreateSapErrorData($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        $this->setModel();
+        $this->model->scenario = 'update_provisional_member';
+        $deleteModel = $model_save = $all_doc = $memberdoc = $unlink_files = $attachments = [];
+        $message = '';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblMemberProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $model_save[] = $historyModel;
+            $this->model->load(Yii::$app->request->post());
+            if ($this->model->validate()) {
+                $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
+                $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
+                $model_save[] = $this->model;
+                $this->memberApprove('approve', $model_save, $deleteModel, $this->model, $all_doc, $memberdoc, $save_member_doc = [], $message, $unlink_files, $attachments);
+                $transaction = $this->generalModel->saveDeleteTransaction($model_save, [], $deleteModel, ['Provisional Member', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+        return $this->render('update', [
+                    'model' => $this->model,
+                    'createSapErrorData' => 'createSapErrorData'
+        ]);
+    }
+
 }
