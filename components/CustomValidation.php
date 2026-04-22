@@ -1413,6 +1413,47 @@ class CustomValidation extends Component {
                             }", 'on' => ['product_master']],
                     ],
                 ],
+                'TblContactDetails' => [
+                    'default' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'dcs-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'dcs-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'plant-create' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'mcc-create' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'bmc-create' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'customer-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                ],
             ],
         ];
     }
