@@ -52,6 +52,7 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
                         }],
                     ['attribute' => 'commission', 'value' => 'commission'],
+                    ['attribute' => 'rdo_commission', 'value' => 'rdo_commission'],
                 ];
 
                 $grid_option = [

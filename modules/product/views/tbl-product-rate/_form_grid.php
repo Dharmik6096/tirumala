@@ -49,6 +49,11 @@ $attribute = [
             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
         }],
     ['attribute' => 'commission', 'value' => 'commission'],
+    ['attribute' => 'rdo_commission',
+            'value' => function($model) {
+                return (!empty($model->rdo_commission)) ? $model->rdo_commission : '.00';
+            }
+    ],
 ];
 
 $grid_option = [
