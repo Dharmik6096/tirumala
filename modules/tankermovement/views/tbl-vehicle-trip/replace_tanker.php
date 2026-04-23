@@ -21,7 +21,7 @@ $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(exp
                     <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
                 </div>
                 <div class="col-md-6">
-                    <div class="background_shadow pd0">
+                    <div class="background_shadow pd0 ms-0">
                         <div class="theme-box-heading">Select Broken Tanker</div>
                         <div class="replacement-body">
                             <?= Yii::$app->dropdown->vehicleOpenTripDetail($model, $form, 'tblvehicletrip-union_code,trip_process', 'old_trip_code', $model->getAttributeLabel('trip_code')); ?>
@@ -35,7 +35,7 @@ $tankerMovementWithTripSubStatus = Yii::$app->general->getUnionConfiguration(exp
                 </div>
 
                 <div class="col-md-6">
-                    <div class="background_shadow pd0">
+                    <div class="background_shadow pd0 ms-0">
                         <div class="theme-box-heading">Assign New Tanker</div>
                         <div class="replacement-body">
                             <?php

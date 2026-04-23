@@ -910,6 +910,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                 $newTrip->driver_name = $model->driver_name;
                 $newTrip->mobile_no = $model->mobile_no;
                 $newTrip->old_trip_code = $oldTripCode;
+                unset($newTrip->created_at, $newTrip->updated_at, $newTrip->created_by, $newTrip->updated_by);
                 $saveModel[] = $newTrip;
 
                 $oldTrip->scenario = 'closetrip';
@@ -966,6 +967,18 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $dispatch->scenario = 'tripUpdate';
                     $saveModel[] = $dispatchHistory;
                     $saveModel[] = $dispatch;
+                }
+
+                $qaModel = new TblVehicleQaInspection();
+                $qaRecords = $qaModel->getVehicleQaInpection($model->vehicle_code);
+                if (!empty($qaRecords)) {
+                    foreach ($qaRecords as $qa) {
+                        $historyModel = new TblVehicleQaInspectionHistory();
+                        Yii::$app->operation->history($qa, $historyModel, UPDATE);
+                        $qa->status = 'closed';
+                        $saveModel[] = $historyModel;
+                        $saveModel[] = $qa;
+                    }
                 }
 
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle Trip Replaced', 'edit']);
