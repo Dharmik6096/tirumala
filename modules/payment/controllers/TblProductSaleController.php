@@ -1328,13 +1328,26 @@ class TblProductSaleController extends \app\controllers\ChildController {
     }
 
     public function actionRfcRePush($id) {
-        $this->model = TblProductSaleTransaction::findOne($id);
-        $historyModel = new TblProductSaleTransactionHistory();
-        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $saveModel = [];
+        $this->model = TblProductSale::findOne($id);
+        $historyModel = new TblProductSaleHistory();
+        Yii::$app->operation->history($this->model , $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
         $this->model->send_status = 0;
-        $record = [];
-        if ($this->model->save(true, false)) {
-            $historyModel->save();
+        $saveModel[] = $this->model;
+        $transactionModels = TblProductSaleTransaction::find()->where(['product_sale_code' => $id])->all();
+        if ($transactionModels) {
+            foreach ($transactionModels as $transactionModel) {
+                $historyModel = new TblProductSaleTransactionHistory();
+                Yii::$app->operation->history($transactionModel, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $transactionModel->send_status = 0;
+                $saveModel[] = $transactionModel;
+            }
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Product Sale', 'edit']);
+        \Yii::$app->session->removeAllFlashes();
+        if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Product Sale Transaction re-pushed successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Failed to re-push Product Sale Transaction.'];

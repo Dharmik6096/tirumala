@@ -48,7 +48,7 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
     public function rules() {
         return [
             [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
-            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted', 'sap_vendor_code'], 'safe'],
+            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no', 'is_stock_posted', 'sap_vendor_code','data_post_status','picked_datetime','response_datetime','response_msg'], 'safe'],
             [['available_stock', 'qty'], 'number'],
             [['unit_code', 'originating_type'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],

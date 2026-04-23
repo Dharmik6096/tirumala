@@ -57,7 +57,7 @@ class TblProductSaleHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['invoice_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['invoice_date', 'created_at', 'updated_at', 'history_created_at', 'send_status', 'picked_datetime', 'response_datetime','response_msg'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'safe'],
             [['payment_mode', 'is_installment', 'no_of_installment', 'is_cancel', 'originating_type'], 'safe'],
             [['product_sale_code', 'invoice_no'], 'safe'],

@@ -5,6 +5,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 
 <?php
+$grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'grn_without_stock_entry') == 1 ? TRUE : FALSE;
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
@@ -74,8 +75,21 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getOriginatingType($model, 'originating_type');
         }, 'filter' => false],
+    ['attribute' => 'send_status',
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->send_status] : 'Pending';
+        }, 'filter' => false, 'visible' => false],
+    ['attribute' => 'picked_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'response_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+        }, 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
 ];
-
+$gridId = 'product-sale-list';
 $grid_option = [
     'id' => 'product-sale-list',
     'attributes' => $attribute,
@@ -89,6 +103,13 @@ $grid_option = [
         'delete' => [
             'option' => 'customer_type###customer_code###invoice_date~date,product_sale_code,/payment/tbl-product-sale/delete,checkPaymentCycleLock()',
         ],
+
+        'repush' => function ($url, $model) use ($grnWithoutStockEntry,$gridId) {
+            if ($grnWithoutStockEntry) {
+                return Yii::$app->general->createRePushLink($url, $model, $gridId, 'product_sale_code' ,'send_status');
+            }
+            return '';
+        },
     ]
 ];
 
