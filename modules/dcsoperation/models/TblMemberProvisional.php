@@ -54,6 +54,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblRouteMapping;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -177,10 +178,10 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
                     return ($this->chackExistRecord($params) && $this->is_active);
                 }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
-                    return ($this->chackExistRecord($params) && $this->is_active);
-                }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-               [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+            /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
+              return ($this->chackExistRecord($params) && $this->is_active);
+              }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
+              [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }],
               [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -1197,4 +1198,17 @@ class TblMemberProvisional extends ChildModel {
     public function getRouteMapping() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
+
+    public function validateContactDetail($attribute, $params) {
+        $mobile = $this->$attribute;
+        if (!empty($mobile)) {
+            $encryptedMobile = Yii::$app->general->encryptData($mobile);
+            $data = TblContactDetails::find()->where(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
+                            ->andWhere(['is_active' => 1])->one();
+            if (!empty($data)) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No has already been taken in contact detail.'));
+            }
+        }
+    }
+
 }
