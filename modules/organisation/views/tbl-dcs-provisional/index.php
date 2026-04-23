@@ -17,7 +17,7 @@ if ($pending_approval) {
         <div class="panel-heading">
             <?= $this->title; ?>
         </div>
-        <div class="panel-body hide-grid-export">
+        <div class="panel-body">
             <?=
             $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
