@@ -411,7 +411,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         $saveModel[] = $historyModel;
         $this->model->data_post_status = 0;
         $saveModel[] = $this->model;
-        $transactionModels = TblInventoryTransferTxn::find()->where(['inventory_transfer_code' => $id])->all();
+        $transactionModels = TblInventoryTransferTxn::find()->where(['inventory_transfer_code' => $id, 'data_post_status'=> 3])->all();
         if ($transactionModels) {
             foreach ($transactionModels as $transactionModel) {
                 $historyModel = new TblInventoryTransferTxnHistory();

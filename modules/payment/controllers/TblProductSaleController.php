@@ -1335,7 +1335,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $saveModel[] = $historyModel;
         $this->model->send_status = 0;
         $saveModel[] = $this->model;
-        $transactionModels = TblProductSaleTransaction::find()->where(['product_sale_code' => $id])->all();
+        $transactionModels = TblProductSaleTransaction::find()->where(['product_sale_code' => $id, 'send_status' => 3])->all();
         if ($transactionModels) {
             foreach ($transactionModels as $transactionModel) {
                 $historyModel = new TblProductSaleTransactionHistory();
