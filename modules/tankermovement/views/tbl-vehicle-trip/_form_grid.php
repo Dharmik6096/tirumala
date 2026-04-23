@@ -139,6 +139,16 @@ $grid_option = [
             }
             return Html::a('<i class="fa fa-pencil-alt"></i>', $updatedUrl, $options);
         },
+        'replace-tanker' => function ($url, $model) {
+            $disable = (in_array($model->trip_status, ['generated', 'open', 'tankerfull']) && in_array($model->trip_sub_status, ['gate_out', 'gate_in'])) ? FALSE : TRUE;
+            $disable = ($model->is_active == 1) ? $disable : TRUE;
+            if ($disable) {
+                return GhostHtml::a('<i class="fa fa-exchange"></i>', ['/tankermovement/tbl-vehicle-trip/replace-tanker'], ['class' => 'disabled']);
+            } else {
+                $options = ['title' => Yii::t('app', 'Replace Tanker'),'data-toggle' => 'tooltip','data-placement' => 'top','data-original-title' => Yii::t('app', 'Replace Tanker')];
+                return GhostHtml::a('<i class="fa fa-exchange"></i>', ['/tankermovement/tbl-vehicle-trip/replace-tanker', 'old_trip_code' => $model->trip_code], $options);
+            }
+        },
         'generate-challan' => function ($url, $model) {
             $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
             $disable = ($model->is_active == 1) ? $disable : TRUE;
