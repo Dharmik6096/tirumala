@@ -2315,6 +2315,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionFarmerLedgerReport() {
+        $this->report = 'FarmerLedgerReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5124,11 +5129,17 @@ class ReportsController extends \app\controllers\ChildController {
             // 'extension' => 'xlsx',
             ],
             'MilkPurchaseRegisterReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,date:string:shift:all,milk_type_code,member_types:static:member_types,member_code,from_code,to_code,sort_type:static:sort_type',
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,sort_type:static:sort_type',
                 'sp_name' => 'mis_milk_purchase_register',
                 'multiple_sheet' => ['summary' => 'mis_milk_purchase_register_summary'],
                 'scenario' => 'MilkPurchaseRegisterReport',
                 'title' => 'Milk Purchase Register Report',
+            ],
+            'FarmerLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code,to_code',
+                'sp_name' => 'mis_farmer_ledger',
+                'scenario' => 'FarmerLedgerReport',
+                'title' => 'Farmer Ledger Report',
             ],
         ];
         return $label[$l];

@@ -14,7 +14,7 @@ $model->from_date = empty($model->from_date) ? date('d-m-Y') : $model->from_date
 $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
 $model->from_shift = empty($model->from_shift) ? 1 : $model->from_shift;
 $model->to_shift = empty($model->to_shift) ? 2 : $model->to_shift;
-$model->language_code = empty($model->language_code) ? 'en' : $model->language_code;
+$model->language_code = empty($model->language_code) ? 0 : $model->language_code;
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
 $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
@@ -111,15 +111,22 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>    
                                             <?php
                                             if (isset($value_array[2])) {
-                                                $shiftAll = (isset($value_array[3]) && $value_array[3] == 'all') ? TRUE : FALSE;
                                                 ?>
                                                 <div class="col-sm-6 shift">
                                                     <?php
-                                                    echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-6 form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2], $shiftAll);
+                                                    echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
                                                     ?>
                                                 </div>    
                                                 <?php
                                             }
+                                        }
+                                        if (in_array($value, array('shift_code'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?php
+                                                echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', $model->getAttributeLabel('shift_code'), false, 'shift_code');
+                                                ?>
+                                            </div>      <?php
                                         }
                                         if (in_array($value, array('union_code'))) {
                                             ?>
@@ -274,7 +281,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('member_code'))) {
                                             ?>
-                                            <div class="col-sm-6 val_member_code">
+                                            <div class="col-sm-6">
                                                 <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
                                             </div>
                                             <?php
@@ -614,13 +621,9 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-12 radio-section">
                                                 <?=
-                                                $form->field($model, 'language_code')->radioList([0 => 'English', 1 => 'Gujarati'], [
-                                                    'class' => 'radio-container',
-                                                    'value' => (isset($model->language_code) && $model->language_code !== '') ? 0 : $model->language_code,
-                                                    'item' => function ($index, $label, $name, $checked, $value) {
+                                                $form->field($model, 'language_code')->radioList([0 => 'English', 1 => 'Gujarati'], ['class' => 'radio-container', 'item' => function ($index, $label, $name, $checked, $value) {
                                                         return '<label class="radio-inline">' . Html::radio($name, $checked, ['value' => $value]) . ' ' . $label . '</label>';
-                                                    }
-                                                ])->label('Language <span class="text-danger">*</span>')
+                                                    }]);
                                                 ?>
                                             </div>
                                             <?php
@@ -628,7 +631,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('from_code'))) {
                                             ?>
                                             <div class="col-sm-6 val_from_code">
-                                                <?= $form->field($model, 'from_code')->textInput(['type' => 'number', 'min' => 1, 'value' => (isset($model->from_code) && $model->from_code !== '') ? $model->from_code : 1]) ?>                             
+
+                                                <?= $form->field($model, 'from_code')->textInput(['type' => 'number', 'min' => 1, 'value' => (isset($model->from_code) && $model->from_code != 0) ? $model->from_code : 1]) ?>                             
                                             </div>
                                             <?php
                                         }
@@ -859,10 +863,18 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
         }
         
-        if('" . $report . "'=='MilkPurchaseRegisterReport'){
+        if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport'){
             hideMemberTypes();
             $(document).on('change','#reportsmodel-member_types', function() {
                  hideMemberTypes();
+            });
+            $(document).on('keyup change','#reportsmodel-from_code', function() {
+                if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport'){
+                    var member_types =  $('#reportsmodel-member_types').val();
+                    if(member_types == '1'){
+                        $('#reportsmodel-to_code').val($(this).val());
+                    }
+                }
             });
         }
 		
@@ -987,34 +999,33 @@ $('.mis_report_modal_toggle').on('click', function(){
        
     }
     
-    function hideMemberTypes(){
-        if('" . $report . "'=='MilkPurchaseRegisterReport'){
-            var member_types =  $('#reportsmodel-member_types option:selected').val();
-             if(member_types == '1'){
-                $('.val_member_code').show();
-                $('.val_from_code').hide();
-                $('.val_to_code').hide();
-                $('.val_from_code input').val('');
-                $('.val_to_code input').val('');
-            }else if(member_types == '2'){
-                $('.val_member_code').hide();
-                $('.val_from_code').show();
-                $('.val_to_code').show();
-                $('.val_member_code select').val('');
-                $('.val_member_code select').trigger('change');
-                $('.val_from_code input').val('1');
-                $('.val_to_code input').val('9999');
-            }else {
-                $('.val_member_code').hide();
-                $('.val_from_code').hide();
-                $('.val_to_code').hide();
-                $('.val_member_code select').val('');
-                $('.val_member_code select').trigger('change');
-                $('.val_from_code input').val('');
-                $('.val_to_code input').val('');
-            }
-        }
+   function hideMemberTypes() {
+    var member_types = $('#reportsmodel-member_types').val();
+    var fromCode = $('#reportsmodel-from_code');
+    var toCode = $('#reportsmodel-to_code');
+    if (member_types == '1') { 
+        $('.val_from_code').show();
+        $('.val_to_code').show();
+        fromCode.prop('readonly', false);
+        toCode.prop('readonly', true);
+        fromCode.val('1');
+        toCode.val(fromCode.val());
+    } else if (member_types == '2') { 
+        $('.val_from_code').show();
+        $('.val_to_code').show();
+        fromCode.prop('readonly', false);
+        toCode.prop('readonly', false);
+        fromCode.val('1');
+        toCode.val('9999');
+    } 
+    else { 
+        $('.val_from_code').hide();
+        $('.val_to_code').hide();
+        fromCode.prop('readonly', true).val(0);
+        toCode.prop('readonly', true).val(0);
     }
+}
+
 	
 ";
 
