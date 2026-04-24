@@ -274,7 +274,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('member_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6 val_member_code">
                                                 <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
                                             </div>
                                             <?php
@@ -625,13 +625,6 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('code'))) {
-                                            ?>
-                                            <div class="col-sm-6 val_code">
-                                                <?= $form->field($model, 'code')->textInput(['type' => 'number', 'min' => 0, 'value' => (isset($model->code) && $model->code !== '') ? $model->code : 0]) ?>
-                                            </div>
-                                            <?php
-                                        }
                                         if (in_array($value, array('from_code'))) {
                                             ?>
                                             <div class="col-sm-6 val_from_code">
@@ -653,6 +646,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
                                     }
+                                    ?>   <div class = "clearfix"></div>
+                                    <?php
                                     if (!isset($data['output_type'])) {
                                         echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
@@ -996,17 +991,27 @@ $('.mis_report_modal_toggle').on('click', function(){
         if('" . $report . "'=='MilkPurchaseRegisterReport'){
             var member_types =  $('#reportsmodel-member_types option:selected').val();
              if(member_types == '1'){
-                $('.val_code').show();
+                $('.val_member_code').show();
                 $('.val_from_code').hide();
                 $('.val_to_code').hide();
+                $('.val_from_code input').val('');
+                $('.val_to_code input').val('');
             }else if(member_types == '2'){
-                $('.val_code').hide();
+                $('.val_member_code').hide();
                 $('.val_from_code').show();
                 $('.val_to_code').show();
+                $('.val_member_code select').val('');
+                $('.val_member_code select').trigger('change');
+                $('.val_from_code input').val('1');
+                $('.val_to_code input').val('9999');
             }else {
-                $('.val_code').hide();
+                $('.val_member_code').hide();
                 $('.val_from_code').hide();
                 $('.val_to_code').hide();
+                $('.val_member_code select').val('');
+                $('.val_member_code select').trigger('change');
+                $('.val_from_code input').val('');
+                $('.val_to_code input').val('');
             }
         }
     }
