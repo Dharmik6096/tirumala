@@ -58,7 +58,7 @@ class MasterDataController extends RestController {
         if (!empty($data['content'])) {
             foreach ($data['content'] as $transaction_data) {
                 $request = Yii::$app->get('androidHttpRequest');
-                $transaction_data = $request->camelCaseToUnderscore($transaction_data);
+                //$transaction_data = $request->camelCaseToUnderscore($transaction_data);
                 $model = new TblInbox();
                 $model->setAttributes($transaction_data);
                 $model->posting_timestamp = date('Y-m-d H:i:s');
