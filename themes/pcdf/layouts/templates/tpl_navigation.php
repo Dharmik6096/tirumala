@@ -1117,8 +1117,10 @@ echo GhostMenu::widget([
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Reports') . '<b class="caret"></b></a>',
                             'items' => [
-                                    ['label' => '101 -' . Yii::t('app', 'Milk Purchase Register'), 'url' => ['/misreports/reports/milk-purchase-register-report']],
-                                    ['label' => '103 -' . Yii::t('app', 'Farmer Ledger'), 'url' => ['/misreports/reports/farmer-ledger-report']],
+                                ['label' => '101 -' . Yii::t('app', 'Milk Purchase Register'), 'url' => ['/misreports/reports/milk-purchase-register-report']],
+                                ['label' => '102 -' . Yii::t('app', 'Member Wise Summary'), 'url' => ['/misreports/reports/member-wise-summary-report']],
+                                ['label' => '103 -' . Yii::t('app', 'Farmer Ledger'), 'url' => ['/misreports/reports/farmer-ledger-report']],
+                                ['label' => '105 -' . Yii::t('app', 'Local Sale Report'), 'url' => ['/misreports/reports/local-sale-report']],
                             ]
                         ],
                     ]

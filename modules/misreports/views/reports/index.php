@@ -2,7 +2,7 @@
 
 use app\components\CustomDataTable;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use app\components\ActiveForm;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\grid\GridView;
 use yii\web\View;
@@ -193,7 +193,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                 ?>
                                                 <div class="col-sm-6">
-                                                    <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'reportsmodel-union_code', '', Yii::t('app', 'Society')); ?>            
+                                                    <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'reportsmodel-union_code', '', Yii::t('app', 'Society'), 'dcs_code', false, $multiple); ?>
                                                 </div>  
                                                 <?php
                                             } else {
@@ -630,8 +630,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('from_code'))) {
                                             ?>
+                                            <div class="clearfix"></div>
                                             <div class="col-sm-6 val_from_code">
-
                                                 <?= $form->field($model, 'from_code')->textInput(['type' => 'number', 'min' => 1, 'value' => (isset($model->from_code) && $model->from_code != 0) ? $model->from_code : 1]) ?>                             
                                             </div>
                                             <?php
@@ -640,6 +640,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-6 val_to_code">
                                                 <?= $form->field($model, 'to_code')->textInput(['type' => 'number', 'min' => 1, 'max' => 9999, 'value' => (isset($model->to_code) && $model->to_code !== '') ? $model->to_code : 9999]) ?>                                          
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('is_show_zero_val'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= $form->field($model, 'is_show_zero_val', ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
                                             </div>
                                             <?php
                                         }

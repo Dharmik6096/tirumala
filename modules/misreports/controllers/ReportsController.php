@@ -2320,6 +2320,15 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberWiseSummaryReport() {
+        $this->report = 'MemberWiseSummaryReport';
+        return $this->actionIndex();
+    }
+    public function actionLocalSaleReport() {
+        $this->report = 'LocalSaleReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5140,6 +5149,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_farmer_ledger',
                 'scenario' => 'FarmerLedgerReport',
                 'title' => 'Farmer Ledger Report',
+            ],
+            'MemberWiseSummaryReport' => [
+                'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code,to_code,milk_type_code,dcs_code:union_code',
+                'sp_name' => 'mis_member_wise_summary',
+                'multiple_sheet' => ['summary' => 'mis_member_wise_summary_register'],
+                'scenario' => 'MemberWiseSummaryReport',
+                'title' => 'Member Wise Summary Report',
+                'multiArray' => ['dcs_code']
+            ],
+            'LocalSaleReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,is_show_zero_val',
+                'sp_name' => 'mis_local_sale',
+                'scenario' => 'LocalSaleReport',
+                'title' => 'Local sale Report',
             ],
         ];
         return $label[$l];

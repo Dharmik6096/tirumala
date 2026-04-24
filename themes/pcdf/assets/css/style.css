@@ -6622,3 +6622,8 @@ select:focus > option:checked {
 #mis_report_search_filter .modal-body {
     padding: 20px !important;
 }
+
+.mt-25 {
+    margin-top: 25px;
+    margin-bottom: 0px;
+}
