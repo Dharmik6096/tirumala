@@ -6606,3 +6606,19 @@ select:focus > option:checked {
 .alignment_mapping .table>tbody>tr>td {
     vertical-align: top !important;
 }
+.radio-section{
+    margin-bottom: 14px;
+    margin-top: -4px;
+}
+
+.radio-section .radio-container{
+    margin-left: 14px !important;
+}
+
+.radio-section input{
+    margin-top: -4px;
+}
+
+#mis_report_search_filter .modal-body {
+    padding: 20px !important;
+}

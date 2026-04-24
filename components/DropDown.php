@@ -2406,6 +2406,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Posting Type'),
                 'data' => [1 => Yii::t('app', 'Consolidate'), 2 => Yii::t('app', 'Day'), 3 => Yii::t('app', 'Payment Cycle')],
             ],
+            'sort_type' => [
+                'name' => 'sort_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Farmer Code'), 2 => Yii::t('app', 'Time'), 3 => Yii::t('app', 'Farmer Code Desc'), 4 => Yii::t('app', 'Time Desc')],
+            ],
+            'member_types' => [
+                'name' => 'member_types',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Specific'), 2 => Yii::t('app', 'Range')],
+            ],
         ];
         return $records[$l];
     }

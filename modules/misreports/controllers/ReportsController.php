@@ -2310,6 +2310,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkPurchaseRegisterReport() {
+        $this->report = 'MilkPurchaseRegisterReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2547,28 +2552,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //301
             'MemberWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_wise_summary',
                 'scenario' => 'MemberWiseSummary',
                 'title' => '301 - Member Wise Summary',
                 'report_type' => [Yii::t('app', 'Member vs Date'), Yii::t('app', 'Member vs Product vs Date'), Yii::t('app', 'Member Vs Consolidated'), Yii::t('app', 'Member vs Product vs Consolidated')],
             ],
             'MemberWiseProductWiseDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_wise_product_wise_date_wise',
                 'scenario' => 'MemberWiseSummary',
                 'title' => '301 - Member Wise Product Wise Date Wise',
                 'report_type' => [Yii::t('app', 'Member vs Date'), Yii::t('app', 'Member vs Product vs Date'), Yii::t('app', 'Member Vs Consolidated'), Yii::t('app', 'Member vs Product vs Consolidated')],
             ],
             'MemberWiseFromDateToDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_wise_from_date_to_date_wise',
                 'scenario' => 'MemberWiseSummary',
                 'title' => '301 - Member Wise Consolidated',
                 'report_type' => [Yii::t('app', 'Member vs Date'), Yii::t('app', 'Member vs Product vs Date'), Yii::t('app', 'Member Vs Consolidated'), Yii::t('app', 'Member vs Product vs Consolidated')],
             ],
             'MemberWiseProductWiseFromDateToDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_wise_product_wise_from_date_to_date_wise',
                 'scenario' => 'MemberWiseSummary',
                 'title' => '301 - Member Wise Product Wise Consolidated',
@@ -2576,28 +2581,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //302
             'VendorWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sahayak_wise_sumamry',
                 'scenario' => 'VendorWiseSummary',
                 'title' => '302 - Vendor Wise Summary',
                 'report_type' => [Yii::t('app', 'Vendor vs Date'), Yii::t('app', 'Vendor vs Product vs Date'), Yii::t('app', 'Vendor vs Consolidated'), Yii::t('app', 'Vendor vs Product vs Consolidated')],
             ],
             'VendorWiseProductWiseDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sahayak_wise_product_wise_date_wise',
                 'scenario' => 'VendorWiseSummary',
                 'title' => '302 - Vendor Wise Product Wise Date Wise',
                 'report_type' => [Yii::t('app', 'Vendor vs Date'), Yii::t('app', 'Vendor vs Product vs Date'), Yii::t('app', 'Vendor vs Consolidated'), Yii::t('app', 'Vendor vs Product vs Consolidated')],
             ],
             'VendorWiseConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sahayak_wise_from_date_to_date_wise',
                 'scenario' => 'VendorWiseSummary',
                 'title' => '302 - Vendor Wise Consolidated',
                 'report_type' => [Yii::t('app', 'Vendor vs Date'), Yii::t('app', 'Vendor vs Product vs Date'), Yii::t('app', 'Vendor vs Consolidated'), Yii::t('app', 'Vendor vs Product vs Consolidated')],
             ],
             'VendorWiseProductWiseConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sahayak_wise_product_wise_from_date_to_date_wise',
                 'scenario' => 'VendorWiseSummary',
                 'title' => '302 - Vendor Wise Product Wise Consolidated',
@@ -2605,28 +2610,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //303
             'BmcWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_bmc_wise_summary',
                 'scenario' => 'BmcWiseSummary',
                 'title' => '303 - BMC Wise Summary',
                 'report_type' => [Yii::t('app', 'BMC vs Date'), Yii::t('app', 'BMC vs Product vs Date'), Yii::t('app', 'BMC vs Consolidated'), Yii::t('app', 'BMC vs Product vs Consolidated')],
             ],
             'BmcWiseProductWiseDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_bmc_wise_product_wise_date_wise',
                 'scenario' => 'BmcWiseSummary',
                 'title' => '303 - BMC Wise Product Wise Date Wise',
                 'report_type' => [Yii::t('app', 'BMC vs Date'), Yii::t('app', 'BMC vs Product vs Date'), Yii::t('app', 'BMC vs Consolidated'), Yii::t('app', 'BMC vs Product vs Consolidated')],
             ],
             'BmcWiseConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_bmc_wise_from_date_to_date_wise',
                 'scenario' => 'BmcWiseSummary',
                 'title' => '303 - BMC Wise Consolidated',
                 'report_type' => [Yii::t('app', 'BMC vs Date'), Yii::t('app', 'BMC vs Product vs Date'), Yii::t('app', 'BMC vs Consolidated'), Yii::t('app', 'BMC vs Product vs Consolidated')],
             ],
             'BmcWiseProductWiseConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_bmc_wise_product_wise_from_date_to_date_wise',
                 'scenario' => 'BmcWiseSummary',
                 'title' => '303 - BMC Wise Product Wise Consolidated',
@@ -2634,28 +2639,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //304
             'UnionWiseSummary' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_union_wise_summary',
                 'scenario' => 'UnionWiseSummary',
                 'title' => '304 - Union Wise Summary',
                 'report_type' => [Yii::t('app', 'Company vs Date'), Yii::t('app', 'Company vs Product vs Date'), Yii::t('app', 'Company vs Consolidated'), Yii::t('app', 'Company vs Product vs Consolidated')],
             ],
             'UnionWiseProductWiseDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_union_wise_product_wise_date_wise',
                 'scenario' => 'UnionWiseSummary',
                 'title' => '304 - Union Wise Product Wise Date Wise',
                 'report_type' => [Yii::t('app', 'Company vs Date'), Yii::t('app', 'Company vs Product vs Date'), Yii::t('app', 'Company vs Consolidated'), Yii::t('app', 'Company vs Product vs Consolidated')],
             ],
             'UnionWiseConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_union_wise_from_date_to_date_wise',
                 'scenario' => 'UnionWiseSummary',
                 'title' => '304 - Union Wise Consolidated',
                 'report_type' => [Yii::t('app', 'Company vs Date'), Yii::t('app', 'Company vs Product vs Date'), Yii::t('app', 'Company vs Consolidated'), Yii::t('app', 'Company vs Product vs Consolidated')],
             ],
             'UnionWiseProductWiseConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_union_wise_product_wise_from_date_to_date_wise',
                 'scenario' => 'UnionWiseSummary',
                 'title' => '304 - Union Wise Product Wise Consolidated',
@@ -5114,9 +5119,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_master_data_verification',
                 'scenario' => 'BankVerificationReport',
                 'title' => 'Bank Verification Report',
-                // 'excel_readonly' => TRUE,
-                // 'editable_columns' => ['is_verified'],
-                // 'extension' => 'xlsx',
+            // 'excel_readonly' => TRUE,
+            // 'editable_columns' => ['is_verified'],
+            // 'extension' => 'xlsx',
+            ],
+            'MilkPurchaseRegisterReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string:shift:all,milk_type_code,member_types:static:member_types,code,from_code,to_code,sort_type:static:sort_type',
+                'sp_name' => 'mis_milk_purchase_register',
+                'multiple_sheet' => ['summary' => 'mis_milk_purchase_register_summary'],
+                'scenario' => 'MilkPurchaseRegisterReport',
+                'title' => 'Milk Purchase Register Report',
             ],
         ];
         return $label[$l];

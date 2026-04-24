@@ -1184,6 +1184,20 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'User Attendance Report PDF'), 'url' => ['/jasperreports/default/user-attendance-report']],
                     ]
                 ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BANAS Reports') . ' <b class="caret"></b></a>',
+                    'visible' => TRUE,
+                    'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => '101 -' . Yii::t('app', 'Milk Purchase Register'), 'url' => ['/misreports/reports/milk-purchase-register-report']],
+                            ]
+                        ],
+                    ]
+                ],
             ],
         ],
             [
