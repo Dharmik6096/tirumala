@@ -385,15 +385,15 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                                 </div>
                                                 <?php
                                             }
-                                            if (in_array($value, array('p_trip_code'))) {
+                                            if (in_array($value, array('trip_code'))) {
                                                 if (isset($value_array[1]) && $value_array[1] == 'p_vehicle_code') {
                                                     ?>
                                                     <div class="col-sm-3">
-                                                        <?= Yii::$app->dropdown->depend_dropdown('vehicle_trip', $model, $form, 'reportsmodel-p_vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('p_trip_code')); ?>
+                                                        <?= Yii::$app->dropdown->depend_dropdown('vehicle_trip', $model, $form, 'reportsmodel-p_vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('trip_code')); ?>
                                                     </div>
                                                 <?php } else { ?>
                                                     <div class="col-sm-3">
-                                                        <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'p_trip_code'); ?>
+                                                        <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'trip_code'); ?>
                                                     </div>
                                                     <?php
                                                 }
