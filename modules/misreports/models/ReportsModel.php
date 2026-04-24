@@ -197,12 +197,12 @@ class ReportsModel extends Model {
                     return $model->member_types == 1;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-member_types').val() == '1';
-                 }"],
+                 }", 'on' => ['MilkPurchaseRegisterReport']],
                 [['from_code', 'to_code'], 'required', 'when' => function ($model) {
                     return $model->member_types == 2;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-member_types').val() == '2';
-                }"],
+                }", 'on' => ['MilkPurchaseRegisterReport']],
         ];
     }
 
