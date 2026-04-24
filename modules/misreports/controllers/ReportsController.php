@@ -2328,6 +2328,14 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'LocalSaleReport';
         return $this->actionIndex();
     }
+    public function actionLocalSaleDetailReport() {
+        $this->report = 'LocalSaleDetailReport';
+        return $this->actionIndex();
+    }
+    public function actionMilkRateDetailReport() {
+        $this->report = 'MilkRateDetailReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5163,6 +5171,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_local_sale',
                 'scenario' => 'LocalSaleReport',
                 'title' => 'Local sale Report',
+            ],
+            'LocalSaleDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,payment_method:static:payment_method',
+                'sp_name' => 'mis_local_sales_detail_report',
+                'scenario' => 'LocalSaleDetailReport',
+                'title' => 'Local Sale Detail Report',
+            ],
+            'MilkRateDetailReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,milk_type_code,report_rate_type:static:report_rate_type',
+               // 'sp_name' => '',
+                'scenario' => 'MilkRateDetailReport',
+                'title' => 'Milk Rate Detail Report',
             ],
         ];
         return $label[$l];

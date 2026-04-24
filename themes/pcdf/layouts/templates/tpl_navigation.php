@@ -1121,6 +1121,8 @@ echo GhostMenu::widget([
                                 ['label' => '102 -' . Yii::t('app', 'Member Wise Summary'), 'url' => ['/misreports/reports/member-wise-summary-report']],
                                 ['label' => '103 -' . Yii::t('app', 'Farmer Ledger'), 'url' => ['/misreports/reports/farmer-ledger-report']],
                                 ['label' => '105 -' . Yii::t('app', 'Local Sale Report'), 'url' => ['/misreports/reports/local-sale-report']],
+                                ['label' => '106 -' . Yii::t('app', 'Local Sale Report Detail'), 'url' => ['/misreports/reports/local-sale-detail-report']],
+                                ['label' => '110 -' . Yii::t('app', 'Milk Rate Detail'), 'url' => ['/misreports/reports/milk-rate-detail-report']],
                             ]
                         ],
                     ]

@@ -2416,6 +2416,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Specific'), 2 => Yii::t('app', 'Range')],
             ],
+            'payment_method' => [
+                'name' => 'payment_method',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Cash'), 2 => Yii::t('app', 'Credit')],
+            ],
+            'report_rate_type' => [
+                'name' => 'report_rate_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Farmer Rate')],
+            ],
         ];
         return $records[$l];
     }
