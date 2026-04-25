@@ -1137,6 +1137,7 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => '101 -' . Yii::t('app', 'Society List'), 'url' => ['/misreports/reports/society-list']],
                                     ['label' => '102 -' . Yii::t('app', 'Farmer List'), 'url' => ['/misreports/reports/farmer-list-report']],
+                                    ['label' => '103 -' . Yii::t('app', 'Farmer App Details'), 'url' => ['/misreports/reports/farmer-app-details-report']],
                             ]
                         ],
                     ]

@@ -2496,6 +2496,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'State'), 2 => Yii::t('app', 'District'), 3 => Yii::t('app', 'Sub District'), 4 => Yii::t('app', 'Village')],
             ],
+            'registered_type' => [
+                'name' => 'registered_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Register'), 3 => Yii::t('app', 'NonRegister')]
+            ],
+            'farmer_sort_type' => [
+                'name' => 'farmer_sort_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Farmer Code'), 1 => Yii::t('app', 'Mobole No')],
+            ],
         ];
         return $records[$l];
     }

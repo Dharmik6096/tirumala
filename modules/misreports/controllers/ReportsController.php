@@ -2380,6 +2380,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionFarmerAppDetailsReport() {
+        $this->report = 'FarmerAppDetailsReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5275,6 +5280,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_Society_list_report',
                 'scenario' => 'SocietyList',
                 'title' => 'Society List Report',
+            ],
+            'FarmerAppDetailsReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,registered_type:static:registered_type,farmer_sort_type:static:farmer_sort_type',
+                //'sp_name' => '',
+                'scenario' => 'FarmerAppDetailsReport',
+                'title' => 'Farmer App Details Report',
             ],
         ];
         return $label[$l];
