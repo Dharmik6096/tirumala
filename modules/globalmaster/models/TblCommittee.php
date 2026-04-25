@@ -43,7 +43,7 @@ class TblCommittee extends ChildModel
     public function rules()
     {
         return [
-            [['election_date', 'formation_date', 'created_at', 'updated_at'], 'safe'],
+            [['committee_name', 'local_name', 'election_date', 'formation_date', 'year', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['originating_type'], 'integer'],
             [['committee_name', 'local_name'], 'string', 'max' => 45],
             [['year'], 'string', 'max' => 5],

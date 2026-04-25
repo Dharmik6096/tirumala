@@ -118,9 +118,22 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->userName, 'name');
         }, 'visible' => false, 'filter' => true
     ],
-        ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
-        ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
-        ['attribute' => 'place', 'visible' => false, 'filter' => false],
+    ['attribute' => 'member_identity_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'witness_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'place', 'visible' => false, 'filter' => false],
+    ['attribute' => 'land', 'visible' => false, 'filter' => false],
+    ['attribute' => 'land_type', 'visible' => false, 'filter' => false],
+    ['attribute' => 'farmer_type', 'visible' => false, 'filter' => false],
+    ['attribute' => 'is_educated', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            return $model->is_educated == '1' ? 'Yes' : 'No';
+        },],
+    ['attribute' => 'is_cooking_gas', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            return $model->is_cooking_gas == '1' ? 'Yes' : 'No';
+    },],
+    ['attribute' => 'marital_status', 'visible' => false, 'filter' => false],
+    ['attribute' => 'registration_no', 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

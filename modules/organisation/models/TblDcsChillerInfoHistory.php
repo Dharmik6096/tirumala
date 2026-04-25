@@ -61,19 +61,7 @@ class TblDcsChillerInfoHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['chiller_info_code'], 'required'],
-            [['chiller_info_code', 'chilling_capacity', 'is_active', 'originating_type'], 'integer'],
-            [['min_qty', 'tds_percentage', 'fix_rent'], 'number'],
-            [['installation_date', 'agreement_from_date', 'agreement_to_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['bmc_code', 'mcc_plant_code', 'plant_code', 'dcs_code'], 'string', 'max' => 12],
-            [['owner_name', 'pan_no', 'chiller_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['rate_type', 'operation_type'], 'string', 'max' => 10],
-            [['agreement_no'], 'string', 'max' => 100],
-            [['union_code'], 'string', 'max' => 3],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['billing_method'], 'string', 'max' => 50],
-            [['sap_vendor_code'], 'string', 'max' => 225],
+            [['chiller_info_code', 'bmc_code', 'owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'is_active', 'mcc_plant_code', 'plant_code', 'union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'chiller_name', 'fix_rent', 'billing_method', 'sap_vendor_code', 'dcs_code', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

@@ -46,15 +46,7 @@ class TblCommitteeHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['committee_code'], 'required'],
-            [['committee_code', 'originating_type'], 'integer'],
-            [['election_date', 'formation_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['committee_name', 'local_name'], 'string', 'max' => 45],
-            [['year'], 'string', 'max' => 5],
-            [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['operation_type'], 'string', 'max' => 10],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['committee_code', 'committee_name', 'local_name', 'election_date', 'formation_date', 'year', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
