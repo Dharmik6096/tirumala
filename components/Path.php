@@ -37,7 +37,7 @@ class Path extends Component {
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
             'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason', 'TblRejectionResponsibility',
-            'TblDeviceMaster', 'TblDeviceMasterMapping', 'TblRateClass', 'TblAnimalTypeAdditional', 'TblCommitteeType', 'TblCommitteeMembers', 'TblCommitteeMembersHistory',
+            'TblDeviceMaster', 'TblDeviceMasterMapping', 'TblRateClass', 'TblAnimalTypeAdditional', 'TblCommitteeType', 'TblCommitteeMembers', 'TblCommitteeMembersHistory', 'TblCommittee', 'TblCommitteeHistory'
         ],
         '\\app\modules\organisation\models\\' =>
             ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
@@ -52,7 +52,7 @@ class Path extends Component {
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
             'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus', 'TblAllowDcsManualCollectionRange', 'TblChannelMaster', 'TblAnimalInspector', 'TblAnimalInspectorApplicability', 'TblAnimalInspectorRequest', 'TblCustomerMasterProvisional', 'TblMasterHierarchy', 'TblOrganizationLatlong', 'TblOrganizationLatlongSearch', 'TblOrganizationLatlongHistory', 'TblOrganizationLatLongApplicability', 'TblBankVerification', 'TblBankVerificationHistory', 'TblPlantDockMapping', 'TblPlantDockMappingHistory',
-            'TblBmcChillerInfo', 'TblBmcChillerInfoHistory', 'TblDcsProvisional', 'TblDcsProvisionalHistory', 'TblCustomerMasterProvisionalHistory', 'TblMemberRateRepushLog'
+            'TblBmcChillerInfo', 'TblBmcChillerInfoHistory', 'TblDcsProvisional', 'TblDcsProvisionalHistory', 'TblCustomerMasterProvisionalHistory', 'TblMemberRateRepushLog', 'TblDcsChillerInfo', 'TblDcsChillerInfoHistory'
         ],
         '\\app\modules\details\models\\' =>
             ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],
