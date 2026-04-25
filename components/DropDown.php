@@ -2511,6 +2511,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Offline'), 3 => Yii::t('app', 'Online'), 4 => Yii::t('app', 'Do not show offline')],
             ],
+            'report_status_type' => [
+                'name' => 'report_status_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Sent'), 3 => Yii::t('app', 'Success'), 4 => Yii::t('app', 'Fail'), 5 => Yii::t('app', 'Conflict')],
+            ],
+            'sms_type' => [
+                'name' => 'sms_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Otp'), 2 => Yii::t('app', 'Milk Collection')],
+            ],
         ];
         return $records[$l];
     }

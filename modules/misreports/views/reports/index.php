@@ -122,11 +122,12 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('shift_code'))) {
                                             ?>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6 ShiftHideShow">
                                                 <?php
                                                 echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', $model->getAttributeLabel('shift_code'), false, 'shift_code');
                                                 ?>
-                                            </div>      <?php
+                                            </div>    
+                                            <?php
                                         }
                                         if (in_array($value, array('union_code'))) {
                                             ?>
@@ -319,7 +320,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -679,6 +680,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('mobile_no'))) {
+                                            ?>
+                                            <div class="col-sm-6 number-validate MobileHideShow">
+                                                <?= $form->field($model, 'mobile_no')->textInput() ?>                                          
+                                            </div>
+                                            <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type']);
@@ -899,13 +907,13 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
         }
         
-        if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis' || '" . $report . "'=='FarmerListReport'){
+	if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis' || '" . $report . "'=='FarmerListReport'|| '" . $report . "'=='SmsDetailReport'){
             hideMemberTypes();
             $(document).on('change','#reportsmodel-member_types', function() {
                  hideMemberTypes();
             });
             $(document).on('keyup change','#reportsmodel-from_code', function() {
-                if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis' || '" . $report . "'=='FarmerListReport'){
+                if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis' || '" . $report . "'=='FarmerListReport'|| '" . $report . "'=='SmsDetailReport'){
                     var member_types =  $('#reportsmodel-member_types').val();
                     if(member_types == '1'){
                         $('#reportsmodel-to_code').val($(this).val());
@@ -936,6 +944,13 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
         }
         
+        if('" . $report . "'=='SmsDetailReport'){
+            hideContactShift();
+            $(document).on('change','#reportsmodel-sms_type', function() {
+                 hideContactShift();
+            });
+        }
+		
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -1133,7 +1148,27 @@ $('.mis_report_modal_toggle').on('click', function(){
     function resetField(selector) {
         $(selector).val(0).trigger('change').trigger('select2:select');
     }
-	
+    
+     function hideContactShift(){
+        if('" . $report . "'=='SmsDetailReport'){
+            var sms_type =  $('#reportsmodel-sms_type').val();
+            if(sms_type == '1'){ 
+                $('.MobileHideShow').show();
+                $('.ShiftHideShow').hide();
+                resetField('.ShiftHideShow select')
+            }else if(sms_type == '2'){ 
+                $('.MobileHideShow').hide();
+                $('.ShiftHideShow').show();
+                $('.MobileHideShow input').val('').trigger('change').trigger('select2:select');
+            }else {
+                $('.MobileHideShow').hide();
+                $('.ShiftHideShow').hide();
+                $('.MobileHideShow input').val('').trigger('change').trigger('select2:select');
+                resetField('.ShiftHideShow select')
+            }
+        }
+    }
+    
 ";
 
 if ($defaultToggle) {

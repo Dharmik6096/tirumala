@@ -2384,16 +2384,29 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'FarmerAppDetailsReport';
         return $this->actionIndex();
     }
+
     public function actionUnionWiseMessageDetailReport() {
         $this->report = 'UnionWiseMessageDetailReport';
         return $this->actionIndex();
     }
+
     public function actionUnionWiseMessageReport() {
         $this->report = 'UnionWiseMessageReport';
         return $this->actionIndex();
     }
+
     public function actionOnlineOfflineSocietyReport() {
         $this->report = 'OnlineOfflineSocietyReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkRatePublishReport() {
+        $this->report = 'MilkRatePublishReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSmsDetailReport() {
+        $this->report = 'SmsDetailReport';
         return $this->actionIndex();
     }
 
@@ -5277,7 +5290,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FatWiseQtyAnalysis' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
-                'sp_name' => '',
+//                'sp_name' => '',
                 'scenario' => 'FatWiseQtyAnalysis',
                 'title' => 'Fat Wise Qty Analysis Report',
             ],
@@ -5316,6 +5329,18 @@ class ReportsController extends \app\controllers\ChildController {
                 //'sp_name' => '',
                 'scenario' => 'OnlineOfflineSocietyReport',
                 'title' => 'Online Offline Society Report',
+            ],
+            'MilkRatePublishReport' => [
+                'param' => 'language_code,union_code,from_soc,to_soc,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
+//                'sp_name' => '',
+                'scenario' => 'MilkRatePublishReport',
+                'title' => 'Milk Rate Publish Report',
+            ],
+            'SmsDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no,shift_code,member_types:static:member_types,from_code,to_code',
+//                'sp_name' => '',
+                'scenario' => 'SmsDetailReport',
+                'title' => 'Sms Detail Report',
             ],
         ];
         return $label[$l];
