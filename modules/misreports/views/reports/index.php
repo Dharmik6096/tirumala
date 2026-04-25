@@ -319,7 +319,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -657,6 +657,21 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('from_soc'))) {
+                                            ?>
+                                            <div class="clearfix"></div>
+                                            <div class="col-sm-6 val_from_soc">
+                                                <?= $form->field($model, 'from_soc')->textInput(['type' => 'number', 'min' => 1, 'value' => (isset($model->from_soc) && $model->from_soc != 0) ? $model->from_soc : 1]) ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('to_soc'))) {
+                                            ?>
+                                            <div class="col-sm-6 val_to_soc">
+                                                <?= $form->field($model, 'to_soc')->textInput(['type' => 'number', 'min' => 1, 'max' => 100, 'value' => (isset($model->to_soc) && $model->to_soc !== '') ? $model->to_soc : 100]) ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type']);
@@ -877,13 +892,13 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
         }
         
-        if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis'){
+        if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis' || '" . $report . "'=='FarmerListReport'){
             hideMemberTypes();
             $(document).on('change','#reportsmodel-member_types', function() {
                  hideMemberTypes();
             });
             $(document).on('keyup change','#reportsmodel-from_code', function() {
-                if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis'){
+                if('" . $report . "'=='MilkPurchaseRegisterReport' || '" . $report . "'=='FarmerLedgerReport' || '" . $report . "'=='MilkPurchaseAnalysis' || '" . $report . "'=='FarmerListReport'){
                     var member_types =  $('#reportsmodel-member_types').val();
                     if(member_types == '1'){
                         $('#reportsmodel-to_code').val($(this).val());

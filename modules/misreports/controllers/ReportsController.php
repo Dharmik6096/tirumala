@@ -2352,7 +2352,12 @@ class ReportsController extends \app\controllers\ChildController {
     public function actionMilkPurchaseAnalysisReport() {
             $this->report = 'MilkPurchaseAnalysis';
             return $this->actionIndex();
-        }
+    }
+    public function actionFarmerListReport() {
+            $this->report = 'FarmerListReport';
+            return $this->actionIndex();
+    }
+
 
     /* Reports Configuration */
 
@@ -5216,9 +5221,15 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MilkPurchaseAnalysis' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
-                'sp_name' => '',
+               // 'sp_name' => '',
                 'scenario' => 'MilkPurchaseAnalysis',
                 'title' => 'Milk Purchase Analysis Report',
+            ],
+            'FarmerListReport' => [
+                'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
+                //'sp_name' => '',
+                'scenario' => 'FarmerListReport',
+                'title' => 'Farmer List Report',
             ],
         ];
         return $label[$l];
