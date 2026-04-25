@@ -1214,6 +1214,15 @@ echo GhostMenu::widget([
                                     ['label' => '101 -' . Yii::t('app', 'Society List'), 'url' => ['/misreports/reports/society-list']],
                                     ['label' => '102 -' . Yii::t('app', 'Farmer List'), 'url' => ['/misreports/reports/farmer-list-report']],
                                     ['label' => '103 -' . Yii::t('app', 'Farmer App Details'), 'url' => ['/misreports/reports/farmer-app-details-report']],
+                                    ['label' => '105 -' . Yii::t('app', 'Union Wise Message Detail'), 'url' => ['/misreports/reports/union-wise-message-detail-report']],
+                            ],
+                        ],
+                        [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => '101 -' . Yii::t('app', 'Union Wise Message'), 'url' => ['/misreports/reports/union-wise-message-report']],
+                                ['label' => '102 -' . Yii::t('app', 'Online Offline Society'), 'url' => ['/misreports/reports/online-offline-society-report']],
                             ],
                         ],
                     ]

@@ -2506,6 +2506,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Farmer Code'), 1 => Yii::t('app', 'Mobole No')],
             ],
+            'soc_type' => [
+                'name' => 'soc_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Offline'), 3 => Yii::t('app', 'Online'), 4 => Yii::t('app', 'Do not show offline')],
+            ],
         ];
         return $records[$l];
     }

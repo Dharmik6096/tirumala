@@ -2384,6 +2384,18 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'FarmerAppDetailsReport';
         return $this->actionIndex();
     }
+    public function actionUnionWiseMessageDetailReport() {
+        $this->report = 'UnionWiseMessageDetailReport';
+        return $this->actionIndex();
+    }
+    public function actionUnionWiseMessageReport() {
+        $this->report = 'UnionWiseMessageReport';
+        return $this->actionIndex();
+    }
+    public function actionOnlineOfflineSocietyReport() {
+        $this->report = 'OnlineOfflineSocietyReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5286,6 +5298,24 @@ class ReportsController extends \app\controllers\ChildController {
                 //'sp_name' => '',
                 'scenario' => 'FarmerAppDetailsReport',
                 'title' => 'Farmer App Details Report',
+            ],
+            'UnionWiseMessageDetailReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,group_by_region',
+                //'sp_name' => '',
+                'scenario' => 'UnionWiseMessageDetailReport',
+                'title' => 'Union Wise Message Detail Report',
+            ],
+            'UnionWiseMessageReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string',
+                //'sp_name' => '',
+                'scenario' => 'UnionWiseMessageReport',
+                'title' => 'Union Wise Message Report',
+            ],
+            'OnlineOfflineSocietyReport' => [
+                'param' => 'language_code,union_code,region_type,dcs_code:union_code,soc_type:static:soc_type,show_only_received_data',
+                //'sp_name' => '',
+                'scenario' => 'OnlineOfflineSocietyReport',
+                'title' => 'Online Offline Society Report',
             ],
         ];
         return $label[$l];
