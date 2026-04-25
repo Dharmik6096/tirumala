@@ -102,8 +102,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         $value = $value_array[0];
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
+                                            echo ($value == 'date' || $value == 'from_date' || ($value == 'to_date' && isset($value_array[2]))) ? '<div class="clearfix"></div>' : '';
                                             ?>
-                                            <div class="clearfix"></div>
                                             <div class="col-sm-6 reportDate">
                                                 <?php
                                                 echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-6 padding-left-5 padding-right-5', false);
@@ -192,7 +192,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?php
                                             } else if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                 ?>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-6 val_dcs_code">
                                                     <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'reportsmodel-union_code', '', Yii::t('app', 'Society'), 'dcs_code', false, $multiple); ?>
                                                 </div>  
                                                 <?php
@@ -319,7 +319,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -333,7 +333,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-6 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));      ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));       ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -519,11 +519,18 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
                                         if (in_array($value, array('region_code'))) {
-                                            ?>
-                                            <div class="col-sm-6">
-                                                <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
-                                            </div>
-                                            <?php
+                                            if (isset($value_array[1]) && $value_array[1] == 'union_code') {
+//                                                $addAll = (in_array('all', $value_array)) ? TRUE : FALSE;
+                                                ?>
+                                                <div class="col-sm-6 val_region_code">
+                                                    <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="col-sm-6">
+                                                    <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (in_array($value, array('area_code'))) {
                                             ?>
@@ -643,10 +650,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('is_show_zero_val'))) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society'])) {
                                             ?>
                                             <div class="col-sm-6">
-                                                <?= $form->field($model, 'is_show_zero_val', ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+                                                <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
                                             </div>
                                             <?php
                                         }
@@ -885,6 +892,28 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
         }
 		
+        if('" . $report . "'=='DateWiseMilkPurchaseSummary'){
+            hideSearchType();
+            $(document).on('change','#reportsmodel-search_type', function() {
+                 hideSearchType();
+            });
+            $(document).on('keyup change','#reportsmodel-from_code', function() {
+                if('" . $report . "'=='DateWiseMilkPurchaseSummary'){
+                    var search_type =  $('#reportsmodel-search_type').val();
+                    if(search_type == '1'){
+                        $('#reportsmodel-to_code').val($(this).val());
+                    }
+                }
+            });
+        }
+        
+        if('" . $report . "'=='MilkEditReport'){
+            hideSearchBy();
+            $(document).on('change','#reportsmodel-search_by', function() {
+                 hideSearchBy();
+            });
+        }
+        
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -1033,6 +1062,55 @@ $('.mis_report_modal_toggle').on('click', function(){
     }
 }
 
+    function hideSearchBy(){
+        if('" . $report . "'=='MilkEditReport'){
+            var search_by =  $('#reportsmodel-search_by').val();
+            if(search_by == '1'){ 
+                $('.val_dcs_code').show();
+                $('.val_region_code').hide();
+                resetField('.val_region_code select')
+            }else if(search_by == '2'){ 
+                $('.val_dcs_code').hide();
+                $('.val_region_code').show();
+                resetField('.val_dcs_code select')
+            }else {
+                $('.val_dcs_code').hide();
+                $('.val_region_code').hide();
+                resetField('.val_dcs_code select')
+                resetField('.val_region_code select')
+            }
+        }
+    }
+	
+    function hideSearchType() {
+        var search_type = $('#reportsmodel-search_type').val();
+        var fromCode = $('#reportsmodel-from_code');
+        var toCode = $('#reportsmodel-to_code');
+        if (search_type == '1') { 
+            $('.val_from_code').show();
+            $('.val_to_code').show();
+            fromCode.prop('readonly', false);
+            toCode.prop('readonly', true);
+            fromCode.val('1');
+            toCode.val(fromCode.val());
+        } else if (search_type == '2') { 
+            $('.val_from_code').show();
+            $('.val_to_code').show();
+            fromCode.prop('readonly', false);
+            toCode.prop('readonly', false);
+            fromCode.val('1');
+            toCode.val('9999');
+        } else { 
+            $('.val_from_code').hide();
+            $('.val_to_code').hide();
+            fromCode.prop('readonly', true).val(0);
+            toCode.prop('readonly', true).val(0);
+        }
+    }
+
+    function resetField(selector) {
+        $(selector).val(0).trigger('change').trigger('select2:select');
+    }
 	
 ";
 

@@ -2409,7 +2409,7 @@ class DropDown extends Component {
             'sort_type' => [
                 'name' => 'sort_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'Farmer Code'), 2 => Yii::t('app', 'Time'), 3 => Yii::t('app', 'Farmer Code Desc'), 4 => Yii::t('app', 'Time Desc')],
+                'data' => [1 => Yii::t('app', 'FarmerCode'), 2 => Yii::t('app', 'Time'), 3 => Yii::t('app', 'FarmerCode Desc'), 4 => Yii::t('app', 'Time Desc')],
             ],
             'member_types' => [
                 'name' => 'member_types',
@@ -2425,6 +2425,31 @@ class DropDown extends Component {
                 'name' => 'report_rate_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Farmer Rate')],
+            ],
+            'search_by' => [
+                'name' => 'search_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Search by Society'), 2 => Yii::t('app', 'Search by Region')],
+            ],
+            'edit_type' => [
+                'name' => 'edit_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'ManualEdit'), 2 => Yii::t('app', 'ManualOnlineEdit'), 3 => Yii::t('app', 'MilkEditRequestEdit'), 4 => Yii::t('app', 'AlcoholicShiftEdit')],
+            ],
+            'sort_by' => [
+                'name' => 'sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'FarmerCode'), 2 => Yii::t('app', 'Shift'), 3 => Yii::t('app', 'FarmerCode Desc'), 4 => Yii::t('app', 'Shift Desc'), 5 => Yii::t('app', 'Transactiondate'), 6 => Yii::t('app', 'Transactiondate Desc')],
+            ],
+            'amount_variation' => [
+                'name' => 'amount_variation',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Plus'), 2 => Yii::t('app', 'Minus')],
+            ],
+            'search_type' => [
+                'name' => 'search_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Search by Society'), 2 => Yii::t('app', 'Search by Interval')],
             ],
         ];
         return $records[$l];

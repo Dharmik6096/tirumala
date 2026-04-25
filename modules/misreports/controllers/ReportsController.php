@@ -2324,16 +2324,29 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberWiseSummaryReport';
         return $this->actionIndex();
     }
+
     public function actionLocalSaleReport() {
         $this->report = 'LocalSaleReport';
         return $this->actionIndex();
     }
+
     public function actionLocalSaleDetailReport() {
         $this->report = 'LocalSaleDetailReport';
         return $this->actionIndex();
     }
+
     public function actionMilkRateDetailReport() {
         $this->report = 'MilkRateDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditReport() {
+        $this->report = 'MilkEditReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDateWiseMilkPurchaseSummary() {
+        $this->report = 'DateWiseMilkPurchaseSummary';
         return $this->actionIndex();
     }
 
@@ -5180,9 +5193,22 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MilkRateDetailReport' => [
                 'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,milk_type_code,report_rate_type:static:report_rate_type',
-               // 'sp_name' => '',
+                // 'sp_name' => '',
                 'scenario' => 'MilkRateDetailReport',
                 'title' => 'Milk Rate Detail Report',
+            ],
+            'MilkEditReport' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type,from_code,to_code,sort_by:static:sort_by,amount_variation:static:amount_variation,is_group_by_society',
+                'sp_name' => 'mis_milk_edit',
+                'scenario' => 'MilkEditReport',
+                'title' => 'Milk Edit Report',
+            ],
+            'DateWiseMilkPurchaseSummary' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
+                'sp_name' => 'mis_date_wise_milk_purchase_summary_register',
+                'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
+                'scenario' => 'DateWiseMilkPurchaseSummary',
+                'title' => 'Date wise Milk Purchase Summary Report',
             ],
         ];
         return $label[$l];
