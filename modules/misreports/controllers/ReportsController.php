@@ -2349,6 +2349,10 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DateWiseMilkPurchaseSummary';
         return $this->actionIndex();
     }
+    public function actionMilkPurchaseAnalysisReport() {
+            $this->report = 'MilkPurchaseAnalysis';
+            return $this->actionIndex();
+        }
 
     /* Reports Configuration */
 
@@ -5209,6 +5213,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
                 'scenario' => 'DateWiseMilkPurchaseSummary',
                 'title' => 'Date wise Milk Purchase Summary Report',
+            ],
+            'MilkPurchaseAnalysis' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
+                'sp_name' => '',
+                'scenario' => 'MilkPurchaseAnalysis',
+                'title' => 'Milk Purchase Analysis Report',
             ],
         ];
         return $label[$l];
