@@ -650,7 +650,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society'])) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate'])) {
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>

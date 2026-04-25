@@ -5192,8 +5192,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Local Sale Detail Report',
             ],
             'MilkRateDetailReport' => [
-                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,milk_type_code,report_rate_type:static:report_rate_type',
-                // 'sp_name' => '',
+                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,report_rate_type:static:report_rate_type,milk_type_code,last_rate',
+                'sp_name' => 'mis_milk_rate_detail_report',
                 'scenario' => 'MilkRateDetailReport',
                 'title' => 'Milk Rate Detail Report',
             ],
