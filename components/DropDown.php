@@ -2451,6 +2451,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Search by Society'), 2 => Yii::t('app', 'Search by Interval')],
             ],
+            'report_sort_by' => [
+                'name' => 'report_sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Code'), 2 => Yii::t('app', 'Time')],
+            ],
+            'sort_direction' => [
+                'name' => 'sort_direction',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Ascending'), 1 => Yii::t('app', 'Decending')],
+            ]
         ];
         return $records[$l];
     }
