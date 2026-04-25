@@ -2481,6 +2481,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Diff Amount'), 2 => Yii::t('app', 'Diff Qty')],
             ],
+            'status_type' => [
+                'name' => 'status_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Active'), 3 => Yii::t('app', 'InActive')],
+            ],
+            'society_type' => [
+                'name' => 'society_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'AMCS'), 3 => Yii::t('app', 'Logistic')],
+            ],
+            'region_type' => [
+                'name' => 'region_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'State'), 2 => Yii::t('app', 'District'), 3 => Yii::t('app', 'Sub District'), 4 => Yii::t('app', 'Village')],
+            ],
         ];
         return $records[$l];
     }

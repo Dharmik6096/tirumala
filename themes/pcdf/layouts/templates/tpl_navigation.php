@@ -1135,6 +1135,7 @@ echo GhostMenu::widget([
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Society Reports') . '<b class="caret"></b></a>',
                             'items' => [
+                                    ['label' => '101 -' . Yii::t('app', 'Society List'), 'url' => ['/misreports/reports/society-list']],
                                     ['label' => '102 -' . Yii::t('app', 'Farmer List'), 'url' => ['/misreports/reports/farmer-list-report']],
                             ]
                         ],

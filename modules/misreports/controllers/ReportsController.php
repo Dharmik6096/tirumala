@@ -2375,6 +2375,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSocietyList() {
+        $this->report = 'SocietyList';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5264,6 +5269,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
                 'scenario' => 'MilkCompare',
                 'title' => 'Milk Compare Report',
+            ],
+            'SocietyList' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_type:static:region_type,region_code:union_code,dcs_code:union_code,status_type:static:status_type,society_type:static:society_type',
+                'sp_name' => 'mis_Society_list_report',
+                'scenario' => 'SocietyList',
+                'title' => 'Society List Report',
             ],
         ];
         return $label[$l];
