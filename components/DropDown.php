@@ -2459,17 +2459,27 @@ class DropDown extends Component {
             'sort_direction' => [
                 'name' => 'sort_direction',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Ascending'), 1 => Yii::t('app', 'Decending')],
+                'data' => [1 => Yii::t('app', 'Ascending'), 2 => Yii::t('app', 'Decending')],
             ],
             'report_member_type' => [
                 'name' => 'report_member_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Member'),  2 => Yii::t('app', 'NonMember')],
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Member'), 2 => Yii::t('app', 'NonMember')],
             ],
             'farmer_type' => [
                 'name' => 'farmer_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Large Farmer'), 2 => Yii::t('app', 'Small'), 3 => Yii::t('app', 'Shriman'), 4 => Yii::t('app', 'Land Employee'), 5 => Yii::t('app', 'Other'), 6 => Yii::t('app', 'Side Agency'), 7 => Yii::t('app', 'Medium'), 8 => Yii::t('app', 'BMC Facilitator')],
+            ],
+            'filter_type' => [
+                'name' => 'filter_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Qty'), 2 => Yii::t('app', 'No Of Farmer'), 3 => Yii::t('app', 'Percentage Of Qty')],
+            ],
+            'milk_sort_by' => [
+                'name' => 'milk_sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Diff Amount'), 2 => Yii::t('app', 'Diff Qty')],
             ],
         ];
         return $records[$l];

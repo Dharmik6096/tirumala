@@ -1202,9 +1202,12 @@ echo GhostMenu::widget([
                                     ['label' => '107 -' . Yii::t('app', 'Date Wise Milk Purchase Summary'), 'url' => ['/misreports/reports/date-wise-milk-purchase-summary']],
                                     ['label' => '110 -' . Yii::t('app', 'Milk Rate Detail'), 'url' => ['/misreports/reports/milk-rate-detail-report']],
                                     ['label' => '111 -' . Yii::t('app', 'Milk Purchase Analysis'), 'url' => ['/misreports/reports/milk-purchase-analysis-report']],
+                                    ['label' => '112 -' . Yii::t('app', 'Milk Edit Summary'), 'url' => ['/misreports/reports/milk-edit-summary']],
+                                    ['label' => '113 -' . Yii::t('app', 'Fat Wise Qty Analysis'), 'url' => ['/misreports/reports/fat-wise-qty-analysis']],
+                                    ['label' => '117 -' . Yii::t('app', 'Milk Compare'), 'url' => ['/misreports/reports/milk-compare']],
                             ],
                         ],
-                        [
+                            [
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Society Reports') . '<b class="caret"></b></a>',
                             'items' => [

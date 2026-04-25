@@ -2349,15 +2349,31 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DateWiseMilkPurchaseSummary';
         return $this->actionIndex();
     }
+
     public function actionMilkPurchaseAnalysisReport() {
-            $this->report = 'MilkPurchaseAnalysis';
-            return $this->actionIndex();
-    }
-    public function actionFarmerListReport() {
-            $this->report = 'FarmerListReport';
-            return $this->actionIndex();
+        $this->report = 'MilkPurchaseAnalysis';
+        return $this->actionIndex();
     }
 
+    public function actionFarmerListReport() {
+        $this->report = 'FarmerListReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditSummary() {
+        $this->report = 'MilkEditSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionFatWiseQtyAnalysis() {
+        $this->report = 'FatWiseQtyAnalysis';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCompare() {
+        $this->report = 'MilkCompare';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5221,7 +5237,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MilkPurchaseAnalysis' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
-               // 'sp_name' => '',
+                // 'sp_name' => '',
                 'scenario' => 'MilkPurchaseAnalysis',
                 'title' => 'Milk Purchase Analysis Report',
             ],
@@ -5230,6 +5246,24 @@ class ReportsController extends \app\controllers\ChildController {
                 //'sp_name' => '',
                 'scenario' => 'FarmerListReport',
                 'title' => 'Farmer List Report',
+            ],
+            'MilkEditSummary' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type',
+                'sp_name' => 'mis_milk_edit_summary',
+                'scenario' => 'MilkEditSummary',
+                'title' => 'Milk Edit Summary Report',
+            ],
+            'FatWiseQtyAnalysis' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
+                'sp_name' => '',
+                'scenario' => 'FatWiseQtyAnalysis',
+                'title' => 'Fat Wise Qty Analysis Report',
+            ],
+            'MilkCompare' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
+                'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
+                'scenario' => 'MilkCompare',
+                'title' => 'Milk Compare Report',
             ],
         ];
         return $label[$l];

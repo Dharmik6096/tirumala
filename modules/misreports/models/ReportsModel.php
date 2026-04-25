@@ -15,10 +15,10 @@ class ReportsModel extends Model {
     public $org_type, $product_type, $module_type, $action_perform, $channel_code, $upload_ftp_file, $sap_file, $trip_code, $grn_no, $plant_register_type, $bill_head_code, $trip_status, $milk_sale_on, $billing_on, $dispatch_center_type, $dispatch_center, $dispatch_type;
     public $state_code, $region_code, $area_code, $user_code, $report_req_status, $login_user_code, $payment_type, $user_login_type, $as_on_date, $from_value, $to_value, $basis_on, $top_collection_on, $param_type, $top_value, $milk_type, $f_spr_date, $t_spr_date, $f_cmpr_date, $t_cmpr_date, $animal_type, $current_status, $login_type;
     public $rate_cal_for, $insurance_master_code, $operation_type, $date_payment_cycle, $store_location_code, $is_groupbyserial, $store_location_type_all, $product_group_code, $header_reference, $assignment, $department, $p_product_type, $master_type;
-    public $milk_type_code, $sort_type, $language_code, $member_types, $from_code, $to_code, $shift_code, $is_show_zero_val, $payment_method, $report_rate_type, $amount_variation, $sort_by, $search_by, $edit_type, $is_group_by_society, $search_type, $last_rate, $report_sort_by, $sort_direction, $from_soc, $to_soc, $farmer_type, $report_member_type;
+    public $milk_type_code, $sort_type, $language_code, $member_types, $from_code, $to_code, $shift_code, $is_show_zero_val, $payment_method, $report_rate_type, $amount_variation, $sort_by, $search_by, $edit_type, $is_group_by_society, $search_type, $last_rate, $report_sort_by, $sort_direction, $from_soc, $to_soc, $farmer_type, $report_member_type, $filter_type, $milk_sort_by;
 
     function __construct() {
-
+        
     }
 
     /**
@@ -27,7 +27,7 @@ class ReportsModel extends Model {
     public function rules() {
         return [
                 [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code', 'main_customer_type', 'transporter_code', 'vehicle_code', 'product_type', 'animal_type'], 'default', 'value' => 0],
-                [['year', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'no_of_payment_cycle', 'output_type', 'report_type', 'store_location_type', 'asset_code', 'sap_code', 'sr_no', 'main_customer_type', 'transporter_code', 'vehicle_code', 'originating_type', 'report_collection_type', 'type_wise_report', 'route_type_trans', 'product_code', 'org_type', 'product_type', 'module_type', 'action_perform', 'channel_code', 'upload_ftp_file', 'sap_file', 'channel_code', 'month', 'state_code', 'region_code', 'area_code', 'report_req_status', 'login_user_code', 'user_code', 'as_on_date', 'basis_on', 'top_collection_on', 'param_type', 'top_value', 'milk_type', 'f_spr_date', 't_spr_date', 'f_cmpr_date', 't_cmpr_date', 'animal_type', 'current_status', 'login_type', 'user_login_type', 'insurance_master_code', 'operation_type', 'bank_type', 'trip_status', 'trip_code', 'milk_sale_on', 'billing_on', 'dispatch_center_type', 'dispatch_center', 'dispatch_type', 'date_payment_cycle', 'bank_type', 'trip_status', 'trip_code', 'date_payment_cycle', 'store_location_code', 'is_groupbyserial', 'store_location_type_all', 'product_group_code', 'header_reference', 'assignment', 'department', 'bill_head_code', 'p_product_type', 'master_type', 'sort_type', 'milk_type_code', 'language_code', 'member_types', 'from_code', 'to_code', 'shift_code', 'is_show_zero_val', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'search_by', 'edit_type', 'is_group_by_society', 'search_type', 'last_rate', 'is_show_zero_val', 'report_sort_by', 'sort_direction', 'from_soc', 'to_soc', 'report_member_type', 'farmer_type'], 'safe'],
+                [['year', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'no_of_payment_cycle', 'output_type', 'report_type', 'store_location_type', 'asset_code', 'sap_code', 'sr_no', 'main_customer_type', 'transporter_code', 'vehicle_code', 'originating_type', 'report_collection_type', 'type_wise_report', 'route_type_trans', 'product_code', 'org_type', 'product_type', 'module_type', 'action_perform', 'channel_code', 'upload_ftp_file', 'sap_file', 'channel_code', 'month', 'state_code', 'region_code', 'area_code', 'report_req_status', 'login_user_code', 'user_code', 'as_on_date', 'basis_on', 'top_collection_on', 'param_type', 'top_value', 'milk_type', 'f_spr_date', 't_spr_date', 'f_cmpr_date', 't_cmpr_date', 'animal_type', 'current_status', 'login_type', 'user_login_type', 'insurance_master_code', 'operation_type', 'bank_type', 'trip_status', 'trip_code', 'milk_sale_on', 'billing_on', 'dispatch_center_type', 'dispatch_center', 'dispatch_type', 'date_payment_cycle', 'bank_type', 'trip_status', 'trip_code', 'date_payment_cycle', 'store_location_code', 'is_groupbyserial', 'store_location_type_all', 'product_group_code', 'header_reference', 'assignment', 'department', 'bill_head_code', 'p_product_type', 'master_type', 'sort_type', 'milk_type_code', 'language_code', 'member_types', 'from_code', 'to_code', 'shift_code', 'is_show_zero_val', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'search_by', 'edit_type', 'is_group_by_society', 'search_type', 'last_rate', 'is_show_zero_val', 'report_sort_by', 'sort_direction', 'from_soc', 'to_soc', 'report_member_type', 'farmer_type', 'filter_type', 'milk_sort_by'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_code', 'date', 'shift'], 'required', 'on' => ['MemberCollectionShiftReport']],
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['BmcCollDateShiftWiseSummary', 'BmcCollDateShiftWiseSummaryCommon']],
                 [['union_code', 'plant_code', 'mcc_code', 'date'], 'required', 'on' => ['MemberCollectionPaymentCycleWise', 'MemberWiseMonthlyCollection']],
@@ -123,7 +123,7 @@ class ReportsModel extends Model {
                 }, 'skipOnEmpty' => false, 'on' => ['MemberDailyCollection', 'MilkCollectionData', 'DpuRateComparision']],
                 [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-                }, 'skipOnEmpty' => false, 'except' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill']],
+                }, 'skipOnEmpty' => false, 'except' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill', 'MilkCompare']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SocietyCompositeVsActual', 'MpgPaymentBillStatement']],
                 [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
                 [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
@@ -207,15 +207,18 @@ class ReportsModel extends Model {
                     return $model->search_by == 1;
                 }, 'whenClient' => "function (attribute, value) {
                     var val = $('#reportsmodel-search_by').val() == '1';
-                }", 'on' => ['MilkEditReport']],
+                }", 'on' => ['MilkEditReport', 'MilkEditSummary']],
                 [['region_code'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
                     var val = $('#reportsmodel-search_by').val() == '2';
-                }", 'on' => ['MilkEditReport']],
+                }", 'on' => ['MilkEditReport', 'MilkEditSummary']],
                 [['language_code', 'union_code', 'region_code', 'search_type', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'from_code', 'to_code'], 'required', 'on' => ['DateWiseMilkPurchaseSummary']],
                 [['language_code', 'union_code', 'dcs_code', 'date', 'shift_code', 'milk_type_code', 'member_types', 'from_code', 'to_code', 'report_sort_by', 'sort_direction'], 'required', 'on' => ['MilkPurchaseAnalysis']],
                 [['language_code', 'union_code', 'from_soc', 'to_soc', 'report_member_type', 'member_types', 'from_code', 'to_code', 'farmer_type'], 'required', 'on' => ['FarmerListReport']],
+                [['language_code', 'union_code', 'search_by', 'from_date', 'to_date', 'from_shift', 'to_shift', 'edit_type'], 'required', 'on' => ['MilkEditSummary']],
+                [['language_code', 'union_code', 'region_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'filter_type', 'from_code', 'to_code', 'milk_type_code'], 'required', 'on' => ['FatWiseQtyAnalysis']],
+                [['language_code', 'union_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'from_code', 'to_code', 'milk_sort_by', 'sort_direction'], 'required', 'on' => ['MilkCompare']],
         ];
     }
 
@@ -227,10 +230,10 @@ class ReportsModel extends Model {
             'bmc_code' => \Yii::t('app', 'BMC'),
             'dcs_code' => \Yii::t('app', 'DCS Code'),
             'dcs_name' => \Yii::t('app', 'DCS Name'),
-            'from_date' => \Yii::t('app', 'From Date'),
-            'from_shift' => \Yii::t('app', 'From Shift'),
-            'to_date' => \Yii::t('app', 'To Date'),
-            'to_shift' => \Yii::t('app', 'To Shift'),
+            'from_date' => ($this->scenario == 'MilkCompare') ? \Yii::t('app', 'Supervision Date') : \Yii::t('app', 'From Date'),
+            'from_shift' => ($this->scenario == 'MilkCompare') ? \Yii::t('app', 'Supervision Shift') : \Yii::t('app', 'From Shift'),
+            'to_date' => ($this->scenario == 'MilkCompare') ? \Yii::t('app', 'Compare Date') : \Yii::t('app', 'From Date'),
+            'to_shift' => ($this->scenario == 'MilkCompare') ? \Yii::t('app', 'Compare Shift') : \Yii::t('app', 'To Shift'),
             'p_date' => \Yii::t('app', 'As On Date'),
             'date' => \Yii::t('app', 'Date'),
             'shift' => \Yii::t('app', 'Shift'),
@@ -262,8 +265,8 @@ class ReportsModel extends Model {
             'milk_type_code' => \Yii::t('app', 'Milk Type'),
             'language_code' => \Yii::t('app', 'Language'),
             'member_types' => \Yii::t('app', 'Member'),
-            'from_code' => ($this->scenario == 'MilkEditReport') ? \Yii::t('app', 'From Member') : ((in_array($this->scenario, ['DateWiseMilkPurchaseSummary', 'MilkRateDetailReport'])) ? \Yii::t('app', 'From Society') : \Yii::t('app', 'From Code')),
-            'to_code' => ($this->scenario == 'MilkEditReport') ? \Yii::t('app', 'To Member') : ((in_array($this->scenario, ['DateWiseMilkPurchaseSummary', 'MilkRateDetailReport'])) ? \Yii::t('app', 'To Society') : \Yii::t('app', 'To Code')),
+            'from_code' => (in_array($this->scenario, ['MilkEditReport', 'MilkEditSummary', 'MilkCompare', 'FarmerListReport'])) ? \Yii::t('app', 'From Member') : ((in_array($this->scenario, ['DateWiseMilkPurchaseSummary', 'MilkRateDetailReport', 'FatWiseQtyAnalysis'])) ? \Yii::t('app', 'From Society') : \Yii::t('app', 'From Code')),
+            'to_code' => (in_array($this->scenario, ['MilkEditReport', 'MilkEditSummary', 'MilkCompare', 'FarmerListReport'])) ? \Yii::t('app', 'To Member') : ((in_array($this->scenario, ['DateWiseMilkPurchaseSummary', 'MilkRateDetailReport', 'FatWiseQtyAnalysis'])) ? \Yii::t('app', 'To Society') : \Yii::t('app', 'To Code')),
             'shift_code' => \Yii::t('app', 'Shift'),
             'payment_method' => \Yii::t('app', 'Payment Type'),
             'is_show_zero_val' => \Yii::t('app', 'Is Show Zero Value'),
@@ -280,6 +283,8 @@ class ReportsModel extends Model {
             'from_soc' => \Yii::t('app', 'From Society'),
             'to_soc' => \Yii::t('app', 'To Society'),
             'report_member_type' => \Yii::t('app', 'Member Type'),
+            'filter_type' => \Yii::t('app', 'Filter Type'),
+            'milk_sort_by' => \Yii::t('app', 'Sort By'),
         ];
     }
 

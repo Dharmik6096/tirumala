@@ -319,7 +319,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -922,7 +922,7 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
         }
         
-        if('" . $report . "'=='MilkEditReport'){
+        if('" . $report . "'=='MilkEditReport' || '" . $report . "'=='MilkEditSummary'){
             hideSearchBy();
             $(document).on('change','#reportsmodel-search_by', function() {
                  hideSearchBy();
@@ -1078,7 +1078,7 @@ $('.mis_report_modal_toggle').on('click', function(){
 }
 
     function hideSearchBy(){
-        if('" . $report . "'=='MilkEditReport'){
+        if('" . $report . "'=='MilkEditReport' || '" . $report . "'=='MilkEditSummary'){
             var search_by =  $('#reportsmodel-search_by').val();
             if(search_by == '1'){ 
                 $('.val_dcs_code').show();
