@@ -125,20 +125,49 @@ class CronjobController extends \yii\console\Controller {
 
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle('Sheet1');
-        $sheet->fromArray($file_header, NULL, 'A1');
-        //     var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet1');
+
+        $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
+        $header_included = isset($header_info['header_included']) ? $header_info['header_included'] : false;
+        
+        $header_rows = 1;
+        if ($header_included) {
+            $colCount = count($file_header);
+            $lastCol = ($colCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($colCount - 1) : 'A';
+            $header_rows = 4;
+            $companyName = isset($header_info['organization_name']) ? $header_info['organization_name'] : 'Everest Instruments Pvt. Ltd.';
+            $reportTitle = $model->report_title;
+            $searchParams = isset($header_info['search_params']) ? $header_info['search_params'] : '';
+
+            $sheet->setCellValue('A1', $companyName);
+            $sheet->setCellValue('A2', $reportTitle);
+            $sheet->setCellValue('A3', $searchParams);
+            $sheet->mergeCells("A1:{$lastCol}1");
+            $sheet->mergeCells("A2:{$lastCol}2");
+            $sheet->mergeCells("A3:{$lastCol}3");
+            $sheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
+            $sheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
+            $sheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        }
+
+        $sheet->fromArray($file_header, NULL, 'A' . $header_rows);
+        if ($header_included) {
+            $sheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
+        }
+        
         foreach ($output_chunk as $output) {
             if ($a == $sheet_change_on_chunk) {
                 $a = 1;
                 $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
                 $sheet->setTitle('Sheet' . $sheet_no);
-                $sheet->fromArray($file_header, NULL, 'A1');
-                //       var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet' . $sheet_no);
+                $sheet->fromArray($file_header, NULL, 'A' . $header_rows);
+                if ($header_included) {
+                    $sheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
+                }
                 $sheet_no++;
             }
-            $data_cell = 'A' . ($a == 1 ? '2' : ((($a - 1) * $chunk_size) + 2));
+            $current_row = ($a == 1 ? ($header_rows + 1) : ((($a - 1) * $chunk_size) + ($header_rows + 1)));
+            $data_cell = 'A' . $current_row;
             $sheet->fromArray($output, NULL, $data_cell);
-            //        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
             $a++;
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');

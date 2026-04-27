@@ -1101,7 +1101,17 @@ class ReportsController extends \app\controllers\ChildController {
                 $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
             }
         } else {
-            $output = $this->RegisterReportRequest('mis', $this->data, $controls);
+            $header_labels = Yii::$app->request->get('header_labels');
+            $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
+            $header_info = [
+                'header_included' => (isset($this->data['header_included']) && $this->data['header_included'] === true) ? true : false,
+                'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
+            ];
+
+            if ($header_info['header_included']) {
+                $header_info['search_params'] = $this->getSearchParamsString($controls, $header_labels_arr);
+            }
+            $output = $this->RegisterReportRequest('mis', $this->data, $controls, json_encode($header_info));
         }
         $this->output = $output;
 
@@ -1270,6 +1280,9 @@ class ReportsController extends \app\controllers\ChildController {
             } else if (isset($this->data['excel_readonly'])) {
                 $this->downloadDataReadonly($this->output, $this->data, $this->label);
             } else {
+                if (isset($this->data['report_type']) && !isset($controls['report_type'])) {
+                    $controls['report_type'] = $model->report_type;
+                }
                 $this->downloadData($controls);
             }
         }
@@ -5544,6 +5557,26 @@ class ReportsController extends \app\controllers\ChildController {
             if ($isZip && !in_array('attachment_link', $file_header)) {
                 $file_header[] = 'attachment_link';
             }
+            $header_rows = 1;
+            if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
+                $colCount = count($file_header);
+                $lastCol = ($colCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($colCount - 1) : 'A';
+                $header_rows = 4;
+                $header_labels = Yii::$app->request->get('header_labels');
+                $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
+                $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
+                $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
+                $searchParams = $this->getSearchParamsString($controls, $header_labels_arr);
+                $sheet->setCellValue('A1', $companyName);
+                $sheet->setCellValue('A2', $reportTitle);
+                $sheet->setCellValue('A3', $searchParams);
+                $sheet->mergeCells("A1:{$lastCol}1");
+                $sheet->mergeCells("A2:{$lastCol}2");
+                $sheet->mergeCells("A3:{$lastCol}3");
+                $sheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
+                $sheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
+                $sheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            }
             /* $file_header = array_map(function($file_header) {
               return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
               }, array_values($file_header)); */
@@ -5551,15 +5584,17 @@ class ReportsController extends \app\controllers\ChildController {
             $sheet->fromArray(
                     $file_header, // The data to set
                     NULL, // Array values with this value will not be set
-                    'A1'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
+                    'A' . $header_rows         // Top left coordinate of the worksheet range where
             );
             $sheet->fromArray(
                     $this->output, // The data to set
                     NULL, // Array values with this value will not be set
-                    'A2'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
+                    'A' . ($header_rows + 1)         // Top left coordinate of the worksheet range where
             );
+
+            if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
+                $sheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
+            }
 
             if ($isZip && !empty($this->output)) {
                 $rowIndex = 2;
@@ -5792,6 +5827,31 @@ class ReportsController extends \app\controllers\ChildController {
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
+    }
+
+    public function getSearchParamsString($controls, $header_labels_arr) {
+        $reportsModel = new ReportsModel();
+        $attributeLabels = $reportsModel->attributeLabels();
+
+        $param = isset($this->data['param']) ? explode(',', $this->data['param']) : [];
+        $params_config = array_map(function($p) { return explode(':', $p)[0]; }, $param);
+        if (isset($this->data['report_type']) && !in_array('report_type', $params_config)) {
+            $params_config[] = 'report_type';
+        }
+
+        $searchParams = "";
+        foreach ($params_config as $p) {
+            $parts = explode(':', $p);
+            $key = $parts[0];
+
+            if (isset($controls[$key]) && $controls[$key] !== '' && $controls[$key] !== null) {
+                $value = $controls[$key];
+                $label = isset($attributeLabels[$key]) ? $attributeLabels[$key] : ucwords(str_replace(['_', 'code'], [' ', ''], $key));
+                $displayValue = isset($header_labels_arr[$key]) ? $header_labels_arr[$key] : (is_array($value) ? implode(', ', $value) : $value);
+                $searchParams .= trim($label) . ": " . $displayValue . "  ";
+            }
+        }
+        return $searchParams;
     }
 
 }
