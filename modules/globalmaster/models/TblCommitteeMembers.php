@@ -53,7 +53,7 @@ class TblCommitteeMembers extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['committee_member_code', 'committee_type_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'member_name', 'election_date', 'tenure_from_date', 'tenure_to_date', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'local_name'], 'safe'],
+            [['committee_member_code', 'committee_type_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'member_name', 'election_date', 'tenure_from_date', 'tenure_to_date', 'is_active', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'local_name', 'formation', 'joining_date', 'registration_date', 'committee_code'], 'safe'],
             [['committee_type_code' ,'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'member_name', 'election_date', 'tenure_from_date', 'tenure_to_date'], 'required'],
             [['tenure_to_date'], 'validateToDate'],
             [['local_name'], function ($attribute, $params) {
@@ -152,6 +152,10 @@ class TblCommitteeMembers extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getCommitteeCode() {
+        return $this->hasOne(TblCommittee::className(), ['committee_code' => 'committee_code']);
     }
 
 }

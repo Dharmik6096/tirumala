@@ -18,7 +18,7 @@ class TblAreaBmcMappingSearch extends TblAreaBmcMapping {
     public function rules() {
         return [
             [['area_bmc_mapping_code', 'is_active'], 'integer'],
-            [['area_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+            [['area_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'applicable_type', 'applicable_code'], 'safe'],
         ];
     }
 
@@ -58,6 +58,8 @@ class TblAreaBmcMappingSearch extends TblAreaBmcMapping {
         $query->andFilterWhere([
             'area_code' => $this->area_code,
             'bmc_code' => $this->bmc_code,
+            'applicable_type' => $this->applicable_type,
+            'applicable_code' => $this->applicable_code,
         ]);
 
         return $dataProvider;

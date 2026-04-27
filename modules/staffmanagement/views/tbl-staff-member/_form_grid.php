@@ -40,6 +40,14 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getStaticValue($model->is_on_role, 'is_on_role');
         }],
+    [
+        'attribute' => 'approved_date',
+        'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->approved_date);
+        }],
+    ['attribute' => 'salary', 'visible' => false, 'filter' => false],
+    ['attribute' => 'member_code', 'visible' => false, 'filter' => false],
 ];
 $grid_option = [
     'id' => 'staff-member-list',

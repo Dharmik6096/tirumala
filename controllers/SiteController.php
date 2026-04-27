@@ -493,6 +493,12 @@ class SiteController extends \app\controllers\ChildController {
                     $out[] = array('id' => $r['id'],
                         'name' => $value);
             }
+            if (\Yii::$app->request->get('addAll') == 1) {
+                if ($out === NULL) {
+                    $out = [];
+                }
+                array_unshift($out, ['id' => '0', 'name' => 'All']);
+            }
             return Json::encode(['output' => $out, 'selected' => '']);
             return;
         }

@@ -2318,6 +2318,151 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkPurchaseRegisterReport() {
+        $this->report = 'MilkPurchaseRegisterReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerLedgerReport() {
+        $this->report = 'FarmerLedgerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberWiseSummaryReport() {
+        $this->report = 'MemberWiseSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionLocalSaleReport() {
+        $this->report = 'LocalSaleReport';
+        return $this->actionIndex();
+    }
+
+    public function actionLocalSaleDetailReport() {
+        $this->report = 'LocalSaleDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkRateDetailReport() {
+        $this->report = 'MilkRateDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditReport() {
+        $this->report = 'MilkEditReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDateWiseMilkPurchaseSummary() {
+        $this->report = 'DateWiseMilkPurchaseSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkPurchaseAnalysisReport() {
+        $this->report = 'MilkPurchaseAnalysis';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerListReport() {
+        $this->report = 'FarmerListReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditSummary() {
+        $this->report = 'MilkEditSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionFatWiseQtyAnalysis() {
+        $this->report = 'FatWiseQtyAnalysis';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCompare() {
+        $this->report = 'MilkCompare';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyList() {
+        $this->report = 'SocietyList';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerAppDetailsReport() {
+        $this->report = 'FarmerAppDetailsReport';
+        return $this->actionIndex();
+    }
+
+    public function actionUnionWiseMessageDetailReport() {
+        $this->report = 'UnionWiseMessageDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionUnionWiseMessageReport() {
+        $this->report = 'UnionWiseMessageReport';
+        return $this->actionIndex();
+    }
+
+    public function actionOnlineOfflineSocietyReport() {
+        $this->report = 'OnlineOfflineSocietyReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkRatePublishReport() {
+        $this->report = 'MilkRatePublishReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSmsDetailReport() {
+        $this->report = 'SmsDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTopSocietyMilkCollectionReport() {
+        $this->report = 'TopSocietyMilkCollectionReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTopFarmerMilkCollectionReport() {
+        $this->report = 'TopFarmerMilkCollectionReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerManualEntryReport() {
+        $this->report = 'FarmerManualEntryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyWiseSummaryReport() {
+        $this->report = 'SocietyWiseSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerNotSubmittingMilkReport() {
+        $this->report = 'FarmerNotSubmittingMilkReport';
+        return $this->actionIndex();
+    }
+
+    public function actionManualCollectionSummaryReport() {
+        $this->report = 'ManualCollectionSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditForFarmerReport() {
+        $this->report = 'MilkEditForFarmerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMuAppVdcsAppUserReport() {
+        $this->report = 'MuAppVdcsAppUserReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietySampleReport() {
+        $this->report = 'SocietySampleReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5129,9 +5274,189 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_master_data_verification',
                 'scenario' => 'BankVerificationReport',
                 'title' => 'Bank Verification Report',
-                // 'excel_readonly' => TRUE,
-                // 'editable_columns' => ['is_verified'],
-                // 'extension' => 'xlsx',
+            // 'excel_readonly' => TRUE,
+            // 'editable_columns' => ['is_verified'],
+            // 'extension' => 'xlsx',
+            ],
+            'MilkPurchaseRegisterReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,sort_type:static:sort_type',
+                'sp_name' => 'mis_milk_purchase_register',
+                'multiple_sheet' => ['summary' => 'mis_milk_purchase_register_summary'],
+                'scenario' => 'MilkPurchaseRegisterReport',
+                'title' => 'Milk Purchase Register Report',
+            ],
+            'FarmerLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code,to_code',
+                'sp_name' => 'mis_farmer_ledger',
+                'scenario' => 'FarmerLedgerReport',
+                'title' => 'Farmer Ledger Report',
+            ],
+            'MemberWiseSummaryReport' => [
+                'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code,to_code,milk_type_code,dcs_code:union_code',
+                'sp_name' => 'mis_member_wise_summary',
+                'multiple_sheet' => ['summary' => 'mis_member_wise_summary_register'],
+                'scenario' => 'MemberWiseSummaryReport',
+                'title' => 'Member Wise Summary Report',
+                'multiArray' => ['dcs_code']
+            ],
+            'LocalSaleReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,is_show_zero_val',
+                'sp_name' => 'mis_local_sale',
+                'scenario' => 'LocalSaleReport',
+                'title' => 'Local sale Report',
+            ],
+            'LocalSaleDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,payment_method:static:payment_method',
+                'sp_name' => 'mis_local_sales_detail_report',
+                'scenario' => 'LocalSaleDetailReport',
+                'title' => 'Local Sale Detail Report',
+            ],
+            'MilkRateDetailReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,report_rate_type:static:report_rate_type,milk_type_code,last_rate',
+                'sp_name' => 'mis_milk_rate_detail_report',
+                'scenario' => 'MilkRateDetailReport',
+                'title' => 'Milk Rate Detail Report',
+            ],
+            'MilkEditReport' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type,from_code,to_code,sort_by:static:sort_by,amount_variation:static:amount_variation,is_group_by_society',
+                'sp_name' => 'mis_milk_edit',
+                'scenario' => 'MilkEditReport',
+                'title' => 'Milk Edit Report',
+            ],
+            'DateWiseMilkPurchaseSummary' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
+                'sp_name' => 'mis_date_wise_milk_purchase_summary_register',
+                'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
+                'scenario' => 'DateWiseMilkPurchaseSummary',
+                'title' => 'Date wise Milk Purchase Summary Report',
+            ],
+            'MilkPurchaseAnalysis' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
+                'sp_name' => 'mis_milk_purchase_analysis',
+                'scenario' => 'MilkPurchaseAnalysis',
+                'title' => 'Milk Purchase Analysis Report',
+            ],
+            'FarmerListReport' => [
+                'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
+                'sp_name' => '',
+                'scenario' => 'FarmerListReport',
+                'title' => 'Farmer List Report',
+            ],
+            'MilkEditSummary' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type',
+                'sp_name' => 'mis_milk_edit_summary',
+                'scenario' => 'MilkEditSummary',
+                'title' => 'Milk Edit Summary Report',
+            ],
+            'FatWiseQtyAnalysis' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
+                'sp_name' => 'mis_Fat_wise_qty_analysis',
+                'scenario' => 'FatWiseQtyAnalysis',
+                'title' => 'Fat Wise Qty Analysis Report',
+            ],
+            'MilkCompare' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
+                'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
+                'scenario' => 'MilkCompare',
+                'title' => 'Milk Compare Report',
+            ],
+            'SocietyList' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_type:static:region_type,region_code:union_code,dcs_code:union_code,status_type:static:status_type,society_type:static:society_type',
+                'sp_name' => 'mis_Society_list_report',
+                'scenario' => 'SocietyList',
+                'title' => 'Society List Report',
+            ],
+            'FarmerAppDetailsReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,registered_type:static:registered_type,farmer_sort_type:static:farmer_sort_type',
+                'sp_name' => 'mis_farmer_app_details',
+                'multiple_sheet' => ['mis_farmer_app_details_summary'],
+                'scenario' => 'FarmerAppDetailsReport',
+                'title' => 'Farmer App Details Report',
+            ],
+            'UnionWiseMessageDetailReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,group_by_region',
+                'sp_name' => 'mis_union_wise_message_detail',
+                'scenario' => 'UnionWiseMessageDetailReport',
+                'title' => 'Union Wise Message Detail Report',
+            ],
+            'UnionWiseMessageReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_union_wise_message',
+                'scenario' => 'UnionWiseMessageReport',
+                'title' => 'Union Wise Message Report',
+            ],
+            'OnlineOfflineSocietyReport' => [
+                'param' => 'language_code,union_code,region_type,dcs_code:union_code,soc_type:static:soc_type,show_only_received_data',
+                'sp_name' => 'mis_online_offline_society',
+                'scenario' => 'OnlineOfflineSocietyReport',
+                'title' => 'Online Offline Society Report',
+            ],
+            'MilkRatePublishReport' => [
+                'param' => 'language_code,union_code,from_soc,to_soc,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
+//                'sp_name' => '',
+                'scenario' => 'MilkRatePublishReport',
+                'title' => 'Milk Rate Publish Report',
+            ],
+            'SmsDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no,shift_code,member_types:static:member_types,from_code,to_code',
+//                'sp_name' => '',
+                'scenario' => 'SmsDetailReport',
+                'title' => 'Sms Detail Report',
+            ],
+            'TopSocietyMilkCollectionReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string,top:static:top',
+                'sp_name' => 'mis_top_society_milk_collection',
+                'scenario' => 'TopSocietyMilkCollectionReport',
+                'title' => 'Top Society Milk Collection Report',
+            ],
+            'TopFarmerMilkCollectionReport' => [
+                'param' => 'language_code,union_code,search_by_soc:static:search_by_soc,dcs_code:union_code,from_date:string,to_date:string,top:static:top,report_gender:static:report_gender',
+                'sp_name' => 'mis_top_farmer_milk_collection',
+                'scenario' => 'TopFarmerMilkCollectionReport',
+                'title' => 'Top Farmer Collection Report',
+            ],
+            'FarmerManualEntryReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,manual_type:static:manual_type,show_val',
+                'sp_name' => 'mis_farmer_manual_entry',
+                'scenario' => 'FarmerManualEntryReport',
+                'title' => 'Farmer Manual Entry Report',
+            ],
+            'SocietyWiseSummaryReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_society_wise_summary',
+                'scenario' => 'SocietyWiseSummaryReport',
+                'title' => 'Society Wise Summary Report',
+            ],
+            'FarmerNotSubmittingMilkReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string,to_date:string,show_only_received_data',
+                'sp_name' => 'mis_farmer_not_submitting_milk',
+                'scenario' => 'FarmerNotSubmittingMilkReport',
+                'title' => 'Farmer Not Submitting Milk Report',
+            ],
+            'ManualCollectionSummaryReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_manual_collection_summary',
+                'scenario' => 'ManualCollectionSummaryReport',
+                'title' => 'Manual Collection Summary Report',
+            ],
+            'MilkEditForFarmerReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,no_of_farmer_edit,no_of_individual_farmer_edit,edit_type:static:edit_type',
+                'sp_name' => 'mis_milk_edit_for_farmer_register',
+                'multiple_sheet' => ['mis_milk_edit_for_farmer_summary'],
+                'scenario' => 'MilkEditForFarmerReport',
+                'title' => 'Milk Edit For Farmer Report',
+            ],
+            'MuAppVdcsAppUserReport' => [
+                'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
+                'sp_name' => '',
+                'scenario' => 'MuAppVdcsAppUserReport',
+                'title' => 'MU App VDCS APP User Report',
+            ],
+            'SocietySampleReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,is_group_by_society,is_show_zero_val,from_time,to_time,last_rate',
+                'sp_name' => '',
+                'scenario' => 'SocietySampleReport',
+                'title' => 'Society Sample Report',
             ],
         ];
         return $label[$l];

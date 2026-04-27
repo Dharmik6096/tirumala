@@ -57,6 +57,20 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->tenure_to_date);
         }],
+    ['attribute' => 'formation', 'filter' => false, 'visible' => false, 'value' => function($model) {
+        return Yii::$app->controls->view_date($model->formation);
+    }],
+    ['attribute' => 'joining_date', 'filter' => false, 'visible' => false, 'value' => function($model) {
+        return Yii::$app->controls->view_date($model->joining_date);
+    }],
+    ['attribute' => 'registration_date', 'filter' => false, 'visible' => false, 'value' => function($model) {
+        return Yii::$app->controls->view_date($model->registration_date);
+    }],
+    ['attribute' => 'committee_code', 
+    'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->committeeCode, 'committee_name');
+        },
+    'filter' => false, 'visible' => false],
 ];
 $grid_option = [
     'id' => 'committee-members-grid',
