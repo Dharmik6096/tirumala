@@ -6,6 +6,7 @@ use app\components\ActiveForm;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\grid\GridView;
 use yii\web\View;
+use yii\widgets\MaskedInput;
 
 //$this->title = Yii::$app->label->title('view', 'Reports');
 $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : '');
@@ -23,6 +24,8 @@ $model->f_spr_date = empty($model->f_spr_date) ? date('d-m-Y') : $model->f_spr_d
 $model->t_spr_date = empty($model->t_spr_date) ? date('d-m-Y') : $model->t_spr_date;
 $model->f_cmpr_date = empty($model->f_cmpr_date) ? date('d-m-Y') : $model->f_cmpr_date;
 $model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmpr_date;
+$model->from_time = empty($model->from_time) ? date('H:i') : $model->from_time;
+$model->to_time = empty($model->to_time) ? date('H:i') : $model->to_time;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
@@ -320,7 +323,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'top', 'search_by_soc', 'report_gender', 'manual_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'top', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -661,14 +664,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('from_soc'))) {
                                             ?>
                                             <div class="clearfix"></div>
-                                            <div class="col-sm-6 val_from_soc">
+                                            <div class="col-sm-6">
                                                 <?= $form->field($model, 'from_soc')->textInput(['type' => 'number', 'min' => 1, 'value' => (isset($model->from_soc) && $model->from_soc != 0) ? $model->from_soc : 1]) ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('to_soc'))) {
                                             ?>
-                                            <div class="col-sm-6 val_to_soc">
+                                            <div class="col-sm-6">
                                                 <?= $form->field($model, 'to_soc')->textInput(['type' => 'number', 'min' => 1, 'max' => 100, 'value' => (isset($model->to_soc) && $model->to_soc !== '') ? $model->to_soc : 100]) ?>
                                             </div>
                                             <?php
@@ -684,6 +687,34 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-6 number-validate MobileHideShow">
                                                 <?= $form->field($model, 'mobile_no')->textInput() ?>                                          
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('no_of_farmer_edit'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= $form->field($model, 'no_of_farmer_edit')->textInput(['type' => 'number', 'min' => 0, 'value' => (isset($model->no_of_farmer_edit)) ? $model->no_of_farmer_edit : 0]) ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('no_of_individual_farmer_edit'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= $form->field($model, 'no_of_individual_farmer_edit')->textInput(['type' => 'number', 'min' => 0, 'value' => (isset($model->no_of_individual_farmer_edit) && $model->no_of_individual_farmer_edit !== '') ? $model->no_of_individual_farmer_edit : 0]) ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('from_time'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= $form->field($model, 'from_time')->widget(MaskedInput::className(), ['mask' => '99:99', 'value' => (isset($model->from_time) && $model->from_time !== '') ? $model->from_time : date('H:i')]); ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('to_time'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= $form->field($model, 'to_time')->widget(MaskedInput::className(), ['mask' => '99:99', 'value' => (isset($model->to_time) && $model->to_time !== '') ? $model->to_time : date('H:i')]); ?> 
                                             </div>
                                             <?php
                                         }
@@ -950,6 +981,24 @@ $('.mis_report_modal_toggle').on('click', function(){
                  hideContactShift();
             });
         }
+        
+        if('" . $report . "'=='MuAppVdcsAppUserReport'){
+            hideReportAppType();
+            $(document).on('change','#reportsmodel-report_app_type', function() {
+                 hideReportAppType();
+            });
+        }
+        
+        if('" . $report . "'=='SocietySampleReport'){
+              hideSocietySampleFields();
+              $(document).on('change','#reportsmodel-region_code', function() {
+                  hideSocietySampleFields();
+              });
+
+              $(document).on('change','#reportsmodel-is_show_zero_val', function() {
+                  hideSocietySampleFields();
+              });
+        }
 		
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
@@ -1165,6 +1214,44 @@ $('.mis_report_modal_toggle').on('click', function(){
                 $('.ShiftHideShow').hide();
                 $('.MobileHideShow input').val('').trigger('change').trigger('select2:select');
                 resetField('.ShiftHideShow select')
+            }
+        }
+    }
+    
+    
+    
+    function hideReportAppType(){
+        if('" . $report . "'=='MuAppVdcsAppUserReport'){
+            var report_app_type =  $('#reportsmodel-report_app_type').val();
+            if(report_app_type == '1'){ 
+                $('.val_dcs_code').hide();
+                resetField('.val_dcs_code select')
+            }else if(report_app_type == '2'){ 
+                $('.val_dcs_code').show();
+            }else {
+                $('.val_dcs_code').hide();
+                resetField('.val_dcs_code select')
+            }
+        }
+    }
+    
+    function hideSocietySampleFields(){
+        if('" . $report . "' == 'SocietySampleReport'){
+            var is_show_zero_val = $('#reportsmodel-is_show_zero_val').is(':checked');
+            if(is_show_zero_val){
+                $('#reportsmodel-from_time').prop('readonly', false);
+                $('#reportsmodel-to_time').prop('readonly', false);
+            }else{
+                $('#reportsmodel-from_time').prop('readonly', true);
+                $('#reportsmodel-to_time').prop('readonly', true);
+            }
+
+            var region_code = $('#reportsmodel-region_code').val();
+            if(region_code != '0' && region_code != '' && region_code != null){
+                $('.val_dcs_code').hide();
+                resetField('.val_dcs_code select');
+            }else{
+                $('.val_dcs_code').show();
             }
         }
     }

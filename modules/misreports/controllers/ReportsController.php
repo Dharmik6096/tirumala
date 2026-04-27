@@ -2409,16 +2409,49 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SmsDetailReport';
         return $this->actionIndex();
     }
+
     public function actionTopSocietyMilkCollectionReport() {
         $this->report = 'TopSocietyMilkCollectionReport';
         return $this->actionIndex();
     }
+
     public function actionTopFarmerMilkCollectionReport() {
         $this->report = 'TopFarmerMilkCollectionReport';
         return $this->actionIndex();
     }
+
     public function actionFarmerManualEntryReport() {
         $this->report = 'FarmerManualEntryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyWiseSummaryReport() {
+        $this->report = 'SocietyWiseSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerNotSubmittingMilkReport() {
+        $this->report = 'FarmerNotSubmittingMilkReport';
+        return $this->actionIndex();
+    }
+
+    public function actionManualCollectionSummaryReport() {
+        $this->report = 'ManualCollectionSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditForFarmerReport() {
+        $this->report = 'MilkEditForFarmerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMuAppVdcsAppUserReport() {
+        $this->report = 'MuAppVdcsAppUserReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietySampleReport() {
+        $this->report = 'SocietySampleReport';
         return $this->actionIndex();
     }
 
@@ -5372,6 +5405,43 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_farmer_manual_entry',
                 'scenario' => 'FarmerManualEntryReport',
                 'title' => 'Farmer Manual Entry Report',
+            ],
+            'SocietyWiseSummaryReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_society_wise_summary',
+                'scenario' => 'SocietyWiseSummaryReport',
+                'title' => 'Society Wise Summary Report',
+            ],
+            'FarmerNotSubmittingMilkReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string,to_date:string,show_only_received_data',
+                'sp_name' => 'mis_farmer_not_submitting_milk',
+                'scenario' => 'FarmerNotSubmittingMilkReport',
+                'title' => 'Farmer Not Submitting Milk Report',
+            ],
+            'ManualCollectionSummaryReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_manual_collection_summary',
+                'scenario' => 'ManualCollectionSummaryReport',
+                'title' => 'Manual Collection Summary Report',
+            ],
+            'MilkEditForFarmerReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,no_of_farmer_edit,no_of_individual_farmer_edit,edit_type:static:edit_type',
+                'sp_name' => 'mis_milk_edit_for_farmer_register',
+                'multiple_sheet' => ['mis_milk_edit_for_farmer_summary'],
+                'scenario' => 'MilkEditForFarmerReport',
+                'title' => 'Milk Edit For Farmer Report',
+            ],
+            'MuAppVdcsAppUserReport' => [
+                'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
+                'sp_name' => '',
+                'scenario' => 'MuAppVdcsAppUserReport',
+                'title' => 'MU App VDCS APP User Report',
+            ],
+            'SocietySampleReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,is_group_by_society,is_show_zero_val,from_time,to_time,last_rate',
+                'sp_name' => '',
+                'scenario' => 'SocietySampleReport',
+                'title' => 'Society Sample Report',
             ],
         ];
         return $label[$l];

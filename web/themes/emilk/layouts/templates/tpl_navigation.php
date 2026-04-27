@@ -1231,10 +1231,22 @@ echo GhostMenu::widget([
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Special Reports') . '<b class="caret"></b></a>',
                             'items' => [
-                                ['label' => '101 -' . Yii::t('app', 'Top Society Milk Collection'), 'url' => ['/misreports/reports/top-society-milk-collection-report']],
-                                ['label' => '102 -' . Yii::t('app', 'Top Farmer Milk Collection'), 'url' => ['/misreports/reports/top-farmer-milk-collection-report']],
-                                ['label' => '109 -' . Yii::t('app', 'Farmer Manual Entry'), 'url' => ['/misreports/reports/farmer-manual-entry-report']],
-                            ],
+                                    ['label' => '101 -' . Yii::t('app', 'Top Society Milk Collection'), 'url' => ['/misreports/reports/top-society-milk-collection-report']],
+                                    ['label' => '102 -' . Yii::t('app', 'Top Farmer Milk Collection'), 'url' => ['/misreports/reports/top-farmer-milk-collection-report']],
+                                    ['label' => '104 -' . Yii::t('app', 'Society Wise Summary'), 'url' => ['/misreports/reports/society-wise-summary-report']],
+                                    ['label' => '105 -' . Yii::t('app', 'Farmer Not Submitting Milk'), 'url' => ['/misreports/reports/farmer-not-submitting-milk-report']],
+                                    ['label' => '106 -' . Yii::t('app', 'Society Sample'), 'url' => ['/misreports/reports/society-sample-report']],
+                                    ['label' => '109 -' . Yii::t('app', 'Farmer Manual Entry'), 'url' => ['/misreports/reports/farmer-manual-entry-report']],
+                                    ['label' => '111 -' . Yii::t('app', 'Manual Collection Summary'), 'url' => ['/misreports/reports/manual-collection-summary-report']],
+                                    ['label' => '112 -' . Yii::t('app', 'Milk Edit For Farmer'), 'url' => ['/misreports/reports/milk-edit-for-farmer-report']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'MU App Report') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => '101 -' . Yii::t('app', 'MU App VDCS APP User Report'), 'url' => ['/misreports/reports/mu-app-vdcs-app-user-report']],
+                            ]
                         ],
                     ]
                 ],

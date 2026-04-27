@@ -2484,12 +2484,12 @@ class DropDown extends Component {
             'status_type' => [
                 'name' => 'status_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Active'), 3 => Yii::t('app', 'InActive')],
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Active'), 2 => Yii::t('app', 'InActive')],
             ],
             'society_type' => [
                 'name' => 'society_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'AMCS'), 3 => Yii::t('app', 'Logistic')],
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'AMCS'), 2 => Yii::t('app', 'Logistic')],
             ],
             'region_type' => [
                 'name' => 'region_type',
@@ -2499,7 +2499,7 @@ class DropDown extends Component {
             'registered_type' => [
                 'name' => 'registered_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Register'), 3 => Yii::t('app', 'NonRegister')]
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Register'), 2 => Yii::t('app', 'NonRegister')]
             ],
             'farmer_sort_type' => [
                 'name' => 'farmer_sort_type',
@@ -2509,7 +2509,7 @@ class DropDown extends Component {
             'soc_type' => [
                 'name' => 'soc_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Offline'), 3 => Yii::t('app', 'Online'), 4 => Yii::t('app', 'Do not show offline')],
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Offline'), 2 => Yii::t('app', 'Online'), 3 => Yii::t('app', 'Do not show offline')],
             ],
             'report_status_type' => [
                 'name' => 'report_status_type',
@@ -2540,6 +2540,11 @@ class DropDown extends Component {
                 'name' => 'manual_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Fat'), 2 => Yii::t('app', 'Weight'), 3 => Yii::t('app', 'Snf')]
+            ],
+            'report_app_type' => [
+                'name' => 'report_app_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'MU App'), 2 => Yii::t('app', 'VDCS App')]
             ],
         ];
         return $records[$l];
