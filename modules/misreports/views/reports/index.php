@@ -521,10 +521,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('region_code'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'union_code') {
-//                                                $addAll = (in_array('all', $value_array)) ? TRUE : FALSE;
+                                                $addAll = (in_array('all', $value_array)) ? true : false;
                                                 ?>
                                                 <div class="col-sm-6 val_region_code">
-                                                    <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-12', 'Region', 'region_code'); ?>
+                                                    <?= Yii::$app->dropdown->depend_dropdown('region', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-12', 'Region', 'region_code', false, 0, [], false, '', false, true, false, true, false, $addAll); ?>
                                                 </div>
                                             <?php } else { ?>
                                                 <div class="col-sm-6">

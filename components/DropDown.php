@@ -902,7 +902,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true, $listView = false) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true, $listView = false, $addAll = false) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -943,7 +943,7 @@ class DropDown extends Component {
                     'pluginOptions' => [
                         'depends' => $depends,
                         'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
+                        'url' => Url::to([$url, 'addAll' => $addAll ? 1 : 0]),
                         'allParam' => $allParam,
                         'initialize' => true,
                         'ajaxSettings' => [
