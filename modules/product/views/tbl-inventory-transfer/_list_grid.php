@@ -24,6 +24,19 @@ $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
         ['attribute' => 'is_stock_posted', 'value' => function($model) {
                 return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_stock_posted');
             }, 'visible' => TRUE, 'filter' => false],
+        ['attribute' => 'data_post_status',
+                'value' => function($model) {
+                    return isset(Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('data_post_status')['data'][$model->data_post_status] : 'Pending';
+                }, 'filter' => false, 'visible' => false],
+        ['attribute' => 'response_msg', 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'picked_datetime',
+                'value' => function($model) {
+                    return Yii::$app->controls->view_datetime($model->picked_datetime, 'php:d-m-Y H:i:s');
+                }, 'filter' => FALSE, 'visible' => false],
+        ['attribute' => 'response_datetime',
+                'value' => function($model) {
+                    return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
+                }, 'filter' => FALSE, 'visible' => false],
     ];
 
 
