@@ -1227,6 +1227,13 @@ echo GhostMenu::widget([
                                     ['label' => '103 -' . Yii::t('app', 'Sms Detail'), 'url' => ['/misreports/reports/sms-detail-report']],
                             ],
                         ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Special Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => '101 -' . Yii::t('app', 'Top Society Milk Collection'), 'url' => ['/misreports/reports/top-society-milk-collection-report']],
+                            ],
+                        ],
                     ]
                 ],
             ],

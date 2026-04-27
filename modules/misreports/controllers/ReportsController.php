@@ -2409,6 +2409,10 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SmsDetailReport';
         return $this->actionIndex();
     }
+    public function actionTopSocietyMilkCollectionReport() {
+        $this->report = 'TopSocietyMilkCollectionReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5341,6 +5345,12 @@ class ReportsController extends \app\controllers\ChildController {
 //                'sp_name' => '',
                 'scenario' => 'SmsDetailReport',
                 'title' => 'Sms Detail Report',
+            ],
+            'TopSocietyMilkCollectionReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string,top:static:top',
+//                'sp_name' => '',
+                'scenario' => 'TopSocietyMilkCollectionReport',
+                'title' => 'Top Society Milk Collection Report',
             ],
         ];
         return $label[$l];
