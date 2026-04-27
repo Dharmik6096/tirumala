@@ -5323,7 +5323,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FarmerListReport' => [
                 'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
-                'sp_name' => '',
+                //'sp_name' => '',
                 'scenario' => 'FarmerListReport',
                 'title' => 'Farmer List Report',
             ],
@@ -5439,7 +5439,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'SocietySampleReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,is_group_by_society,is_show_zero_val,from_time,to_time,last_rate',
-                'sp_name' => '',
+                'sp_name' => 'mis_Society_sample_report',
                 'scenario' => 'SocietySampleReport',
                 'title' => 'Society Sample Report',
             ],
