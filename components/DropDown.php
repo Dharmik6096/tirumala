@@ -2526,6 +2526,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', '10'), 2 => Yii::t('app', '20'), 3 => Yii::t('app', '30'), 4 => Yii::t('app', '40'), 5 => Yii::t('app', '50')]
             ],
+            'search_by_soc' => [
+                'name' => 'search_by_soc',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Search by Society')],
+            ],
+            'report_gender' => [
+                'name' => 'report_gender',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Male'), 2 => Yii::t('app', 'Female'), 3 => Yii::t('app', 'Other')]
+            ],
+            'manual_type' => [
+                'name' => 'manual_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Fat'), 2 => Yii::t('app', 'Weight'), 3 => Yii::t('app', 'Snf')]
+            ],
         ];
         return $records[$l];
     }

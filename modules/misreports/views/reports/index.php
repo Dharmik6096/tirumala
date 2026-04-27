@@ -320,7 +320,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'top'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'top', 'search_by_soc', 'report_gender', 'manual_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -651,7 +651,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data'])) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val'])) {
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>

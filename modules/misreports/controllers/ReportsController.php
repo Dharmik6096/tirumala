@@ -2413,6 +2413,14 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'TopSocietyMilkCollectionReport';
         return $this->actionIndex();
     }
+    public function actionTopFarmerMilkCollectionReport() {
+        $this->report = 'TopFarmerMilkCollectionReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerManualEntryReport() {
+        $this->report = 'FarmerManualEntryReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5276,13 +5284,13 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MilkPurchaseAnalysis' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
-                // 'sp_name' => '',
+                'sp_name' => 'mis_milk_purchase_analysis',
                 'scenario' => 'MilkPurchaseAnalysis',
                 'title' => 'Milk Purchase Analysis Report',
             ],
             'FarmerListReport' => [
                 'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
-                //'sp_name' => '',
+                'sp_name' => '',
                 'scenario' => 'FarmerListReport',
                 'title' => 'Farmer List Report',
             ],
@@ -5294,7 +5302,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FatWiseQtyAnalysis' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
-//                'sp_name' => '',
+                'sp_name' => 'mis_Fat_wise_qty_analysis',
                 'scenario' => 'FatWiseQtyAnalysis',
                 'title' => 'Fat Wise Qty Analysis Report',
             ],
@@ -5312,25 +5320,26 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FarmerAppDetailsReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,registered_type:static:registered_type,farmer_sort_type:static:farmer_sort_type',
-                //'sp_name' => '',
+                'sp_name' => 'mis_farmer_app_details',
+                'multiple_sheet' => ['mis_farmer_app_details_summary'],
                 'scenario' => 'FarmerAppDetailsReport',
                 'title' => 'Farmer App Details Report',
             ],
             'UnionWiseMessageDetailReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,group_by_region',
-                //'sp_name' => '',
+                'sp_name' => 'mis_union_wise_message_detail',
                 'scenario' => 'UnionWiseMessageDetailReport',
                 'title' => 'Union Wise Message Detail Report',
             ],
             'UnionWiseMessageReport' => [
                 'param' => 'language_code,union_code,from_date:string,to_date:string',
-                //'sp_name' => '',
+                'sp_name' => 'mis_union_wise_message',
                 'scenario' => 'UnionWiseMessageReport',
                 'title' => 'Union Wise Message Report',
             ],
             'OnlineOfflineSocietyReport' => [
                 'param' => 'language_code,union_code,region_type,dcs_code:union_code,soc_type:static:soc_type,show_only_received_data',
-                //'sp_name' => '',
+                'sp_name' => 'mis_online_offline_society',
                 'scenario' => 'OnlineOfflineSocietyReport',
                 'title' => 'Online Offline Society Report',
             ],
@@ -5348,9 +5357,21 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'TopSocietyMilkCollectionReport' => [
                 'param' => 'language_code,union_code,from_date:string,to_date:string,top:static:top',
-//                'sp_name' => '',
+                'sp_name' => 'mis_top_society_milk_collection',
                 'scenario' => 'TopSocietyMilkCollectionReport',
                 'title' => 'Top Society Milk Collection Report',
+            ],
+            'TopFarmerMilkCollectionReport' => [
+                'param' => 'language_code,union_code,search_by_soc:static:search_by_soc,dcs_code:union_code,from_date:string,to_date:string,top:static:top,report_gender:static:report_gender',
+                'sp_name' => 'mis_top_farmer_milk_collection',
+                'scenario' => 'TopFarmerMilkCollectionReport',
+                'title' => 'Top Farmer Collection Report',
+            ],
+            'FarmerManualEntryReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,manual_type:static:manual_type,show_val',
+                'sp_name' => 'mis_farmer_manual_entry',
+                'scenario' => 'FarmerManualEntryReport',
+                'title' => 'Farmer Manual Entry Report',
             ],
         ];
         return $label[$l];
