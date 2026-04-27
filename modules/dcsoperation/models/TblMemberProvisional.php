@@ -54,6 +54,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblRouteMapping;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -142,7 +143,7 @@ class TblMemberProvisional extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'receipt_scan_copy', 'beneficiary_name'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code', 'remarks', 'vendor_code', 'latitude', 'longitude', 'occupation', 'age', 'daily_milk_total', 'home_consumption_milk', 'market_surplus_milk', 'annual_milk_pour', 'aadhaar_card_address', 'is_contact_verified', 'is_email_verify', 'is_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'post_office', 'is_aadhar_verify', 'is_operator_aggre', 'application_no', 'name_as_per_adhar', 'member_status', 'witness_name', 'place', 'dcs_ref_code', 'payment_type', 'recipt_ref_no', 'sap_farmer_code', 'operation', 'approve_remarks', 'route_code', 'supervisor_employee_id', 'supervisor_employee_name', 'receipt_scan_copy', 'beneficiary_name', 'response_msg', 'response_datetime', 'is_sap_approved'], 'safe'],
                 [['is_download', 'is_contact_verified', 'is_verify', 'is_email_verify'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
@@ -177,10 +178,10 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
                     return ($this->chackExistRecord($params) && $this->is_active);
                 }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-                /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
-                    return ($this->chackExistRecord($params) && $this->is_active);
-                }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
-               [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+            /* [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($attribute, $params) {
+              return ($this->chackExistRecord($params) && $this->is_active);
+              }, 'except' => ['androidsync', 'hosync', 'hosyncUpdate']],
+              [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }],
               [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
@@ -356,6 +357,7 @@ class TblMemberProvisional extends ChildModel {
             'supervisor_employee_id' => Yii::t('app', 'Supervisor Employee'),
             'supervisor_employee_name' => Yii::t('app', 'Supervisor Employee Name'),
             'receipt_scan_copy' => Yii::t('app', 'Fee Receipt Number'),
+            'is_sap_approved' => Yii::t('app', 'SAP Approval Status')
         ];
     }
 
@@ -1197,4 +1199,17 @@ class TblMemberProvisional extends ChildModel {
     public function getRouteMapping() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
+
+    public function validateContactDetail($attribute, $params) {
+        $mobile = $this->$attribute;
+        if (!empty($mobile)) {
+            $encryptedMobile = Yii::$app->general->encryptData($mobile);
+            $data = TblContactDetails::find()->where(['or', ['mobile_no' => $mobile], ['mobile_no' => $encryptedMobile]])
+                            ->andWhere(['is_active' => 1])->one();
+            if (!empty($data)) {
+                $this->addError($attribute, Yii::t('app/validation', 'Mobile No has already been taken in contact detail.'));
+            }
+        }
+    }
+
 }

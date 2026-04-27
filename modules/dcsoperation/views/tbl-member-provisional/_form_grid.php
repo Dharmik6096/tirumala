@@ -97,8 +97,8 @@ $attribute = [
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'application_no', 'filter' => true],
         ['attribute' => 'is_approved', 'value' => function($model) {
-            return $model->is_approved == 1 ? 'Approved' : 'Pending';
-        }, 'visible' => false, 'filter' => false],
+            return Yii::$app->general->getStaticDropdownVal('approved_status', $model, 'is_approved');
+        }, 'visible' => true, 'filter' => false],
         ['attribute' => 'provisional_from'],
         ['attribute' => 'employee_code', 'visible' => false, 'filter' => true],
         ['attribute' => 'employee_name', 'visible' => false, 'filter' => true],
@@ -154,6 +154,8 @@ $attribute = [
         }, 'filter' => FALSE, 'visible' => false],
         ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
         ['attribute' => 'receipt_scan_copy', 'visible' => false],
+        ['attribute' => 'resp_status', 'filter' => false, 'visible' => true],
+        ['attribute' => 'response_msg', 'filter' => false, 'visible' => true],
 ];
 $gridId = 'member-grid';
 $grid_option = [

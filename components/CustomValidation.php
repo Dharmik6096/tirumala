@@ -1400,6 +1400,7 @@ class CustomValidation extends Component {
                 ],
                 'BackGroundDataImport' => [
                     'default' => [
+                            [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'on' => ['member']],
                             [['purchase_ledger', 'sale_ledger'], 'required', 'on' => ['product_master']],
                             [['milk_type', 'local_sale_ledger', 'coupon_ledger'], 'required', 'when' => function($model) {
                                 return $model->is_milk == 1;
@@ -1411,6 +1412,86 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) {
                                     return $('#tblproduct-is_milk').prop('checked') == false;
                             }", 'on' => ['product_master']],
+                    ],
+                ],
+                'TblContactDetails' => [
+                    'default' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'dcs-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'dcs-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'plant-create' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'mcc-create' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'bmc-create' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'customer-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
+                            [['adhar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove', 'create_animal']],
+                            [['beneficiary_name'], 'required', 'when' => function ($model) {
+                                return ($model->is_verify == 1);
+                            }, 'whenClient' => "function (attribute, value) { 
+                                    return $('#tblmemberprovisional-is_verify').prop('checked') == true;
+                             }", 'on' => ['createProvisionalMember']],
+                            [['mobile_no'], 'validateContactDetail', 'on' => ['createProvisionalMember', 'update_provisional_member', 'approval_address_detail']],
+                    ],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification', 'specialCodeImportCsv']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['saveCreamyData', 'androidsync', 'specialCodeImportCsv']],
+                            [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync', 'specialCodeImportCsv']],
+                            [['adhar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'specialCodeImportCsv']],
+                            [['mobile_no'], 'validateContactDetail', 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
             ],

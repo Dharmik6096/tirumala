@@ -5,6 +5,7 @@ use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
+$createSapErrorData = !empty($createSapErrorData) ? true : false;
 $milkType = $model->getMilkTypes();
 if (!empty($model->milk_type)) {
     $model->milk_type_code = explode(',', $model->milk_type);
@@ -16,7 +17,7 @@ if (!empty($model->milk_type)) {
 $nameWarning = 0;
 $codeWarning = 0;
 $bankWarning = 0;
-$readonly = $type == 'create' ? FALSE : TRUE;
+$readonly = ($type == 'create' || !$createSapErrorData) ? FALSE : TRUE;
 if (!empty($_POST) && !empty($_POST['warning']) && !empty($_POST['code_warning'])) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
@@ -99,18 +100,18 @@ $form = ActiveForm::begin([
             ?>
             <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
                 <div class="col-sm-2 number-validate">  
-                    <?= $form->field($model, 'dcs_code_ex')->textInput() ?>
+                    <?= $form->field($model, 'dcs_code_ex')->textInput(['readonly' => $createSapErrorData]) ?>
                 </div>
             <?php } ?>
             <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
                 <div class="col-sm-2 number-validate">  
-                    <?= $form->field($model, 'ref_code')->textInput() ?>
+                    <?= $form->field($model, 'ref_code')->textInput(['readonly' => $createSapErrorData]) ?>
                 </div>
             <?php } ?>
         <?php } ?>
 
         <div class="col-sm-2">
-            <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true, 'readonly' => $createSapErrorData]) ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->local($model, $form); ?>
@@ -461,15 +462,23 @@ $form = ActiveForm::begin([
     <div class="row">
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
-                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?php
+                if ($type == 'edit' && !$createSapErrorData) {
+                    echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
+                    echo Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut', 'data-toggle' => 'modal', 'data-target' => '#ProvisionalModal',]);
+                } ?>
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : ($createSapErrorData ? Yii::t('app', 'UPDATE & CREATE') : Yii::t('app', 'Update')), ['class' => 'btn btn-primary apply-shortcut saveBtn', 'name' => 'submitBtn', 'value' => 'save']) ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
         </div>
     </div>
-    <?php ActiveForm::end(); ?>
-
     <?php
+    if ($type == 'edit' && !$createSapErrorData) {
+        echo $this->render('@app/modules/document/views/tbl-attachment/_reroute', ['model' => $model]);
+    }
+    ActiveForm::end();
+
     $script = "
     var supervisorId = '$model->supervisor_employee_id';
     var supervisorName = '$model->supervisor_employee_name';
