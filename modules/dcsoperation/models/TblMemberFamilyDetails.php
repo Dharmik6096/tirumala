@@ -52,6 +52,8 @@ class TblMemberFamilyDetails extends ChildModel {
                 [['is_nominee'], 'validateIsNomineeRequired', 'on' => ['member_family_detail']],
                 [['is_nominee'], 'validateIsNominee', 'on' => ['member_family_detail']],
                 [['dob'], 'validateAge', 'on' => ['member_family_detail']],
+                [['dcs_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['member_code'], 'setData']
         ];
     }
 
@@ -82,6 +84,12 @@ class TblMemberFamilyDetails extends ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'dcs_code' => Yii::t('app', 'Society'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 
@@ -131,6 +139,16 @@ class TblMemberFamilyDetails extends ChildModel {
 
         if ($nomineeCount == 0 && $this->is_nominee == 0) {
             $this->addError($attribute, 'At Least One Nominee Is Required Per Member.');
+        }
+    }
+
+    public function setData() {
+        if(empty($this->x_col1)){
+            $this->x_col1 = Yii::$app->general->getUuid();
+        }
+
+        if(empty($this->dcs_code)){
+            $this->dcs_code = substr($this->member_code, 0, -4);
         }
     }
 

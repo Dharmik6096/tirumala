@@ -2500,7 +2500,7 @@ class DropDown extends Component {
             'report_sort_by' => [
                 'name' => 'report_sort_by',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'Code'), 2 => Yii::t('app', 'Time')],
+                'data' => [1 => Yii::t('app', 'Code'), 3 => Yii::t('app', 'Time')],
             ],
             'sort_direction' => [
                 'name' => 'sort_direction',

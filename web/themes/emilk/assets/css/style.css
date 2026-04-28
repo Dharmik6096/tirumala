@@ -5046,7 +5046,7 @@ tr.highlightRow {
 }
 
 #report-form .shift, #report-form .reportDate, #report-form .col-sm-3 {
-    height: 57px
+    height: 56px
 }
 
 .width_100-50_per {
@@ -6418,4 +6418,26 @@ div#dashboardFarmerPopup {
 
 .field-reportsmodel-show_val .form-check{
     margin-top: 25px;
+}
+
+.radio-section{
+    margin-bottom: 14px;
+    margin-top: -4px;
+}
+
+.radio-section .radio-container{
+    margin-left: 14px !important;
+}
+
+.radio-section input{
+    margin-top: -4px;
+}
+
+#mis_report_search_filter .modal-body {
+    padding: 20px !important;
+}
+
+.mt-25 {
+    margin-top: 25px;
+    margin-bottom: 0px;
 }

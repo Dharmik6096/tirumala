@@ -725,6 +725,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
                                     }
+                                    echo Html::hiddenInput('header_labels', '', ['id' => 'header_labels_input']);
                                     ?>   <div class = "clearfix"></div>
                                     <?php
                                     if (!isset($data['output_type'])) {
@@ -1255,6 +1256,34 @@ $('.mis_report_modal_toggle').on('click', function(){
             }
         }
     }
+
+    $(document).on('submit', '#report-form', function() {
+        var labels = {};
+        $(this).find('select, input[type=\"text\"]').each(function() {
+            var id = $(this).attr('id');
+            if (id && id.indexOf('reportsmodel-') !== -1) {
+                var key = id.replace('reportsmodel-', '');
+                if ($(this).is('select')) {
+                    var selectedTexts = [];
+                    $(this).find('option:selected').each(function() {
+                        var t = $(this).text();
+                        if (t && t.indexOf('Select') === -1 && t !== '') {
+                            selectedTexts.push(t);
+                        }
+                    });
+                    if (selectedTexts.length > 0) {
+                        labels[key] = selectedTexts.join(', ');
+                    }
+                } else {
+                    var val = $(this).val();
+                    if (val && val !== '') {
+                        labels[key] = val;
+                    }
+                }
+            }
+        });
+        $('#header_labels_input').val(JSON.stringify(labels));
+    });
     
 ";
 
