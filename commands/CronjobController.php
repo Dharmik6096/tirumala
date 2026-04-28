@@ -127,7 +127,7 @@ class CronjobController extends \yii\console\Controller {
         $sheet->setTitle('Sheet1');
 
         $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
-        $header_included = isset($header_info['header_included']) ? $header_info['header_included'] : false;
+        $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
         
         $header_rows = 1;
         if ($header_included) {
@@ -157,6 +157,7 @@ class CronjobController extends \yii\console\Controller {
         foreach ($output_chunk as $output) {
             if ($a == $sheet_change_on_chunk) {
                 $a = 1;
+                $header_rows = 1;
                 $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
                 $sheet->setTitle('Sheet' . $sheet_no);
                 $sheet->fromArray($file_header, NULL, 'A' . $header_rows);
