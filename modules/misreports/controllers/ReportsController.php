@@ -5638,7 +5638,7 @@ class ReportsController extends \app\controllers\ChildController {
             $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
             $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
             $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
-            $searchParams = $this->getSearchParamsString($controls, $header_labels_arr);
+            $searchParams = $this->getSearchParamsString($header_labels_arr);
             $customWorksheet->setCellValue('A1', $companyName);
             $customWorksheet->setCellValue('A2', $reportTitle);
             $customWorksheet->setCellValue('A3', $searchParams);
@@ -5750,8 +5750,27 @@ class ReportsController extends \app\controllers\ChildController {
                 $objPHPExcel->addSheet($newsheet);
                 $newoutput = \Yii::$app->general->getSpData($new_sp_name, $controls);
                 $new_file_header = !empty($newoutput) ? array_keys($newoutput[0]) : [];
-                $newsheet->fromArray($new_file_header, NULL, 'A1');
-                $newsheet->fromArray($newoutput, NULL, 'A2');
+                $new_header_rows = 1;
+                if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
+                    $newColCount = count($new_file_header);
+                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
+                    $new_header_rows = 4;
+                    $newsheet->setCellValue('A1', $companyName);
+                    $newsheet->setCellValue('A2', $reportTitle);
+                    $newsheet->setCellValue('A3', $searchParams);
+                    $newsheet->mergeCells("A1:{$lastCol}1");
+                    $newsheet->mergeCells("A2:{$lastCol}2");
+                    $newsheet->mergeCells("A3:{$lastCol}3");
+                    $newsheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
+                    $newsheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
+                    $newsheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                }
+                $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
+                $newsheet->fromArray($newoutput, NULL, 'A' . ($new_header_rows + 1));
+
+                if (isset($this->data['header_included']) && $this->data['header_included'] === true && isset($newLastCol)) {
+                    $newsheet->getStyle("A{$new_header_rows}:{$newLastCol}{$new_header_rows}")->getFont()->setBold(true);
+                }
             }
         }
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
