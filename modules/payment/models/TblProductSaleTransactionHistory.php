@@ -35,7 +35,7 @@ class TblProductSaleTransactionHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['product_code', 'product_sale_transaction_code'], 'safe'],
+            [['product_code', 'product_sale_transaction_code', 'send_status', 'picked_datetime', 'response_datetime', 'resp_desc'], 'safe'],
             [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
             [['rate', 'quantity', 'amount', 'remarks', 'sap_batch_no'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at', 'originating_org_code', 'originating_org_type', 'originating_type', 'reference_code'], 'safe'],
