@@ -137,45 +137,47 @@ class CronjobController extends \yii\console\Controller {
         $objPHPExcel->addSheet($customWorksheet);
         $objPHPExcel->removeSheetByIndex(0);
 
-        $customWorksheet->fromArray($file_header, NULL, 'A1');
-        $customWorksheet->fromArray($output, NULL, 'A2');
-        // $sheet->fromArray($file_header, NULL, 'A1');
-        // if (!empty($dataToText)) {
-        //     foreach ($dataToText as $columnName) {
-        //         $columnIndex = array_search($columnName, $file_header);
-        //         if ($columnIndex !== false) {
-        //             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-        //             $sheet->getStyle($accountNoColumn)
-        //                     ->getNumberFormat()
-        //                     ->setFormatCode('00000000000');
-        //         }
-        //     }
-        // }
-        //     var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet1');
+        $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
+        $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
+        
+        $header_rows = 1;
+        if ($header_included) {
+            $colCount = count($file_header);
+            $lastCol = ($colCount > 0) ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colCount) : 'A';
+            $header_rows = 4;
+            $companyName = isset($header_info['organization_name']) ? $header_info['organization_name'] : 'Everest Instruments Pvt. Ltd.';
+            $reportTitle = $model->report_title;
+            $searchParams = isset($header_info['search_params']) ? $header_info['search_params'] : '';
+
+            $customWorksheet->setCellValue('A1', $companyName);
+            $customWorksheet->setCellValue('A2', $reportTitle);
+            $customWorksheet->setCellValue('A3', $searchParams);
+            $customWorksheet->mergeCells("A1:{$lastCol}1");
+            $customWorksheet->mergeCells("A2:{$lastCol}2");
+            $customWorksheet->mergeCells("A3:{$lastCol}3");
+            $customWorksheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
+            $customWorksheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        }
+
+        $customWorksheet->fromArray($file_header, NULL, 'A' . $header_rows);
+        if ($header_included) {
+            $customWorksheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
+        }
+
         foreach ($output_chunk as $output) {
             if ($a == $sheet_change_on_chunk) {
                 $a = 1;
                 $customWorksheet = new Worksheet($objPHPExcel, 'Sheet' . $sheet_no);
                 $objPHPExcel->addSheet($customWorksheet);
-                $customWorksheet->fromArray($file_header, null, 'A1');
-                // $sheet = $objPHPExcel->createSheet($sheet_no); // Pass the index as the second argument
-                // $sheet->setTitle('Sheet' . $sheet_no);
-                // $sheet->fromArray($file_header, NULL, 'A1');
-                // if (!empty($dataToText)) {
-                //     foreach ($dataToText as $columnName) {
-                //         $columnIndex = array_search($columnName, $file_header);
-                //         if ($columnIndex !== false) {
-                //             $accountNoColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-                //             $sheet->getStyle($accountNoColumn)
-                //                     ->getNumberFormat()
-                //                     ->setFormatCode('00000000000');
-                //         }
-                //     }
-                // }
-                //       var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Header Sheet' . $sheet_no);
+                $customWorksheet->fromArray($file_header, NULL, 'A' . $header_rows);
+                if ($header_included) {
+                    $customWorksheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
+                }
                 $sheet_no++;
             }
-            $data_cell = 'A' . ($a == 1 ? '2' : ((($a - 1) * $chunk_size) + 2));
+            $current_row = ($a == 1 ? ($header_rows + 1) : ((($a - 1) * $chunk_size) + ($header_rows + 1)));
+            $data_cell = 'A' . $current_row;
             $customWorksheet->fromArray($output, NULL, $data_cell);
             //        var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data Chunk ' . $a);
             $a++;
