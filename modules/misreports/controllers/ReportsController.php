@@ -1111,7 +1111,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $header_info = [
                     'header_included' => $headerIncluded,
                     'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
-                    'search_params' => $this->getSearchParamsString($controls, $header_labels_arr)
+                    'search_params' => $this->getSearchParamsString($header_labels_arr)
                 ];
                 $header_info = json_encode($header_info);
             } else {
