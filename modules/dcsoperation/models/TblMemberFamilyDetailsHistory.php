@@ -49,6 +49,7 @@ class TblMemberFamilyDetailsHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['member_family_detail_code', 'age', 'gender_code', 'relationship_code', 'is_nominee', 'originating_type', 'local_family_member_name', 'family_member_name', 'guardian_name', 'local_guardian_name', 'nominee_address', 'local_nominee_address', 'union_code', 'member_code', 'dob', 'remarks', 'created_at', 'created_by', 'operation_type', 'originating_org_code', 'originating_org_type', 'updated_by', 'history_created_by', 'updated_at', 'history_created_at', 'ration_card_no', 'ration_card_type', 'farmer_code', 'farmer_name', 'is_farmer', 'aadhar_card'], 'safe'],
+                [['dcs_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
