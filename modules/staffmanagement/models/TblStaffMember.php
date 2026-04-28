@@ -188,7 +188,7 @@ class TblStaffMember extends \app\models\ChildModel {
             Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
         }, 'skipOnEmpty' => false,],
             //required due to dependency in attendance
-            [['is_on_role'], 'required'],
+            [['is_on_role'], 'required', 'except' => ['androidsync']],
             [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblStaffMember', $this->form_validation_type);

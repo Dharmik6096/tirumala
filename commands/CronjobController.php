@@ -138,8 +138,8 @@ class CronjobController extends \yii\console\Controller {
         $objPHPExcel->removeSheetByIndex(0);
 
         $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
-        $header_included = isset($header_info['header_included']) ? $header_info['header_included'] : false;
-
+        $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
+        
         $header_rows = 1;
         if ($header_included) {
             $colCount = count($file_header);
