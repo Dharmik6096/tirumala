@@ -38,7 +38,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
-        if (isset($this->data['bkg_export']) && (!isset($this->data['output_type']))) {
+        if (isset($this->data['bkg_export']) && (!isset($this->data['output_type']) && !User::canRoute('misreports/reports/mis-live-report-generation'))) {
             $this->data['output_type'] = $model->output_type = 'BACKGROUND';
         }
 
@@ -3735,9 +3735,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string,plant_register_type',
                 'sp_name' => 'mis_plant_register',
                 'scenario' => 'PlantRegister',
-                'title' => 'Plant Receipt Register',
-                'header_included' => TRUE,
-                'bkg_export' => TRUE
+                'title' => 'Plant Receipt Register'
             ],
             'TankerReceiptNote' => [
                 'param' => 'union_code,from_date:string,to_date:string,trip_code,grn_no',
