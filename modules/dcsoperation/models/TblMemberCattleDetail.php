@@ -44,6 +44,7 @@ class TblMemberCattleDetail extends ChildModel
     public function rules()
     {
         return [
+            [['member_code'], 'required', 'except' => ['androidsync']],
             [['milky', 'dry', 'calf', 'total', 'member_code', 'cattle_detail', 'originating_org_code', 'originating_org_type', 'originating_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }

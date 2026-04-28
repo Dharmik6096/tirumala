@@ -70,6 +70,7 @@ class TblDcsChillerInfo extends ChildModel
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['billing_method'], 'string', 'max' => 50],
             [['sap_vendor_code'], 'string', 'max' => 225],
+            [['dcs_code'], 'required', 'except' => ['androidsync']],
         ];
     }
 

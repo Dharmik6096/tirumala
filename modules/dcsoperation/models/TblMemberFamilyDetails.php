@@ -48,7 +48,7 @@ class TblMemberFamilyDetails extends ChildModel {
     public function rules() {
         return [
                 [['age', 'union_code', 'member_code', 'dob', 'remarks', 'gender_code', 'family_member_name', 'local_family_member_name', 'nominee_address', 'local_nominee_address', 'guardian_name', 'local_guardian_name', 'relationship_code', 'is_nominee', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'ration_card_no', 'ration_card_type', 'farmer_code', 'farmer_name', 'is_farmer', 'aadhar_card'], 'safe'],
-                [['age', 'dob', 'nominee_address', 'gender_code', 'family_member_name', 'guardian_name', 'relationship_code'], 'required', 'on' => ['member_family_detail']],
+                [['age', 'dob', 'nominee_address', 'gender_code', 'family_member_name', 'guardian_name', 'relationship_code'], 'required', 'on' => ['member_family_detail'], 'except' => ['androidsync']],
                 [['is_nominee'], 'validateIsNomineeRequired', 'on' => ['member_family_detail']],
                 [['is_nominee'], 'validateIsNominee', 'on' => ['member_family_detail']],
                 [['dob'], 'validateAge', 'on' => ['member_family_detail']],
