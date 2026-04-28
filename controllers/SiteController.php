@@ -498,6 +498,9 @@ class SiteController extends Controller {
                     $out[] = array('id' => $r['id'],
                         'name' => $value);
             }
+            if (!empty($out) && \Yii::$app->request->get('addAll') == 1) {
+                array_unshift($out, ['id' => '0', 'name' => 'All']);
+            }
             return Json::encode(['output' => $out, 'selected' => '']);
             return;
         }

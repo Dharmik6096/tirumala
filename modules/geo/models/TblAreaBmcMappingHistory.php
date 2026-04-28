@@ -35,7 +35,7 @@ class TblAreaBmcMappingHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['area_bmc_mapping_code', 'is_active'], 'safe'],
-            [['area_code', 'bmc_code', 'created_by', 'operation_type', 'updated_by', 'history_created_by'], 'safe'],
+            [['area_code', 'bmc_code', 'created_by', 'operation_type', 'updated_by', 'history_created_by', 'applicable_type', 'applicable_code'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
     }

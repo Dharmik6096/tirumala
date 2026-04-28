@@ -69,7 +69,7 @@ class TblStaffMemberHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['staff_member_code', 'staff_member_name', 'aadhar_card_no', 'address', 'bank_account_no', 'birth_date', 'created_by', 'email_id', 'ifsc', 'mobile_no', 'pan_no', 'pincode', 'updated_by', 'bank_code', 'branch_code', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'union_code', 'department', 'ex_staff_member_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
-            [['created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'history_created_at', 'approved_date', 'salary', 'member_code'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'designation_code', 'gender_code', 'qualification_code', 'originating_type', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no'], 'safe'],
         ];
     }

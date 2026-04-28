@@ -1101,7 +1101,21 @@ class ReportsController extends \app\controllers\ChildController {
                 $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
             }
         } else {
-            $output = $this->RegisterReportRequest('mis', $this->data, $controls);
+            $headerIncluded = isset($this->data['header_included']) && $this->data['header_included'] === true ? true : false;
+            if($headerIncluded){
+                $header_labels = Yii::$app->request->get('header_labels');
+                $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
+                $header_info = [
+                    'header_included' => $headerIncluded,
+                    'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
+                    'search_params' => $this->getSearchParamsString($header_labels_arr)
+                ];
+                $header_info = json_encode($header_info);
+            } else {
+                $header_info = NULL;
+            }
+
+            $output = $this->RegisterReportRequest('mis', $this->data, $controls, $header_info);
         }
         $this->output = $output;
 
@@ -2307,6 +2321,151 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBankVerificationReport() {
         $this->report = 'BankVerificationReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkPurchaseRegisterReport() {
+        $this->report = 'MilkPurchaseRegisterReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerLedgerReport() {
+        $this->report = 'FarmerLedgerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberWiseSummaryReport() {
+        $this->report = 'MemberWiseSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionLocalSaleReport() {
+        $this->report = 'LocalSaleReport';
+        return $this->actionIndex();
+    }
+
+    public function actionLocalSaleDetailReport() {
+        $this->report = 'LocalSaleDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkRateDetailReport() {
+        $this->report = 'MilkRateDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditReport() {
+        $this->report = 'MilkEditReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDateWiseMilkPurchaseSummary() {
+        $this->report = 'DateWiseMilkPurchaseSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkPurchaseAnalysisReport() {
+        $this->report = 'MilkPurchaseAnalysis';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerListReport() {
+        $this->report = 'FarmerListReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditSummary() {
+        $this->report = 'MilkEditSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionFatWiseQtyAnalysis() {
+        $this->report = 'FatWiseQtyAnalysis';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCompare() {
+        $this->report = 'MilkCompare';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyList() {
+        $this->report = 'SocietyList';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerAppDetailsReport() {
+        $this->report = 'FarmerAppDetailsReport';
+        return $this->actionIndex();
+    }
+
+    public function actionUnionWiseMessageDetailReport() {
+        $this->report = 'UnionWiseMessageDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionUnionWiseMessageReport() {
+        $this->report = 'UnionWiseMessageReport';
+        return $this->actionIndex();
+    }
+
+    public function actionOnlineOfflineSocietyReport() {
+        $this->report = 'OnlineOfflineSocietyReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkRatePublishReport() {
+        $this->report = 'MilkRatePublishReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSmsDetailReport() {
+        $this->report = 'SmsDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTopSocietyMilkCollectionReport() {
+        $this->report = 'TopSocietyMilkCollectionReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTopFarmerMilkCollectionReport() {
+        $this->report = 'TopFarmerMilkCollectionReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerManualEntryReport() {
+        $this->report = 'FarmerManualEntryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyWiseSummaryReport() {
+        $this->report = 'SocietyWiseSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerNotSubmittingMilkReport() {
+        $this->report = 'FarmerNotSubmittingMilkReport';
+        return $this->actionIndex();
+    }
+
+    public function actionManualCollectionSummaryReport() {
+        $this->report = 'ManualCollectionSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkEditForFarmerReport() {
+        $this->report = 'MilkEditForFarmerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMuAppVdcsAppUserReport() {
+        $this->report = 'MuAppVdcsAppUserReport';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietySampleReport() {
+        $this->report = 'SocietySampleReport';
         return $this->actionIndex();
     }
 
@@ -5114,9 +5273,248 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_master_data_verification',
                 'scenario' => 'BankVerificationReport',
                 'title' => 'Bank Verification Report',
-                // 'excel_readonly' => TRUE,
-                // 'editable_columns' => ['is_verified'],
-                // 'extension' => 'xlsx',
+            // 'excel_readonly' => TRUE,
+            // 'editable_columns' => ['is_verified'],
+            // 'extension' => 'xlsx',
+            ],
+            'MilkPurchaseRegisterReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,sort_type:static:sort_type',
+                'sp_name' => 'mis_milk_purchase_register',
+                'multiple_sheet' => ['summary' => 'mis_milk_purchase_register_summary'],
+                'scenario' => 'MilkPurchaseRegisterReport',
+                'title' => 'Milk Purchase Register Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code,to_code',
+                'sp_name' => 'mis_farmer_ledger',
+                'scenario' => 'FarmerLedgerReport',
+                'title' => 'Farmer Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MemberWiseSummaryReport' => [
+                'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code,to_code,milk_type_code,dcs_code:union_code',
+                'sp_name' => 'mis_member_wise_summary',
+                'multiple_sheet' => ['summary' => 'mis_member_wise_summary_register'],
+                'scenario' => 'MemberWiseSummaryReport',
+                'title' => 'Member Wise Summary Report',
+                'multiArray' => ['dcs_code'],
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'LocalSaleReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,is_show_zero_val',
+                'sp_name' => 'mis_local_sale',
+                'scenario' => 'LocalSaleReport',
+                'title' => 'Local sale Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'LocalSaleDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,payment_method:static:payment_method',
+                'sp_name' => 'mis_local_sales_detail_report',
+                'scenario' => 'LocalSaleDetailReport',
+                'title' => 'Local Sale Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkRateDetailReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,report_rate_type:static:report_rate_type,milk_type_code,last_rate',
+                'sp_name' => 'mis_milk_rate_detail_report',
+                'scenario' => 'MilkRateDetailReport',
+                'title' => 'Milk Rate Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkEditReport' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type,from_code,to_code,sort_by:static:sort_by,amount_variation:static:amount_variation,is_group_by_society',
+                'sp_name' => 'mis_milk_edit',
+                'scenario' => 'MilkEditReport',
+                'title' => 'Milk Edit Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'DateWiseMilkPurchaseSummary' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
+                'sp_name' => 'mis_date_wise_milk_purchase_summary_register',
+                'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
+                'scenario' => 'DateWiseMilkPurchaseSummary',
+                'title' => 'Date wise Milk Purchase Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkPurchaseAnalysis' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
+                'sp_name' => 'mis_milk_purchase_analysis',
+                'scenario' => 'MilkPurchaseAnalysis',
+                'title' => 'Milk Purchase Analysis Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerListReport' => [
+                'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
+                //'sp_name' => '',
+                'scenario' => 'FarmerListReport',
+                'title' => 'Farmer List Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkEditSummary' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type',
+                'sp_name' => 'mis_milk_edit_summary',
+                'scenario' => 'MilkEditSummary',
+                'title' => 'Milk Edit Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FatWiseQtyAnalysis' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
+                'sp_name' => 'mis_Fat_wise_qty_analysis',
+                'scenario' => 'FatWiseQtyAnalysis',
+                'title' => 'Fat Wise Qty Analysis Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkCompare' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
+                'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
+                'scenario' => 'MilkCompare',
+                'title' => 'Milk Compare Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'SocietyList' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_type:static:region_type,region_code:union_code,dcs_code:union_code,status_type:static:status_type,society_type:static:society_type',
+                'sp_name' => 'mis_Society_list_report',
+                'scenario' => 'SocietyList',
+                'title' => 'Society List Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerAppDetailsReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,registered_type:static:registered_type,farmer_sort_type:static:farmer_sort_type',
+                'sp_name' => 'mis_farmer_app_details',
+                'multiple_sheet' => ['mis_farmer_app_details_summary'],
+                'scenario' => 'FarmerAppDetailsReport',
+                'title' => 'Farmer App Details Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'UnionWiseMessageDetailReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,group_by_region',
+                'sp_name' => 'mis_union_wise_message_detail',
+                'scenario' => 'UnionWiseMessageDetailReport',
+                'title' => 'Union Wise Message Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'UnionWiseMessageReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_union_wise_message',
+                'scenario' => 'UnionWiseMessageReport',
+                'title' => 'Union Wise Message Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'OnlineOfflineSocietyReport' => [
+                'param' => 'language_code,union_code,region_type,dcs_code:union_code,soc_type:static:soc_type,show_only_received_data',
+                'sp_name' => 'mis_online_offline_society',
+                'scenario' => 'OnlineOfflineSocietyReport',
+                'title' => 'Online Offline Society Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkRatePublishReport' => [
+                'param' => 'language_code,union_code,from_soc,to_soc,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
+//                'sp_name' => '',
+                'scenario' => 'MilkRatePublishReport',
+                'title' => 'Milk Rate Publish Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'SmsDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no,shift_code,member_types:static:member_types,from_code,to_code',
+//                'sp_name' => '',
+                'scenario' => 'SmsDetailReport',
+                'title' => 'Sms Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TopSocietyMilkCollectionReport' => [
+                'param' => 'language_code,union_code,from_date:string,to_date:string,top:static:top',
+                'sp_name' => 'mis_top_society_milk_collection',
+                'scenario' => 'TopSocietyMilkCollectionReport',
+                'title' => 'Top Society Milk Collection Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TopFarmerMilkCollectionReport' => [
+                'param' => 'language_code,union_code,search_by_soc:static:search_by_soc,dcs_code:union_code,from_date:string,to_date:string,top:static:top,report_gender:static:report_gender',
+                'sp_name' => 'mis_top_farmer_milk_collection',
+                'scenario' => 'TopFarmerMilkCollectionReport',
+                'title' => 'Top Farmer Collection Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerManualEntryReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,manual_type:static:manual_type,show_val',
+                'sp_name' => 'mis_farmer_manual_entry',
+                'scenario' => 'FarmerManualEntryReport',
+                'title' => 'Farmer Manual Entry Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'SocietyWiseSummaryReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_society_wise_summary',
+                'scenario' => 'SocietyWiseSummaryReport',
+                'title' => 'Society Wise Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerNotSubmittingMilkReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string,to_date:string,show_only_received_data',
+                'sp_name' => 'mis_farmer_not_submitting_milk',
+                'scenario' => 'FarmerNotSubmittingMilkReport',
+                'title' => 'Farmer Not Submitting Milk Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ManualCollectionSummaryReport' => [
+                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_manual_collection_summary',
+                'scenario' => 'ManualCollectionSummaryReport',
+                'title' => 'Manual Collection Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkEditForFarmerReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,no_of_farmer_edit,no_of_individual_farmer_edit,edit_type:static:edit_type',
+                'sp_name' => 'mis_milk_edit_for_farmer_register',
+                'multiple_sheet' => ['mis_milk_edit_for_farmer_summary'],
+                'scenario' => 'MilkEditForFarmerReport',
+                'title' => 'Milk Edit For Farmer Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MuAppVdcsAppUserReport' => [
+                'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
+                'sp_name' => 'mis_vdcs_app_user_register',
+                'multiple_sheet' => ['mis_vdcs_app_user_summary'],
+                'scenario' => 'MuAppVdcsAppUserReport',
+                'title' => 'MU App VDCS APP User Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'SocietySampleReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,is_group_by_society,is_show_zero_val,from_time,to_time,last_rate',
+                'sp_name' => 'mis_Society_sample_report',
+                'scenario' => 'SocietySampleReport',
+                'title' => 'Society Sample Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];
@@ -5219,6 +5617,26 @@ class ReportsController extends \app\controllers\ChildController {
             if ($isZip && !in_array('attachment_link', $file_header)) {
                 $file_header[] = 'attachment_link';
             }
+            $header_rows = 1;
+            if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
+                $colCount = count($file_header);
+                $lastCol = ($colCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($colCount - 1) : 'A';
+                $header_rows = 4;
+                $header_labels = Yii::$app->request->get('header_labels');
+                $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
+                $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
+                $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
+                $searchParams = $this->getSearchParamsString($header_labels_arr);
+                $sheet->setCellValue('A1', $companyName);
+                $sheet->setCellValue('A2', $reportTitle);
+                $sheet->setCellValue('A3', $searchParams);
+                $sheet->mergeCells("A1:{$lastCol}1");
+                $sheet->mergeCells("A2:{$lastCol}2");
+                $sheet->mergeCells("A3:{$lastCol}3");
+                $sheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
+                $sheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
+                $sheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            }
             /* $file_header = array_map(function($file_header) {
               return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
               }, array_values($file_header)); */
@@ -5226,15 +5644,17 @@ class ReportsController extends \app\controllers\ChildController {
             $sheet->fromArray(
                     $file_header, // The data to set
                     NULL, // Array values with this value will not be set
-                    'A1'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
+                    'A' . $header_rows         // Top left coordinate of the worksheet range where
             );
             $sheet->fromArray(
                     $this->output, // The data to set
                     NULL, // Array values with this value will not be set
-                    'A2'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
+                    'A' . ($header_rows + 1)         // Top left coordinate of the worksheet range where
             );
+
+            if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
+                $sheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
+            }
 
             if ($isZip && !empty($this->output)) {
                 $rowIndex = 2;
@@ -5265,8 +5685,30 @@ class ReportsController extends \app\controllers\ChildController {
                     $newsheet->setTitle($new_sheet_name);
                     $newoutput = \Yii::$app->general->getSpData($new_sp_name, $controls);
                     $new_file_header = !empty($newoutput) ? array_keys($newoutput[0]) : [];
-                    $newsheet->fromArray($new_file_header, NULL, 'A1');
-                    $newsheet->fromArray($newoutput, NULL, 'A2');
+
+                    $new_header_rows = 1;
+                    if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
+                        $newColCount = count($new_file_header);
+                        $newLastCol = ($newColCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 1) : 'A';
+                        $new_header_rows = 4;
+
+                        $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
+                        $newsheet->setCellValue('A2', isset($reportTitle) ? $reportTitle : '');
+                        $newsheet->setCellValue('A3', isset($searchParams) ? $searchParams : '');
+                        $newsheet->mergeCells("A1:{$newLastCol}1");
+                        $newsheet->mergeCells("A2:{$newLastCol}2");
+                        $newsheet->mergeCells("A3:{$newLastCol}3");
+                        $newsheet->getStyle("A1:{$newLastCol}3")->getFont()->setBold(true);
+                        $newsheet->getStyle("A1:{$newLastCol}2")->getFont()->setSize(14);
+                        $newsheet->getStyle("A1:{$newLastCol}3")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    }
+
+                    $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
+                    $newsheet->fromArray($newoutput, NULL, 'A' . ($new_header_rows + 1));
+
+                    if (isset($this->data['header_included']) && $this->data['header_included'] === true && isset($newLastCol)) {
+                        $newsheet->getStyle("A{$new_header_rows}:{$newLastCol}{$new_header_rows}")->getFont()->setBold(true);
+                    }
                 }
             }
             $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
@@ -5467,6 +5909,41 @@ class ReportsController extends \app\controllers\ChildController {
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
+    }
+
+    public function getSearchParamsString($header_labels_arr) {
+        $reportsModel = new ReportsModel();
+        $attributeLabels = $reportsModel->attributeLabels();
+        $params_config = [];
+        if (!empty($this->data['param'])) {
+            foreach (explode(',', $this->data['param']) as $p) {
+                $parts = array_map('trim', explode(':', $p));
+                if (!empty($parts[0])) {
+                    $params_config[] = $parts[0];
+                }
+                foreach (array_slice($parts, 1) as $part) {
+                    if (in_array($part, ['from_shift', 'to_shift'])) {
+                        $params_config[] = $part;
+                    }
+                }
+            }
+        }
+        if (isset($this->data['report_type']) && !in_array('report_type', $params_config)) {
+            $params_config[] = 'report_type';
+        }
+        $request = \Yii::$app->request;
+        $requestData = $request->get('ReportsModel', $request->post('ReportsModel', []));
+
+        $searchParams = "";
+        foreach ($params_config as $key) {
+            if (isset($requestData[$key]) && $requestData[$key] !== '') {
+                $value = $requestData[$key];
+                $label = isset($attributeLabels[$key]) ? $attributeLabels[$key] : ucwords(str_replace(['_', 'code'], [' ', ''], $key));
+                $displayValue = isset($header_labels_arr[$key]) ? $header_labels_arr[$key] : (is_array($value) ? implode(', ', $value) : $value);
+                $searchParams .= trim($label) . ": " . $displayValue . "  ";
+            }
+        }
+        return $searchParams;
     }
 
 }
