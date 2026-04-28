@@ -5282,12 +5282,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['summary' => 'mis_milk_purchase_register_summary'],
                 'scenario' => 'MilkPurchaseRegisterReport',
                 'title' => 'Milk Purchase Register Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'FarmerLedgerReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code,to_code',
                 'sp_name' => 'mis_farmer_ledger',
                 'scenario' => 'FarmerLedgerReport',
                 'title' => 'Farmer Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MemberWiseSummaryReport' => [
                 'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code,to_code,milk_type_code,dcs_code:union_code',
@@ -5295,31 +5299,41 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['summary' => 'mis_member_wise_summary_register'],
                 'scenario' => 'MemberWiseSummaryReport',
                 'title' => 'Member Wise Summary Report',
-                'multiArray' => ['dcs_code']
+                'multiArray' => ['dcs_code'],
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'LocalSaleReport' => [
                 'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,is_show_zero_val',
                 'sp_name' => 'mis_local_sale',
                 'scenario' => 'LocalSaleReport',
                 'title' => 'Local sale Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'LocalSaleDetailReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,payment_method:static:payment_method',
                 'sp_name' => 'mis_local_sales_detail_report',
                 'scenario' => 'LocalSaleDetailReport',
                 'title' => 'Local Sale Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkRateDetailReport' => [
                 'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,report_rate_type:static:report_rate_type,milk_type_code,last_rate',
                 'sp_name' => 'mis_milk_rate_detail_report',
                 'scenario' => 'MilkRateDetailReport',
                 'title' => 'Milk Rate Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkEditReport' => [
                 'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type,from_code,to_code,sort_by:static:sort_by,amount_variation:static:amount_variation,is_group_by_society',
                 'sp_name' => 'mis_milk_edit',
                 'scenario' => 'MilkEditReport',
                 'title' => 'Milk Edit Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'DateWiseMilkPurchaseSummary' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
@@ -5327,42 +5341,56 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
                 'scenario' => 'DateWiseMilkPurchaseSummary',
                 'title' => 'Date wise Milk Purchase Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkPurchaseAnalysis' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
                 'sp_name' => 'mis_milk_purchase_analysis',
                 'scenario' => 'MilkPurchaseAnalysis',
                 'title' => 'Milk Purchase Analysis Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'FarmerListReport' => [
                 'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
                 //'sp_name' => '',
                 'scenario' => 'FarmerListReport',
                 'title' => 'Farmer List Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkEditSummary' => [
                 'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type',
                 'sp_name' => 'mis_milk_edit_summary',
                 'scenario' => 'MilkEditSummary',
                 'title' => 'Milk Edit Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'FatWiseQtyAnalysis' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
                 'sp_name' => 'mis_Fat_wise_qty_analysis',
                 'scenario' => 'FatWiseQtyAnalysis',
                 'title' => 'Fat Wise Qty Analysis Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkCompare' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
                 'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
                 'scenario' => 'MilkCompare',
                 'title' => 'Milk Compare Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'SocietyList' => [
                 'param' => 'language_code,union_code,search_by:static:search_by,region_type:static:region_type,region_code:union_code,dcs_code:union_code,status_type:static:status_type,society_type:static:society_type',
                 'sp_name' => 'mis_Society_list_report',
                 'scenario' => 'SocietyList',
                 'title' => 'Society List Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'FarmerAppDetailsReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,registered_type:static:registered_type,farmer_sort_type:static:farmer_sort_type',
@@ -5370,72 +5398,96 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['mis_farmer_app_details_summary'],
                 'scenario' => 'FarmerAppDetailsReport',
                 'title' => 'Farmer App Details Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'UnionWiseMessageDetailReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,group_by_region',
                 'sp_name' => 'mis_union_wise_message_detail',
                 'scenario' => 'UnionWiseMessageDetailReport',
                 'title' => 'Union Wise Message Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'UnionWiseMessageReport' => [
                 'param' => 'language_code,union_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_union_wise_message',
                 'scenario' => 'UnionWiseMessageReport',
                 'title' => 'Union Wise Message Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'OnlineOfflineSocietyReport' => [
                 'param' => 'language_code,union_code,region_type,dcs_code:union_code,soc_type:static:soc_type,show_only_received_data',
                 'sp_name' => 'mis_online_offline_society',
                 'scenario' => 'OnlineOfflineSocietyReport',
                 'title' => 'Online Offline Society Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkRatePublishReport' => [
                 'param' => 'language_code,union_code,from_soc,to_soc,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
 //                'sp_name' => '',
                 'scenario' => 'MilkRatePublishReport',
                 'title' => 'Milk Rate Publish Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'SmsDetailReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no,shift_code,member_types:static:member_types,from_code,to_code',
 //                'sp_name' => '',
                 'scenario' => 'SmsDetailReport',
                 'title' => 'Sms Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'TopSocietyMilkCollectionReport' => [
                 'param' => 'language_code,union_code,from_date:string,to_date:string,top:static:top',
                 'sp_name' => 'mis_top_society_milk_collection',
                 'scenario' => 'TopSocietyMilkCollectionReport',
                 'title' => 'Top Society Milk Collection Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'TopFarmerMilkCollectionReport' => [
                 'param' => 'language_code,union_code,search_by_soc:static:search_by_soc,dcs_code:union_code,from_date:string,to_date:string,top:static:top,report_gender:static:report_gender',
                 'sp_name' => 'mis_top_farmer_milk_collection',
                 'scenario' => 'TopFarmerMilkCollectionReport',
                 'title' => 'Top Farmer Collection Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'FarmerManualEntryReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,manual_type:static:manual_type,show_val',
                 'sp_name' => 'mis_farmer_manual_entry',
                 'scenario' => 'FarmerManualEntryReport',
                 'title' => 'Farmer Manual Entry Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'SocietyWiseSummaryReport' => [
                 'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_society_wise_summary',
                 'scenario' => 'SocietyWiseSummaryReport',
                 'title' => 'Society Wise Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'FarmerNotSubmittingMilkReport' => [
                 'param' => 'language_code,union_code,from_code,to_code,from_date:string,to_date:string,show_only_received_data',
                 'sp_name' => 'mis_farmer_not_submitting_milk',
                 'scenario' => 'FarmerNotSubmittingMilkReport',
                 'title' => 'Farmer Not Submitting Milk Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'ManualCollectionSummaryReport' => [
                 'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_manual_collection_summary',
                 'scenario' => 'ManualCollectionSummaryReport',
                 'title' => 'Manual Collection Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MilkEditForFarmerReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,no_of_farmer_edit,no_of_individual_farmer_edit,edit_type:static:edit_type',
@@ -5443,6 +5495,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['mis_milk_edit_for_farmer_summary'],
                 'scenario' => 'MilkEditForFarmerReport',
                 'title' => 'Milk Edit For Farmer Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'MuAppVdcsAppUserReport' => [
                 'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
@@ -5450,12 +5504,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'multiple_sheet' => ['mis_vdcs_app_user_summary'],
                 'scenario' => 'MuAppVdcsAppUserReport',
                 'title' => 'MU App VDCS APP User Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
             'SocietySampleReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,is_group_by_society,is_show_zero_val,from_time,to_time,last_rate',
                 'sp_name' => 'mis_Society_sample_report',
                 'scenario' => 'SocietySampleReport',
                 'title' => 'Society Sample Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
             ],
         ];
         return $label[$l];
