@@ -327,7 +327,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-6 mb15">
                                                     <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                                 </div>
                                                 <?php
@@ -623,7 +623,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('milk_type_code'))) {
                                             ?>                
-                                            <div class = "col-sm-6">
+                                            <div class = "col-sm-6 mb15">
                                                 <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('milk_type_code'), false, 'milk_type_code', true); ?>
                                             </div>
                                             <?php
@@ -657,7 +657,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val'])) {
                                             ?>
                                             <div class="col-sm-6">
-                                                <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+                                                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, $value); ?>
                                             </div>
                                             <?php
                                         }
@@ -678,7 +678,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, array('region_type'))) {
                                             ?>
-                                            <div class="col-sm-6 val_region_code">
+                                            <div class="col-sm-6 val_region_code mb15">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                             </div>
                                             <?php

@@ -6415,3 +6415,7 @@ div#dashboardFarmerPopup {
     -ms-user-select: none; 
     -webkit-touch-callout: none; 
 }
+
+.field-reportsmodel-show_val .form-check{
+    margin-top: 25px;
+}
