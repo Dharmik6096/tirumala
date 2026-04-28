@@ -1104,7 +1104,17 @@ class ReportsController extends \app\controllers\ChildController {
                 $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
             }
         } else {
-            $output = $this->RegisterReportRequest('mis', $this->data, $controls);
+            $header_labels = Yii::$app->request->get('header_labels');
+            $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
+            $header_info = [
+                'header_included' => (isset($this->data['header_included']) && $this->data['header_included'] === true) ? true : false,
+                'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
+            ];
+
+            if ($header_info['header_included']) {
+                $header_info['search_params'] = $this->getSearchParamsString($controls, $header_labels_arr);
+            }
+            $output = $this->RegisterReportRequest('mis', $this->data, $controls, json_encode($header_info));
         }
         $this->output = $output;
 
@@ -1278,6 +1288,9 @@ class ReportsController extends \app\controllers\ChildController {
             } else if (isset($this->data['excel_readonly'])) {
                 $this->downloadDataReadonly($this->output, $this->data, $this->label);
             } else {
+                if (isset($this->data['report_type']) && !isset($controls['report_type'])) {
+                    $controls['report_type'] = $model->report_type;
+                }
                 $this->downloadData($controls);
             }
         }
@@ -5338,7 +5351,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FarmerListReport' => [
                 'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
-                'sp_name' => '',
+                //'sp_name' => '',
                 'scenario' => 'FarmerListReport',
                 'title' => 'Farmer List Report',
             ],
@@ -5448,13 +5461,14 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MuAppVdcsAppUserReport' => [
                 'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
-                'sp_name' => '',
+                'sp_name' => 'mis_vdcs_app_user_register',
+                'multiple_sheet' => ['mis_vdcs_app_user_summary'],
                 'scenario' => 'MuAppVdcsAppUserReport',
                 'title' => 'MU App VDCS APP User Report',
             ],
             'SocietySampleReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,is_group_by_society,is_show_zero_val,from_time,to_time,last_rate',
-                'sp_name' => '',
+                'sp_name' => 'mis_Society_sample_report',
                 'scenario' => 'SocietySampleReport',
                 'title' => 'Society Sample Report',
             ],
@@ -5862,6 +5876,33 @@ class ReportsController extends \app\controllers\ChildController {
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
+    }
+
+    public function getSearchParamsString($controls, $header_labels_arr) {
+        $reportsModel = new ReportsModel();
+        $attributeLabels = $reportsModel->attributeLabels();
+
+        $param = isset($this->data['param']) ? explode(',', $this->data['param']) : [];
+        $params_config = array_map(function($p) {
+            return explode(':', $p)[0];
+        }, $param);
+        if (isset($this->data['report_type']) && !in_array('report_type', $params_config)) {
+            $params_config[] = 'report_type';
+        }
+
+        $searchParams = "";
+        foreach ($params_config as $p) {
+            $parts = explode(':', $p);
+            $key = $parts[0];
+
+            if (isset($controls[$key]) && $controls[$key] !== '' && $controls[$key] !== null) {
+                $value = $controls[$key];
+                $label = isset($attributeLabels[$key]) ? $attributeLabels[$key] : ucwords(str_replace(['_', 'code'], [' ', ''], $key));
+                $displayValue = isset($header_labels_arr[$key]) ? $header_labels_arr[$key] : (is_array($value) ? implode(', ', $value) : $value);
+                $searchParams .= trim($label) . ": " . $displayValue . "  ";
+            }
+        }
+        return $searchParams;
     }
 
 }
