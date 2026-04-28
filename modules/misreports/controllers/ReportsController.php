@@ -5446,7 +5446,8 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MuAppVdcsAppUserReport' => [
                 'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
-                'sp_name' => '',
+                'sp_name' => 'mis_vdcs_app_user_register',
+                'multiple_sheet' => ['mis_vdcs_app_user_summary'],
                 'scenario' => 'MuAppVdcsAppUserReport',
                 'title' => 'MU App VDCS APP User Report',
             ],
@@ -5834,7 +5835,9 @@ class ReportsController extends \app\controllers\ChildController {
         $attributeLabels = $reportsModel->attributeLabels();
 
         $param = isset($this->data['param']) ? explode(',', $this->data['param']) : [];
-        $params_config = array_map(function($p) { return explode(':', $p)[0]; }, $param);
+        $params_config = array_map(function($p) {
+            return explode(':', $p)[0];
+        }, $param);
         if (isset($this->data['report_type']) && !in_array('report_type', $params_config)) {
             $params_config[] = 'report_type';
         }
