@@ -1198,7 +1198,7 @@ echo GhostMenu::widget([
                                     ['label' => 'M - 103 -' . Yii::t('app', 'Farmer Ledger'), 'url' => ['/misreports/reports/farmer-ledger-report']],
                                     ['label' => 'M - 104 -' . Yii::t('app', 'Milk Edit'), 'url' => ['/misreports/reports/milk-edit-report']],
                                     ['label' => 'M - 105 -' . Yii::t('app', 'Local Sale Report'), 'url' => ['/misreports/reports/local-sale-report']],
-                                    ['label' => 'M - 106 -' . Yii::t('app', 'Local Sale Report Detail'), 'url' => ['/misreports/reports/local-sale-detail-report']],
+                                    ['label' => 'M - 106 -' . Yii::t('app', 'Local Sale Detail Report'), 'url' => ['/misreports/reports/local-sale-detail-report']],
                                     ['label' => 'M - 107 -' . Yii::t('app', 'Date Wise Milk Purchase Summary'), 'url' => ['/misreports/reports/date-wise-milk-purchase-summary']],
                                     ['label' => 'M - 110 -' . Yii::t('app', 'Milk Rate Detail'), 'url' => ['/misreports/reports/milk-rate-detail-report']],
                                     ['label' => 'M - 111 -' . Yii::t('app', 'Milk Purchase Analysis'), 'url' => ['/misreports/reports/milk-purchase-analysis-report']],
