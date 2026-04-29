@@ -39,7 +39,7 @@ class ReportsController extends \app\controllers\ChildController {
             $this->data['output_type'] = $model->output_type = 'BACKGROUND';
         }
 
-        if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $this->LoadReport($model);
             if (empty($this->output)) {
 
@@ -68,14 +68,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberDailyCollection() {
         $this->report = 'MemberPassbook';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberDailyCollection';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberConsolidated';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'MemberConsolidatedWithBank';
             }
         }
@@ -84,14 +84,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionDcsCollDateShiftSummary() {
         $this->report = 'DcsCollDateShiftSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'DcsCollDateWiseSummary';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'DcsCollectionConsolidate';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'ConsolidatedWithBank';
             }
         }
@@ -110,11 +110,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionManualMilkEntryMemberDateShiftWise() {
         $this->report = 'ManualMilkEntryMemberDateShiftWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'ManualMilkEntryMemberDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'ManualMilkEntryMemberConsolidated';
             }
         }
@@ -128,14 +128,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollDateShiftWiseSummary() {
         $this->report = 'BmcCollDateShiftWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BmcCollDateWiseSummary';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BmcCollConsolidated';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'BmcConsolidatedWithBank';
             }
         }
@@ -144,11 +144,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionUnionCollDateShiftWiseSummary() {
         $this->report = 'UnionCollDateShiftWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'UnionCollDateWiseSummary';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'UnionCollConsolidated';
             }
         }
@@ -157,14 +157,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberWiseSummary() {
         $this->report = 'MemberWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberWiseProductWiseDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberWiseFromDateToDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'MemberWiseProductWiseFromDateToDateWise';
             }
         }
@@ -173,14 +173,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVendorWiseSummary() {
         $this->report = 'VendorWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'VendorWiseProductWiseDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'VendorWiseConsolidated';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'VendorWiseProductWiseDateWise';
             }
         }
@@ -189,14 +189,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcWiseSummary() {
         $this->report = 'BmcWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BmcWiseProductWiseDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BmcWiseConsolidated';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'BmcWiseProductWiseConsolidated';
             }
         }
@@ -205,14 +205,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionUnionWiseSummary() {
         $this->report = 'UnionWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'UnionWiseProductWiseDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'UnionWiseConsolidated';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'UnionWiseProductWiseConsolidated';
             }
         }
@@ -221,8 +221,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcWisePaymentCycleWise() {
         $this->report = 'BmcWisePaymentCycleWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BMCWiseFromDateToDateSummary';
             }
         }
@@ -231,8 +231,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCompanyWisePaymentCycleWise() {
         $this->report = 'CompanyWisePaymentCycleWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'ComapanyWiseFromDateToDateSummary';
             }
         }
@@ -241,8 +241,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVendorPaymentCycleWiseBmcWise() {
         $this->report = 'VendorPaymentCycleWiseBmcWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BmcWiseVendorPaymentConsolidated';
             }
         }
@@ -251,8 +251,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVendorPaymentCycleWiseUnionWise() {
         $this->report = 'VendorPaymentCycleWiseUnionWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'CompanyWiseVendorPaymentConsolidated';
             }
         }
@@ -261,8 +261,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionTotalPaymentCompanyWisePaymentCycleWise() {
         $this->report = 'TotalPaymentCompanyWisePaymentCycleWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'TotalPaymentCompanyWiseConsolidated';
             }
         }
@@ -296,11 +296,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSocietyWiseCda() {
         $this->report = 'SocietyWiseCda';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SocietyWiseCdaDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'SocietyWiseCdaConsolidated';
             }
         }
@@ -309,11 +309,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSocietyWiseCdaFormat() {
         $this->report = 'SocietyWiseCdaFormat';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SocietyWiseCdaDateWiseFormat';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'SocietyWiseCdaConsolidatedFormat';
             }
         }
@@ -327,11 +327,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionManualMilkEntrySocietyDateShiftWise() {
         $this->report = 'ManualMilkEntrySocietyDateShiftWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'ManualMilkEntrySocietyDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'ManualMilkEntrySocietyConsolidated';
             }
         }
@@ -395,8 +395,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapStatusReport() {
         $this->report = 'SapStatusReport';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SapDetailedStatusReport';
             }
         }
@@ -405,8 +405,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapComparisionReport() {
         $this->report = 'SapComparisionReportDateWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SapComparisionReportDateShiftWise';
             }
         }
@@ -420,14 +420,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCpmilkSapReport() {
         $this->report = 'CPMemberReportSap';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'CPRmrdReportSap';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'CPMemberReportSapWithDateTime';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'CPRmrdReportSapWithDateTime';
             }
         }
@@ -441,8 +441,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberPayment() {
         $this->report = 'MemberPaymentDcsWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberPaymentMemberWise';
             }
         }
@@ -526,11 +526,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcAutomationReport() {
         $this->report = 'BMCAutomationReport';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BMCAutomationDayWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BMCAutomationConsolidated';
             }
         }
@@ -539,8 +539,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberPaymentDrafted() {
         $this->report = 'MemberPaymentWithBank';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberPaymentWoBank';
             }
         }
@@ -549,8 +549,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionRouteWiseCollection() {
         $this->report = 'RouteWiseFarmerCollection';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'RouteWiseBMCCollection';
             }
         }
@@ -559,12 +559,12 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionRouteWiseCollectionSummary() {
         $this->report = 'RouteWiseCollectionSummaryFarmerDateShift';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'RouteWiseCollectionSummaryFarmerConsolidate';
-            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            } else if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'RouteWiseCollectionSummaryBmcDateShift';
-            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            } else if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'RouteWiseCollectionSummaryBmcConsolidate';
             }
         }
@@ -573,8 +573,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVendorWiseCollectionSummary() {
         $this->report = 'VendorWiseCollectionSummaryDateShift';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'VendorWiseCollectionSummaryConsolidate';
             }
         }
@@ -613,8 +613,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAutoManualMilkCollection() {
         $this->report = 'AutoManualMilkCollection';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AutoManualBMCCollection';
             }
         }
@@ -628,7 +628,7 @@ class ReportsController extends \app\controllers\ChildController {
         if (!empty($this->data['scenario'])) {
             $model->scenario = $this->data['scenario'];
         }
-        if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if (empty($model->dcs_code)) {
                 $model->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
             }
@@ -679,11 +679,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSocietyWiseCdaTwo() {
         $this->report = 'SocietyWiseCdaTwo';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SocietyWiseCdaDateWiseTwo';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'SocietyWiseCdaConsolidatedTwo';
             }
         }
@@ -712,8 +712,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMilkCollectionNotExists() {
         $this->report = 'MilkCollectionNotExistsDetail';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MilkCollectionNotExistsSummary';
             }
         }
@@ -722,8 +722,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionDayWiseQty() {
         $this->report = 'DayWiseQtyDetail';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'DayWiseQtySummary';
             }
         }
@@ -752,8 +752,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMissingShift() {
         $this->report = 'MissingShift';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MissingBmcShift';
             }
         }
@@ -787,8 +787,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCenterLossGainReport() {
         $this->report = 'CenterLossGainReport';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BMCLossGainReport';
             }
         }
@@ -837,8 +837,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionStockAtMcc() {
         $this->report = 'StockAtMcc';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'StockAtMccAmount';
             }
         }
@@ -882,11 +882,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberMilkBill() {
         $this->report = 'MemberMilkBill';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberMilkBillDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberMilkBillSummary';
             }
         }
@@ -895,11 +895,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAgentWiseReconciliation() {
         $this->report = 'AgentWiseReconciliation';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AgentWiseReconciliationDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'AgentWiseReconciliationSummary';
             }
         }
@@ -959,8 +959,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapReportDodla() {
         $this->report = 'VmReportSap';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'WqReportSap';
             }
         }
@@ -984,11 +984,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAutoManualQtyDateShiftWiseSummary() {
         $this->report = 'AutoManualQtyDateShiftWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AutoManualQtyDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'AutoManualQtyConsolidated';
             }
         }
@@ -997,11 +997,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSampleTimeMilkCollection() {
         $this->report = 'SampleTimeMilkCollection';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SampleTimeBmcCollection';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'SampleTimeComparision';
             }
         }
@@ -1103,12 +1103,12 @@ class ReportsController extends \app\controllers\ChildController {
         } else {
             $headerIncluded = isset($this->data['header_included']) && $this->data['header_included'] === true ? true : false;
             if($headerIncluded){
-                $header_labels = Yii::$app->request->get('header_labels');
+                $header_labels = Yii::$app->request->post('header_labels');
                 $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
                 $header_info = [
                     'header_included' => $headerIncluded,
                     'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
-                    'search_params' => $this->getSearchParamsString($header_labels_arr)
+                    'search_params' => $this->getSearchParams($header_labels_arr, $model)
                 ];
                 $header_info = json_encode($header_info);
             } else {
@@ -1232,7 +1232,7 @@ class ReportsController extends \app\controllers\ChildController {
                         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
                         $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
                     }
-                    if (isset(Yii::$app->request->queryParams['upload_ftp_file']) && Yii::$app->request->queryParams['upload_ftp_file'] == '1') {
+                    if (isset(Yii::$app->request->post()['upload_ftp_file']) && Yii::$app->request->post()['upload_ftp_file'] == '1') {
                         $this->uploadFTPData($title, $download, $model, $bmc);
                     }
 
@@ -1284,7 +1284,7 @@ class ReportsController extends \app\controllers\ChildController {
             } else if (isset($this->data['excel_readonly'])) {
                 $this->downloadDataReadonly($this->output, $this->data, $this->label);
             } else {
-                $this->downloadData($controls);
+                $this->downloadData($controls, $model);
             }
         }
     }
@@ -1351,8 +1351,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionUmangSapReport() {
         $this->report = 'UmangSapReportDaily';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'UmangSapReportWeekly';
             }
         }
@@ -1416,8 +1416,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMccReceiptVsBmcDispatch() {
         $this->report = 'MccReceiptVsBmcDispatch';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MccReceiptVsBmcDispatchDetail';
             }
         }
@@ -1481,11 +1481,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionStockRegisterToSap() {
         $this->report = 'StockRegisterToSap';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'StockRegisterToProduct';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'StockRegisterToSummary';
             }
         }
@@ -1494,11 +1494,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionStockRegisterMccToSap() {
         $this->report = 'StockRegisterMccToSap';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'StockRegisterMccToProduct';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'StockRegisterMccToSummary';
             }
         }
@@ -1507,8 +1507,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcWiseSocietyWiseAutoManual() {
         $this->report = 'BmcWiseSocietyWiseAutoManual';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BmcWiseSocietyWiseAutoManualSummary';
             }
         }
@@ -1557,11 +1557,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberDailyCollectionRegion() {
         $this->report = 'MemberPassbookRegion';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberDailyCollectionRegion';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberConsolidatedRegion';
             }
         }
@@ -1570,11 +1570,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionDcsCollDateShiftSummaryRegion() {
         $this->report = 'DcsCollDateShiftSummaryRegion';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'DcsCollDateWiseSummaryRegion';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'DcsCollectionConsolidateRegion';
             }
         }
@@ -1583,11 +1583,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAgentWiseReconciliationRegion() {
         $this->report = 'AgentWiseReconciliationRegion';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AgentWiseReconciliationDateWiseRegion';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'AgentWiseReconciliationSummaryRegion';
             }
         }
@@ -1596,8 +1596,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCenterLossGainReportRegion() {
         $this->report = 'CenterLossGainReportRegion';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BMCLossGainReportRegion';
             }
         }
@@ -1626,8 +1626,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionTallyReport() {
         $this->report = 'TallyReport';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'TallyConsolidatedReport';
             }
         }
@@ -1696,11 +1696,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberDailyCollectionCommon() {
         $this->report = 'MemberPassbookCommon';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberDailyCollectionCommon';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberConsolidatedCommon';
             }
         }
@@ -1709,11 +1709,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionDcsCollDateShiftSummaryCommon() {
         $this->report = 'DcsCollDateShiftSummaryCommon';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'DcsCollDateWiseSummaryCommon';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'DcsCollectionConsolidateCommon';
             }
         }
@@ -1727,11 +1727,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollDateShiftWiseSummaryCommon() {
         $this->report = 'BmcCollDateShiftWiseSummaryCommon';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BmcCollDateWiseSummaryCommon';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BmcCollConsolidatedCommon';
             }
         }
@@ -1740,11 +1740,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSocietyWiseCdaCommon() {
         $this->report = 'SocietyWiseCdaCommon';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SocietyWiseCdaDateWiseCommon';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'SocietyWiseCdaConsolidatedCommon';
             }
         }
@@ -1753,8 +1753,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapWqFile() {
         $this->report = 'SapWqFile';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'SapWqFileXls';
             }
         }
@@ -1773,11 +1773,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollectionSummaryRahema() {
         $this->report = 'BmcCollectionSummaryRahema';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'BmcCollectionDateWiseRheman';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BmcCollectionConsolidatedRaheman';
             }
         }
@@ -1866,14 +1866,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionStockRegisterBmcToSap() {
         $this->report = 'StockRegisterBmcToSap';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'StockRegisterBmcToProduct';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'StockRegisterBmcToSummary';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'StockRegisterBmcAndTypeWise';
             }
         }
@@ -1977,11 +1977,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCompanyWiseMilkCollection() {
         $this->report = 'CompanyWiseMilkCollection';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'PlantWiseMilkCollection';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'DcsWiseMilkCollection';
             }
         }
@@ -2025,14 +2025,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAreBmcCollDateShiftWiseSummary() {
         $this->report = 'AreBmcCollDateShiftWiseSummary';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AreBmcCollDateWiseSummary';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'AreBmcCollConsolidated';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'AreConsolidatedWithBank';
             }
         }
@@ -2041,11 +2041,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAreSocietyWiseCda() {
         $this->report = 'AreSocietyWiseCda';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AreSocietyWiseCdaDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'AreSocietyWiseCdaConsolidated';
             }
         }
@@ -2059,8 +2059,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAreMemberPayment() {
         $this->report = 'AreMemberPaymentDcsWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AreMemberPaymentMemberWise';
             }
         }
@@ -2089,11 +2089,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionRouteWiseCdaFormat() {
         $this->report = 'RouteWiseCdaFormat';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'RouteWiseCdaDateWiseFormat';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'RouteWiseCdaConsolidatedFormat';
             }
         }
@@ -2187,8 +2187,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionFarmerPaymentWiseMilkWise() {
         $this->report = 'FarmerPaymentWiseMilkWise';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'FarmerPaymentWiseMilkWiseSummary';
             }
         }
@@ -2202,8 +2202,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionYearlyFarmerCollectionReport() {
         $this->report = 'YearlyFarmerCollectionReport';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'YearlyVspCollectionReport';
             }
         }
@@ -2212,8 +2212,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionAadeshLatter() {
         $this->report = 'AadeshLatter';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'AadeshLatterSummary';
             }
         }
@@ -2267,14 +2267,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberDailyCollectionSecond() {
         $this->report = 'MemberPassbookSecond';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'MemberDailyCollectionSecond';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'MemberConsolidatedSecond';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '3') {
                 $this->report = 'MemberConsolidatedWithBankSecond';
             }
         }
@@ -2283,8 +2283,8 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVlccCommission() {
         $this->report = 'VlccCommission';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'CommissionReportSummary';
             }
         }
@@ -2293,10 +2293,10 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapReportExport() {
         $this->report = 'VmReportSapExport';
-        if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->request->post()['ReportsModel']['report_type'] == '1') {
                 $this->report = 'WqReportSapExport';
-            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            } else if (Yii::$app->request->post()['ReportsModel']['report_type'] == '2') {
                 $this->report = 'SdReportSapExport';
             }
         }
@@ -5520,7 +5520,7 @@ class ReportsController extends \app\controllers\ChildController {
         return $label[$l];
     }
 
-    public function downloadData($controls) {
+    public function downloadData($controls, $model) {
 //        $extention = 'xls';
 //        $header = [
 //            'mime' => 'application/ms-excel',
@@ -5622,11 +5622,11 @@ class ReportsController extends \app\controllers\ChildController {
                 $colCount = count($file_header);
                 $lastCol = ($colCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($colCount - 1) : 'A';
                 $header_rows = 4;
-                $header_labels = Yii::$app->request->get('header_labels');
+                $header_labels = Yii::$app->request->post('header_labels');
                 $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
                 $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
                 $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
-                $searchParams = $this->getSearchParamsString($header_labels_arr);
+                $searchParams = $this->getSearchParams($header_labels_arr, $model);
                 $sheet->setCellValue('A1', $companyName);
                 $sheet->setCellValue('A2', $reportTitle);
                 $sheet->setCellValue('A3', $searchParams);
@@ -5911,39 +5911,20 @@ class ReportsController extends \app\controllers\ChildController {
         exit();
     }
 
-    public function getSearchParamsString($header_labels_arr) {
-        $reportsModel = new ReportsModel();
-        $attributeLabels = $reportsModel->attributeLabels();
-        $params_config = [];
-        if (!empty($this->data['param'])) {
-            foreach (explode(',', $this->data['param']) as $p) {
-                $parts = array_map('trim', explode(':', $p));
-                if (!empty($parts[0])) {
-                    $params_config[] = $parts[0];
-                }
-                foreach (array_slice($parts, 1) as $part) {
-                    if (in_array($part, ['from_shift', 'to_shift'])) {
-                        $params_config[] = $part;
-                    }
-                }
-            }
-        }
-        if (isset($this->data['report_type']) && !in_array('report_type', $params_config)) {
-            $params_config[] = 'report_type';
-        }
-        $request = \Yii::$app->request;
-        $requestData = $request->get('ReportsModel', $request->post('ReportsModel', []));
-
+    public function getSearchParams($header_labels_arr, $model) {
+        $attributeLabels = $model->attributeLabels();
         $searchParams = "";
-        foreach ($params_config as $key) {
-            if (isset($requestData[$key]) && $requestData[$key] !== '') {
-                $value = $requestData[$key];
-                $label = isset($attributeLabels[$key]) ? $attributeLabels[$key] : ucwords(str_replace(['_', 'code'], [' ', ''], $key));
-                $displayValue = isset($header_labels_arr[$key]) ? $header_labels_arr[$key] : (is_array($value) ? implode(', ', $value) : $value);
-                $searchParams .= trim($label) . ": " . $displayValue . "  ";
+        if (!empty($header_labels_arr)) {
+            foreach ($header_labels_arr as $key => $val) {
+                if (isset($header_labels_arr[$key]) && $header_labels_arr[$key] !== '' && $key !== "output_type") {
+                    $label = isset($attributeLabels[$key]) ? $attributeLabels[$key] : ucwords(str_replace(['_'], [' '], $key));
+                    $displayValue = is_array($val) ? implode(', ', $val) : $val;
+                    $searchParams .= trim($label) . ": " . $displayValue . "  ";
+                }
             }
         }
-        return $searchParams;
+        return trim($searchParams);
     }
+
 
 }

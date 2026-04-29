@@ -87,7 +87,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             'id' => 'report-form',
                                             'field-class' => 'form-group col-sm-6'
                                         ],
-                                        'method' => 'get',
+                                        'method' => 'post',
                                         'validateOnBlur' => FALSE,
                                         'validateOnChange' => FALSE,
                                         'enableClientValidation' => true,
@@ -1259,26 +1259,38 @@ $('.mis_report_modal_toggle').on('click', function(){
 
     $(document).on('submit', '#report-form', function() {
         var labels = {};
-        $(this).find('select, input[type=\"text\"]').each(function() {
+        $(this).find('select, input[type=\"text\"], input[type=\"radio\"]:checked').each(function() {
             var id = $(this).attr('id');
+            var key = '';
             if (id && id.indexOf('reportsmodel-') !== -1) {
-                var key = id.replace('reportsmodel-', '');
-                if ($(this).is('select')) {
-                    var selectedTexts = [];
-                    $(this).find('option:selected').each(function() {
-                        var t = $(this).text();
-                        if (t && t.indexOf('Select') === -1 && t !== '') {
-                            selectedTexts.push(t);
-                        }
-                    });
-                    if (selectedTexts.length > 0) {
-                        labels[key] = selectedTexts.join(', ');
+                key = id.replace('reportsmodel-', '');
+            }
+
+            if ($(this).is('select')) {
+                var selectedTexts = [];
+                $(this).find('option:selected').each(function() {
+                    var t = $(this).text();
+                    if (t && t.indexOf('Select') === -1 && t !== '') {
+                        selectedTexts.push(t);
                     }
-                } else {
-                    var val = $(this).val();
-                    if (val && val !== '') {
-                        labels[key] = val;
-                    }
+                });
+                if (selectedTexts.length > 0) {
+                    labels[key] = selectedTexts.join(', ');
+                }
+
+            } else if ($(this).is(':radio')) {
+                var name = $(this).attr('name');
+                if (name && name.toLowerCase().indexOf('reportsmodel') !== -1) {
+                    key = name.replace(/^reportsmodel\[|\]$/i, '');
+                }
+                var radioText = $(this).closest('label').text().trim();
+                if (radioText !== '') {
+                    labels[key] = radioText;
+                }
+            } else {
+                var val = $(this).val();
+                if (val && val !== '') {
+                    labels[key] = val;
                 }
             }
         });
