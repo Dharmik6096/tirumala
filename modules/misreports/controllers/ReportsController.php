@@ -5278,7 +5278,7 @@ class ReportsController extends \app\controllers\ChildController {
             // 'extension' => 'xlsx',
             ],
             'MilkPurchaseRegisterReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,sort_type:static:sort_type',
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code:txt,to_code:txt,sort_type:static:sort_type',
                 'sp_name' => 'mis_milk_purchase_register',
                 'multiple_sheet' => ['summary' => 'mis_milk_purchase_register_summary'],
                 'scenario' => 'MilkPurchaseRegisterReport',
@@ -5287,7 +5287,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'FarmerLedgerReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code,to_code',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code:txt,to_code:txt',
                 'sp_name' => 'mis_farmer_ledger',
                 'scenario' => 'FarmerLedgerReport',
                 'title' => 'M - 103 - Farmer Ledger Report',
@@ -5295,17 +5295,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MemberWiseSummaryReport' => [
-                'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code,to_code,milk_type_code,dcs_code:union_code',
+                'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code:txt,to_code:txt,milk_type_code,dcs_code:union_code:addAll',
                 'sp_name' => 'mis_member_wise_summary',
                 'multiple_sheet' => ['summary' => 'mis_member_wise_summary_register'],
                 'scenario' => 'MemberWiseSummaryReport',
                 'title' => 'M - 102 - Member Wise Summary Report',
-                'multiArray' => ['dcs_code'],
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],
             'LocalSaleReport' => [
-                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,is_show_zero_val',
+                'param' => 'language_code,union_code,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,is_show_zero_val',
                 'sp_name' => 'mis_local_sale',
                 'scenario' => 'LocalSaleReport',
                 'title' => 'M - 105 - Local sale Report',
@@ -5321,7 +5320,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkRateDetailReport' => [
-                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code,to_code,report_rate_type:static:report_rate_type,milk_type_code,last_rate',
+                'param' => 'language_code,union_code,from_date:string,to_date:string,from_code:txt,to_code:txt,report_rate_type:static:report_rate_type,milk_type_code,last_rate',
                 'sp_name' => 'mis_milk_rate_detail_report',
                 'scenario' => 'MilkRateDetailReport',
                 'title' => 'M - 110 - Milk Rate Detail Report',
@@ -5329,7 +5328,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkEditReport' => [
-                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type,from_code,to_code,sort_by:static:sort_by,amount_variation:static:amount_variation,is_group_by_society',
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,edit_type:static:edit_type,from_code:txt,to_code:txt,sort_by:static:sort_by,amount_variation:static:amount_variation,is_group_by_society',
                 'sp_name' => 'mis_milk_edit',
                 'scenario' => 'MilkEditReport',
                 'title' => 'M - 104 - Milk Edit Report',
@@ -5337,7 +5336,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'DateWiseMilkPurchaseSummary' => [
-                'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
+                'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
                 'sp_name' => 'mis_date_wise_milk_purchase_summary_register',
                 'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
                 'scenario' => 'DateWiseMilkPurchaseSummary',
@@ -5346,7 +5345,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkPurchaseAnalysis' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code,to_code,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,member_types:static:member_types,from_code:txt,to_code:txt,report_sort_by:static:report_sort_by,sort_direction:static:sort_direction',
                 'sp_name' => 'mis_milk_purchase_analysis',
                 'scenario' => 'MilkPurchaseAnalysis',
                 'title' => 'M - 111 - Milk Purchase Analysis Report',
@@ -5354,7 +5353,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'FarmerListReport' => [
-                'param' => 'language_code,union_code,from_soc,to_soc,report_member_type:static:report_member_type,member_types:static:member_types,from_code,to_code,farmer_type:static:farmer_type',
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,report_member_type:static:report_member_type,member_types:static:member_types,from_code:txt,to_code:txt,farmer_type:static:farmer_type',
                 //'sp_name' => '',
                 'scenario' => 'FarmerListReport',
                 'title' => 'S - 102 - Farmer List Report',
@@ -5370,7 +5369,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'FatWiseQtyAnalysis' => [
-                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,filter_type:static:filter_type',
                 'sp_name' => 'mis_Fat_wise_qty_analysis',
                 'scenario' => 'FatWiseQtyAnalysis',
                 'title' => 'M - 113 - Fat Wise Qty Analysis Report',
@@ -5378,7 +5377,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkCompare' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
                 'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
                 'scenario' => 'MilkCompare',
                 'title' => 'M - 113 - Milk Compare Report',
@@ -5403,7 +5402,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'UnionWiseMessageDetailReport' => [
-                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,group_by_region',
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code:txt,to_code:txt,from_date:string,to_date:string,group_by_region',
                 'sp_name' => 'mis_union_wise_message_detail',
                 'scenario' => 'UnionWiseMessageDetailReport',
                 'title' => 'S - 105 - Union Wise Message Detail Report',
@@ -5419,7 +5418,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'OnlineOfflineSocietyReport' => [
-                'param' => 'language_code,union_code,region_type,dcs_code:union_code,soc_type:static:soc_type,show_only_received_data',
+                'param' => 'language_code,union_code,region_type:static:region_type,region_code:union_code,soc_type:static:soc_type,show_only_received_data',
                 'sp_name' => 'mis_online_offline_society',
                 'scenario' => 'OnlineOfflineSocietyReport',
                 'title' => 'O - 102 - Online Offline Society Report',
@@ -5427,7 +5426,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkRatePublishReport' => [
-                'param' => 'language_code,union_code,from_soc,to_soc,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
 //                'sp_name' => '',
                 'scenario' => 'MilkRatePublishReport',
                 'title' => 'S - 106 - Milk Rate Publish Report',
@@ -5435,7 +5434,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'SmsDetailReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no,shift_code,member_types:static:member_types,from_code,to_code',
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no:txt,shift_code,member_types:static:member_types,from_code:txt,to_code:txt',
 //                'sp_name' => '',
                 'scenario' => 'SmsDetailReport',
                 'title' => 'O - 103 - Sms Detail Report',
@@ -5467,7 +5466,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'SocietyWiseSummaryReport' => [
-                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_society_wise_summary',
                 'scenario' => 'SocietyWiseSummaryReport',
                 'title' => 'SP - 104 - Society Wise Summary Report',
@@ -5475,7 +5474,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'FarmerNotSubmittingMilkReport' => [
-                'param' => 'language_code,union_code,from_code,to_code,from_date:string,to_date:string,show_only_received_data',
+                'param' => 'language_code,union_code,from_code:txt,to_code:txt,from_date:string,to_date:string,show_only_received_data',
                 'sp_name' => 'mis_farmer_not_submitting_milk',
                 'scenario' => 'FarmerNotSubmittingMilkReport',
                 'title' => 'SP - 105 - Farmer Not Submitting Milk Report',
@@ -5483,7 +5482,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'ManualCollectionSummaryReport' => [
-                'param' => 'language_code,union_code,from_code,to_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_manual_collection_summary',
                 'scenario' => 'ManualCollectionSummaryReport',
                 'title' => 'SP - 111 - Manual Collection Summary Report',
@@ -5491,7 +5490,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkEditForFarmerReport' => [
-                'param' => 'language_code,union_code,region_code:union_code:all,from_code,to_code,from_date:string,to_date:string,no_of_farmer_edit,no_of_individual_farmer_edit,edit_type:static:edit_type',
+                'param' => 'language_code,union_code,region_code:union_code:all,from_soc:txt,to_soc:txt,from_date:string,to_date:string,no_of_farmer_edit:txt,no_of_individual_farmer_edit:txt,edit_type:static:edit_type',
                 'sp_name' => 'mis_milk_edit_for_farmer_register',
                 'multiple_sheet' => ['mis_milk_edit_for_farmer_summary'],
                 'scenario' => 'MilkEditForFarmerReport',
@@ -5925,6 +5924,5 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return trim($searchParams);
     }
-
 
 }
