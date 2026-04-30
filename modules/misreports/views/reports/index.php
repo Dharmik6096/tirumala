@@ -8,6 +8,7 @@ use yii\grid\GridView;
 use yii\web\View;
 use nullref\datatable\DataTable;
 use yii\widgets\MaskedInput;
+
 //$this->title = Yii::$app->label->title('view', 'Reports');
 $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : '');
 $inclass = !empty($result) ? '' : 'in';
@@ -666,7 +667,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         }
                                         if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val'])) {
                                             ?>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6 mt15 mb-5 checkbox_padding_0">
                                                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, $value); ?>
                                             </div>
                                             <?php
