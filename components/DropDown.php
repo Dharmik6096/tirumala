@@ -208,14 +208,14 @@ class DropDown extends Component {
         }
     }
 
-    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $multiple = false) {
+    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $multiple = false, $addAll = false) {
         $check_list = '';
         $label = $label ? Yii::t('app', $label) : false;
         if (!empty(Yii::$app->session->get('Dcs'))) {
             $check_list = explode(',', Yii::$app->session->get('Dcs'));
             $check_list = implode('-', $check_list);
         }
-        return $this->depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list, $multiple, '', false, true, $multiple);
+        return $this->depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list, $multiple, '', false, true, $multiple, true, false, $addAll);
     }
 
     public function union_routes($model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
