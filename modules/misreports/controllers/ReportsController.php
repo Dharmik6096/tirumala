@@ -5338,7 +5338,7 @@ class ReportsController extends \app\controllers\ChildController {
             'DateWiseMilkPurchaseSummary' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,milk_type_code',
                 'sp_name' => 'mis_date_wise_milk_purchase_summary_register',
-                'multiple_sheet' => ['mis_date_wise_milk_purchase_summary'],
+                'multiple_sheet' => ['summary' => 'mis_date_wise_milk_purchase_summary'],
                 'scenario' => 'DateWiseMilkPurchaseSummary',
                 'title' => 'M - 107 - Date wise Milk Purchase Summary Report',
                 'header_included' => TRUE,
@@ -5395,7 +5395,7 @@ class ReportsController extends \app\controllers\ChildController {
             'FarmerAppDetailsReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,registered_type:static:registered_type,farmer_sort_type:static:farmer_sort_type',
                 'sp_name' => 'mis_farmer_app_details',
-                'multiple_sheet' => ['mis_farmer_app_details_summary'],
+                'multiple_sheet' => ['summary' => 'mis_farmer_app_details_summary'],
                 'scenario' => 'FarmerAppDetailsReport',
                 'title' => 'S - 103 - Farmer App Details Report',
                 'header_included' => TRUE,
@@ -5492,7 +5492,7 @@ class ReportsController extends \app\controllers\ChildController {
             'MilkEditForFarmerReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_soc:txt,to_soc:txt,from_date:string,to_date:string,no_of_farmer_edit:txt,no_of_individual_farmer_edit:txt,edit_type:static:edit_type',
                 'sp_name' => 'mis_milk_edit_for_farmer_register',
-                'multiple_sheet' => ['mis_milk_edit_for_farmer_summary'],
+                'multiple_sheet' => ['summary' => 'mis_milk_edit_for_farmer_summary'],
                 'scenario' => 'MilkEditForFarmerReport',
                 'title' => 'SP - 112 - Milk Edit For Farmer Report',
                 'header_included' => TRUE,
@@ -5501,7 +5501,7 @@ class ReportsController extends \app\controllers\ChildController {
             'MuAppVdcsAppUserReport' => [
                 'param' => 'language_code,union_code,report_app_type:static:report_app_type,dcs_code:union_code,registered_type:static:registered_type,status_type:static:status_type',
                 'sp_name' => 'mis_vdcs_app_user_register',
-                'multiple_sheet' => ['mis_vdcs_app_user_summary'],
+                'multiple_sheet' => ['summary' => 'mis_vdcs_app_user_summary'],
                 'scenario' => 'MuAppVdcsAppUserReport',
                 'title' => 'App - 101 - MU App VDCS APP User Report',
                 'header_included' => TRUE,
