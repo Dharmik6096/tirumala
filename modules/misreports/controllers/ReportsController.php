@@ -5613,6 +5613,9 @@ class ReportsController extends \app\controllers\ChildController {
               \PHPExcel_Style_NumberFormat::FORMAT_TEXT
               ); */
             $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+            foreach ($file_header as $key => $value) {
+                $file_header[$key] = \Yii::t('app', $value);
+            }
             $isZip = isset($this->data['append_link']) && $this->data['append_link'] == true;
             if ($isZip && !in_array('attachment_link', $file_header)) {
                 $file_header[] = 'attachment_link';
@@ -5685,7 +5688,9 @@ class ReportsController extends \app\controllers\ChildController {
                     $newsheet->setTitle($new_sheet_name);
                     $newoutput = \Yii::$app->general->getSpData($new_sp_name, $controls);
                     $new_file_header = !empty($newoutput) ? array_keys($newoutput[0]) : [];
-
+                    foreach ($new_file_header as $key => $value) {
+                        $new_file_header[$key] = \Yii::t('app', $value);
+                    }
                     $new_header_rows = 1;
                     if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
                         $newColCount = count($new_file_header);

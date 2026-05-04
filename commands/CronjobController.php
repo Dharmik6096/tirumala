@@ -96,7 +96,9 @@ class CronjobController extends \yii\console\Controller {
         ];
         $objPHPExcel = new PHPExcel();
         $file_header = !empty($output) ? array_keys($output[0]) : [];
-
+        foreach ($file_header as $key => $value) {
+            $file_header[$key] = \Yii::t('app', $value);
+        }
         $dataToDecrypt = !empty($model->decrypt_data) ? json_decode($model->decrypt_data, TRUE) : [];
         $dataToDecryptCheck = false;
         foreach ($output[0] as $att => $value) {
@@ -128,7 +130,7 @@ class CronjobController extends \yii\console\Controller {
 
         $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
         $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
-        
+
         $header_rows = 1;
         if ($header_included) {
             $colCount = count($file_header);
@@ -153,7 +155,7 @@ class CronjobController extends \yii\console\Controller {
         if ($header_included) {
             $sheet->getStyle("A{$header_rows}:{$lastCol}{$header_rows}")->getFont()->setBold(true);
         }
-        
+
         foreach ($output_chunk as $output) {
             if ($a == $sheet_change_on_chunk) {
                 $a = 1;
