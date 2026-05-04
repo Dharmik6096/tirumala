@@ -140,4 +140,10 @@ return [
     'Actual Qty' => 'Actual Qty In Ltr',
     'Composite Qty' => 'Composite Qty In Ltr',
     'DCS Code Ex' => 'Society Code Ex',
+    'Dcs Code' => 'Society Code',
+    'Dcs Code Ex' => 'Society Code Ex',
+    'Dcs Name' => 'Society Name',
+    'dcs_code' => 'society_code',
+    'dcs_code_ex' => 'society_code_ex',
+    'dcs_name' => 'society_name',
 ];
