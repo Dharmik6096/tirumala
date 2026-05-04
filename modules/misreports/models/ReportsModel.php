@@ -233,7 +233,7 @@ class ReportsModel extends Model {
                 [['language_code', 'union_code', 'region_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'filter_type', 'from_code', 'to_code', 'milk_type_code'], 'required', 'on' => ['FatWiseQtyAnalysis']],
                 [['language_code', 'union_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'from_code', 'to_code', 'milk_sort_by', 'sort_direction'], 'required', 'on' => ['MilkCompare']],
                 [['language_code', 'union_code', 'search_by', 'status_type', 'society_type'], 'required', 'on' => ['SocietyList']],
-                [['region_code', 'region_type'], 'required', 'when' => function ($model) {
+                [['region_type'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
                     var val = $('#reportsmodel-search_by').val() == '2';
