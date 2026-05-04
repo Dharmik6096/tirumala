@@ -5395,7 +5395,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'language_code,union_code,dcs_code:union_code,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,milk_sort_by:static:milk_sort_by,sort_direction:static:sort_direction',
                 'sp_name' => 'mis_society_and_member_wise_milk_compair_report',
                 'scenario' => 'MilkCompare',
-                'title' => 'M - 113 - Milk Compare Report',
+                'title' => 'M - 117 - Milk Compare Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],
@@ -5405,6 +5405,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyList',
                 'title' => 'S - 101 - Society List Report',
                 'header_included' => TRUE,
+                'to_decrypt' => ['VDCS_Pan_No'],
                 'bkg_export' => TRUE
             ],
             'FarmerAppDetailsReport' => [
