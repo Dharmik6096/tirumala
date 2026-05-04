@@ -240,7 +240,7 @@ class ReportsModel extends Model {
                 [['language_code', 'union_code', 'dcs_code', 'farmer_sort_type', 'registered_type'], 'required', 'on' => ['FarmerAppDetailsReport']],
                 [['language_code', 'union_code', 'region_code', 'from_code', 'to_code', 'from_date', 'to_date', 'group_by_region'], 'required', 'on' => ['UnionWiseMessageDetailReport']],
                 [['language_code', 'union_code', 'from_date', 'to_date'], 'required', 'on' => ['UnionWiseMessageReport']],
-                [['language_code', 'union_code', 'region_type','soc_type', 'show_only_received_data'], 'required', 'on' => ['OnlineOfflineSocietyReport']],
+                [['language_code', 'union_code', 'region_type', 'soc_type', 'show_only_received_data'], 'required', 'on' => ['OnlineOfflineSocietyReport']],
                 [['language_code', 'union_code', 'from_soc', 'to_soc', 'date', 'shift_code', 'report_rate_type', 'report_status_type'], 'required', 'on' => ['MilkRatePublishReport']],
                 [['language_code', 'union_code', 'dcs_code', 'date', 'sms_type', 'member_types', 'from_code', 'to_code'], 'required', 'on' => ['SmsDetailReport']],
                 [['mobile_no'], 'required', 'when' => function ($model) {
@@ -262,6 +262,8 @@ class ReportsModel extends Model {
                 [['language_code', 'union_code', 'from_soc', 'to_soc', 'from_date', 'region_code', 'edit_type', 'no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'required', 'on' => ['MilkEditForFarmerReport']],
                 [['language_code', 'union_code', 'report_app_type', 'registered_type', 'status_type'], 'required', 'on' => ['MuAppVdcsAppUserReport']],
                 [['language_code', 'union_code', 'region_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'from_time', 'to_time', 'is_show_zero_val', 'is_group_by_society', 'last_rate'], 'required', 'on' => ['SocietySampleReport']],
+                [['to_soc'], 'validateToSoc', 'on' => ['ManualCollectionSummaryReport', 'MilkEditForFarmerReport', 'FarmerListReport', 'MilkRatePublishReport']],
+                [['to_code'], 'validateToCode', 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport']],
         ];
     }
 
@@ -408,6 +410,24 @@ class ReportsModel extends Model {
         $bmcModel = new TblDcsBmc();
         $bmcData = $bmcModel->find()->where(['bmc_code' => $bmcCode])->one();
         return $bmcData;
+    }
+
+    public function validateToCode($attribute, $params) {
+        if (!empty($this->from_code) && !empty($this->to_code)) {
+            if ($this->from_code > $this->to_code) {
+                $this->addError($attribute, Yii::t('app/validation', 'Minimum ' . $this->getAttributeLabel('to_code') . ' is ' . $this->from_code . '.'));
+                return false;
+            }
+        }
+    }
+
+    public function validateToSoc($attribute, $params) {
+        if (!empty($this->from_soc) && !empty($this->to_soc)) {
+            if ($this->from_soc > $this->to_soc) {
+                $this->addError($attribute, Yii::t('app/validation', 'Minimum ' . $this->getAttributeLabel('to_soc') . ' is ' . $this->from_soc . '.'));
+                return false;
+            }
+        }
     }
 
 }

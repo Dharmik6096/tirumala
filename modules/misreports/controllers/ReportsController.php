@@ -5311,8 +5311,8 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MemberWiseSummaryReport' => [
                 'param' => 'language_code,union_code,from_date:string:from_shift,to_date:string:to_shift,from_code:txt,to_code:txt,milk_type_code,dcs_code:union_code:addAll',
-                'sp_name' => 'mis_member_wise_summary',
-                'multiple_sheet' => ['summary' => 'mis_member_wise_summary_register'],
+                'sp_name' => 'mis_member_wise_summary_register',
+                'multiple_sheet' => ['summary' => 'mis_member_wise_summary'],
                 'scenario' => 'MemberWiseSummaryReport',
                 'title' => 'M - 102 - Member Wise Summary Report',
                 'header_included' => TRUE,
