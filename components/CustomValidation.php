@@ -1495,6 +1495,19 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
+            'GREENFDAIRY' => [
+                'TblContactDetails' => [
+                    'default' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'customer-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                ],
+            ],
         ];
     }
 
