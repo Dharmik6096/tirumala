@@ -30,6 +30,9 @@ class DisableField extends Component {
                 'TblProductSale' => [
                     'invoice_date'
                 ],
+                'TblPlantDispatchTxn' => [
+                    'product_mrp', 'distributor_landing_rate', 'sachiv_price', 'member_price'
+                ],
             ],
             'DODLA' => [
                 'TblBmcMilkDispatchTxn' => [
@@ -38,6 +41,7 @@ class DisableField extends Component {
             ],
             'BANAS' => [
                 'TblProductSale' => [],
+                'TblPlantDispatchTxn' => [],
             ],
             'CARGILL' => [
                 'TblProductSale' => [],
