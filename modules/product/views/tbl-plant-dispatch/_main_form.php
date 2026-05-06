@@ -94,6 +94,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'product_mrp')->textInput() ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-sm-2 reset_field number-validate">
             <?= $form->field($txModel, 'distributor_landing_rate')->textInput() ?>
         </div>
