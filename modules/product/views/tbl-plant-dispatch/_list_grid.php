@@ -24,6 +24,10 @@ $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
         ['attribute' => 'amount', 'filter' => FALSE],
         ['attribute' => 'lr_no', 'filter' => FALSE],
         ['attribute' => 'po_itemno', 'filter' => FALSE],
+        ['attribute' => 'product_mrp', 'filter' => FALSE],
+        ['attribute' => 'distributor_landing_rate', 'filter' => FALSE],
+        ['attribute' => 'sachiv_price', 'filter' => FALSE],
+        ['attribute' => 'member_price', 'filter' => FALSE],
     ];
 
 

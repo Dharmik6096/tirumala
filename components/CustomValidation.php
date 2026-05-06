@@ -1398,6 +1398,11 @@ class CustomValidation extends Component {
                             }"],
                     ],
                 ],
+                'TblPlantDispatchTxn' => [
+                    'default' => [
+                        [['product_mrp', 'distributor_landing_rate', 'sachiv_price', 'member_price'], 'required'],
+                    ],
+                ],
                 'BackGroundDataImport' => [
                     'default' => [
                             [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'on' => ['member']],

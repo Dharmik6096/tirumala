@@ -49,14 +49,14 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
         $union_code = empty($this->union_code) ? explode(',', Yii::$app->session->get('Unions')) : $this->union_code;
         $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($union_code, 'batch_no_wise_inventory', 'PORTAL');
         $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration($union_code, 'grn_without_stock_entry', 'PORTAL');
-        return [
+        $main_rules = [
                 [['plant_dispatch_txn_code'], 'required'],
                 [['qty', 'rate'], 'number', 'on' => ['clienterp_cargill']],
                 [['product_code', 'rate', 'qty'], 'required', 'on' => ['clienterp_cargill']],
                 [['product_code'], 'validateProduct', 'on' => ['clienterp_cargill']],
                 [['product_code', 'unit_code', 'rate', 'amount', 'qty'], 'required', 'except' => ['clienterp_cargill']],
                 [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks', 'manuf_date'], 'safe'],
-                [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
+                [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no', 'product_mrp', 'distributor_landing_rate', 'sachiv_price', 'member_price'], 'safe'],
                 [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'po_itemno'], 'safe'],
                 [['sap_batch_no'], 'required', 'when' => function ($model) use ($batchNoWiseInventory, $grnWithoutStockEntry) {
@@ -72,6 +72,8 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
                     return $batchNoWiseInventory == 1;
                 }],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblPlantDispatchTxn', 'default');
+        return array_merge($client_rules, $main_rules);
     }
 
     /**
@@ -101,6 +103,10 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'po_itemno' => Yii::t('app', 'PO Item No'),
             'manuf_date' => Yii::t('app', 'Manufacturing Date'),
+            'product_mrp' => Yii::t('app', 'Product Mrp'),
+            'distributor_landing_rate' => Yii::t('app', 'Distributor Landing Rate'),
+            'sachiv_price' => Yii::t('app', 'Sachiv Price'),
+            'member_price' => Yii::t('app', 'Member Price'),
         ];
     }
 

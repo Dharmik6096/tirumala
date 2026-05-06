@@ -47,7 +47,7 @@ class TblPlantDispatchTxnHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['plant_dispatch_txn_code', 'plant_dispatch_code'], 'safe'],
-            [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no', 'grn_missing_qty'], 'safe'],
+            [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no', 'grn_missing_qty', 'product_mrp', 'distributor_landing_rate', 'sachiv_price', 'member_price'], 'safe'],
             [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'history_created_at'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'po_itemno'], 'safe'],
         ];
@@ -83,6 +83,10 @@ class TblPlantDispatchTxnHistory extends \yii\db\ActiveRecord {
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
             'po_itemno' => Yii::t('app', 'PO Item No'),
+            'product_mrp' => Yii::t('app', 'Product Mrp'),
+            'distributor_landing_rate' => Yii::t('app', 'Distributor Landing Rate'),
+            'sachiv_price' => Yii::t('app', 'Sachiv Price'),
+            'member_price' => Yii::t('app', 'Member Price'),
         ];
     }
 

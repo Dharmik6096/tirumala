@@ -2,8 +2,6 @@
 
 use yii\helpers\Html;
 use app\components\ActiveForm;
-use yii\web\View;
-use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
@@ -93,7 +91,18 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($txModel, 'lr_no')->textInput() ?>
         </div>
-
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'product_mrp')->textInput() ?>
+        </div>
+        <div class="col-sm-2 reset_field number-validate">
+            <?= $form->field($txModel, 'distributor_landing_rate')->textInput() ?>
+        </div>
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'sachiv_price')->textInput() ?>
+        </div>
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'member_price')->textInput() ?>
+        </div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?=
@@ -123,6 +132,10 @@ $form = ActiveForm::begin([
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>
                 <th><?= $txModel->getAttributeLabel('lr_no') ?></th>
+                <th><?= $txModel->getAttributeLabel('product_mrp') ?></th>
+                <th><?= $txModel->getAttributeLabel('distributor_landing_rate') ?></th>
+                <th><?= $txModel->getAttributeLabel('sachiv_price') ?></th>
+                <th><?= $txModel->getAttributeLabel('member_price') ?></th>
                 <th><?= Yii::t('app', 'Action') ?></th>
             </tr>
         </thead>
