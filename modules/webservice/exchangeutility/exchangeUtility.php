@@ -5,6 +5,7 @@ namespace app\modules\webservice\exchangeutility;
 /**
  * exchangeUtility module definition class
  */
+use app\modules\androiddpu\components\CaseConverterFilter;
 class exchangeUtility extends \yii\base\Module {
 
     /**
@@ -26,6 +27,14 @@ class exchangeUtility extends \yii\base\Module {
             ],
         ];
         // custom initialization code goes here
+    }
+
+    public function behaviors() {
+        return [
+            'caseConverter' => [
+                'class' => CaseConverterFilter::class,
+            ],
+        ];
     }
 
 }
