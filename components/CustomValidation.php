@@ -1494,6 +1494,73 @@ class CustomValidation extends Component {
                             [['mobile_no'], 'validateContactDetail', 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification', 'specialCodeImportCsv']],
                     ],
                 ],
+                'TblPlant' => [
+                    'default' => [
+                            [['hamlet_code', 'sap_vendor_code'], 'required'],
+                            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
+                    ],
+                ],
+                'TblMccPlant' => [
+                    'default' => [
+                            [['hamlet_code', 'sap_vendor_code'], 'required'],
+                            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
+                    ],
+                ],
+                'TblDcsBmc' => [
+                    'default' => [
+                            [['hamlet_code'], 'required'],
+                            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['post_sap_data', 'from_mcc']],
+                            [
+                                ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['post_sap_data', 'from_mcc']
+                        ],
+                            [['aadhaar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
+                            [['sap_vendor_code'], 'required', 'except' => 'post_sap_data'],
+                    ],
+                ],
+                'TblDcs' => [
+                    'default' => [
+                            [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
+                            [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
+                            [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
+                            [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                            [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                                return $model->isAttributeChanged('sap_vendor_code', FALSE);
+                            }],
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
+                            [
+                                ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
+                        ],
+                            [['aadhaar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                            [['sap_vendor_code'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData']],
+                    ],
+                ],
+                'TblCustomerMaster' => [
+                    'default' => [
+                            [['aadhaar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
+                            [['sap_vendor_code'], 'required', 'except' => ['deleteRouteMapping']],
+                    ],
+                ],
+                'TblDcsProvisional' => [
+                    'default' => [
+                            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'uploadDoc']],
+                            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'uploadDoc']],
+                            [['aadhaar_no'], function ($attribute, $params) {
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
+                            [['valid_from'], 'required', 'except' => ['importCsv', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                            [['sap_vendor_code'], 'required', 'except' => ['routeMapping', 'saveCreamyData', 'uploadDoc', 'reject']],
+                    ],
+                ],
             ],
         ];
     }
