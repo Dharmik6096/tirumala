@@ -507,7 +507,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         $contactModel = new TblContactDetails();
         $contactModel->module_code = $this->model->id;
         $contactModel->module_name = 'user';
-        $contactModelData = $contactModel->getAllContactData(0);
+        $contactModel->mobile_no = !empty($this->model->mobile_no)?$this->model->mobile_no:'';
+        $contactModelData = $contactModel->getAllContactData(0,true);
         if (!empty($contactModelData)) {
             foreach ($contactModelData as $contactdetail) {
                 $historyModel = new TblContactDetailsHistory();

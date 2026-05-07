@@ -35,17 +35,17 @@ $attribute = [
         ['attribute' => 'customer_name'],
         ['attribute' => 'local_name', 'filter' => FALSE],
         [
-            'attribute' => 'gst_no',
-            'headerOptions' => ['class' => 'hidden-for-specific-client'],
-            'contentOptions' => ['class' => 'hidden-for-specific-client'],
-            'filterOptions' => ['class' => 'hidden-for-specific-client'],
-        ],
+        'attribute' => 'gst_no',
+        'headerOptions' => ['class' => 'hidden-for-specific-client'],
+        'contentOptions' => ['class' => 'hidden-for-specific-client'],
+        'filterOptions' => ['class' => 'hidden-for-specific-client'],
+    ],
         [
-            'attribute' => 'customer_category',
-            'headerOptions' => ['class' => 'd-none-for-specific-client'],
-            'contentOptions' => ['class' => 'd-none-for-specific-client'],
-            'filterOptions' => ['class' => 'd-none-for-specific-client'],
-        ],
+        'attribute' => 'customer_category',
+        'headerOptions' => ['class' => 'd-none-for-specific-client'],
+        'contentOptions' => ['class' => 'd-none-for-specific-client'],
+        'filterOptions' => ['class' => 'd-none-for-specific-client'],
+    ],
         ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
         ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,
@@ -132,6 +132,12 @@ $attribute = [
         ['attribute' => 'ts_code_m', 'visible' => FALSE],
         ['attribute' => 'ts_code_e', 'visible' => FALSE],
         ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_weight_manual', 'filter' => false, 'value' => function ($model) {
+            return isset($model->is_weight_manual) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->is_weight_manual] : '';
+        }, 'visible' => false],
+        ['attribute' => 'is_quality_manual', 'filter' => false, 'value' => function ($model) {
+            return isset($model->is_quality_manual) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->is_quality_manual] : '';
+        }, 'visible' => false],
 ];
 
 $grid_option = [
