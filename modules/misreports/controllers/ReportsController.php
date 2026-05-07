@@ -5458,7 +5458,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'TopSocietyMilkCollectionReport' => [
-                'param' => 'language_code,union_code,from_date:string,to_date:string,top:static:top',
+                'param' => 'language_code,union_code,from_date:string,to_date:string,top:txt',
                 'sp_name' => 'mis_top_society_milk_collection',
                 'scenario' => 'TopSocietyMilkCollectionReport',
                 'title' => 'SP - 101 - Top Society Milk Collection Report',
@@ -5466,7 +5466,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'TopFarmerMilkCollectionReport' => [
-                'param' => 'language_code,union_code,search_by_soc:static:search_by_soc,dcs_code:union_code,from_date:string,to_date:string,top:static:top,report_gender:static:report_gender',
+                'param' => 'language_code,union_code,search_by_soc:static:search_by_soc,dcs_code:union_code,from_date:string,to_date:string,top:txt,report_gender:static:report_gender',
                 'sp_name' => 'mis_top_farmer_milk_collection',
                 'scenario' => 'TopFarmerMilkCollectionReport',
                 'title' => 'SP - 102 - Top Farmer Collection Report',
