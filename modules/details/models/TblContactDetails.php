@@ -177,13 +177,15 @@ class TblContactDetails extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function getAllContactData($status) {
-        return $this->find()
-                        ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_active' => $status])
-                        ->orderBy(['detail_code' => SORT_DESC])
-                        ->limit(1)
-                        ->all();
+    public function getAllContactData($status, $is_activate = false) {
+        $query = $this->find()->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_active' => $status]);
+        if ($is_activate && !empty($this->mobile_no)) {
+            $query->andWhere(['mobile_no' => $this->mobile_no]);
+        }
+        $query->orderBy(['detail_code' => SORT_DESC])->limit(1);
+        return $query->all();
     }
+
 
     public function getOrgDetail() {
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
