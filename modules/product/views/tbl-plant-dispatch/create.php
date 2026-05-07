@@ -10,6 +10,7 @@ use yii\web\JsExpression;
 $this->title = Yii::$app->label->title('create', 'Plant Dispatch');
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 $grnWithoutStockEntry = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'grn_without_stock_entry', 'PORTAL');
+Yii::$app->disable->getDisableFields($txModel);
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -63,6 +64,22 @@ $script = "
     
     $('#tblplantdispatchtxn-sap_batch_no').on('change', function(){
         // checkPlantBatchNoExist();
+        addBtnEnable();
+    });
+
+    $('#tblplantdispatchtxn-product_mrp').on('change', function(){
+        addBtnEnable();
+    });
+
+    $('#tblplantdispatchtxn-distributor_landing_rate').on('change', function(){
+        addBtnEnable();
+    });
+
+    $('#tblplantdispatchtxn-sachiv_price').on('change', function(){
+        addBtnEnable();
+    });
+
+    $('#tblplantdispatchtxn-member_price').on('change', function(){
         addBtnEnable();
     });
    
@@ -133,8 +150,25 @@ $script = "
         var qty = $('#tblplantdispatchtxn-qty').val();
         var amount = $('#tblplantdispatchtxn-amount').val();
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
-        
-        if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '') {
+        var product_mrp = $('#tblplantdispatchtxn-product_mrp').val();
+        var distributor_landing_rate = $('#tblplantdispatchtxn-distributor_landing_rate').val();
+        var sachiv_price = $('#tblplantdispatchtxn-sachiv_price').val();
+        var member_price = $('#tblplantdispatchtxn-member_price').val();
+        var commonFields = (dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '');
+        var isClientFieldsMandatory = !$('.field-tblplantdispatchtxn-distributor_landing_rate').hasClass('disabled');
+        var clientFieldsValidate = false;
+        if(isClientFieldsMandatory) {
+            var clientFields = (product_mrp != '' && distributor_landing_rate != '' && sachiv_price != '' && member_price != '');
+            if(commonFields && clientFields) {
+                clientFieldsValidate = true;
+            }
+        } else {
+            if(commonFields) {
+                clientFieldsValidate = true;
+            }
+        }
+
+        if(clientFieldsValidate) {
             if(batchNoWiseInventory == '1' && (grnWithoutStockEntry == '1' || sap_batch_no != '')) {
                 $('.add-asset-record').removeClass('disabled no_pointer');
             }
@@ -156,6 +190,10 @@ $script = "
         var amount = $('#tblplantdispatchtxn-amount').val();
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
         var lr_no = $('#tblplantdispatchtxn-lr_no').val();
+        var product_mrp = $('#tblplantdispatchtxn-product_mrp').val();
+        var distributor_landing_rate = $('#tblplantdispatchtxn-distributor_landing_rate').val();
+        var sachiv_price = $('#tblplantdispatchtxn-sachiv_price').val();
+        var member_price = $('#tblplantdispatchtxn-member_price').val();
 
         if(product_code != ''){
             var existData = $('.selected_'+product_code).not('.edit_product').text().length;
@@ -190,6 +228,10 @@ $script = "
             add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblPlantDispatchTxn['+product_code+'][qty]\" ></td>';
             add_row += '<td>' + amount + '<input type=\"hidden\" class=\"added_amount\" value=\"'+amount+'\" name=\"TblPlantDispatchTxn['+product_code+'][amount]\" ></td>';
             add_row += '<td>' + lr_no + '<input type=\"hidden\" class=\"added_lr_no\" value=\"'+lr_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][lr_no]\" ></td>';
+            add_row += '<td>' + product_mrp + '<input type=\"hidden\" class=\"added_product_mrp\" value=\"'+product_mrp+'\" name=\"TblPlantDispatchTxn['+product_code+'][product_mrp]\" ></td>';
+            add_row += '<td>' + distributor_landing_rate + '<input type=\"hidden\" class=\"added_distributor_landing_rate\" value=\"'+distributor_landing_rate+'\" name=\"TblPlantDispatchTxn['+product_code+'][distributor_landing_rate]\" ></td>';
+            add_row += '<td>' + sachiv_price + '<input type=\"hidden\" class=\"added_sachiv_price\" value=\"'+sachiv_price+'\" name=\"TblPlantDispatchTxn['+product_code+'][sachiv_price]\" ></td>';
+            add_row += '<td>' + member_price + '<input type=\"hidden\" class=\"added_member_price\" value=\"'+member_price+'\" name=\"TblPlantDispatchTxn['+product_code+'][member_price]\" ></td>';
             add_row += '<td><a href=\'javascript:void(0)\' onClick=\'editTransaction(\"'+product_code+'\")\' class=\'edit\' title=\'Edit\'><span class=\"fa fa-pencil\"></span></a><a href=\'javascript:void(0)\' onClick=\'deleteTransaction(\"'+product_code+'\")\' class=\'view ml15\' title=\'Delete\'><span class=\"fa fa-remove\"></span></a></td>';
             add_row += '</tr>';
             $('tbody').append(add_row);
@@ -206,6 +248,10 @@ $script = "
                 $('#tblplantdispatchtxn-sap_batch_no').val('');
             }
             $('#tblplantdispatchtxn-lr_no').val('');
+            $('#tblplantdispatchtxn-product_mrp').val('');
+            $('#tblplantdispatchtxn-distributor_landing_rate').val('');
+            $('#tblplantdispatchtxn-sachiv_price').val('');
+            $('#tblplantdispatchtxn-member_price').val('');
             $('tbody tr.edit_product').remove();
             $('.single_entry_area').addClass('disabled no_pointer');
 //            $('.sap_batch_no').addClass('disabled no_pointer');
@@ -229,6 +275,10 @@ $script = "
         $('#tblplantdispatchtxn-rate').val($('.'+select_raw_class+' .added_rate').val());
         $('#tblplantdispatchtxn-amount').val($('.'+select_raw_class+' .added_amount').val());
         $('#tblplantdispatchtxn-lr_no').val($('.'+select_raw_class+' .added_lr_no').val());
+        $('#tblplantdispatchtxn-product_mrp').val($('.'+select_raw_class+' .added_product_mrp').val());
+        $('#tblplantdispatchtxn-distributor_landing_rate').val($('.'+select_raw_class+' .added_distributor_landing_rate').val());
+        $('#tblplantdispatchtxn-sachiv_price').val($('.'+select_raw_class+' .added_sachiv_price').val());
+        $('#tblplantdispatchtxn-member_price').val($('.'+select_raw_class+' .added_member_price').val());
         $('.add-asset-record').removeClass('disabled no_pointer');
     }
     
