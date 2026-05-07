@@ -63,7 +63,22 @@ class ReportsController extends \app\controllers\ChildController {
             $this->data['export_file_name'] = $this->data['title'];
         }
         $model->upload_ftp_file = '0';
-        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
+        $header_labels = Yii::$app->request->post('header_labels');
+        $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
+        $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
+        $searchParams = $this->getSearchParams($header_labels_arr, $model);
+        
+        return $this->render('index', [
+                    'result' => $this->output,
+                    'message' => $this->message,
+                    'report' => $this->report,
+                    'data' => $this->data,
+                    'model' => $model,
+                    'dataProvider' => $this->dataProvider,
+                    'fileDownloadArr' => $this->fileDownloadArr,
+                    'companyName' => $companyName,
+                    'searchParams' => $searchParams,
+        ]);
     }
 
     public function actionMemberDailyCollection() {
