@@ -6416,8 +6416,8 @@ div#dashboardFarmerPopup {
     -webkit-touch-callout: none; 
 }
 
-.field-reportsmodel-show_val .form-check{
-    margin-top: 25px;
+.field-reportsmodel-show_val .form-check , .field-reportsmodel-is_show_zero_val .form-check{
+    margin-top: 15px;
 }
 
 .radio-section{
@@ -6440,4 +6440,8 @@ div#dashboardFarmerPopup {
 .mt-25 {
     margin-top: 25px;
     margin-bottom: 0px;
+}
+
+.checkbox_padding_0:has(.field-reportsmodel-last_rate) {
+    margin-top: 0px !important;
 }
