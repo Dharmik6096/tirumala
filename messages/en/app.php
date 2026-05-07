@@ -146,4 +146,8 @@ return [
     'dcs_code' => 'society_code',
     'dcs_code_ex' => 'society_code_ex',
     'dcs_name' => 'society_name',
+    'Member Code' => 'Farmer Code',
+    'Member Name' => 'Farmer Name',
+    'member_code' => 'farmer_code',
+    'member_name' => 'farmer_name',
 ];

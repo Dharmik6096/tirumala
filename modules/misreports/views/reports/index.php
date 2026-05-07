@@ -28,7 +28,8 @@ $model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmp
 $model->from_time = empty($model->from_time) ? date('H:i') : $model->from_time;
 $model->to_time = empty($model->to_time) ? date('H:i') : $model->to_time;
 $model->from_code = empty($model->from_code) ? 1 : $model->from_code;
-$model->to_code = empty($model->to_code) ? 9999 : $model->to_code;
+$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport']) ? 99999 : 9999;
+$model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
 $model->to_soc = empty($model->to_soc) ? 100 : $model->to_soc;
 if (isset($data['url1'])) {
@@ -38,8 +39,16 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
 
-    <div class="panel-heading"><?= Html::encode($this->title) ?></div>
-    <?php
+    <?php if (!empty($result) && !empty($data['header_included']) && $data['header_included'] == true) { ?>
+        <div class="text-center report-header-info mt23 mb15">
+            <h3 class="label_heading mt3"><b><?= Html::encode($companyName) ?></b></h3>
+            <h4 class="text-info mt3"><b><?= Yii::t('app', $data['title']) ?></b></h4>
+            <p class="search-params mt3"><b><?= Html::encode($searchParams) ?></b></p>
+        </div>
+    <?php } else { ?>
+        <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+        <?php
+    }
     $removeExportType = [];
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
@@ -350,7 +359,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'top', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 $static_class = 'col-sm-6 mb15';
                                                 if ($value == 'region_type') {
@@ -1070,18 +1079,24 @@ $('.mis_report_modal_toggle').on('click', function(){
        
     }
         
-    function handleHideShow(selectedValue) {
+      function handleHideShow(selectedValue) {
         var fromCode = $('#reportsmodel-from_code');
         var toCode = $('#reportsmodel-to_code');
 
         if (selectedValue == '1' || selectedValue == '2') {
             $('.val_from_code, .val_to_code').show();
-            fromCode.prop('readonly', false).val('1');
+            if (fromCode.val() == '' || fromCode.val() == '0') {
+                fromCode.val('1');
+            }
+            fromCode.prop('readonly', false);
 
             if (selectedValue == '1') {
-                toCode.prop('readonly', true).val('1');
+                toCode.val('1').prop('readonly', true);
             } else {
-                toCode.prop('readonly', false).val('9999');
+                if (toCode.val() == '' || toCode.val() == '0') {
+                    toCode.val('" . $toCodeDefault . "');
+                }
+                toCode.prop('readonly', false);
             }
         } else {
             $('.val_from_code, .val_to_code').hide();
@@ -1178,7 +1193,7 @@ $('.mis_report_modal_toggle').on('click', function(){
             } else if ($(this).is(':radio')) {
                 var name = $(this).attr('name');
                 if (name && name.toLowerCase().indexOf('reportsmodel') !== -1) {
-                    key = name.replace(/^reportsmodel\[|\]$/i, '');
+                    key = name.replace(/^reportsmodel\[|\]$/ig, '');
                 }
                 var radioText = $(this).closest('label').text().trim();
                 if (radioText !== '') {

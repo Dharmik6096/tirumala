@@ -6445,3 +6445,9 @@ div#dashboardFarmerPopup {
 .checkbox_padding_0:has(.field-reportsmodel-last_rate) {
     margin-top: 0px !important;
 }
+.mt3 {
+    margin-top: 3px !important;
+}
+.checkbox_padding_0:has(.field-reportsmodel-is_group_by_society) {
+    margin-top: 28px !important;
+}
