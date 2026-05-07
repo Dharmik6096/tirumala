@@ -183,7 +183,6 @@ class TblContactDetails extends \app\models\ChildModel {
             $query->andWhere(['mobile_no' => $this->mobile_no])
                 ->orderBy(['detail_code' => SORT_DESC])
                 ->limit(1);
-            return $query->all();
         }
         return $query->all();
     }
