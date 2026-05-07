@@ -38,8 +38,15 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
 
-    <div class="panel-heading"><?= Html::encode($this->title) ?></div>
-    <?php
+    <?php if (!empty($result) && !empty($data['header_included']) && $data['header_included'] == true) { ?>
+        <div class="text-center report-header-info mt23 mb15">
+            <h3 class="label_heading mt3"><b><?= Html::encode($companyName) ?></b></h3>
+            <h4 class="text-info mt3"><b><?= Yii::t('app', $data['title']) ?></b></h4>
+            <p class="search-params mt3"><b><?= Html::encode($searchParams) ?></b></p>
+        </div>
+    <?php } else { ?>
+        <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+    <?php }
     $removeExportType = [];
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
@@ -1178,7 +1185,7 @@ $('.mis_report_modal_toggle').on('click', function(){
             } else if ($(this).is(':radio')) {
                 var name = $(this).attr('name');
                 if (name && name.toLowerCase().indexOf('reportsmodel') !== -1) {
-                    key = name.replace(/^reportsmodel\[|\]$/i, '');
+                    key = name.replace(/^reportsmodel\[|\]$/ig, '');
                 }
                 var radioText = $(this).closest('label').text().trim();
                 if (radioText !== '') {
