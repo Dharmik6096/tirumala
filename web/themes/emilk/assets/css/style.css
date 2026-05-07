@@ -6445,3 +6445,6 @@ div#dashboardFarmerPopup {
 .checkbox_padding_0:has(.field-reportsmodel-last_rate) {
     margin-top: 0px !important;
 }
+.mt3 {
+    margin-top: 3px !important;
+}
