@@ -1127,17 +1127,14 @@ $('.mis_report_modal_toggle').on('click', function(){
     
     function hideContactShift(){
         var sms_type =  $('#reportsmodel-sms_type').val();
-        if(sms_type == '1'){ 
+        if(sms_type == '0'){ 
             $('.MobileHideShow').show();
             $('.ShiftHideShow').hide();
             resetField('.ShiftHideShow select')
-        }else if(sms_type == '2'){ 
-            $('.MobileHideShow').hide();
+        }else if(sms_type == '1'){ 
             $('.ShiftHideShow').show();
-            $('.MobileHideShow input').val('').trigger('change').trigger('select2:select');
         }else {
-            $('.MobileHideShow, .ShiftHideShow').hide();
-            $('.MobileHideShow input').val('').trigger('change').trigger('select2:select');
+            $('.ShiftHideShow').hide();
             resetField('.ShiftHideShow select')
         }
     }
