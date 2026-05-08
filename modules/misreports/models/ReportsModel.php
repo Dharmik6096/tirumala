@@ -39,9 +39,8 @@ class ReportsModel extends Model {
                     return $('#reportsmodel-member_types').val() != 0;
                 }", 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'MilkRatePublishReport']],
                 [['to_code'], 'number', 'max' => 9999, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'MilkEditReport', 'MilkPurchaseAnalysis', 'FarmerListReport', 'MilkCompare', 'SmsDetailReport']],
-                [['to_code'], 'number', 'max' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport']],
+                [['to_code', 'to_soc'], 'number', 'max' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
                 [['from_soc'], 'number', 'min' => 1, 'on' => ['ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
-                [['to_soc'], 'number', 'max' => 100, 'on' => ['FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
                 [['top'], 'number', 'min' => 1, 'max' => 50, 'on' => ['TopSocietyMilkCollectionReport', 'TopFarmerMilkCollectionReport']],
                 [['no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'number', 'min' => 0, 'on' => ['MilkEditForFarmerReport']],
                 [['union_code', 'plant_code', 'mcc_code', 'date', 'shift'], 'required', 'on' => ['MemberCollectionShiftReport']],
@@ -246,15 +245,18 @@ class ReportsModel extends Model {
                 [['language_code', 'union_code', 'region_type', 'soc_type', 'show_only_received_data'], 'required', 'on' => ['OnlineOfflineSocietyReport']],
                 [['language_code', 'union_code', 'from_soc', 'to_soc', 'date', 'shift_code', 'report_rate_type', 'report_status_type'], 'required', 'on' => ['MilkRatePublishReport']],
                 [['language_code', 'union_code', 'dcs_code', 'date', 'sms_type', 'member_types', 'from_code', 'to_code'], 'required', 'on' => ['SmsDetailReport']],
+                [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['SmsDetailReport']],
                 [['mobile_no'], 'required', 'when' => function ($model) {
+                    return $model->sms_type == 0;
+                }, 'whenClient' => "function (attribute, value) {
+                    var val = $('#reportsmodel-sms_type').val() == '0';
+                }", 'on' => ['SmsDetailReport']],
+                [['shift_code'], 'required', 'when' => function ($model) {
                     return $model->sms_type == 1;
                 }, 'whenClient' => "function (attribute, value) {
                     var val = $('#reportsmodel-sms_type').val() == '1';
-                }", 'on' => ['SmsDetailReport']],
-                [['shift_code'], 'required', 'when' => function ($model) {
-                    return $model->sms_type == 2;
-                }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-sms_type').val() == '2';
                 }", 'on' => ['SmsDetailReport']],
                 [['language_code', 'union_code', 'from_date', 'to_date', 'top'], 'required', 'on' => ['TopSocietyMilkCollectionReport']],
                 [['language_code', 'union_code', 'search_by_soc', 'dcs_code', 'from_date', 'to_date', 'top', 'report_gender'], 'required', 'on' => ['TopFarmerMilkCollectionReport']],
