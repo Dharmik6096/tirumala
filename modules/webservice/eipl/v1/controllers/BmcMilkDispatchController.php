@@ -18,7 +18,9 @@ use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\tankermovement\models\TblBmcDispatchStockHistory;
 use app\modules\tankermovement\models\TblQtyDiffType;
+use app\modules\tankermovement\models\TblVehicleTripHistory;
 use app\modules\transporter\models\TblVehicleCompartmentDetail;
 
 class BmcMilkDispatchController extends MasterController {
@@ -238,10 +240,15 @@ class BmcMilkDispatchController extends MasterController {
         $tripModel->trip_code = $model->trip_code;
         $tripModel = $tripModel->getTripData();
         if ($tripModel) {
-            $tripModel->trip_status = $model->is_last_destination == 1 ? 'tankerfull' : 'open';
+            if($model->is_last_destination == 1){
+                $tripModelHistory = new TblVehicleTripHistory();
+                Yii::$app->operation->history($tripModel, $tripModelHistory, 'UPDATE');
+                $saveModels[] = $tripModelHistory;
+                $tripModel->trip_status = 'tankerfull';
+                $saveModels[] = $tripModel;
+            }
             $model->driver_name = $tripModel->driver_name;
             $model->driver_contact_no = $tripModel->mobile_no;
-            $saveModels[] = $tripModel;
         }
 
         $dispatchTxnData = !empty($reqData['dispatch_txn']) ? $reqData['dispatch_txn'] : [$reqData];
@@ -395,6 +402,9 @@ class BmcMilkDispatchController extends MasterController {
                     $stockModel->closing_bal = $txnModel->dispatch_qty;
                     $existingStock = $stockModel->getStockEntry();
                     if ($existingStock && strtolower($existingStock->type) == 'dispatch') {
+                        $stockModelHistory = new TblBmcDispatchStockHistory();
+                        Yii::$app->operation->history($existingStock, $stockModelHistory, 'UPDATE');
+                        $saveModels[] = $stockModelHistory;
                         $stockModel = $existingStock;
                         $stockModel->qty_diff = $txnModel->qty_diff;
                         $stockModel->qty_diff_type_code = $txnModel->qty_diff_type_code;
