@@ -220,12 +220,12 @@ class ReportsModel extends Model {
                 [['dcs_code'], 'required', 'when' => function ($model) {
                     return $model->search_by == 1;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-search_by').val() == '1';
+                    return $('#reportsmodel-search_by').val() == '1';
                 }", 'on' => ['MilkEditReport', 'MilkEditSummary', 'SocietyList']],
                 [['region_code'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-search_by').val() == '2';
+                    return $('#reportsmodel-search_by').val() == '2';
                 }", 'on' => ['MilkEditReport', 'MilkEditSummary']],
                 [['language_code', 'union_code', 'region_code', 'search_type', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'from_code', 'to_code'], 'required', 'on' => ['DateWiseMilkPurchaseSummary']],
                 [['language_code', 'union_code', 'dcs_code', 'date', 'shift_code', 'milk_type_code', 'member_types', 'from_code', 'to_code', 'report_sort_by', 'sort_direction'], 'required', 'on' => ['MilkPurchaseAnalysis']],
@@ -237,7 +237,7 @@ class ReportsModel extends Model {
                 [['region_type'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-search_by').val() == '2';
+                    return $('#reportsmodel-search_by').val() == '2';
                 }", 'on' => ['SocietyList']],
                 [['language_code', 'union_code', 'dcs_code', 'farmer_sort_type', 'registered_type'], 'required', 'on' => ['FarmerAppDetailsReport']],
                 [['language_code', 'union_code', 'region_code', 'from_code', 'to_code', 'from_date', 'to_date', 'group_by_region'], 'required', 'on' => ['UnionWiseMessageDetailReport']],
@@ -251,12 +251,12 @@ class ReportsModel extends Model {
                 [['mobile_no'], 'required', 'when' => function ($model) {
                     return $model->sms_type == 0;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-sms_type').val() == '0';
+                    return $('#reportsmodel-sms_type').val() == '0';
                 }", 'on' => ['SmsDetailReport']],
                 [['shift_code'], 'required', 'when' => function ($model) {
                     return $model->sms_type == 1;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-sms_type').val() == '1';
+                    return $('#reportsmodel-sms_type').val() == '1';
                 }", 'on' => ['SmsDetailReport']],
                 [['language_code', 'union_code', 'from_date', 'to_date', 'top'], 'required', 'on' => ['TopSocietyMilkCollectionReport']],
                 [['language_code', 'union_code', 'search_by_soc', 'dcs_code', 'from_date', 'to_date', 'top', 'report_gender'], 'required', 'on' => ['TopFarmerMilkCollectionReport']],
