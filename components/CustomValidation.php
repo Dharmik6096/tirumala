@@ -1278,6 +1278,34 @@ class CustomValidation extends Component {
                             [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'mobile_no'], 'required', 'on' => ['member']],
                     ]
                 ],
+                'TblVehicleMaster' => [
+                    'default' => [
+                            [['parsing_no'], function ($attribute, $params) {
+                                Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+                            }, 'except' => ['activation']],
+                            [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
+                    ],
+                ],
+                'TblBmcMilkDispatch' => [
+                    'default' => [
+                            [['tested_by'], 'required']
+                    ],
+                ],
+                'TblBmcMilkDispatchTxn' => [
+                    'default' => [
+                            [['shift_of_milk'], 'required']
+                    ],
+                ],
+                'TblMilkVehicleEntryQlty' => [
+                    'default' => [
+                            [['tested_by', 'verified_by'], 'required', 'except' => ['resetQlty']]
+                    ],
+                ],
+                'TblMilkVehicleEntryQltyMerge' => [
+                    'default' => [
+                            [['tested_by', 'verified_by'], 'required', 'except' => ['androidsync']]
+                    ],
+                ],
             ],
             'DODLA' => [
                 'TblVehicleMaster' => [
