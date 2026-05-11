@@ -16,6 +16,7 @@ use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblApiMaster;
+use app\modules\usermanagement\models\TblEiplAppMenuActionsMapping;
 
 class EiplAppController extends MasterController {
 
@@ -357,4 +358,26 @@ class EiplAppController extends MasterController {
         return \Yii::$app->general->getSpData($sp_name, $sp_param);
     }
 
+    public function actionAppMenu() {
+        $identity = Yii::$app->eiplapp->identity;
+        if (empty($identity)) {
+            $this->response->setStatusCode($this->eiplResponseCode->statusError);
+            $this->response->setMessage(['Invalid Access.']);
+            return $this->response;
+        }
+
+        $appType = $identity->app_type;
+        $loginType = $identity->login_type;
+        $department = $identity->department;
+        $menuList = TblEiplAppMenuActionsMapping::find()
+                ->alias('m')
+                ->select(['a.action_code', 'a.action_name', 'a.service_url', 'a.description', 'a.parent_code', 'a.sequence_no'])
+                ->innerJoin('tbl_eipl_app_menu_actions a', 'a.action_code = m.action_code')
+                ->where(['m.app_type' => $appType, 'm.login_type' => $loginType, 'm.department' => $department, 'a.is_active' => 1])
+                ->orderBy(['a.sequence_no' => SORT_ASC])
+                ->asArray()
+                ->all();
+        $this->response->setData($menuList);
+        return $this->response;
+    }
 }

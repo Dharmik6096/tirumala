@@ -1398,7 +1398,7 @@ class DropDown extends Component {
             'login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['ALL' => Yii::t('app', 'ALL'), 'MEMBER' => Yii::t('app', 'MEMBER'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
+                'data' => ['ALL' => Yii::t('app', 'ALL'), 'MEMBER' => Yii::t('app', 'MEMBER'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'DRIVER' => Yii::t('app', 'DRIVER')],
                 'remove_key' => ['ALL']
             ],
             'is_quality_auto' => [
