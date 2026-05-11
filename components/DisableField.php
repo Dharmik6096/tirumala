@@ -39,6 +39,11 @@ class DisableField extends Component {
                     'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'dip_open', 'dip_close', 'dip_diff',
                 ],
             ],
+            'ABT' => [
+                'TblBmcMilkDispatchTxn' => [
+                    'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'dip_open', 'dip_close', 'dip_diff',
+                ],
+            ],
             'BANAS' => [
                 'TblProductSale' => [],
                 'TblPlantDispatchTxn' => [],
