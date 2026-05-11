@@ -10,7 +10,7 @@ $response = Yii::$app->general->getColumnName($tripDetail->source_org_type);
 $sourceData = $tripDetail->{$response['rel'] . 'Source'};
 $sourceValue = !empty($sourceData) ? $sourceData->{$response['name']} . '-' . strtoupper($tripDetail->source_org_type) : '';
 $sourceCode = !empty($sourceData) ? $sourceData->{$response['ref_code']} : '';
-$client_code = Yii::$app->session->get('eiplCode') == 'DODLA';
+$client_code = in_array(Yii::$app->session->get('eiplCode'), ['DODLA', 'ABT']);
 $currentDateTime = date('Y-m-d\TH:i:s');
 ?>
 <div class="modal modal-default fade" id="TripDetailModal" role="dialog">
