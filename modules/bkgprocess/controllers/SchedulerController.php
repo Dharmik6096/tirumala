@@ -502,7 +502,8 @@ class SchedulerController extends ChildController {
                 }
             }
             $filePath = $path . $fileName;
-            $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
+            $writerType = (strtolower(pathinfo($fileName, PATHINFO_EXTENSION)) == 'xlsx') ? IOFactory::WRITER_XLSX : IOFactory::WRITER_XLS;
+            $objWriter = IOFactory::createWriter($objPHPExcel, $writerType);
             $objWriter->save($filePath);
             return $absoluteBaseUrl . $folder . $fileName;
         }
@@ -1740,7 +1741,7 @@ class SchedulerController extends ChildController {
         $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
         if (!empty($result) && $report_type == 'excel') {
             $datetime = date('YmdHis') . $j;
-            $fileName = str_replace(' ', '_', $datetime . '-' . $data['report_name']) . '.xls';
+            $fileName = str_replace(' ', '_', $datetime . '-' . $data['report_name']) . '.xlsx';
             $file_path = $this->CreateFile($fileName, $result, '', $isMultiSheet);
             $file_path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . $this->attachment_folder . $fileName;
         }
