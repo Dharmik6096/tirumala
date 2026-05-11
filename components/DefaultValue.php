@@ -48,6 +48,13 @@ class DefaultValue extends Component {
                     'dpu_type' => 0,
                     'machine_owned' => 2
                 ],
+                'TblVehicleMaster' => [
+                    'billing_method' => 'fix_rent_daily',
+                    'vehicle_use_type' => 1,
+                    'fuel_type_code' => 2,
+                    'flag_wef_date' => date('Y-m-d'),
+                    'billing_qty_flag' => 1,
+                ],
             ],
             'DODLA' => [
                 'TblVehicleMaster' => [
