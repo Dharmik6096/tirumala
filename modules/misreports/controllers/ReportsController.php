@@ -70,7 +70,7 @@ class ReportsController extends \app\controllers\ChildController {
         $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
         $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
         $searchParams = $this->getSearchParams($header_labels_arr, $model);
-        
+
         return $this->render('index', [
                     'result' => $this->output,
                     'message' => $this->message,
@@ -5384,7 +5384,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FarmerListReport' => [
                 'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,report_member_type:static:report_member_type,member_types:static:member_types,from_code:txt,to_code:txt,farmer_type:static:farmer_type',
-                //'sp_name' => '',
+                'sp_name' => 'mis_farmer_list',
                 'scenario' => 'FarmerListReport',
                 'title' => 'S - 102 - Farmer List Report',
                 'header_included' => TRUE,
@@ -5457,8 +5457,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'MilkRatePublishReport' => [
-                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,date:string,shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
-//                'sp_name' => '',
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,date:string:shift_code,report_rate_type:static:report_rate_type,report_status_type:static:report_status_type',
+                'sp_name' => 'mis_milk_rate_publish',
                 'scenario' => 'MilkRatePublishReport',
                 'title' => 'S - 106 - Milk Rate Publish Report',
                 'header_included' => TRUE,
@@ -5466,7 +5466,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'SmsDetailReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,date:string,sms_type:static:sms_type,mobile_no:txt,shift_code,member_types:static:member_types,from_code:txt,to_code:txt',
-//                'sp_name' => '',
+                'sp_name' => 'mis_sms_detail',
                 'scenario' => 'SmsDetailReport',
                 'title' => 'O - 103 - Sms Detail Report',
                 'header_included' => TRUE,

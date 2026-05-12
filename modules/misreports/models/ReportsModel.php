@@ -33,15 +33,16 @@ class ReportsModel extends Model {
                 [['to_code'], 'default', 'value' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport']],
                 [['to_soc'], 'default', 'value' => 100, 'on' => ['FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
                 [['from_time', 'to_time'], 'default', 'value' => date('H:i'), 'on' => ['SocietySampleReport']],
+                [['from_time', 'to_time'], 'time', 'format' => 'php:H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01:30'), 'on' => ['SocietySampleReport']],
+                [['from_time', 'to_time'], 'validateExceedTime', 'params' => ['min' => '00:00', 'max' => '23:59'], 'skipOnError' => true, 'on' => ['SocietySampleReport']],
                 [['from_code', 'from_soc', 'to_code', 'to_soc'], 'number', 'min' => 1, 'when' => function($model) {
                     return $model->member_types != 0;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-member_types').val() != 0;
                 }", 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'MilkRatePublishReport']],
                 [['to_code'], 'number', 'max' => 9999, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'MilkEditReport', 'MilkPurchaseAnalysis', 'FarmerListReport', 'MilkCompare', 'SmsDetailReport']],
-                [['to_code'], 'number', 'max' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport']],
+                [['to_code', 'to_soc'], 'number', 'max' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
                 [['from_soc'], 'number', 'min' => 1, 'on' => ['ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
-                [['to_soc'], 'number', 'max' => 100, 'on' => ['FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
                 [['top'], 'number', 'min' => 1, 'max' => 50, 'on' => ['TopSocietyMilkCollectionReport', 'TopFarmerMilkCollectionReport']],
                 [['no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'number', 'min' => 0, 'on' => ['MilkEditForFarmerReport']],
                 [['union_code', 'plant_code', 'mcc_code', 'date', 'shift'], 'required', 'on' => ['MemberCollectionShiftReport']],
@@ -221,12 +222,12 @@ class ReportsModel extends Model {
                 [['dcs_code'], 'required', 'when' => function ($model) {
                     return $model->search_by == 1;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-search_by').val() == '1';
+                    return $('#reportsmodel-search_by').val() == '1';
                 }", 'on' => ['MilkEditReport', 'MilkEditSummary', 'SocietyList']],
                 [['region_code'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-search_by').val() == '2';
+                    return $('#reportsmodel-search_by').val() == '2';
                 }", 'on' => ['MilkEditReport', 'MilkEditSummary']],
                 [['language_code', 'union_code', 'region_code', 'search_type', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'from_code', 'to_code'], 'required', 'on' => ['DateWiseMilkPurchaseSummary']],
                 [['language_code', 'union_code', 'dcs_code', 'date', 'shift_code', 'milk_type_code', 'member_types', 'from_code', 'to_code', 'report_sort_by', 'sort_direction'], 'required', 'on' => ['MilkPurchaseAnalysis']],
@@ -238,7 +239,7 @@ class ReportsModel extends Model {
                 [['region_type'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-search_by').val() == '2';
+                    return $('#reportsmodel-search_by').val() == '2';
                 }", 'on' => ['SocietyList']],
                 [['language_code', 'union_code', 'dcs_code', 'farmer_sort_type', 'registered_type'], 'required', 'on' => ['FarmerAppDetailsReport']],
                 [['language_code', 'union_code', 'region_code', 'from_code', 'to_code', 'from_date', 'to_date', 'group_by_region'], 'required', 'on' => ['UnionWiseMessageDetailReport']],
@@ -246,15 +247,18 @@ class ReportsModel extends Model {
                 [['language_code', 'union_code', 'region_type', 'soc_type', 'show_only_received_data'], 'required', 'on' => ['OnlineOfflineSocietyReport']],
                 [['language_code', 'union_code', 'from_soc', 'to_soc', 'date', 'shift_code', 'report_rate_type', 'report_status_type'], 'required', 'on' => ['MilkRatePublishReport']],
                 [['language_code', 'union_code', 'dcs_code', 'date', 'sms_type', 'member_types', 'from_code', 'to_code'], 'required', 'on' => ['SmsDetailReport']],
+                [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['SmsDetailReport']],
                 [['mobile_no'], 'required', 'when' => function ($model) {
-                    return $model->sms_type == 1;
+                    return $model->sms_type == 0;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-sms_type').val() == '1';
+                    return $('#reportsmodel-sms_type').val() == '0';
                 }", 'on' => ['SmsDetailReport']],
                 [['shift_code'], 'required', 'when' => function ($model) {
-                    return $model->sms_type == 2;
+                    return $model->sms_type == 1;
                 }, 'whenClient' => "function (attribute, value) {
-                    var val = $('#reportsmodel-sms_type').val() == '2';
+                    return $('#reportsmodel-sms_type').val() == '1';
                 }", 'on' => ['SmsDetailReport']],
                 [['language_code', 'union_code', 'from_date', 'to_date', 'top'], 'required', 'on' => ['TopSocietyMilkCollectionReport']],
                 [['language_code', 'union_code', 'search_by_soc', 'dcs_code', 'from_date', 'to_date', 'top', 'report_gender'], 'required', 'on' => ['TopFarmerMilkCollectionReport']],
@@ -262,7 +266,7 @@ class ReportsModel extends Model {
                 [['language_code', 'union_code', 'from_code', 'to_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SocietyWiseSummaryReport']],
                 [['language_code', 'union_code', 'from_code', 'to_code', 'from_date', 'to_date', 'show_only_received_data'], 'required', 'on' => ['FarmerNotSubmittingMilkReport']],
                 [['language_code', 'union_code', 'from_soc', 'to_soc', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['ManualCollectionSummaryReport']],
-                [['language_code', 'union_code', 'from_soc', 'to_soc', 'from_date', 'region_code', 'edit_type', 'no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'required', 'on' => ['MilkEditForFarmerReport']],
+                [['language_code', 'union_code', 'from_soc', 'to_soc', 'from_date', 'edit_type', 'no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'required', 'on' => ['MilkEditForFarmerReport']],
                 [['language_code', 'union_code', 'report_app_type', 'registered_type', 'status_type'], 'required', 'on' => ['MuAppVdcsAppUserReport']],
                 [['language_code', 'union_code', 'region_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'from_time', 'to_time', 'is_show_zero_val', 'is_group_by_society', 'last_rate'], 'required', 'on' => ['SocietySampleReport']],
                 [['to_soc'], 'validateToSoc', 'on' => ['ManualCollectionSummaryReport', 'MilkEditForFarmerReport', 'FarmerListReport', 'MilkRatePublishReport']],
@@ -429,6 +433,33 @@ class ReportsModel extends Model {
             if ($this->from_soc > $this->to_soc) {
                 $this->addError($attribute, Yii::t('app/validation', 'Minimum ' . $this->getAttributeLabel('to_soc') . ' is ' . $this->from_soc . '.'));
                 return false;
+            }
+        }
+    }
+
+    public function validateExceedTime($attribute, $params) {
+        $value = $this->$attribute;
+        $minStr = $params['min'];
+        $maxStr = $params['max'];
+
+        if (!empty($value) && empty($this->getErrors())) {
+            if ($value < $minStr || $value > $maxStr) {
+                $this->addError($attribute, $this->getAttributeLabel($attribute) . " must be between $minStr and $maxStr.");
+                return false;
+            }
+
+            if (!empty($this->from_time) && !empty($this->to_time)) {
+                $from = strtotime($this->from_time);
+                $to = strtotime($this->to_time);
+
+                if ($from >= $to) {
+                    if ($attribute == 'from_time') {
+                        $this->addError($attribute, "From Time must be smaller than To Time.");
+                    } else {
+                        $this->addError($attribute, "To Time must be greater than From Time.");
+                    }
+                    return false;
+                }
             }
         }
     }

@@ -5045,7 +5045,7 @@ tr.highlightRow {
     color: #fff !important;
 }
 
-#report-form .shift, #report-form .reportDate, #report-form .col-sm-3 {
+#report-form .reportDate, #report-form .col-sm-3 {
     height: 56px
 }
 
@@ -6450,4 +6450,10 @@ div#dashboardFarmerPopup {
 }
 .checkbox_padding_0:has(.field-reportsmodel-is_group_by_society) {
     margin-top: 28px !important;
+}
+#report-form .field-reportsmodel-mobile_no{
+    height: 10px;
+}
+#report-form .field-reportsmodel-milk_sort_by{
+    margin-bottom: 16px;
 }

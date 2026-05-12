@@ -1136,10 +1136,10 @@ echo GhostMenu::widget([
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Society Reports') . '<b class="caret"></b></a>',
                             'items' => [
                                     ['label' => 'S - 101 -' . Yii::t('app', 'Society List'), 'url' => ['/misreports/reports/society-list']],
-//                                    ['label' => 'S - 102 -' . Yii::t('app', 'Farmer List'), 'url' => ['/misreports/reports/farmer-list-report']],
-                                ['label' => 'S - 103 -' . Yii::t('app', 'Farmer App Details'), 'url' => ['/misreports/reports/farmer-app-details-report']],
+                                    ['label' => 'S - 102 -' . Yii::t('app', 'Farmer List'), 'url' => ['/misreports/reports/farmer-list-report']],
+                                    ['label' => 'S - 103 -' . Yii::t('app', 'Farmer App Details'), 'url' => ['/misreports/reports/farmer-app-details-report']],
                                     ['label' => 'S - 105 -' . Yii::t('app', 'Union Wise Message Detail'), 'url' => ['/misreports/reports/union-wise-message-detail-report']],
-//                                    ['label' => 'S - 106 -' . Yii::t('app', 'Milk Rate Publish'), 'url' => ['/misreports/reports/milk-rate-publish-report']],
+                                    ['label' => 'S - 106 -' . Yii::t('app', 'Milk Rate Publish'), 'url' => ['/misreports/reports/milk-rate-publish-report']],
                             ]
                         ],
                             [
@@ -1148,7 +1148,7 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => 'O - 101 -' . Yii::t('app', 'Union Wise Message'), 'url' => ['/misreports/reports/union-wise-message-report']],
                                     ['label' => 'O - 102 -' . Yii::t('app', 'Online Offline Society'), 'url' => ['/misreports/reports/online-offline-society-report']],
-//                                    ['label' => 'O - 103 -' . Yii::t('app', 'Sms Detail'), 'url' => ['/misreports/reports/sms-detail-report']],
+                                    ['label' => 'O - 103 -' . Yii::t('app', 'Sms Detail'), 'url' => ['/misreports/reports/sms-detail-report']],
                             ]
                         ],
                             [

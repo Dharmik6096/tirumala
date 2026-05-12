@@ -31,8 +31,8 @@ var exportThisWithParameter = (function () {
                 headerHtml += '<tr><th colspan="' + colspan + '" style="text-align:center; font-size:14px; font-weight:bold;">' + params + '</th></tr>';
             }
         }
-        htmlData = htmlData + '<thead>' + headerHtml + $('#' + table_id + ' thead ').eq(0).html() + '</thead>';
-        htmlData = htmlData + '<tbody>' + $('#' + table_id + ' tbody ').html() + '</tbody>';
+        var theadRows = $('#' + table_id + ' thead ').eq(0).html() || $('.fht-thead table thead').html() || '';
+        htmlData = (headerHtml + theadRows + $('#' + table_id + ' tbody ').html()).replace(/ style="[^"]*"/gi, '');
         setTimeout(() => {
             tableID = document.getElementById(tableID)
             var ctx = {worksheet: excelName || 'Worksheet', table: htmlData}

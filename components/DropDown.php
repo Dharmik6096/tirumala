@@ -2560,12 +2560,12 @@ class DropDown extends Component {
             'report_status_type' => [
                 'name' => 'report_status_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Sent'), 3 => Yii::t('app', 'Success'), 4 => Yii::t('app', 'Fail'), 5 => Yii::t('app', 'Conflict')],
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Success')],
             ],
             'sms_type' => [
                 'name' => 'sms_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'Otp'), 2 => Yii::t('app', 'Milk Collection')],
+                'data' => [0 => Yii::t('app', 'Otp'), 1 => Yii::t('app', 'Milk Collection')],
             ],
             'search_by_soc' => [
                 'name' => 'search_by_soc',
