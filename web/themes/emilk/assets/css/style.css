@@ -5046,7 +5046,7 @@ tr.highlightRow {
 }
 
 #report-form .shift, #report-form .reportDate, #report-form .col-sm-3 {
-    height: 57px
+    height: 56px
 }
 
 .width_100-50_per {
@@ -6414,4 +6414,40 @@ div#dashboardFarmerPopup {
     -moz-user-select: none; 
     -ms-user-select: none; 
     -webkit-touch-callout: none; 
+}
+
+.field-reportsmodel-show_val .form-check , .field-reportsmodel-is_show_zero_val .form-check{
+    margin-top: 15px;
+}
+
+.radio-section{
+    margin-bottom: 14px;
+    margin-top: -4px;
+}
+
+.radio-section .radio-container{
+    margin-left: 14px !important;
+}
+
+.radio-section input{
+    margin-top: -4px;
+}
+
+#mis_report_search_filter .modal-body {
+    padding: 20px !important;
+}
+
+.mt-25 {
+    margin-top: 25px;
+    margin-bottom: 0px;
+}
+
+.checkbox_padding_0:has(.field-reportsmodel-last_rate) {
+    margin-top: 0px !important;
+}
+.mt3 {
+    margin-top: 3px !important;
+}
+.checkbox_padding_0:has(.field-reportsmodel-is_group_by_society) {
+    margin-top: 28px !important;
 }

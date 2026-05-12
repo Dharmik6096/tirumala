@@ -111,9 +111,15 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class='pull-left col-sm-8'>
+        <div class="col-sm-3 mt10">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_weight_manual'); ?>
+        </div>
+        <div class="col-sm-3 mt10">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_quality_manual'); ?>
+        </div>
+        <div class='pull-left col-sm-6'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
-            <div class="col-sm-4">
+            <div class="col-sm-6">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
             </div>
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>

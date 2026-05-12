@@ -425,6 +425,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
                     'sp_name' => 'sp_remuneration_payment_abt',
                 ],
+                'party_payment' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'process_party_payment_abt',
+                ],
             ],
             'RAMSONS' => [
                 'vsp_payment' => [

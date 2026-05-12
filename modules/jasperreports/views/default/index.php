@@ -17,43 +17,43 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
 $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
 ?>
-<div class="panel panel-default panel-main">
+    <div class="panel panel-default panel-main">
 
-    <div class="panel-heading"><?= Html::encode($this->title) ?></div>
-    <div class="panel-body padding-0">
-        <div class="report-area">
-            <!--<div class="table-responsive mt10 panel-collapse collapse <?= $inclass ?>" id="panel1">-->
-            <div class="modal modal-default fade" id="jasper_report_search_filter" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
-                            <h4 class="modal-title"><?php echo $title; ?></h4>
-                        </div>
-                        <!-- <div class=""> -->
-                        <?php
-                        $form = ActiveForm::begin([
+        <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+        <div class="panel-body padding-0">
+            <div class="report-area">
+                <!--<div class="table-responsive mt10 panel-collapse collapse <?= $inclass ?>" id="panel1">-->
+                <div class="modal modal-default fade" id="jasper_report_search_filter" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
+                                <h4 class="modal-title"><?php echo $title; ?></h4>
+                            </div>
+                            <!-- <div class=""> -->
+                            <?php
+                            $form = ActiveForm::begin([
                                     'options' => [
-                                        'id' => 'report-form',
-                                        'field-class' => 'form-group col-sm-6'
+                                            'id' => 'report-form',
+                                            'field-class' => 'form-group col-sm-6'
                                     ], 'validateOnBlur' => FALSE,
                                     'validateOnChange' => FALSE,
                                     'enableClientValidation' => true,
                                     'validateOnSubmit' => true,
-                        ]);
-                        ?>
+                            ]);
+                            ?>
 
 
-                        <div class="row margin_0">
+                            <div class="row margin_0">
 
-                            <div class="modal-body">
-                                <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);    ?>
-                                <div class="col-sm-3">
-                                    <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
-                                </div>  
-                                <?php
-                                $param = isset($data['param']) ? explode(',', $data['param']) : [];
-                                foreach ($param as $key => $value) {
+                                <div class="modal-body">
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);    ?>
+                                    <div class="col-sm-3">
+                                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                                    </div>
+                                    <?php
+                                    $param = isset($data['param']) ? explode(',', $data['param']) : [];
+                                    foreach ($param as $key => $value) {
                                     $value_array = explode(':', $value);
                                     $value = $value_array[0];
                                     $multiple = in_array($value, $multiArray) ? true : false;
@@ -77,7 +77,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                             </div>
                                         <?php } else { ?>
                                             <div class="col-sm-3 <?= $multiple_class ?>">
-                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society'), $multiple); ?>         
+                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society'), $multiple); ?>
                                             </div>
                                             <?php
                                         }
@@ -113,7 +113,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                         ?>
                                         <div class="col-sm-3">
                                             <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'reportsmodel-p_district_code', 'form-group col-sm-3 padding-right-5 padding-left-0', 'Sub District', 'p_sub_district_code'); ?>
-                                        </div>    
+                                        </div>
                                         <?php
                                     }
 
@@ -347,15 +347,15 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                         <?php
                                     }
                                     if (in_array($value, array('p_month'))) {
-                                        ?>
-                                        <div class="col-sm-3">
-                                            <?=
-                                            $form->field($model, 'p_month')->widget(\yii\widgets\MaskedInput::className(), [
+                                    ?>
+                                    <div class="col-sm-3">
+                                        <?=
+                                        $form->field($model, 'p_month')->widget(\yii\widgets\MaskedInput::className(), [
                                                 'options' => ['class' => 'form-control '],
                                                 'mask' => '99-9999',
-                                            ])
-                                            ?>
-                                            <?php
+                                        ])
+                                        ?>
+                                        <?php
                                         }
 
                                         if (in_array($value, array('p_dcsc_code'))) {
@@ -386,15 +386,15 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('p_trip_code'))) {
+                                        if (in_array($value, array('trip_code'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'p_vehicle_code') {
                                                 ?>
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->depend_dropdown('vehicle_trip', $model, $form, 'reportsmodel-p_vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('p_trip_code')); ?>
+                                                    <?= Yii::$app->dropdown->depend_dropdown('vehicle_trip', $model, $form, 'reportsmodel-p_vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('trip_code')); ?>
                                                 </div>
                                             <?php } else { ?>
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'p_trip_code'); ?>
+                                                    <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'trip_code'); ?>
                                                 </div>
                                                 <?php
                                             }
@@ -410,7 +410,7 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= $form->field($model, $value)->textInput(['maxlength' => true]) ?>
-                                            </div>  
+                                            </div>
                                             <?php
                                         }
                                         if (in_array($value, array('p_login_type'))) {
@@ -440,105 +440,105 @@ $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
                                             </div>
                                             <?php
                                         }
-                                    }
-                                    if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
-                                    }
-
-                                    echo Html::activeHiddenInput($model, 'p_union_code');
-                                    echo Html::activeHiddenInput($model, 'p_union_name');
-                                    echo Html::activeHiddenInput($model, 'p_dcs_name');
-                                    echo Html::activeHiddenInput($model, 'p_route_name');
-                                    $model->p_report_name = Html::encode($this->title);
-                                    echo Html::activeHiddenInput($model, 'p_report_name');
-                                    echo Html::activeHiddenInput($model, 'locale');
-                                    echo Html::activeHiddenInput($model, 'digit_config');
-                                    ?>
-
-                                    <!--            <div class="clearfix"></div>-->
-                                    <!--<div class="col-sm-3 mt25">-->
-                                    <?php
-                                    if ($param) {
-                                        //                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
-                                    }
-                                    ?>
-                                    <!--</div>-->
-                                </div>
-                                <div class="modal-footer mt10 col-sm-12">
-                                    <?php
-                                    if ($param) {
-                                        echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
-                                    }
-                                    ?>
-                                    <?= GhostHtml::submitButton('<i class="text-white far fa-file"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
-                                    <?php
-                                    if (isset($data['tcpdf']) && $data['tcpdf']) {
-                                        $client_code = \Yii::$app->session->get('eiplCode');
-                                        $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] : 'pdf';
-                                        $iconClass = ' far fa-file-pdf ';
-                                        if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
-                                            $titleTcpdf = 'Milktype Wise Bill';
-                                            $iconClass = ' fa fa-file-text-o ';
                                         }
-                                        echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', $titleTcpdf)]);
-
-                                        if (strtolower($client_code) == 'mmd') {
-                                            echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
+                                        if (isset($data['report_type'])) {
+                                            echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
                                         }
-                                    }
-                                    ?>
-                                    <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+
+                                        echo Html::activeHiddenInput($model, 'p_union_code');
+                                        echo Html::activeHiddenInput($model, 'p_union_name');
+                                        echo Html::activeHiddenInput($model, 'p_dcs_name');
+                                        echo Html::activeHiddenInput($model, 'p_route_name');
+                                        $model->p_report_name = Html::encode($this->title);
+                                        echo Html::activeHiddenInput($model, 'p_report_name');
+                                        echo Html::activeHiddenInput($model, 'locale');
+                                        echo Html::activeHiddenInput($model, 'digit_config');
+                                        ?>
+
+                                        <!--            <div class="clearfix"></div>-->
+                                        <!--<div class="col-sm-3 mt25">-->
+                                        <?php
+                                        if ($param) {
+                                            //                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
+                                        }
+                                        ?>
+                                        <!--</div>-->
+                                    </div>
+                                    <div class="modal-footer mt10 col-sm-12">
+                                        <?php
+                                        if ($param) {
+                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
+                                        }
+                                        ?>
+                                        <?= GhostHtml::submitButton('<i class="text-white far fa-file"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                                        <?php
+                                        if (isset($data['tcpdf']) && $data['tcpdf']) {
+                                            $client_code = \Yii::$app->session->get('eiplCode');
+                                            $titleTcpdf = (isset($data['titleTcpdf'])) ? $data['titleTcpdf'] : 'pdf';
+                                            $iconClass = ' far fa-file-pdf ';
+                                            if (strtolower($client_code) == 'mmd' || strtolower($client_code) == 'elanad') {
+                                                $titleTcpdf = 'Milktype Wise Bill';
+                                                $iconClass = ' fa fa-file-text-o ';
+                                            }
+                                            echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', $titleTcpdf)]);
+
+                                            if (strtolower($client_code) == 'mmd') {
+                                                echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
+                                            }
+                                        }
+                                        ?>
+                                        <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <?php if ($result != '') { ?>
+                            <?php if ($result != '') { ?>
 
-                            <!--                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                                        
+                                <!--                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+
                                 <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
                                     </div>-->
-                        <?php } ?>
+                            <?php } ?>
 
 
-                        <?php ActiveForm::end(); ?>
-                        <!-- </div> -->
+                            <?php ActiveForm::end(); ?>
+                            <!-- </div> -->
+                        </div>
                     </div>
                 </div>
-            </div>
-            <?php
-            $class = 'beforeGridLoad';
-            if (!empty($result)) {
-                $defaultToggle = false;
-            }
-            if (!empty($model->getErrors())) {
-                $defaultToggle = true;
-            }
-            ?>
-
-            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
-                <?php if (false && $result != '') { ?>
-                    <?= GhostHtml::submitButton('<i class="text-white far fa-file-pdf"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
-                    <?php if (!isset($data['pdf'])) { ?>
-                        <?= GhostHtml::submitButton('<i class="fa fa-file-code-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
-                        <?= GhostHtml::submitButton('<i class="fa fa-file-excel-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
-                        <?php
-                    }
+                <?php
+                $class = 'beforeGridLoad';
+                if (!empty($result)) {
+                    $defaultToggle = false;
+                }
+                if (!empty($model->getErrors())) {
+                    $defaultToggle = true;
                 }
                 ?>
-                <div class="btn-group btn btn-default jasper_report_modal_toggle plus-button"><i class="fa fa-search"></i></div>
-            </div>
 
-            <?php if ($result != '') { ?>
-                <div class="report-grid">
-                    <?php echo $result; ?>
+                <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
+                    <?php if (false && $result != '') { ?>
+                        <?= GhostHtml::submitButton('<i class="text-white far fa-file-pdf"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                        <?php if (!isset($data['pdf'])) { ?>
+                            <?= GhostHtml::submitButton('<i class="fa fa-file-code-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
+                            <?= GhostHtml::submitButton('<i class="fa fa-file-excel-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
+                            <?php
+                        }
+                    }
+                    ?>
+                    <div class="btn-group btn btn-default jasper_report_modal_toggle plus-button"><i class="fa fa-search"></i></div>
                 </div>
 
-            <?php }
-            ?>
+                <?php if ($result != '') { ?>
+                    <div class="report-grid">
+                        <?php echo $result; ?>
+                    </div>
+
+                <?php }
+                ?>
+            </div>
         </div>
     </div>
-</div>
 <?php
 $script = "
    $(document).ready(function() {

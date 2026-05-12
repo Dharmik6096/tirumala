@@ -151,6 +151,7 @@ class DataExchangeService {
                     $api->body = json_encode(["dcsNo" => (string) $sapVendorCode]);
 
                     $responseData = $api->ExchangeData();
+                    \Yii::info("Comfed-farmer-sync : WebApi Status: ". $responseData->status);
                     if (isset($responseData->status) && $responseData->status == 'success' && !empty($responseData->data)) {
                         foreach ($responseData->data as $farmer) {
                             $frNo = $farmer->frNo;
@@ -163,23 +164,24 @@ class DataExchangeService {
                                 'MobileNo' => $farmer->frPhoneNo,
                                 'SapVendorCode' => $farmer->frNo
                             ];
+                            \Yii::info("Comfed-farmer-sync : Farmer MemberCode : " . $generatedFarmerCode);
                         }
                         if (!empty($farmerCollection)) {
                             $farmerData = [];
                             $farmerData[] = json_encode($farmerCollection);
                             Yii::$app->general->getSpData('sp_data_exchange_update_member_info', $farmerData, TRUE);
+                            \Yii::info("Comfed-farmer-sync : Farmer Member Update Successfully");
                         }
                     }
                 } catch (Throwable $e) {
-                    \Yii::error("API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
+                    \Yii::info("Comfed-farmer-sync : API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
                     continue;
                 }
             }
             return true;
         } catch (Throwable $e) {
-            \Yii::error("Farmer Sync Fatal Error: " . $e->getMessage());
+            \Yii::info("Comfed-farmer-sync : Farmer Sync Fatal Error: " . $e->getMessage());
             return false;
         }
     }
-
 }

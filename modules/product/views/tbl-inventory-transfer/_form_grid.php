@@ -104,12 +104,12 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        // 'repush' => function ($url, $model) use ($grnWithoutStockEntry, $gridId) {
-        //     if ($grnWithoutStockEntry) {
-        //         return Yii::$app->general->createRePushLink($url, $model, $gridId, 'inventory_transfer_code');
-        //     }
-        //     return '';
-        // },
+         'repush' => function ($url, $model) use ($grnWithoutStockEntry, $gridId) {
+             if ($grnWithoutStockEntry) {
+                 return Yii::$app->general->createRePushLink($url, $model, $gridId, 'inventory_transfer_code');
+             }
+             return '';
+         },
 //        'delete' => ['option' => 'inventory_transfer_no,inventory_transfer_code,tbl-inventory-transfer/delete'],
     ]
 ];

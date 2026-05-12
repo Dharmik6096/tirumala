@@ -4,23 +4,20 @@ use yii\helpers\Html;
 use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-use kartik\grid\GridView;
-use app\modules\globalmaster\models\TblAnimalType;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\dcsoperation\models\TblMemberProvisional */
 /* @var $form yii\widgets\ActiveForm */
 
-$readonly = $type == 'create' ? FALSE : TRUE;
-$ex_code_readonly = $type == 'create' ? TRUE : FALSE;
+$createSapErrorData = !empty($createSapErrorData) ? true : false;
+$readonly = ($type == 'create' || !$createSapErrorData) ? FALSE : TRUE;
+$ex_code_readonly = $type == 'create' || $createSapErrorData ? TRUE : FALSE;
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
-
-$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -83,10 +80,10 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'ex_member_code')->textInput(['readonly' => $ex_code_readonly]) ?>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
+            <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code'), $createSapErrorData); ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'member_name')->textInput() ?>
+            <?= $form->field($model, 'member_name')->textInput(['readonly' => $createSapErrorData]) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'local_name')->textInput() ?>
@@ -328,19 +325,19 @@ if ($model->isNewRecord) {
 <div class="row">           
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?php // Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
-            <?php //Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
-            <?php if ($type == 'edit') { ?>
+            <?php if ($type == 'edit' && !$createSapErrorData) { ?>
                 <?= Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
                 <?= Html::button(Yii::t('app', 'Re-Route'), ['class' => 'btn btn-primary apply-shortcut btn-login', 'data-bs-toggle' => 'modal', 'data-bs-target' => '#ProvisionalModal',]) ?>
             <?php } ?>
-            <?= Html::submitButton(Yii::t('app', 'NEXT'), ['class' => 'btn btn-primary apply-shortcut btn-login saveBtn', 'name' => 'submitBtn', 'value' => 'save']); ?>
+            <?php
+            echo Html::submitButton(Yii::t('app', !$createSapErrorData ? 'NEXT' : 'UPDATE & CREATE'), ['class' => 'btn btn-primary apply-shortcut btn-login saveBtn', 'name' => 'submitBtn', 'value' => 'save']);
+            ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
 </div>
-<?php if ($type == 'edit') { ?>
+<?php if ($type == 'edit' && !$createSapErrorData) { ?>
     <?=
     $this->render('@app/modules/document/views/tbl-attachment/_reroute', [
         'model' => $model,

@@ -43,7 +43,7 @@ $(document).ready(function(){
         });
     });
     
-    $('#" . $id . "').on('click','.delete-record',function(e){
+    $(document).on('click', '#" . $id . " .delete-record', function(e) {
         var id= $(this).attr('data-val');
         var name = $(this).attr('data-name');
         bootbox.confirm({

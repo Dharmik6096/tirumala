@@ -30,14 +30,23 @@ class DisableField extends Component {
                 'TblProductSale' => [
                     'invoice_date'
                 ],
+                'TblPlantDispatchTxn' => [
+                    'product_mrp', 'distributor_landing_rate', 'sachiv_price', 'member_price'
+                ],
             ],
             'DODLA' => [
                 'TblBmcMilkDispatchTxn' => [
                     'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'dip_open', 'dip_close', 'dip_diff',
                 ],
             ],
+            'ABT' => [
+                'TblBmcMilkDispatchTxn' => [
+                    'water', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'dip_open', 'dip_close', 'dip_diff',
+                ],
+            ],
             'BANAS' => [
                 'TblProductSale' => [],
+                'TblPlantDispatchTxn' => [],
             ],
             'CARGILL' => [
                 'TblProductSale' => [],

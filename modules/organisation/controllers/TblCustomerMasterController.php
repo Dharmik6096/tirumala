@@ -78,6 +78,7 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
+        $this->contactDetails->form_validation_type = 'customer-create';
         $this->contactDetails->scenario = 'additional';
         $this->model->scenario = 'createFront';
         if ($this->model->load(Yii::$app->request->post())) {

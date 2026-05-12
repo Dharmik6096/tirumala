@@ -910,6 +910,7 @@ echo GhostMenu::widget([
                                             ['label' => '113 -' . Yii::t('app', 'VLCs comparison details'), 'url' => ['/misreports/reports/milk-collection-proc-detail-region']],
                                             ['label' => Yii::t('app', 'VLCC Transaction Data Report'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report-region']],
                                             ['label' => Yii::t('app', 'VLCC Transaction Data Report 1'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report-region-all']],
+                                            ['label' => Yii::t('app', 'VLCC Transaction Data Percentage Wise'), 'url' => ['/jasperreports/default/vlcc-transaction-data-percentage-wise']],
                                     ]
                                 ],
                                     [
@@ -1105,6 +1106,72 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Complain Status Report'), 'url' => ['/misreports/reports/complaint-summary-detail-report']],
                             ['label' => Yii::t('app', 'User Attendance Details'), 'url' => ['/misreports/reports/user-attendance-details']],
                             ['label' => Yii::t('app', 'User Attendance Report PDF'), 'url' => ['/jasperreports/default/user-attendance-report']],
+                    ]
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BANAS Reports') . ' <b class="caret"></b></a>',
+                    'visible' => TRUE,
+                    'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'M - 101 -' . Yii::t('app', 'Milk Purchase Register'), 'url' => ['/misreports/reports/milk-purchase-register-report']],
+                                    ['label' => 'M - 102 -' . Yii::t('app', 'Member Wise Summary'), 'url' => ['/misreports/reports/member-wise-summary-report']],
+                                    ['label' => 'M - 103 -' . Yii::t('app', 'Farmer Ledger'), 'url' => ['/misreports/reports/farmer-ledger-report']],
+                                    ['label' => 'M - 104 -' . Yii::t('app', 'Milk Edit'), 'url' => ['/misreports/reports/milk-edit-report']],
+                                    ['label' => 'M - 105 -' . Yii::t('app', 'Local Sale Report'), 'url' => ['/misreports/reports/local-sale-report']],
+                                    ['label' => 'M - 106 -' . Yii::t('app', 'Local Sale Detail Report'), 'url' => ['/misreports/reports/local-sale-detail-report']],
+                                    ['label' => 'M - 107 -' . Yii::t('app', 'Date Wise Milk Purchase Summary'), 'url' => ['/misreports/reports/date-wise-milk-purchase-summary']],
+                                    ['label' => 'M - 110 -' . Yii::t('app', 'Milk Rate Detail'), 'url' => ['/misreports/reports/milk-rate-detail-report']],
+                                    ['label' => 'M - 111 -' . Yii::t('app', 'Milk Purchase Analysis'), 'url' => ['/misreports/reports/milk-purchase-analysis-report']],
+                                    ['label' => 'M - 112 -' . Yii::t('app', 'Milk Edit Summary'), 'url' => ['/misreports/reports/milk-edit-summary']],
+                                    ['label' => 'M - 113 -' . Yii::t('app', 'Fat Wise Qty Analysis'), 'url' => ['/misreports/reports/fat-wise-qty-analysis']],
+                                    ['label' => 'M - 117 -' . Yii::t('app', 'Milk Compare'), 'url' => ['/misreports/reports/milk-compare']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Society Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'S - 101 -' . Yii::t('app', 'Society List'), 'url' => ['/misreports/reports/society-list']],
+//                                    ['label' => 'S - 102 -' . Yii::t('app', 'Farmer List'), 'url' => ['/misreports/reports/farmer-list-report']],
+                                ['label' => 'S - 103 -' . Yii::t('app', 'Farmer App Details'), 'url' => ['/misreports/reports/farmer-app-details-report']],
+                                    ['label' => 'S - 105 -' . Yii::t('app', 'Union Wise Message Detail'), 'url' => ['/misreports/reports/union-wise-message-detail-report']],
+//                                    ['label' => 'S - 106 -' . Yii::t('app', 'Milk Rate Publish'), 'url' => ['/misreports/reports/milk-rate-publish-report']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'O - 101 -' . Yii::t('app', 'Union Wise Message'), 'url' => ['/misreports/reports/union-wise-message-report']],
+                                    ['label' => 'O - 102 -' . Yii::t('app', 'Online Offline Society'), 'url' => ['/misreports/reports/online-offline-society-report']],
+//                                    ['label' => 'O - 103 -' . Yii::t('app', 'Sms Detail'), 'url' => ['/misreports/reports/sms-detail-report']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Special Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'SP - 101 -' . Yii::t('app', 'Top Society Milk Collection'), 'url' => ['/misreports/reports/top-society-milk-collection-report']],
+                                    ['label' => 'SP - 102 -' . Yii::t('app', 'Top Farmer Milk Collection'), 'url' => ['/misreports/reports/top-farmer-milk-collection-report']],
+                                    ['label' => 'SP - 104 -' . Yii::t('app', 'Society Wise Summary'), 'url' => ['/misreports/reports/society-wise-summary-report']],
+                                    ['label' => 'SP - 105 -' . Yii::t('app', 'Farmer Not Submitting Milk'), 'url' => ['/misreports/reports/farmer-not-submitting-milk-report']],
+                                    ['label' => 'SP - 106 -' . Yii::t('app', 'Society Sample'), 'url' => ['/misreports/reports/society-sample-report']],
+                                    ['label' => 'SP - 109 -' . Yii::t('app', 'Farmer Manual Entry'), 'url' => ['/misreports/reports/farmer-manual-entry-report']],
+                                    ['label' => 'SP - 111 -' . Yii::t('app', 'Manual Collection Summary'), 'url' => ['/misreports/reports/manual-collection-summary-report']],
+                                    ['label' => 'SP - 112 -' . Yii::t('app', 'Milk Edit For Farmer'), 'url' => ['/misreports/reports/milk-edit-for-farmer-report']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'MU App Report') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => 'App - 101 -' . Yii::t('app', 'MU App VDCS APP User Report'), 'url' => ['/misreports/reports/mu-app-vdcs-app-user-report']],
+                            ]
+                        ],
                     ]
                 ],
             ],

@@ -82,6 +82,10 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
             unset($txnData['amount']);
             unset($txnData['sap_batch_no']);
             unset($txnData['lr_no']);
+            unset($txnData['product_mrp']);
+            unset($txnData['distributor_landing_rate']);
+            unset($txnData['sachiv_price']);
+            unset($txnData['member_price']);
             $i = 1;
             foreach ($txnData as $key => $product) {
                 $txModel = new TblPlantDispatchTxn();
@@ -94,6 +98,10 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 if ($batchNoWiseInventory)
                     $txModel->sap_batch_no = $product['sap_batch_no'];
                 $txModel->lr_no = $product['lr_no'];
+                $txModel->product_mrp = isset($product['product_mrp']) ? $product['product_mrp'] : null;
+                $txModel->distributor_landing_rate = isset($product['distributor_landing_rate']) ? $product['distributor_landing_rate'] : null;
+                $txModel->sachiv_price = isset($product['sachiv_price']) ? $product['sachiv_price'] : null;
+                $txModel->member_price = isset($product['member_price']) ? $product['member_price'] : null;
                 $txModel->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($txModel, $i);
                 $txModel->plant_dispatch_code = $model->plant_dispatch_code;
                 $txModel->union_code = $model->union_code;

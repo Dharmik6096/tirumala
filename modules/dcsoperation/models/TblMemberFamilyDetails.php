@@ -47,11 +47,13 @@ class TblMemberFamilyDetails extends ChildModel {
      */
     public function rules() {
         return [
-                [['age', 'union_code', 'member_code', 'dob', 'remarks', 'gender_code', 'family_member_name', 'local_family_member_name', 'nominee_address', 'local_nominee_address', 'guardian_name', 'local_guardian_name', 'relationship_code', 'is_nominee', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['age', 'dob', 'nominee_address', 'gender_code', 'family_member_name', 'guardian_name', 'relationship_code'], 'required', 'on' => ['member_family_detail']],
+                [['age', 'union_code', 'member_code', 'dob', 'remarks', 'gender_code', 'family_member_name', 'local_family_member_name', 'nominee_address', 'local_nominee_address', 'guardian_name', 'local_guardian_name', 'relationship_code', 'is_nominee', 'originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'ration_card_no', 'ration_card_type', 'farmer_code', 'farmer_name', 'is_farmer', 'aadhar_card'], 'safe'],
+                [['age', 'dob', 'nominee_address', 'gender_code', 'family_member_name', 'guardian_name', 'relationship_code'], 'required', 'on' => ['member_family_detail'], 'except' => ['androidsync']],
                 [['is_nominee'], 'validateIsNomineeRequired', 'on' => ['member_family_detail']],
                 [['is_nominee'], 'validateIsNominee', 'on' => ['member_family_detail']],
                 [['dob'], 'validateAge', 'on' => ['member_family_detail']],
+                [['dcs_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['member_code'], 'setData']
         ];
     }
 
@@ -82,6 +84,12 @@ class TblMemberFamilyDetails extends ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'dcs_code' => Yii::t('app', 'Society'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
 
@@ -131,6 +139,16 @@ class TblMemberFamilyDetails extends ChildModel {
 
         if ($nomineeCount == 0 && $this->is_nominee == 0) {
             $this->addError($attribute, 'At Least One Nominee Is Required Per Member.');
+        }
+    }
+
+    public function setData() {
+        if(empty($this->x_col1)){
+            $this->x_col1 = Yii::$app->general->getUuid();
+        }
+
+        if(empty($this->dcs_code)){
+            $this->dcs_code = substr($this->member_code, 0, -4);
         }
     }
 
