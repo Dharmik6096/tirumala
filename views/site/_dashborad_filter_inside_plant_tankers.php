@@ -32,7 +32,7 @@ $qlt_param = !empty($qlt_param) ? $qlt_param : 'qlt_param';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal">×</button>
                 <h4 class="modal-title"><?= $popup_title ?></h4>
             </div>
             <div class="modal-body dashboard_controls">
@@ -62,14 +62,14 @@ $qlt_param = !empty($qlt_param) ? $qlt_param : 'qlt_param';
                 </div>
 
                 <div class="col-sm-3 pt5 dashboard_modal_footer">
-                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, 'btn_' . $id . ' dashboardSearchButton'); ?>
+                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, 'btn_' . $id . ' dashboardSearchButton btn-login'); ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
 </div>
-<button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
+<button type="button" class="widget_table_search_btn" data-bs-toggle="modal" data-bs-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 
 <?php
 $script = "
