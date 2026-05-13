@@ -356,4 +356,25 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         }
     }
 
+    public static function getTripDispatchDetail($trip_code, $bmc_code) {
+        return self::find()->alias('td')
+            ->select([
+                'td.destination_type', 'td.destination_code', 'td.is_last_destination', 'td.arrival_time', 'td.vehicle_trip_detail_code',
+                't.vehicle_code', 't.trip_code', 't.transaction_date', 't.union_code', 't.is_auto_trip'
+            ])
+            ->innerJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+            ->where([
+                'td.trip_code' => $trip_code,
+                'td.source_org_type' => 'bmc',
+                'td.source_org_code' => $bmc_code,
+                't.trip_status' => ['generated', 'open']
+            ])
+            ->andWhere(['IS', 'td.challan_no', NULL])
+            ->andWhere(['IS NOT', 'td.arrival_time', null])
+            ->andWhere(['IS', 'td.departure_time', null])
+            ->orderBy(['td.sequence_no' => SORT_ASC])
+            ->asArray()
+            ->one();
+    }
+
 }
