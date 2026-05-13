@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 
 $title = Yii::$app->label->title('create', 'Area Mapping');
@@ -204,6 +204,7 @@ $this->title = Yii::t('app', $title);
                 success: function(response) {
                     if(response.status == 'success') {
                         $('#bmc-list').html(response.data);
+                        $('#mapping-grid-container').html(response.grid);
                     }
                 }
             });
