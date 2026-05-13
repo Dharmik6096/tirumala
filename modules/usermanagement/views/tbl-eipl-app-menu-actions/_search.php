@@ -58,10 +58,16 @@ $script = "
         }
         if(appType != '' && appType != null && appType != undefined && appType != 'Loading ...'){
             if(appType == 4) {
-                $('#tbleiplappmenuactionsmapping-login_type').val('');
-                $('#tbleiplappmenuactionsmapping-department').val('');
-                $('.department_div').hide();
-                $('.login_type_div').hide();
+                $('.login_type_div').show();
+                if (login == 'DRIVER') {
+                    $('#tbleiplappmenuactionsmapping-department').val('DRIVER');
+                    $('.department_div').hide();
+                } else {
+                    if ($('#tbleiplappmenuactionsmapping-department').val() == 'DRIVER') {
+                        $('#tbleiplappmenuactionsmapping-department').val('');
+                    }
+                    $('.department_div').show();
+                }
                 $('form#app-menu-mapping-search').submit();
                 setTimeout(function() {
                     $('.showHideData').show();
@@ -98,11 +104,19 @@ $script = "
         var login = $('#tbleiplappmenuactionsmapping-login_type').val();
         var department = $('#tbleiplappmenuactionsmapping-department').val();
         if(appType == 4) {
-            $('.department_div').hide();
-            $('.login_type_div').hide();
+            $('.login_type_div').show();
+            if (login == 'DRIVER') {
+                $('.department_div').hide();
+            } else {
+                $('.department_div').show();
+            }
+            $('.showHideData').show();
         } else if(login =='farmer' || login == 'MEMBER') {
             $('.showHideData').show();
         } else if(login !='') {
+            if(login == 'DRIVER'){
+                $('#tbleiplappmenuactionsmapping-login_type').val('');
+            }
             $('.showHideData').show();
             $('.department_div').show();
         } else {
