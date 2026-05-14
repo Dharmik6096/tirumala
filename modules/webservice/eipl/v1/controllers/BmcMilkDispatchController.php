@@ -56,6 +56,9 @@ class BmcMilkDispatchController extends MasterController {
             'vehicle_code' => $tripCombined['vehicle_code'],
             'transaction_date' => $tripCombined['transaction_date'],
             'union_code' => $tripCombined['union_code'],
+            'parsing_no' => $tripCombined['parsing_no'] ?? '',
+            'driver_name' => $tripCombined['driver_name'] ?? '',
+            'mobile_no' => $tripCombined['mobile_no'] ?? '',
         ];
 
         if (!empty($dispatchDetail['destination_type'])) {
@@ -81,7 +84,14 @@ class BmcMilkDispatchController extends MasterController {
         $txn = new TblBmcMilkDispatchTxn();
         $txn->trip_code = $tripCombined['trip_code'];
         $txn->vehicle_code = $tripCombined['vehicle_code'];
-        $dispatchDetail['chamber_capacities'] = $txn->getCompartmentWiseDispatchData();
+        $chamberCapacities = $txn->getCompartmentWiseDispatchData();
+        $formattedChambers = [];
+        if (!empty($chamberCapacities)) {
+            foreach ($chamberCapacities as $chamberNo => $capacityData) {
+                $formattedChambers[] = array_merge(['chamber_no' => $chamberNo], $capacityData);
+            }
+        }
+        $dispatchDetail['chamber_capacities'] = $formattedChambers;
         
         $vehicleCacheKey = 'bmc_dispatch_vehicle_capacity_' . $tripCombined['vehicle_code'];
         $totalVehicleCapacity = null;
@@ -234,6 +244,7 @@ class BmcMilkDispatchController extends MasterController {
             'stockDetail' => $stockDetail,
             'confige' => $configData['confige'],
             'dynamicConfig' => $configData['dynamicConfig'],
+            'extraConfigs' => $configData['extraConfigs'] ?? [],
         ]);
         return $this->response;
     }

@@ -360,9 +360,11 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return self::find()->alias('td')
             ->select([
                 'td.destination_type', 'td.destination_code', 'td.is_last_destination', 'td.arrival_time', 'td.vehicle_trip_detail_code',
-                't.vehicle_code', 't.trip_code', 't.transaction_date', 't.union_code', 't.is_auto_trip'
+                't.vehicle_code', 't.trip_code', 't.transaction_date', 't.union_code', 't.is_auto_trip',
+                't.driver_name', 't.mobile_no', 'v.parsing_no'
             ])
             ->innerJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+            ->innerJoin('tbl_vehicle_master v', 'v.vehicle_code = t.vehicle_code')
             ->where([
                 'td.trip_code' => $trip_code,
                 'td.source_org_type' => 'bmc',
