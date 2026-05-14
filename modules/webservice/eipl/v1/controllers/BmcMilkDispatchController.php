@@ -22,6 +22,8 @@ use app\modules\tankermovement\models\TblBmcDispatchStockHistory;
 use app\modules\tankermovement\models\TblQtyDiffType;
 use app\modules\tankermovement\models\TblVehicleTripHistory;
 use app\modules\transporter\models\TblVehicleCompartmentDetail;
+use app\modules\configuration\models\TblUnionRatechartRange;
+use yii\helpers\ArrayHelper;
 
 class BmcMilkDispatchController extends MasterController {
 
@@ -36,168 +38,215 @@ class BmcMilkDispatchController extends MasterController {
             return $this->response;
         }
 
-        $cacheKey = 'bmc_dispatch_load_data_'.$bmc_code.'_'.$trip_code;
-        $response_data = Yii::$app->cache->get($cacheKey);
+        $tripCombined = TblVehicleTripDetail::getTripDispatchDetail($trip_code, $bmc_code);
 
-        $vehicleTripDetail = new TblVehicleTripDetail();
-        $vehicleTripDetail->trip_code = $trip_code;
-        $vehicleTripDetail->source_org_code = $bmc_code;
-        $vehicleTripDetail->source_org_type = 'bmc';
-        $tripDispatchDetail = $vehicleTripDetail->getTripDetails(true);
-
-        if (empty($tripDispatchDetail)) {
+        if (empty($tripCombined)) {
             $this->response->setStatusCode($this->eiplResponseCode->statusError);
-            $this->response->setMessage(['Dispatch details not found.']);
+            $this->response->setMessage(['Trip or Dispatch details not found.']);
             return $this->response;
         }
 
-        $trip = TblVehicleTrip::find()->select(['vehicle_code', 'trip_code', 'transaction_date', 'union_code'])->where(['trip_code' => $trip_code, 'trip_status' => ['generated', 'open']])->one();
+        $union_code = $tripCombined['union_code'];
 
-        if (empty($trip)) {
-            $this->response->setStatusCode($this->eiplResponseCode->statusError);
-            $this->response->setMessage(['Trip not found.']);
-            return $this->response;
-        }
+        $dispatchDetail = [
+            'destination_type' => $tripCombined['destination_type'],
+            'destination_code' => $tripCombined['destination_code'],
+            'destination_name' => '',
+            'trip_code' => $tripCombined['trip_code'],
+            'vehicle_code' => $tripCombined['vehicle_code'],
+            'transaction_date' => $tripCombined['transaction_date'],
+            'union_code' => $tripCombined['union_code'],
+            'parsing_no' => $tripCombined['parsing_no'] ?? '',
+            'driver_name' => $tripCombined['driver_name'] ?? '',
+            'mobile_no' => $tripCombined['mobile_no'] ?? '',
+        ];
 
-        $dispatchDetail['destination_type'] = $tripDispatchDetail['destination_type'];
-        $dispatchDetail['destination_code'] = $tripDispatchDetail['destination_code'];
-        $dispatchDetail['destination_name'] = '';
         if (!empty($dispatchDetail['destination_type'])) {
-            $columnData = Yii::$app->general->getColumnName($dispatchDetail['destination_type']);
-            $relName = $columnData['rel'] . 'Dest';
-            $vehicleTripDetail->destination_code = $dispatchDetail['destination_code'];
-        $dispatchDetail['destination_name'] = !empty($vehicleTripDetail->$relName) ? $vehicleTripDetail->$relName->{$columnData['name']} : '';
+            $destCacheKey = 'bmc_dispatch_dest_name_' . $dispatchDetail['destination_type'] . '_' . $dispatchDetail['destination_code'];
+            $destName = null;
+            if (Yii::$app->has('redis')) {
+                $redis = Yii::$app->get('redis');
+                $destName = $redis->get($destCacheKey);
+            }
+            if ($destName === null) {
+                $columnData = Yii::$app->general->getColumnName($dispatchDetail['destination_type']);
+                $relName = $columnData['rel'] . 'Dest';
+                $vtdModel = new TblVehicleTripDetail();
+                $vtdModel->destination_code = $dispatchDetail['destination_code'];
+                $destName = !empty($vtdModel->$relName) ? $vtdModel->$relName->{$columnData['name']} : '';
+                if (Yii::$app->has('redis')) {
+                    $redis->setex($destCacheKey, 86400, $destName);
+                }
+            }
+            $dispatchDetail['destination_name'] = $destName;
         }
-        $dispatchDetail['trip_code'] = $trip->trip_code;
-        $dispatchDetail['vehicle_code'] = $trip->vehicle_code;
-        $dispatchDetail['transaction_date'] = $trip->transaction_date;
-        $dispatchDetail['union_code'] = $trip->union_code;
+
+        $txn = new TblBmcMilkDispatchTxn();
+        $txn->trip_code = $tripCombined['trip_code'];
+        $txn->vehicle_code = $tripCombined['vehicle_code'];
+        $chamberCapacities = $txn->getCompartmentWiseDispatchData();
+        $formattedChambers = [];
+        if (!empty($chamberCapacities)) {
+            foreach ($chamberCapacities as $chamberNo => $capacityData) {
+                $formattedChambers[] = array_merge(['chamber_no' => $chamberNo], $capacityData);
+            }
+        }
+        $dispatchDetail['chamber_capacities'] = $formattedChambers;
+        
+        $vehicleCacheKey = 'bmc_dispatch_vehicle_capacity_' . $tripCombined['vehicle_code'];
+        $totalVehicleCapacity = null;
+        if (Yii::$app->has('redis')) {
+            $redis = Yii::$app->get('redis');
+            $totalVehicleCapacity = $redis->get($vehicleCacheKey);
+        }
+        if ($totalVehicleCapacity === null) {
+            $totalVehicleCapacity = TblVehicleCompartmentDetail::find()->where(['vehicle_code' => $tripCombined['vehicle_code']])->sum('capacity');
+            if (Yii::$app->has('redis')) {
+                $redis->setex($vehicleCacheKey, 86400, $totalVehicleCapacity);
+            }
+        }
+        $dispatchDetail['totalVehicleCapacity'] = $totalVehicleCapacity ?? 0;
 
         $bmcMilkDispatch = new TblBmcMilkDispatch();
         $bmcMilkDispatch->bmc_code = $bmc_code;
         $stock_detail = $bmcMilkDispatch->getFromDateToDate();
         
-        $stockDetail = [];
-        $stockDetail['fromDateTime'] = !empty($stock_detail['from_datetime']) ? $stock_detail['from_datetime'] : null;
-        $stockDetail['toDateTime'] = !empty($stock_detail['to_datetime']) ? $stock_detail['to_datetime'] : null;
-        $stockDetail['physicalStockOnly'] = isset($stock_detail['physical_stock_only']) ? $stock_detail['physical_stock_only'] : 0;
-        $stockDetail['stockData'] = !empty($stock_detail['stock_data']) ? $stock_detail['stock_data'] : [];
-        $stockDetail['mappedStockData'] = !empty($stock_detail['stock_detail']) ? $stock_detail['stock_detail'] : [];
+        $stockDetail = [
+            'fromDateTime' => $stock_detail['from_datetime'] ?? null,
+            'toDateTime' => $stock_detail['to_datetime'] ?? null,
+            'physicalStockOnly' => $stock_detail['physical_stock_only'] ?? 0,
+            'stockData' => $stock_detail['stock_data'] ?? [],
+            'mappedStockData' => $stock_detail['stock_detail'] ?? [],
+        ];
 
-        if (!empty($response_data)) {
-            $response_data['dispatchDetail'] = $dispatchDetail;
-            $response_data['stockDetail'] = $stockDetail;
+        $masterCacheKey = 'bmc_dispatch_master_union_' . $union_code . '_bmc_' . $bmc_code;
+        $configCacheKey = 'bmc_dispatch_config_union_' . $union_code;
 
-            // $vehicle_code = !empty($response_data['tripDetail']['vehicle_code']) ? $response_data['tripDetail']['vehicle_code'] : null;
-            // $chamber_capacities = [];
-            // if (!empty($vehicle_code)) {
-            //     $txn = new TblBmcMilkDispatchTxn();
-            //     $txn->trip_code = $trip_code;
-            //     $txn->vehicle_code = $vehicle_code;
-            //     $chamber_capacities = $txn->getCompartmentWiseDispatchData();
-            // }
-            // $dispatchDetail['chamber_capacities'] = $chamber_capacities;
-
-            $this->response->setData($response_data);
-            return $this->response;
+        $master = null;
+        $configData = null;
+        if (Yii::$app->has('redis')) {
+            $redis = Yii::$app->get('redis');
+            $master = json_decode($redis->get($masterCacheKey), true);
+            $configData = json_decode($redis->get($configCacheKey), true);
         }
 
-        $union_code = $trip->union_code;
-        $chamber_capacities = [];
-        if (!empty($trip->vehicle_code)) {
-            $txn = new TblBmcMilkDispatchTxn();
-            $txn->trip_code = $trip->trip_code;
-            $txn->vehicle_code = $trip->vehicle_code;
-            $chamber_capacities = $txn->getCompartmentWiseDispatchData();
-        }
-        $dispatchDetail['chamber_capacities'] = $chamber_capacities;
+        if (empty($master)) {
+            $animal_types = TblAnimalType::find()->select(['animal_type_code', 'animal_type_name'])->where(['is_active' => 1])->asArray()->all();
+            $atCodes = ArrayHelper::getColumn($animal_types, 'animal_type_code');
 
-        $config = new TblConfig();
-        $config->config_for = 'BMC';
-        $config->process_name = 'BMC_DISPATCH';
-        $config->config_type = 'CONTROL';
-        $config_list = $config->getOrgConfigList($config->config_for, $bmc_code);
-        $dynamicConfig = [];
-        if (!empty($config_list)) {
-            foreach ($config_list as $model) {
-                $item = $model->toArray(['config_code', 'config_name', 'control_type', 'is_adulteration']);
-                $item['config_result'] = [];
-                if ($model->control_type != 'TEXT' && !empty($model->configResult)) {
-                    foreach ($model->configResult as $res) {
-                        $item['config_result'][] = $res->toArray(['config_result_key', 'config_result']);
-                    }
+            $primaryRanges = TblMilkQualityParamRange::find()
+                ->select(['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'animal_type_code'])
+                ->where(['union_code' => $union_code, 'process_name' => 'BMC_MILK_DISPATCH', 'org_type' => 'BMC', 'org_code' => $bmc_code, 'animal_type_code' => $atCodes])
+                ->asArray()->all();
+            $primaryRangeMap = ArrayHelper::index($primaryRanges, 'animal_type_code');
+
+            $fallbackRanges = TblUnionRatechartRange::find()
+                ->select(['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr', 'animal_type_code'])
+                ->where(['union_code' => $union_code, 'config_for' => 'BMC', 'animal_type_code' => $atCodes])
+                ->asArray()->all();
+            $fallbackRangeMap = ArrayHelper::index($fallbackRanges, 'animal_type_code');
+
+            foreach ($animal_types as $key => $mt) {
+                $atCode = $mt['animal_type_code'];
+                $range = $primaryRangeMap[$atCode] ?? $fallbackRangeMap[$atCode] ?? null;
+                if ($range) {
+                    $animal_types[$key]['quality_ranges'] = [
+                        'min_fat' => (float)$range['min_fat'],
+                        'max_fat' => (float)$range['max_fat'],
+                        'min_snf' => (float)$range['min_snf'],
+                        'max_snf' => (float)$range['max_snf'],
+                        'min_clr' => (float)$range['min_clr'],
+                        'max_clr' => (float)$range['max_clr'],
+                    ];
                 }
-                $dynamicConfig[] = $item;
+            }
+
+            $is_clr_input_master = Yii::$app->general->getCheckBmcConfiguration($union_code, 'is_clr_input', $bmc_code, 'BMC', 'BMC_DISPATCH_CONFIG');
+            if ($is_clr_input_master == '') {
+                $is_clr_input_master = Yii::$app->general->getUnionConfiguration($union_code, 'is_clr_input', 'PORTAL');
+            }
+
+            $master = [
+                'silos' => TblBmcSilosInfo::find()->select(['bmc_silos_info_code', 'silo_no', 'description'])->where(['bmc_code' => $bmc_code, 'is_active' => 1])->asArray()->all(),
+                'animal_types' => $animal_types,
+                'milk_quality_types' => TblMilkQualityType::find()->select(['milk_quality_type_code', 'milk_quality_type_name'])->where(['is_active' => 1])->asArray()->all(),
+                'qty_diff_types' => TblQtyDiffType::find()->select(['qty_diff_type_code', 'qty_diff_type_name'])->where(['is_active' => 1])->asArray()->all(),
+                'is_clr_input' => ($is_clr_input_master != '') ? (int)$is_clr_input_master : 0,
+            ];
+            if (Yii::$app->has('redis')) {
+                $redis = Yii::$app->get('redis');
+                $redis->setex($masterCacheKey, 3600, json_encode($master));
             }
         }
 
-        $confige = [];
-        $is_clr_input = Yii::$app->general->getCheckBmcConfiguration($union_code, 'is_clr_input', $bmc_code, '', 'BMC');
-        if ($is_clr_input == '') {
-            $is_clr_input = Yii::$app->general->getUnionConfiguration($union_code, 'is_clr_input', 'PORTAL');
-        }
-        $confige['clr_config'] = ($is_clr_input != '') ? $is_clr_input : 0;
+        if (empty($configData)) {
+            $config = new TblConfig();
+            $config->config_for = 'BMC';
+            $config->process_name = 'BMC_DISPATCH';
+            $config->config_type = 'CONTROL';
+            $config_list = $config->getOrgConfigList($config->config_for, $bmc_code);
+            $dynamicConfig = [];
+            if (!empty($config_list)) {
+                foreach ($config_list as $model) {
+                    $item = $model->toArray(['config_code', 'config_name', 'control_type', 'is_adulteration']);
+                    $item['config_result'] = [];
+                    if ($model->control_type != 'TEXT' && !empty($model->configResult)) {
+                        foreach ($model->configResult as $res) {
+                            $item['config_result'][] = $res->toArray(['config_result_key', 'config_result']);
+                        }
+                    }
+                    $dynamicConfig[] = $item;
+                }
+            }
 
-        $clr_constant1 = Yii::$app->general->getCheckBmcConfiguration($union_code, 'clr_constant1', $bmc_code, 'BMC', 'BMC_MILK_DISPATCH');
-        $clr_constant2 = Yii::$app->general->getCheckBmcConfiguration($union_code, 'clr_constant2', $bmc_code, 'BMC', 'BMC_MILK_DISPATCH');
-        if ($clr_constant1 == '' || $clr_constant2 == '') {
-            $clr_constant1 = Yii::$app->general->getUnionConfiguration($union_code, 'clr_constant1', 'PORTAL');
-            $clr_constant2 = Yii::$app->general->getUnionConfiguration($union_code, 'clr_constant2', 'PORTAL');
-        }
-        $confige['clr_constant1'] = (float) (!empty($clr_constant1) ? $clr_constant1 : 1);
-        $confige['clr_constant2'] = (float) (!empty($clr_constant2) ? $clr_constant2 : 0);
+            $unionConfigs = ArrayHelper::map(Yii::$app->general->getAllUnionWiseConfig($union_code, 'PORTAL'), 'config_key', 'config_result_key');
+            $bmcConfigs = ArrayHelper::map(Yii::$app->general->getAllUnionWiseConfig($union_code, 'BMC'), 'config_key', 'config_result_key');
 
-        $auto_reject = Yii::$app->general->getUnionConfiguration($union_code, 'bmc_dispatch_auto_reject', 'BMC');
-        $confige['auto_reject'] = !empty($auto_reject) ? $auto_reject : '0';
+            $confige = [];
+            $is_clr_input = Yii::$app->general->getCheckBmcConfiguration($union_code, 'is_clr_input', $bmc_code, '', 'BMC');
+            if ($is_clr_input == '') {
+                $is_clr_input = $unionConfigs['is_clr_input'] ?? 0;
+            }
+            $confige['clr_config'] = $is_clr_input;
 
-        $quality_ranges = [];
-        $animal_types = TblAnimalType::find()->select(['animal_type_code', 'animal_type_name'])->where(['is_active' => 1])->asArray()->all();
-        foreach ($animal_types as $key => $mt) {
-            $rangeModel = new TblMilkQualityParamRange();
-            $rangeModel->union_code = $union_code;
-            $rangeModel->process_name = 'BMC_MILK_DISPATCH';
-            $rangeModel->org_type = 'BMC';
-            $rangeModel->org_code = $bmc_code;
-            $rangeModel->animal_type_code = $mt['animal_type_code'];
-            $range = $rangeModel->getQualityRange();
-            if ($range) {
-                $quality_ranges['min_fat'] = $range->min_fat;
-                $quality_ranges['max_fat'] = $range->max_fat;
-                $quality_ranges['min_snf'] = $range->min_snf;
-                $quality_ranges['max_snf'] = $range->max_snf;
-                $quality_ranges['min_clr'] = $range->min_clr;
-                $quality_ranges['max_clr'] = $range->max_clr;
-                $animal_types[$key]['quality_ranges'] = $quality_ranges;
+            $clr_constant1 = Yii::$app->general->getCheckBmcConfiguration($union_code, 'clr_constant1', $bmc_code, 'BMC', 'BMC_MILK_DISPATCH');
+            $clr_constant2 = Yii::$app->general->getCheckBmcConfiguration($union_code, 'clr_constant2', $bmc_code, 'BMC', 'BMC_MILK_DISPATCH');
+            if ($clr_constant1 == '' || $clr_constant2 == '') {
+                $clr_constant1 = $unionConfigs['clr_constant1'] ?? 1;
+                $clr_constant2 = $unionConfigs['clr_constant2'] ?? 0;
+            }
+            $confige['clr_constant1'] = (float)$clr_constant1;
+            $confige['clr_constant2'] = (float)$clr_constant2;
+            $confige['auto_reject'] = $bmcConfigs['bmc_dispatch_auto_reject'] ?? '0';
+
+            $extraConfigs = [
+                'bmc_dispatch_with_milk_type' => $unionConfigs['bmc_dispatch_with_milk_type'] ?? '0',
+                'bmc_dispatch_flush_limit' => (float) Yii::$app->general->getCheckBmcConfiguration($union_code, 'bmc_dispatch_flush_limit', $bmc_code, 'BMC', 'BMC_DISPATCH_CONFIG') ?: 0,
+                'bmc_dispatch_flush_with_stock' => (($bmcConfigs['bmc_dispatch_flush_with_stock'] ?? 0) == 1),
+                'dispatch_qty_mode' => $bmcConfigs['dispatch_qty_mode'] ?? null,
+                'ltr_to_kg_constant' => (float) ($bmcConfigs['ltr_to_kg_constant'] ?? 1),
+            ];
+
+            $configData = [
+                'confige' => $confige,
+                'dynamicConfig' => $dynamicConfig,
+                'extraConfigs' => $extraConfigs
+            ];
+            if (Yii::$app->has('redis')) {
+                $redis = Yii::$app->get('redis');
+                $redis->setex($configCacheKey, 86400, json_encode($configData));
             }
         }
 
-        $master = [];
-        $master['silos'] = TblBmcSilosInfo::find()->select(['bmc_silos_info_code', 'silo_no', 'description'])->where(['bmc_code' => $bmc_code, 'is_active' => 1])->asArray()->all();
-        $master['animal_types'] = $animal_types;
-        $master['milk_quality_types'] = TblMilkQualityType::find()->select(['milk_quality_type_code', 'milk_quality_type_name'])->where(['is_active' => 1])->asArray()->all();
-        $master['qty_diff_types'] = TblQtyDiffType::find()->select(['qty_diff_type_code', 'qty_diff_type_name'])->where(['is_active' => 1])->asArray()->all();
-        
-        $is_clr_input = Yii::$app->general->getCheckBmcConfiguration($union_code, 'is_clr_input', $bmc_code, 'BMC', 'BMC_DISPATCH_CONFIG');
-        if ($is_clr_input == '') {
-            $is_clr_input = Yii::$app->general->getUnionConfiguration($union_code, 'is_clr_input', 'PORTAL');
-        }
-        $master['is_clr_input'] = ($is_clr_input != '') ? (int)$is_clr_input : 0;
-        
-        $totalVehicleCapacity = TblVehicleCompartmentDetail::find()->where(['vehicle_code' => $trip->vehicle_code])->sum('capacity');
-        $dispatchDetail['totalVehicleCapacity'] = $totalVehicleCapacity ?? 0;
-
-        $response_data = [
+        $this->response->setData([
             'masterDetails' => $master,
             'dispatchDetail' => $dispatchDetail,
             'stockDetail' => $stockDetail,
-            'confige' => $confige,
-            'dynamicConfig' => $dynamicConfig,
-        ];
-
-        Yii::$app->cache->set($cacheKey, $response_data, 3600);
-        $this->response->setData($response_data);
+            'confige' => $configData['confige'],
+            'dynamicConfig' => $configData['dynamicConfig'],
+            'extraConfigs' => $configData['extraConfigs'] ?? [],
+        ]);
         return $this->response;
-
     }
 
     public function actionSaveData() {
@@ -259,13 +308,30 @@ class BmcMilkDispatchController extends MasterController {
 
         $unionCode = $model->union_code;
         $bmcCode = $model->bmc_code;
-        $dispatchWithMilkType = $general->getUnionConfiguration($unionCode,'bmc_dispatch_with_milk_type','PORTAL') ?: '0';
-        $flushLimit = (float) $general->getCheckBmcConfiguration($unionCode, 'bmc_dispatch_flush_limit', $bmcCode, 'BMC', 'BMC_DISPATCH_CONFIG') ?: 0;
-        $flushWithStock = $general->getUnionConfiguration($unionCode, 'bmc_dispatch_flush_with_stock', 'BMC') == 1;
+        
+        $configCacheKey = 'bmc_dispatch_config_union_' . $unionCode;
+        $configCache = null;
+        if (Yii::$app->has('redis')) {
+            $redis = Yii::$app->get('redis');
+            $configCache = json_decode($redis->get($configCacheKey), true);
+        }
+        if ($configCache && isset($configCache['extraConfigs'])) {
+            $extra = $configCache['extraConfigs'];
+            $dispatchWithMilkType = $extra['bmc_dispatch_with_milk_type'];
+            $flushLimit = $extra['bmc_dispatch_flush_limit'];
+            $flushWithStock = $extra['bmc_dispatch_flush_with_stock'];
+            $qtyMode = $extra['dispatch_qty_mode'];
+            $conversionConst = $extra['ltr_to_kg_constant'];
+            $autoReject = $configCache['confige']['auto_reject'];
+        } else {
+            $dispatchWithMilkType = $general->getUnionConfiguration($unionCode,'bmc_dispatch_with_milk_type','PORTAL') ?: '0';
+            $flushLimit = (float) $general->getCheckBmcConfiguration($unionCode, 'bmc_dispatch_flush_limit', $bmcCode, 'BMC', 'BMC_DISPATCH_CONFIG') ?: 0;
+            $flushWithStock = $general->getUnionConfiguration($unionCode, 'bmc_dispatch_flush_with_stock', 'BMC') == 1;
 
-        $qtyMode = $general->getUnionConfiguration($unionCode, 'dispatch_qty_mode', 'BMC');
-        $conversionConst = (float) $general->getUnionConfiguration($unionCode, 'ltr_to_kg_constant', 'BMC') ?: 1;
-        $autoReject = $general->getUnionConfiguration($unionCode, 'bmc_dispatch_auto_reject', 'BMC') ?: '0';
+            $qtyMode = $general->getUnionConfiguration($unionCode, 'dispatch_qty_mode', 'BMC');
+            $conversionConst = (float) $general->getUnionConfiguration($unionCode, 'ltr_to_kg_constant', 'BMC') ?: 1;
+            $autoReject = $general->getUnionConfiguration($unionCode, 'bmc_dispatch_auto_reject', 'BMC') ?: '0';
+        }
         $cnt = 1;
         $cIdx = 1;
         foreach ($dispatchTxnData as $index => $txnItem) {
@@ -430,7 +496,7 @@ class BmcMilkDispatchController extends MasterController {
                     if (isset($cData['config_result_key'])) $configResult->config_result = $cData['config_result_key'];
                     $configResult->config_for = 'BMC_DISPATCH';
                     $configResult->originating_org_code = $txnModel->bmc_code;
-                    $configResult->config_txn_result_code = $general->getPrimaryCode($configResult, $cIdx, 'BMC');
+                    $configResult->config_txn_result_code = $general->getPrimaryCode($configResult, $cIdx, 'MOBILE');
                     $configResult->ref_code = $txnModel->bmc_milk_dispatch_txn_code;
                     $cIdx++;
 
@@ -461,8 +527,6 @@ class BmcMilkDispatchController extends MasterController {
         }
         $transaction = $this->generalModel->saveTransaction($saveModels, ['BMC Milk Dispatch', 'create']);
         if ($transaction === 'customRedirect') {
-            Yii::$app->cache->delete("bmc_dispatch_load_data_{$model->bmc_code}_{$model->trip_code}");
-
             $savedTxns = [];
             foreach ($txnModels as $txn) {
                 $savedTxns[] = $txn->attributes;

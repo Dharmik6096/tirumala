@@ -60,7 +60,7 @@ use common\services\InboxParseService;
 
 class SiteController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data', 'feed-summary-dashboard', 'feed-summary-dashboard-details'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data', 'feed-summary-dashboard', 'feed-summary-dashboard-details', 'flush-redis-cache'];
 
     public function init() {
         parent::init();
@@ -3601,5 +3601,24 @@ class SiteController extends \app\controllers\ChildController {
             'widget_title' => $full_title,
             'selected_key_label' => $selected_label
         ]);
+    }
+    public function actionFlushRedisCache() {
+        if (!Yii::$app->has('redis')) {
+            return "Redis component is not configured.";
+        }
+
+        try {
+            $redis = Yii::$app->get('redis');
+            $result = $redis->flushdb();
+            
+            if ($result === 'OK' || $result === true) {
+                return "Success: Redis cache has been cleared successfully!";
+            }
+            
+            return "Error: Could not clear Redis cache.";
+        } catch (\Exception $e) {
+            Yii::error('Redis flush failed: ' . $e->getMessage(), 'redis');
+            return "Error: " . $e->getMessage();
+        }
     }
 }

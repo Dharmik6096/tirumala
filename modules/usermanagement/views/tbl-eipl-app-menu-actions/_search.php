@@ -32,12 +32,16 @@ use yii\web\View;
 </div>
 <?php
 $script = "
+    var selectedLoginType = '" . ($model->login_type ?? '') . "';
     updateGrid();
+    manageDriverOption();
     $('#tbleiplappmenuactionsmapping-app_type').change(function() {
+        manageDriverOption();
         $('.login_type_div').show();
         submitForm();
     });
     $('#tbleiplappmenuactionsmapping-login_type').change(function() {
+        selectedLoginType = $(this).val();
         submitForm();
     });
     $('#tbleiplappmenuactionsmapping-department').change(function() {
@@ -46,6 +50,22 @@ $script = "
     $('#tbleiplappmenuactionsmapping-union_code').change(function() {
         submitForm();
     });
+
+    function manageDriverOption() {
+        var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
+        var loginDropdown = $('#tbleiplappmenuactionsmapping-login_type');
+        if (appType == 4) {
+            if (loginDropdown.find('option[value=\"DRIVER\"]').length == 0) {
+                loginDropdown.append('<option value=\"DRIVER\">Driver</option>');
+            }
+            if (selectedLoginType === 'DRIVER') {
+                loginDropdown.val('DRIVER');
+            }
+        } else {
+            loginDropdown.find('option[value=\"DRIVER\"]').remove();
+        }
+        updateGrid();
+    }
 
     function submitForm(){
         var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
