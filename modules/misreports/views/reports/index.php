@@ -54,7 +54,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
         $this->title = $model->mcc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
         $removeExportType = ['CSV'];
-        $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
+        $exportEvents = ['onRenderSheet' => function ($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
                 $sheet->getProtection()->setPassword("password");
             },];
@@ -67,7 +67,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
         $this->title = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
         $removeExportType = ['CSV'];
-        $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
+        $exportEvents = ['onRenderSheet' => function ($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
                 $sheet->getProtection()->setPassword("password");
             },];
@@ -97,14 +97,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                         <div class="">
                             <?php
                             $form = ActiveForm::begin(['options' => [
-                                            'id' => 'report-form',
-                                            'field-class' => 'form-group col-sm-6'
-                                        ],
-                                        'method' => 'post',
-                                        'validateOnBlur' => FALSE,
-                                        'validateOnChange' => FALSE,
-                                        'enableClientValidation' => true,
-                                        'validateOnSubmit' => true,
+                                    'id' => 'report-form',
+                                    'field-class' => 'form-group col-sm-6'
+                                ],
+                                'method' => 'post',
+                                'validateOnBlur' => FALSE,
+                                'validateOnChange' => FALSE,
+                                'enableClientValidation' => true,
+                                'validateOnSubmit' => true,
                             ]);
                             ?>
                             <div class="row margin_0">
@@ -741,8 +741,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                 <?php if (!empty($result) && $model->output_type != 'BACKGROUND' && empty($data['excel_readonly'])) {
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-                    <?php }
-                    ?>
+                <?php }
+                ?>
             </div>
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
 
@@ -768,7 +768,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                     if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
                         $attr_arr = [];
                         if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
-                            $attr_arr['value'] = function($model) use ($att) {
+                            $attr_arr['value'] = function ($model) use ($att) {
                                 return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
                             };
                         }
@@ -804,7 +804,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                     if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
                         $attr_arr = [];
                         if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
-                            $attr_arr['value'] = function($model) use ($att) {
+                            $attr_arr['value'] = function ($model) use ($att) {
                                 return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
                             };
                         }
@@ -910,21 +910,21 @@ $('.mis_report_modal_toggle').on('click', function(){
         }
         
         if(document.getElementById('reportsmodel-member_types')){
-            handleHideShow($('#reportsmodel-member_types').val());
+            handleHideShow($('#reportsmodel-member_types').val(), false);
             $(document).on('change', '#reportsmodel-member_types', function() {
-                handleHideShow($(this).val());
+                handleHideShow($(this).val(), true);
             });
         }else if(document.getElementById('reportsmodel-search_type')){
-            handleHideShow($('#reportsmodel-search_type').val());
+            handleHideShow($('#reportsmodel-search_type').val(), false);
             $(document).on('change', '#reportsmodel-search_type', function() {
-                handleHideShow($(this).val());
+                handleHideShow($(this).val(), true);
             });
         }
         
         $(document).on('keyup change', '.from-code', function() {
             var fromVal = $('#reportsmodel-from_code').val();
             var toCode = $('#reportsmodel-to_code');
-             if ($('#reportsmodel-member_types').val() == '1' || $('#reportsmodel-search_type').val() == '1') {
+            if ($('#reportsmodel-member_types').val() == '1' || $('#reportsmodel-search_type').val() == '1') {
                 toCode.val(fromVal);
             }
         });
@@ -1078,24 +1078,29 @@ $('.mis_report_modal_toggle').on('click', function(){
        
     }
         
-      function handleHideShow(selectedValue) {
+    function handleHideShow(selectedValue, isUserChange = false) {
         var fromCode = $('#reportsmodel-from_code');
         var toCode = $('#reportsmodel-to_code');
 
         if (selectedValue == '1' || selectedValue == '2') {
             $('.val_from_code, .val_to_code').show();
-            if (fromCode.val() == '' || fromCode.val() == '0') {
-                fromCode.val('1');
-            }
             fromCode.prop('readonly', false);
 
             if (selectedValue == '1') {
-                toCode.val('1').prop('readonly', true);
+                toCode.prop('readonly', true);
+                if (isUserChange) {
+                    fromCode.val('1');
+                    toCode.val('1');
+                } else {
+                    toCode.val(fromCode.val());
+                }
             } else {
-                if (toCode.val() == '' || toCode.val() == '0') {
+                toCode.prop('readonly', false);
+
+                if (isUserChange) {
+                    fromCode.val('1');
                     toCode.val('" . $toCodeDefault . "');
                 }
-                toCode.prop('readonly', false);
             }
         } else {
             $('.val_from_code, .val_to_code').hide();
