@@ -435,11 +435,7 @@ class TblDcsProvisionalController extends ChildController {
             $validate = 1;
             $dcsProvisional->vendor = $dcsProvisional->vendor_code;
             $dcsProvisional->milk_type_code = !empty($dcsProvisional->milk_type) ? explode(',', $dcsProvisional->milk_type) : [];
-            $dcsProvisional->created_at = '';
-            $dcsProvisional->created_by = '';
-            $dcsProvisional->updated_at = '';
-            $dcsProvisional->updated_by = '';
-            $dcsProvisional->remarks = '';
+            unset($dcsProvisional->created_at, $dcsProvisional->created_by, $dcsProvisional->updated_at, $dcsProvisional->updated_by, $dcsProvisional->remarks);
             $oldVillage = '';
             if ($dcsProvisional->provisional_from == 'mobile_update') {
                 $this->model = TblDcs::find()->where(['dcs_code' => $dcsProvisional->dcs_code])->one();
