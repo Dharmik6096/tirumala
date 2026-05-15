@@ -1022,6 +1022,18 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+    public function actionTopRegionsMilkCollectionReport() {
+        $this->report = 'TopRegionsMilkCollectionReport';
+        return $this->actionIndex();
+    }
+    public function actionDailySummaryReport() {
+        $this->report = 'DailySummaryReport';
+        return $this->actionIndex();
+    }
+    public function actionTrucksheetComparisionReport() {
+        $this->report = 'TrucksheetComparisionReport';
+        return $this->actionIndex();
+    }
 
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
@@ -5528,6 +5540,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_Society_sample_report',
                 'scenario' => 'SocietySampleReport',
                 'title' => 'SP - 106 - Society Sample Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TopRegionsMilkCollectionReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_date:string,to_date:string,top:txt',
+                'sp_name' => 'mis_top_region_milk_collection_report',
+                'scenario' => 'TopRegionsMilkCollectionReport',
+                'title' => 'SP - 103 - Top Regions Milk Collection Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'DailySummaryReport' => [
+                'param' => 'language_code,union_code,date:string,storage_type',
+                'sp_name' => 'mis_daily_summary',
+                'scenario' => 'DailySummaryReport',
+                'title' => 'SP - 108 - Daily Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrucksheetComparisionReport' => [
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'TrucksheetComparisionReport',
+                'title' => 'SP - 114 - Trucksheet Comparision Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],

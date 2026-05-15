@@ -1233,12 +1233,15 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => 'SP - 101 -' . Yii::t('app', 'Top Society Milk Collection'), 'url' => ['/misreports/reports/top-society-milk-collection-report']],
                                     ['label' => 'SP - 102 -' . Yii::t('app', 'Top Farmer Milk Collection'), 'url' => ['/misreports/reports/top-farmer-milk-collection-report']],
+                                    ['label' => 'SP - 103 -' . Yii::t('app', 'Top Regions Milk Collection'), 'url' => ['/misreports/reports/top-regions-milk-collection-report']],
                                     ['label' => 'SP - 104 -' . Yii::t('app', 'Society Wise Summary'), 'url' => ['/misreports/reports/society-wise-summary-report']],
                                     ['label' => 'SP - 105 -' . Yii::t('app', 'Farmer Not Submitting Milk'), 'url' => ['/misreports/reports/farmer-not-submitting-milk-report']],
                                     ['label' => 'SP - 106 -' . Yii::t('app', 'Society Sample'), 'url' => ['/misreports/reports/society-sample-report']],
+                                    ['label' => 'SP - 108 -' . Yii::t('app', 'Daily Summary'), 'url' => ['/misreports/reports/daily-summary-report']],
                                     ['label' => 'SP - 109 -' . Yii::t('app', 'Farmer Manual Entry'), 'url' => ['/misreports/reports/farmer-manual-entry-report']],
                                     ['label' => 'SP - 111 -' . Yii::t('app', 'Manual Collection Summary'), 'url' => ['/misreports/reports/manual-collection-summary-report']],
                                     ['label' => 'SP - 112 -' . Yii::t('app', 'Milk Edit For Farmer'), 'url' => ['/misreports/reports/milk-edit-for-farmer-report']],
+                                    ['label' => 'SP - 114 -' . Yii::t('app', 'Trucksheet Comparision'), 'url' => ['/misreports/reports/trucksheet-comparision-report']],
                             ]
                         ],
                             [

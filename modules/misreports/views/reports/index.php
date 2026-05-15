@@ -661,15 +661,25 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('language_code'))) {
+                                        $radioFieldsConfig = [
+                                                'language_code' => [0 => 'English', 1 => 'Gujarati'],
+                                                'storage_type'  => [0 => 'BMC', 1 => 'CAN'],
+                                        ];
+                                        if (array_key_exists($value, $radioFieldsConfig)) {
+                                            $radioColClass = ($value == 'storage_type') ? 'col-sm-6' : 'col-sm-12';
                                             ?>
-                                            <div class="col-sm-12 radio-section">
-                                                <?=
-                                                $form->field($model, 'language_code')->radioList([0 => 'English', 1 => 'Gujarati'], ['class' => 'radio-container', 'item' => function ($index, $label, $name, $checked, $value) {
-                                                        return '<label class="radio-inline">' . Html::radio($name, $checked, ['value' => $value]) . ' ' . $label . '</label>';
-                                                    }
-                                                ]);
-                                                ?>
+                                            <div class="<?= $radioColClass ?> radio-section">
+                                                <?= $form->field($model, $value)->radioList($radioFieldsConfig[$value],
+                                                        [
+                                                                'class' => 'radio-container',
+                                                                'item' => function ($index, $label, $name, $checked, $itemValue) {
+                                                                    return '<label class="radio-inline">' .
+                                                                            Html::radio($name, $checked, ['value' => $itemValue]) .
+                                                                            ' ' . $label .
+                                                                            '</label>';
+                                                                }
+                                                        ]
+                                                ); ?>
                                             </div>
                                             <?php
                                         }
