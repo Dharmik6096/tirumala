@@ -28,6 +28,8 @@ class DataExchangeService {
                     $executionStatus = $this->handleFarmerSync($config);
                 } else if ($config->data_method == 'memberCollectionComfed') {
                     $executionStatus = $this->handleCollectionData($config);
+                } else if ($config->data_method == 'localSaleComfed') {
+                    $executionStatus = $this->handleLocalSaleData($config);
                 }
             }
             return $executionStatus;
@@ -151,7 +153,7 @@ class DataExchangeService {
                     $api->body = json_encode(["dcsNo" => (string) $sapVendorCode]);
 
                     $responseData = $api->ExchangeData();
-                    \Yii::info("Comfed-farmer-sync : WebApi Status: ". $responseData->status);
+                    \Yii::info("Comfed-farmer-sync : WebApi Status: " . $responseData->status);
                     if (isset($responseData->status) && $responseData->status == 'success' && !empty($responseData->data)) {
                         foreach ($responseData->data as $farmer) {
                             $frNo = $farmer->frNo;
@@ -181,6 +183,60 @@ class DataExchangeService {
             return true;
         } catch (Throwable $e) {
             \Yii::info("Comfed-farmer-sync : Farmer Sync Fatal Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function handleLocalSaleData($config) {
+        try {
+            $records = Yii::$app->general->getSpData($config->sp_name, [], false);
+            if (empty($records)) {
+                return false;
+            }
+
+            $eventId = !empty($records[0]['event_id']) ? $records[0]['event_id'] : '';
+            $floats = ['lsd_by_cash', 'lsd_by_credit', 'lsd_grand_total', 'quantity', 'standard_rate'];
+            $payload = array_map(function ($record) use ($floats) {
+                unset($record['event_id']);
+                foreach ($record as $key => $val) {
+                    if (in_array($key, $floats)) {
+                        $record[$key] = (float) $val;
+                    } elseif ($key === 'lsd_is_active') {
+                        $record[$key] = (bool) $val;
+                    } else {
+                        $record[$key] = (string) $val;
+                    }
+                }
+                return $record;
+            }, $records);
+
+            $api = new WebApi();
+            $api->serverUrl = $config->request_url;
+            $api->authentication = false;
+            $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
+            $api->body = json_encode(["data" => $payload]);
+            $responseData = $api->ExchangeData();
+
+            $respStatus = $data_post_status = 3;
+            $respMsg = 'Response Not Parsed.';
+            if (isset($responseData->status) && $responseData->status == 'success' && isset($responseData->data->status) && isset($responseData->data->message)) {
+                $data_post_status = 2;
+                $respStatus = $responseData->data->status;
+                $respMsg = $responseData->data->message;
+            } else if (isset($responseData->message) && isset($responseData->statusCode)) {
+                $data_post_status = 3;
+                $respStatus = $responseData->statusCode;
+                $respMsg = $responseData->message;
+            }
+
+            Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', [$eventId, $data_post_status, $respStatus, substr($respMsg, 0, 250), 'product_sale_transaction'], true);
+            return true;
+        } catch (Throwable $e) {
+            try {
+                Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250), 'product_sale_transaction'], true);
+            } catch (Throwable $e) {
+                
+            }
             return false;
         }
     }
