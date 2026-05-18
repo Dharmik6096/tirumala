@@ -2541,6 +2541,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'MU App'), 2 => Yii::t('app', 'VDCS App')]
             ],
+            'generation_type' => [
+                'name' => 'generation_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Trucksheet Date'), 2 => Yii::t('app', 'Trucksheet Date And Shift Range')]
+            ],
         ];
         return $records[$l];
     }
@@ -2705,6 +2710,7 @@ class DropDown extends Component {
             'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
             'voucher_types' => ['name' => 'voucher_type_code', 'fields' => 'voucher_type_code,voucher_type_name,local_name', 'prompt' => 'Select Voucher Types', 'model' => 'TblVoucherTypes'],
             'project' => ['name' => 'project_code', 'fields' => 'project_code,project_name', 'prompt' => 'Select Project', 'model' => 'TblProject'],
+            'search_by_farmer' => ['name' => 'search_by_farmer', 'fields' => 'member_code,member_name~ref_code,local_name', 'prompt' => Yii::t('app', 'Select Member'), 'model' => 'TblMember', 'depend' => 'dcs_code', 'checkValid'],
         ];
         return $label[$l];
     }

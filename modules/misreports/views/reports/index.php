@@ -31,6 +31,7 @@ $toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailR
 $model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
 $model->to_soc = empty($model->to_soc) ? 100 : $model->to_soc;
+$model->deviation_type = ($model->deviation_type === null || $model->deviation_type === '') ? '0' : $model->deviation_type;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
@@ -118,7 +119,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         $value = $value_array[0];
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
-                                            echo ($value == 'date' || $value == 'from_date' || ($value == 'to_date' && isset($value_array[2]))) ? '<div class="clearfix"></div>' : '';
+                                            //echo ($value == 'date' || $value == 'from_date' || ($value == 'to_date' && isset($value_array[2]))) ? '<div class="clearfix"></div>' : '';
+                                            if ($value == 'to_date' && isset($value_array[2])) {
+                                                echo '<div class="clearfix to-date-clearfix"></div>';
+                                            } else if ($value == 'date' || $value == 'from_date') {
+                                                if ($report != 'FarmerFatAndWtDeviationReport') {
+                                                    echo '<div class="clearfix"></div>';
+                                                }
+                                            }
                                             ?>
                                             <div class="col-sm-6 reportDate">
                                                 <?php
@@ -209,6 +217,9 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?php
                                             } else if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                 $addAll = (isset($value_array[2]) && $value_array[2] == 'addAll') ? true : false;
+                                                if ($report == 'FarmerFatAndWtDeviationReport') {
+                                                    echo '<div class="clearfix"></div>';
+                                                }
                                                 ?>
                                                 <div class="col-sm-6 val_dcs_code">
                                                     <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'reportsmodel-union_code', '', Yii::t('app', 'Society'), 'dcs_code', false, false, $addAll); ?>
@@ -243,6 +254,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 $class .= ' number-validate MobileHideShow val_mobile_no';
                                             } else if ($field == 'no_of_farmer_edit' || $field == 'no_of_individual_farmer_edit') {
                                                 $options += ['type' => 'number', 'value' => !empty($model->{$field}) ? $model->{$field} : 0];
+                                            } else if ($field == 'deviation_days') {
+                                                $options += ['type' => 'number', 'min' => 0, 'max' => 30];
+                                            } else if ($field == 'deviation_value') {
+                                                $options += ['type' => 'number', 'min' => 0, 'max' => 9999];
                                             }
                                             ?>
                                             <div class="<?= $class ?>">
@@ -358,7 +373,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 $static_class = 'col-sm-6';
                                                 if ($value == 'region_type') {
@@ -664,9 +679,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         $radioFieldsConfig = [
                                                 'language_code' => [0 => 'English', 1 => 'Gujarati'],
                                                 'storage_type'  => [0 => 'BMC', 1 => 'CAN'],
+                                                'deviation_type' => ['0' => 'All', '1' => 'Deviation qty', '2' => 'Deviation fat'],
                                         ];
                                         if (array_key_exists($value, $radioFieldsConfig)) {
-                                            $radioColClass = ($value == 'storage_type') ? 'col-sm-6' : 'col-sm-12';
+                                            $radioColClass = ($value == 'storage_type' || $value == 'deviation_type') ? 'col-sm-6' : 'col-sm-12';
                                             ?>
                                             <div class="<?= $radioColClass ?> radio-section">
                                                 <?= $form->field($model, $value)->radioList($radioFieldsConfig[$value],
@@ -695,6 +711,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value)->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('search_by_farmer'))) {
+                                            ?>
+                                            <div class="col-sm-6 val_farmer_code">
+                                                <?= Yii::$app->dropdown->depend_dropdown('search_by_farmer', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('search_by_farmer')); ?>
                                             </div>
                                             <?php
                                         }
@@ -967,6 +990,13 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
 	}
         
+        if('" . $report . "'=='TrucksheetDetailReport'){
+            hideTrucksheetDetailFields();
+            $(document).on('change', '#reportsmodel-generation_type', function() {
+                hideTrucksheetDetailFields();
+            });
+        }
+        
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -1177,6 +1207,22 @@ $('.mis_report_modal_toggle').on('click', function(){
             resetField('.val_dcs_code select');
         }else if(region_code == '0'){
             $('.val_dcs_code').show();
+        }
+    }
+    
+    function hideTrucksheetDetailFields(){
+        if('" . $report . "'=='TrucksheetDetailReport'){
+            var generation_type = $('#reportsmodel-generation_type').val();
+            if(generation_type == '1'){ 
+                $('.shift').hide();
+                $('.to-date-clearfix').hide();
+            }else if(generation_type == '2'){ 
+                $('.shift').show();
+                $('.to-date-clearfix').show();
+            }else {
+                $('.shift').hide();
+                $('.to-date-clearfix').hide();
+            }
         }
     }
 

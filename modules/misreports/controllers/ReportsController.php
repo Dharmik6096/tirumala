@@ -1034,6 +1034,14 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'TrucksheetComparisionReport';
         return $this->actionIndex();
     }
+    public function actionTrucksheetDetailReport() {
+        $this->report = 'TrucksheetDetailReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerFatAndWtDeviationReport() {
+        $this->report = 'FarmerFatAndWtDeviationReport';
+        return $this->actionIndex();
+    }
 
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
@@ -5564,6 +5572,22 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => '',
                 'scenario' => 'TrucksheetComparisionReport',
                 'title' => 'SP - 114 - Trucksheet Comparision Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrucksheetDetailReport' => [
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string:from_shift,to_date:string:to_shift,plant_code,generation_type:static:generation_type',
+                'sp_name' => '',
+                'scenario' => 'TrucksheetDetailReport',
+                'title' => 'SP - 115 - Trucksheet Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerFatAndWtDeviationReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string:shift,milk_type_code,deviation_days:txt,deviation_value:txt,deviation_type,search_by_farmer',
+                'sp_name' => '',
+                'scenario' => 'FarmerFatAndWtDeviationReport',
+                'title' => 'SP - 110 - Farmer Fat And Wt Deviation Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],

@@ -1239,9 +1239,11 @@ echo GhostMenu::widget([
                                     ['label' => 'SP - 106 -' . Yii::t('app', 'Society Sample'), 'url' => ['/misreports/reports/society-sample-report']],
                                     ['label' => 'SP - 108 -' . Yii::t('app', 'Daily Summary'), 'url' => ['/misreports/reports/daily-summary-report']],
                                     ['label' => 'SP - 109 -' . Yii::t('app', 'Farmer Manual Entry'), 'url' => ['/misreports/reports/farmer-manual-entry-report']],
+                                    ['label' => 'SP - 110 -' . Yii::t('app', 'Farmer Fat And Wt Deviation'), 'url' => ['/misreports/reports/farmer-fat-and-wt-deviation-report']],
                                     ['label' => 'SP - 111 -' . Yii::t('app', 'Manual Collection Summary'), 'url' => ['/misreports/reports/manual-collection-summary-report']],
                                     ['label' => 'SP - 112 -' . Yii::t('app', 'Milk Edit For Farmer'), 'url' => ['/misreports/reports/milk-edit-for-farmer-report']],
                                     ['label' => 'SP - 114 -' . Yii::t('app', 'Trucksheet Comparision'), 'url' => ['/misreports/reports/trucksheet-comparision-report']],
+                                    ['label' => 'SP - 115 -' . Yii::t('app', 'Trucksheet Detail'), 'url' => ['/misreports/reports/trucksheet-detail-report']],
                             ]
                         ],
                             [
