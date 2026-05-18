@@ -211,6 +211,7 @@ class DataExchangeService {
             }, $records);
 
             $api = new WebApi();
+            $api->vendor_code = $eventId;
             $api->serverUrl = $config->request_url;
             $api->authentication = false;
             $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
