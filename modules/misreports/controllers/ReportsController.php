@@ -5569,7 +5569,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'TrucksheetComparisionReport' => [
                 'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string,to_date:string',
-                'sp_name' => '',
+                'sp_name' => 'mis_trucksheet_comparision_detail',
                 'scenario' => 'TrucksheetComparisionReport',
                 'title' => 'SP - 114 - Trucksheet Comparision Report',
                 'header_included' => TRUE,
@@ -5577,7 +5577,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'TrucksheetDetailReport' => [
                 'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string:from_shift,to_date:string:to_shift,plant_code,generation_type:static:generation_type',
-                'sp_name' => '',
+                'sp_name' => 'mis_trucksheet_detail',
                 'scenario' => 'TrucksheetDetailReport',
                 'title' => 'SP - 115 - Trucksheet Detail Report',
                 'header_included' => TRUE,
