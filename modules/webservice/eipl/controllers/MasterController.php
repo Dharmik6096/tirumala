@@ -154,9 +154,8 @@ class MasterController extends ActiveController {
                 }
             } else if ($value['organization_type'] == 'DRIVER') {
                 $driver[] = $value['organization_code'];
-                $model = TblVehicleTrip::find()->where(['trip_code' => $value['organization_code']])->one();
-                if (!empty($model->union_code) && !in_array($model->union_code, $union)) {
-                    $union[] = $model->union_code;
+                if (!empty(Yii::$app->eiplapp->identity->union_code) && !in_array(Yii::$app->eiplapp->identity->union_code, $union)) {
+                    $union[] = Yii::$app->eiplapp->identity->union_code;
                 }
             }
         }

@@ -126,8 +126,10 @@ class BmcMilkDispatchController extends MasterController {
         $configData = null;
         if (Yii::$app->has('redis')) {
             $redis = Yii::$app->get('redis');
-            $master = json_decode($redis->get($masterCacheKey), true);
-            $configData = json_decode($redis->get($configCacheKey), true);
+            $cacheData = $redis->get($masterCacheKey);
+            $master = $cacheData ? json_decode($cacheData, true) : [];
+            $configCacheData = $redis->get($configCacheKey);
+            $configData = $configCacheData ? json_decode($configCacheData, true) : [];
         }
 
         if (empty($master)) {
@@ -313,7 +315,8 @@ class BmcMilkDispatchController extends MasterController {
         $configCache = null;
         if (Yii::$app->has('redis')) {
             $redis = Yii::$app->get('redis');
-            $configCache = json_decode($redis->get($configCacheKey), true);
+            $cacheData = $redis->get($configCacheKey);
+            $configCache = $cacheData ? json_decode($cacheData, true) : [];
         }
         if ($configCache && isset($configCache['extraConfigs'])) {
             $extra = $configCache['extraConfigs'];
