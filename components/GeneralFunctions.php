@@ -3183,4 +3183,11 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function removeRedisCache($key) {
+        if (Yii::$app->has('redis')) {
+            $redis = Yii::$app->get('redis');
+            return $redis->del($key);
+        }
+        return false;
+    }
 }

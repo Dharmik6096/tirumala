@@ -22,6 +22,21 @@ class RequestMasterController extends MasterController {
         $data = V1::getLabels($endpoint);
         $response = [];
         if (!empty($data) && !empty($data['sp']) && (!isset($data['call_action']) || !$data['call_action'])) {
+            $is_cache = isset($data['redis']) && $data['redis'] === true;
+            $cache_key = '';
+            if ($is_cache && Yii::$app->has('redis')) {
+                $redis = Yii::$app->get('redis');
+                $req_string = is_array($req_data) ? json_encode($req_data) : (string) $req_data;
+                $cache_key = 'v1_' . str_replace('/', '_', $endpoint) . '_' . md5($req_string);
+                $cached_data = $redis->get($cache_key);
+                if ($cached_data !== false && $cached_data !== null) {
+                    $response = json_decode($cached_data, true);
+                    if (!empty($response)) {
+                        $this->response->setData($response);
+                        return $this->response;
+                    }
+                }
+            }
             $sp_name = $data['sp'];
             $sp_param = [];
             $param = !empty($data['param']) ? explode('#', $data['param']) : [];
@@ -53,6 +68,10 @@ class RequestMasterController extends MasterController {
             }
             if (isset($data['as_object']) && $data['as_object']) {
                 $response = !empty($response) ? $response[0] : NULL;
+            }
+            if ($is_cache && !empty($response) && !empty($cache_key) && Yii::$app->has('redis')) {
+                $redis = Yii::$app->get('redis');
+                $redis->setex($cache_key, 86400, json_encode($response));
             }
         } else {
             $endpoint_array = explode('/', $endpoint);
