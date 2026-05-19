@@ -1022,22 +1022,27 @@ class ReportsController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+
     public function actionTopRegionsMilkCollectionReport() {
         $this->report = 'TopRegionsMilkCollectionReport';
         return $this->actionIndex();
     }
+
     public function actionDailySummaryReport() {
         $this->report = 'DailySummaryReport';
         return $this->actionIndex();
     }
+
     public function actionTrucksheetComparisionReport() {
         $this->report = 'TrucksheetComparisionReport';
         return $this->actionIndex();
     }
+
     public function actionTrucksheetDetailReport() {
         $this->report = 'TrucksheetDetailReport';
         return $this->actionIndex();
     }
+
     public function actionFarmerFatAndWtDeviationReport() {
         $this->report = 'FarmerFatAndWtDeviationReport';
         return $this->actionIndex();
@@ -2501,6 +2506,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSocietySampleReport() {
         $this->report = 'SocietySampleReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerWiseYearlyEditReport() {
+        $this->report = 'FarmerWiseYearlyEditReport';
         return $this->actionIndex();
     }
 
@@ -5568,7 +5578,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'TrucksheetComparisionReport' => [
-                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string,to_date:string',
+                'param' => 'language_code,union_code,from_code:txt,to_code:txt,from_date:string,to_date:string',
                 'sp_name' => 'mis_trucksheet_comparision_detail',
                 'scenario' => 'TrucksheetComparisionReport',
                 'title' => 'SP - 114 - Trucksheet Comparision Report',
@@ -5576,7 +5586,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'TrucksheetDetailReport' => [
-                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string:from_shift,to_date:string:to_shift,plant_code,generation_type:static:generation_type',
+                'param' => 'language_code,union_code,plant_code,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,generation_type:static:generation_type',
                 'sp_name' => 'mis_trucksheet_detail',
                 'scenario' => 'TrucksheetDetailReport',
                 'title' => 'SP - 115 - Trucksheet Detail Report',
@@ -5584,10 +5594,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'FarmerFatAndWtDeviationReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,date:string:shift,milk_type_code,deviation_days:txt,deviation_value:txt,deviation_type,search_by_farmer',
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,deviation_days:txt,deviation_value:txt,deviation_type,member_code',
                 'sp_name' => '',
                 'scenario' => 'FarmerFatAndWtDeviationReport',
                 'title' => 'SP - 110 - Farmer Fat And Wt Deviation Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerWiseYearlyEditReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,financial_year,from_code:txt,to_code:txt',
+                'sp_name' => 'mis_farmer_wise_yearly_edit_report',
+                'scenario' => 'FarmerWiseYearlyEditReport',
+                'title' => 'S - 107 - Farmer Wise Yearly Edit Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],
