@@ -125,17 +125,12 @@ $this->title = Yii::t('app', $title);
     
     $ajaxUrl = Url::to(['get-applicability-data']);
     $dcsAjaxUrl = Url::to(['get-dcs-by-bmc']);
+    $validateAjaxUrl = Url::to(['validate-mapping']);
     $area_code = $searchModel->area_code;
     $applicable_type = $model->applicable_type;
 
-    $selectedCodes = isset($selectedCodes) ? $selectedCodes : [];
-    $selectedBmcs = isset($selectedBmcs) ? $selectedBmcs : [];
-
     $script = "
         var applicable_type = '{$applicable_type}';
-        var selectedCodes = " . json_encode($selectedCodes) . ";
-        var selectedBmcs = " . json_encode($selectedBmcs) . ";
-        var isInitialLoad = true;
 
         if(applicable_type != '' && applicable_type != null && applicable_type != 'undefined') {
             fetchApplicabilityData();
@@ -183,20 +178,8 @@ $this->title = Yii::t('app', $title);
                         if(response.status == 'success') {
                             if (type == 'DCS') {
                                 $('#bmc-filter-list').html(response.data);
-                                if (isInitialLoad && selectedBmcs && selectedBmcs.length > 0) {
-                                    $.each(selectedBmcs, function(index, value) {
-                                        $('.bmc-filter-checkbox[value=\"' + value + '\"]').prop('checked', true);
-                                    });
-                                }
-                                fetchDcsData();
                             } else {
                                 $('#bmc-list').html(response.data);
-                                if (isInitialLoad && selectedCodes && selectedCodes.length > 0) {
-                                    $.each(selectedCodes, function(index, value) {
-                                        $('.data-checkbox[value=\"' + value + '\"]').prop('checked', true);
-                                    });
-                                }
-                                isInitialLoad = false;
                             }
                             $('#mapping-grid-container').html(response.grid);
                         }
@@ -223,12 +206,6 @@ $this->title = Yii::t('app', $title);
                 success: function(response) {
                     if(response.status == 'success') {
                         $('#bmc-list').html(response.data);
-                        if (isInitialLoad && selectedCodes && selectedCodes.length > 0) {
-                            $.each(selectedCodes, function(index, value) {
-                                $('.data-checkbox[value=\"' + value + '\"]').prop('checked', true);
-                            });
-                        }
-                        isInitialLoad = false;
                         $('#mapping-grid-container').html(response.grid);
                     }
                 }
@@ -253,12 +230,47 @@ $this->title = Yii::t('app', $title);
         });
 
         $('.save-form').on('submit', function(e) {
+            if ($(this).data('validated')) {
+                return true;
+            }
+            e.preventDefault();
+            
             var type = $('input[name=\"applicable_type\"]:checked').val();
             if ($('.data-checkbox:checked').length === 0) {
-                e.preventDefault();
                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one ' + type + '.</span></div></div>');
                 return false;
             }
+
+            
+            var applicable_code = [];
+            $('.data-checkbox:checked').each(function() {
+                applicable_code.push($(this).val());
+            });
+            
+            var form = $(this);
+            $.ajax({
+                url: '{$validateAjaxUrl}',
+                type: 'POST',
+                data: {
+                    applicable_type: type,
+                    applicable_code: applicable_code,
+                    _csrf: yii.getCsrfToken()
+                },
+                success: function(response) {
+                    if (response.status === 'error') {
+                        var errorMsg = '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>';
+                        $.each(response.errors, function(i, err) {
+                            errorMsg += err + '<br>';
+                        });
+                        errorMsg += '</span></div></div>';
+                        bootbox.alert(errorMsg);
+                    } else if (response.status === 'success') {
+                        form.data('validated', true);
+                        form.submit();
+                    }
+                }
+            });
+            return false;
         });
 
         var isDeleting = false;
