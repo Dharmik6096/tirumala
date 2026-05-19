@@ -31,7 +31,7 @@ $form = ActiveForm::begin([
         </div> 
         <div class="modal-msg">
             <h4><?= Yii::t('app', 'Upload file having fields in following manner') ?> :<span class="text-right "><?= Html::a('<i class="fa fa-download"></i>', ['/import/default/download-sample', 'flag' => 'insurance-detail', 'local_field' => ''], ['class' => 'btn btn-fab btn-danger btn-download pull-right', 'title' => 'Download Sample']); ?></span></h4>
-            <p class="fields"><?php echo str_replace(',', ', ', 'sr_no,dcs_code,dcs_name,member_id,adhar_no,member_code,member_name,gender,dob,age,nominee_member_name,date_of_joining_scheme,nominee_adhar_no'); ?></p>
+            <p class="fields"><?php echo str_replace(',', ', ', 'sr_no,dcs_code,dcs_name,member_id,adhar_no,member_code,member_name,gender,dob,age,nominee_member_name,date_of_joining_scheme,mobile_no,nominee_adhar_no'); ?></p>
         </div>
             <div class="row">
                 <?php
