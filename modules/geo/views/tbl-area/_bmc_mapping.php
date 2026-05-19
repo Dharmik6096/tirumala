@@ -128,8 +128,15 @@ $this->title = Yii::t('app', $title);
     $area_code = $searchModel->area_code;
     $applicable_type = $model->applicable_type;
 
+    $selectedCodes = isset($selectedCodes) ? $selectedCodes : [];
+    $selectedBmcs = isset($selectedBmcs) ? $selectedBmcs : [];
+
     $script = "
         var applicable_type = '{$applicable_type}';
+        var selectedCodes = " . json_encode($selectedCodes) . ";
+        var selectedBmcs = " . json_encode($selectedBmcs) . ";
+        var isInitialLoad = true;
+
         if(applicable_type != '' && applicable_type != null && applicable_type != 'undefined') {
             fetchApplicabilityData();
         }
@@ -176,8 +183,20 @@ $this->title = Yii::t('app', $title);
                         if(response.status == 'success') {
                             if (type == 'DCS') {
                                 $('#bmc-filter-list').html(response.data);
+                                if (isInitialLoad && selectedBmcs && selectedBmcs.length > 0) {
+                                    $.each(selectedBmcs, function(index, value) {
+                                        $('.bmc-filter-checkbox[value=\"' + value + '\"]').prop('checked', true);
+                                    });
+                                }
+                                fetchDcsData();
                             } else {
                                 $('#bmc-list').html(response.data);
+                                if (isInitialLoad && selectedCodes && selectedCodes.length > 0) {
+                                    $.each(selectedCodes, function(index, value) {
+                                        $('.data-checkbox[value=\"' + value + '\"]').prop('checked', true);
+                                    });
+                                }
+                                isInitialLoad = false;
                             }
                             $('#mapping-grid-container').html(response.grid);
                         }
@@ -204,6 +223,12 @@ $this->title = Yii::t('app', $title);
                 success: function(response) {
                     if(response.status == 'success') {
                         $('#bmc-list').html(response.data);
+                        if (isInitialLoad && selectedCodes && selectedCodes.length > 0) {
+                            $.each(selectedCodes, function(index, value) {
+                                $('.data-checkbox[value=\"' + value + '\"]').prop('checked', true);
+                            });
+                        }
+                        isInitialLoad = false;
                         $('#mapping-grid-container').html(response.grid);
                     }
                 }
@@ -233,6 +258,23 @@ $this->title = Yii::t('app', $title);
                 e.preventDefault();
                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one ' + type + '.</span></div></div>');
                 return false;
+            }
+        });
+
+        var isDeleting = false;
+        $(document).on('click', '#source-grid .delete-record', function() {
+            isDeleting = true;
+        });
+
+        $(document).on('pjax:success', '#source-grid', function(event) {
+            if (isDeleting) {
+                isDeleting = false;
+                var type = $('input[name=\"applicable_type\"]:checked').val();
+                if (type == 'DCS') {
+                    fetchDcsData();
+                } else {
+                    fetchApplicabilityData();
+                }
             }
         });
     ";
