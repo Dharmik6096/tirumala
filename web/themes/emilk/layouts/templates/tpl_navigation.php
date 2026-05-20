@@ -896,6 +896,7 @@ echo GhostMenu::widget([
                                         ['label' => Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/misreports/reports/monthly-sahayak-income']],
                                     ]
                                 ],
+                                ['label' => Yii::t('app', 'RDO Salary'), 'url' => ['/misreports/reports/rdo-salary-structure']],
                             ]
                         ],
                         ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
