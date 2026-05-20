@@ -290,6 +290,7 @@ class ReportsModel extends Model {
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-generation_type').val() == '2';
                 }", 'on' => ['TrucksheetDetailReport']],
+            [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['RdoSalaryStructure']],
         ];
     }
 

@@ -2514,6 +2514,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRdoSalaryStructure() {
+        $this->report = 'RdoSalaryStructure';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -5609,6 +5614,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],
+            'RdoSalaryStructure' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_Rdo_Salary_abt',
+                'scenario' => 'RdoSalaryStructure',
+                'title' => 'Rdo Salary Structure',
+            ]
         ];
         return $label[$l];
     }
