@@ -1026,6 +1026,31 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTopRegionsMilkCollectionReport() {
+        $this->report = 'TopRegionsMilkCollectionReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDailySummaryReport() {
+        $this->report = 'DailySummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTrucksheetComparisionReport() {
+        $this->report = 'TrucksheetComparisionReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTrucksheetDetailReport() {
+        $this->report = 'TrucksheetDetailReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerFatAndWtDeviationReport() {
+        $this->report = 'FarmerFatAndWtDeviationReport';
+        return $this->actionIndex();
+    }
+
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
         $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
@@ -2489,6 +2514,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSocietySampleReport() {
         $this->report = 'SocietySampleReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerWiseYearlyEditReport() {
+        $this->report = 'FarmerWiseYearlyEditReport';
         return $this->actionIndex();
     }
 
@@ -5543,6 +5573,54 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_Society_sample_report',
                 'scenario' => 'SocietySampleReport',
                 'title' => 'SP - 106 - Society Sample Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TopRegionsMilkCollectionReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_date:string,to_date:string,top:txt',
+                'sp_name' => 'mis_top_region_milk_collection_report',
+                'scenario' => 'TopRegionsMilkCollectionReport',
+                'title' => 'SP - 103 - Top Regions Milk Collection Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'DailySummaryReport' => [
+                'param' => 'language_code,union_code,date:string,storage_type',
+                'sp_name' => 'mis_daily_summary',
+                'scenario' => 'DailySummaryReport',
+                'title' => 'SP - 108 - Daily Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrucksheetComparisionReport' => [
+                'param' => 'language_code,union_code,from_code:txt,to_code:txt,from_date:string,to_date:string',
+                'sp_name' => 'mis_trucksheet_comparision_detail',
+                'scenario' => 'TrucksheetComparisionReport',
+                'title' => 'SP - 114 - Trucksheet Comparision Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrucksheetDetailReport' => [
+                'param' => 'language_code,union_code,plant_code,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,generation_type:static:generation_type',
+                'sp_name' => 'mis_trucksheet_detail',
+                'scenario' => 'TrucksheetDetailReport',
+                'title' => 'SP - 115 - Trucksheet Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerFatAndWtDeviationReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string,shift_code,milk_type_code,deviation_days:txt,deviation_value:txt,deviation_type,member_code',
+                'sp_name' => '',
+                'scenario' => 'FarmerFatAndWtDeviationReport',
+                'title' => 'SP - 110 - Farmer Fat And Wt Deviation Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerWiseYearlyEditReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,financial_year,from_code:txt,to_code:txt',
+                'sp_name' => 'mis_farmer_wise_yearly_edit_report',
+                'scenario' => 'FarmerWiseYearlyEditReport',
+                'title' => 'S - 107 - Farmer Wise Yearly Edit Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],
