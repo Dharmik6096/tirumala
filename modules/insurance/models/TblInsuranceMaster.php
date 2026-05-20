@@ -60,9 +60,9 @@ class TblInsuranceMaster extends ChildModel {
             [['insurance_start_date'], 'validateDate'],
             [['insurance_master_code'], 'required', 'on' => ['import_insurance_detail']],
             [['status'], 'default', 'value' => 'DRAFT'],
-            [['insurance_description'], function ($attribute, $params) {
-                Yii::$app->general->validateName($this, $attribute, $params);
-            }, 'skipOnEmpty' => false],
+            // [['insurance_description'], function ($attribute, $params) {
+            //     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+            // }, 'skipOnEmpty' => false],
         ];
     }
 
