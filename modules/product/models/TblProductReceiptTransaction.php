@@ -58,11 +58,11 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_receipt_transaction_code'], 'required', 'on' => ['androidsync']],
-            [['product_receipt_transaction_code', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'product_receipt_code', 'remark', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['requested_quantity', 'dispatched_quantity', 'received_quantity', 'rejected_quantity', 'rate', 'amount', 'discount'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
+                [['product_receipt_transaction_code'], 'required', 'on' => ['androidsync']],
+                [['product_receipt_transaction_code', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'product_receipt_code', 'remark', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['requested_quantity', 'dispatched_quantity', 'received_quantity', 'rejected_quantity', 'rate', 'amount', 'discount'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
         ];
     }
 
@@ -128,7 +128,6 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
             $sentboxArray = [$array]; //Yii::$app->general->getSentBoxCodes('', $this->masterCode->mcc_plant_code, '', '', '');
         }
         foreach ($sentboxArray as $sent) {
-            sleep(10);
             $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
