@@ -14,7 +14,9 @@ use yii\helpers\ArrayHelper;
 use app\modules\geo\models\TblAreaBmcMapping;
 use app\modules\geo\models\TblAreaBmcMappingHistory;
 use app\modules\geo\models\TblAreaBmcMappingSearch;
+use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
+use yii\helpers\Html;
 use yii\web\Response;
 use yii\helpers\Json;
 
@@ -171,41 +173,96 @@ class TblAreaController extends ChildController {
         $searchModel->applicable_type = $model->applicable_type;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $selectedCodes = [];
+        $selectedBmcs = [];
+        if (Yii::$app->request->isPost) {
+            $postData = Yii::$app->request->post('TblAreaBmcMapping', []);
+            if (isset($postData['applicable_code'])) {
+                $selectedCodes = $postData['applicable_code'];
+            }
+            $selectedBmcs = Yii::$app->request->post('bmc_filter', []);
+        }
+
         if (Yii::$app->request->post() && isset(Yii::$app->request->post()['TblAreaBmcMapping'])) {
             $applicable_code = isset(Yii::$app->request->post()['TblAreaBmcMapping']['applicable_code']) ? Yii::$app->request->post()['TblAreaBmcMapping']['applicable_code'] : [];
             $mcc_codes = [];
             $master = [];
+            $validationFailed = false;
             if (!empty($applicable_code)) {
-                foreach ($applicable_code as $mapped_code) {
-                    $model_bmc = new TblAreaBmcMapping();
-                    $model_bmc->area_code = $id;
-                    $model_bmc->applicable_type = $model->applicable_type;
+                $existingMappings = TblAreaBmcMapping::find()
+                    ->with(['mainAreaCode'])
+                    ->where([
+                        'applicable_type' => $model->applicable_type,
+                        'applicable_code' => $applicable_code,
+                        'is_active' => 1
+                    ])
+                    ->all();
+
+                if (!empty($existingMappings)) {
+                    $validationFailed = true;
+                    $existingMap = ArrayHelper::map($existingMappings, 'applicable_code', function($mapping) {
+                        return $mapping;
+                    });
+                    $duplicateCodes = array_keys($existingMap);
+                    $names = [];
+
                     if ($model->applicable_type == 'DCS') {
-                        $model_bmc->applicable_code = $mapped_code;
-                        $model_bmc->bmc_code = null;
-                        $master[] = $model_bmc;
+                        $dcsModels = TblDcs::find()->where(['dcs_code' => $duplicateCodes])->all();
+                        $names = ArrayHelper::map($dcsModels, 'dcs_code', 'dcs_name');
                     } else {
-                        $model_bmc->applicable_code = $mapped_code;
-                        $model_bmc->bmc_code = $mapped_code;
-                        $mcc_codes[] = $model_bmc->bmcCode->mcc_plant_code;
-                        $master[] = $model_bmc;
-                        $mainBmc = $model_bmc->mainBmcCode;
-                        $groupBmc = $model_bmc->bmcCode;
-                        $main_org_data = ['union_code' => $mainBmc->union_code, 'plant_code' => $mainBmc->plant_code, 'mcc_plant_code' => $mainBmc->mcc_plant_code, 'bmc_code' => $id];
-                        $group_org_data = ['union_code' => $groupBmc->union_code, 'plant_code' => $groupBmc->plant_code, 'mcc_plant_code' => $groupBmc->mcc_plant_code, 'bmc_code' => $mapped_code];
-                        Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data);
+                        $bmcModels = TblDcsBmc::find()->where(['bmc_code' => $duplicateCodes])->all();
+                        $names = ArrayHelper::map($bmcModels, 'bmc_code', 'bmc_name');
+                    }
+
+                    foreach ($existingMappings as $exists) {
+                        $mapped_code = $exists->applicable_code;
+                        $areaName = isset($exists->mainAreaCode) ? $exists->mainAreaCode->area_name : 'Unknown';
+                        $entityName = isset($names[$mapped_code]) ? $names[$mapped_code] : $mapped_code;
+
+                        if ($model->applicable_type == 'DCS') {
+                            $model->addError('applicable_code', "DCS '{$entityName}' is already mapped to Area '{$areaName}'.");
+                        } else {
+                            $model->addError('applicable_code', "BMC '{$entityName}' is already mapped to Area '{$areaName}'.");
+                        }
+                    }
+                }
+
+                if (!$validationFailed) {
+                    foreach ($applicable_code as $mapped_code) {
+                        $model_bmc = new TblAreaBmcMapping();
+                        $model_bmc->area_code = $id;
+                        $model_bmc->applicable_type = $model->applicable_type;
+                        if ($model->applicable_type == 'DCS') {
+                            $model_bmc->applicable_code = $mapped_code;
+                            $model_bmc->bmc_code = null;
+                            $master[] = $model_bmc;
+                        } else {
+                            $model_bmc->applicable_code = $mapped_code;
+                            $model_bmc->bmc_code = $mapped_code;
+                            $mcc_codes[] = $model_bmc->bmcCode->mcc_plant_code;
+                            $master[] = $model_bmc;
+                            $mainBmc = $model_bmc->mainBmcCode;
+                            $groupBmc = $model_bmc->bmcCode;
+                            $main_org_data = ['union_code' => $mainBmc->union_code, 'plant_code' => $mainBmc->plant_code, 'mcc_plant_code' => $mainBmc->mcc_plant_code, 'bmc_code' => $id];
+                            $group_org_data = ['union_code' => $groupBmc->union_code, 'plant_code' => $groupBmc->plant_code, 'mcc_plant_code' => $groupBmc->mcc_plant_code, 'bmc_code' => $mapped_code];
+                            Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data);
+                        }
                     }
                 }
             }
-            $transaction = $this->generalModel->saveTransaction($master, ['Area Mapping', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->redirect(['area-mapping', 'id' => $id, 'applicable_type' => $model->applicable_type]);
+            if (!$validationFailed) {
+                $transaction = $this->generalModel->saveTransaction($master, ['Area Mapping', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['area-mapping', 'id' => $id, 'applicable_type' => $model->applicable_type]);
+                }
             }
         }
         return $this->render('_bmc_mapping', [
                     'model' => $model,
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
+                    'selectedCodes' => $selectedCodes,
+                    'selectedBmcs' => $selectedBmcs,
         ]);
     }
 
@@ -257,9 +314,10 @@ class TblAreaController extends ChildController {
         $applicable_type = Yii::$app->request->post('applicable_type');
 
         $searchModel = new TblAreaBmcMappingSearch();
-        $searchModel->area_code = $id;
         $searchModel->applicable_type = $applicable_type;
         $dataProvider = $searchModel->search([]);
+        $dataProvider->pagination = false;
+        $allModels = $dataProvider->getModels();
 
         $exist_data = [];
         if ($applicable_type == 'DCS') {
@@ -268,7 +326,7 @@ class TblAreaController extends ChildController {
             $name = 'bmc_filter[]';
             $classPrefix = 'bmc-filter';
         } else {
-            $exist_data = ArrayHelper::map($dataProvider->getModels(), 'bmc_code', 'bmc_code');
+            $exist_data = ArrayHelper::map($allModels, 'bmc_code', 'bmc_code');
             $DcsBmcModel = new TblDcsBmc();
             $area_data = $DcsBmcModel->getBMCList([], TRUE, FALSE, TRUE);
             unset($area_data[$id]);
@@ -276,10 +334,14 @@ class TblAreaController extends ChildController {
             $name = 'TblAreaBmcMapping[applicable_code][]';
             $classPrefix = 'data';
         }
+        $searchModel->area_code = $id;
+        $dataProvider->setModels(array_filter($allModels, function($model) use ($id) {
+            return $model->area_code == $id;
+        }));
 
         $html = '';
         foreach ($area_data as $value => $label) {
-            $checkbox = \yii\helpers\Html::checkbox($name, false, [
+            $checkbox = Html::checkbox($name, false, [
                 'value' => $value,
                 'label' => '<label for=' . $classPrefix . '-' . $value . '>' . $label . '</label>',
                 'labelOptions' => [
@@ -306,15 +368,22 @@ class TblAreaController extends ChildController {
         $selected_bmc = Yii::$app->request->post('selected_bmc', []);
         
         $searchModel = new TblAreaBmcMappingSearch();
-        $searchModel->area_code = $id;
         $searchModel->applicable_type = 'DCS';
         $dataProvider = $searchModel->search([]);
-        $exist_data = ArrayHelper::map($dataProvider->getModels(), 'applicable_code', 'applicable_code');
+        $dataProvider->pagination = false;
+
+        $allModels = $dataProvider->getModels();
+        $exist_data = ArrayHelper::map($allModels, 'applicable_code', 'applicable_code');
+
+        $searchModel->area_code = $id;
+        $dataProvider->setModels(array_filter($allModels, function($model) use ($id) {
+            return $model->area_code == $id;
+        }));
 
         $areaModel = TblArea::findOne($id);
         $unionCode = $areaModel ? $areaModel->union_code : '';
         
-        $query = \app\modules\organisation\models\TblDcs::find()
+        $query = TblDcs::find()
             ->select(['dcs_code', 'dcs_name'])
             ->where(['is_active' => 1]);
             
@@ -345,8 +414,12 @@ class TblAreaController extends ChildController {
             ]);
             $html .= "<div class='col-sm-4 checklist data-checklist'><div class='checkbox'>{$checkbox}</div></div>";
         }
+        $gridHtml = $this->renderPartial('_mapped_bmc', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
         
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return ['status' => 'success', 'data' => $html];
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        return ['status' => 'success', 'data' => $html, 'grid' => $gridHtml];
     }
 }
