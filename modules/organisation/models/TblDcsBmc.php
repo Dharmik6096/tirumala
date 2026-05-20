@@ -395,6 +395,8 @@ class TblDcsBmc extends \app\models\ChildModel {
                 $hierarchy->save();
             }
         }
+        $destCacheKey = 'bmc_dispatch_dest_name_bmc_' . $this->bmc_code;
+        Yii::$app->general->removeRedisCache($destCacheKey);
     }
 
     private function sentboxModel($code, $type) {
@@ -416,6 +418,8 @@ class TblDcsBmc extends \app\models\ChildModel {
                 }
             }
         }
+        $destCacheKey = 'bmc_dispatch_dest_name_bmc_' . $this->bmc_code;
+        Yii::$app->general->removeRedisCache($destCacheKey);
     }
 
     public function getBmcRecords($mcc_plant_code) {

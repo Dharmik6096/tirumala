@@ -108,6 +108,10 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
                 throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
         }
+        if ($this->vehicle_code) {
+            $vehicleCacheKey = 'bmc_dispatch_vehicle_capacity_' . $this->vehicle_code;
+            Yii::$app->general->removeRedisCache($vehicleCacheKey);
+        }
     }
 
     public function afterDelete() {
@@ -118,6 +122,10 @@ class TblVehicleCompartmentDetail extends \app\models\ChildModel {
             if (!($sentbox->setSentboxBatch($this, 'DELETE', $sentboxArray))) {
                 throw new UserException("SentBox Entry is not created so transaction is rollback!");
             }
+        }
+        if ($this->vehicle_code) {
+            $vehicleCacheKey = 'bmc_dispatch_vehicle_capacity_' . $this->vehicle_code;
+            Yii::$app->general->removeRedisCache($vehicleCacheKey);
         }
     }
 

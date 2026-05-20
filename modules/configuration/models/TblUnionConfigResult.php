@@ -131,4 +131,11 @@ class TblUnionConfigResult extends \app\models\ChildModel {
         }
     }
 
+    public function afterSave($insert, $changedAttributes) {
+        parent::afterSave($insert, $changedAttributes);
+        if ($this->union_code) {
+            $configCacheKey = 'bmc_dispatch_config_union_' . $this->union_code;
+            Yii::$app->general->removeRedisCache($configCacheKey);
+        }
+    }
 }
