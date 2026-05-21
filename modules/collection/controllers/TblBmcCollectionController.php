@@ -232,8 +232,17 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['customer_type'] = Yii::$app->request->post('customer_type');
         $data['union'] = Yii::$app->request->post('union_code');
         $data['qty'] = Yii::$app->request->post('qty');
-
+        $checkCustomerType = Yii::$app->request->post('check_customer_type', 0);
         $model = new TblBmcCollection();
+        $dcsModel = new TblDcs();
+        $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
+        $model->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
+        if ($checkCustomerType == 1 && strtolower($data['customer_type']) != 'dcs') {
+            $model->customer_code = $model->dcs_code;
+            $data['dcs_code'] = $model->validateCustomer($data['union'], $data['dcs_code'], $data['customer_type'], $data['bmc_code']);
+        } else {
+            $data['dcs_code'] = $model->dcs_code;
+        }
         $response = $model->calculateData('rtpl_calculate', $data['union'], $data['bmc_code'], $data['fat'], $data['milk_type'], $data['snf'], $data['clr'], $data['customer_type'], '', $data);
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
@@ -821,5 +830,4 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
-
 }

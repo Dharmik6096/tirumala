@@ -98,7 +98,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         if (!$date_search) {
             $from_date = !empty($this->from_date) ? $this->from_date : date('Y-m-d');
             $to_date = !empty($this->to_date) ? $this->to_date : date('Y-m-d');
-            $query->andFilterWhere(['between', 'tbl_member_provisional.created_at', date('Y-m-d', strtotime($from_date)) . ' 00:00:00.000', date('Y-m-d', strtotime($to_date)) . ' 23:59:59.000']);
+            $query->andFilterWhere(['between', 'tbl_member_provisional.registration_date', date('Y-m-d', strtotime($from_date)), date('Y-m-d', strtotime($to_date))]);
         }
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_member_provisional', 'tbl_member_provisional', 'tbl_member_provisional', 'tbl_member_provisional');
