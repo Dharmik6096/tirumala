@@ -10,6 +10,33 @@ class PushRequestController extends PushMasterController {
     public function actionFarmerFrnoUpdate() {
         $rawBody = Yii::$app->request->getRawBody();
         $request = is_array($rawBody) ? $rawBody : json_decode($rawBody, true);
+        $rateKey = 'limit_comfed_farmer_frno_update_' . Yii::$app->request->userIP;
+        $isCache = false;
+        $count = 0;
+        
+        try {
+            if (!empty(Yii::$app) && Yii::$app->has('redis')) {
+                $count = (int)Yii::$app->redis->get($rateKey) ?: 0;
+                $isCache = true;
+            }
+        } catch (\Exception $e) {
+            Yii::error("Redis connection failed: " . $e->getMessage());
+            $isCache = false;
+        }
+
+        if ($isCache) {
+            if ($count >= 2) {
+                $this->response->setStatusCode(429);
+                $this->response->setMessage(['Too many requests.']);
+                return $this->response;
+            }
+            try {
+                Yii::$app->redis->incr($rateKey);
+                Yii::$app->redis->expire($rateKey, 60);
+            } catch (\Exception $e) {
+                // ignore redis failures and fallback to DB
+            }
+        }
 
         if (empty($request) || !is_array($request)) {
             $this->response->setStatusCode(201);
@@ -17,9 +44,7 @@ class PushRequestController extends PushMasterController {
             return $this->response;
         }
 
-        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $updatedRequest = [];
-
         foreach ($request as $item) {
             if (empty($item['fr_no']) || empty($item['dcs_no']) ||
                 empty($item['fr_name']) || empty($item['fr_phone_no'])) {
@@ -35,13 +60,14 @@ class PushRequestController extends PushMasterController {
                 'fr_phone_no' => trim($item['fr_phone_no']),
                 'fr_no'       => trim($item['fr_no']),
                 'dcs_no'      => trim($item['dcs_no']),
-                'updated_by'  => !empty($user) ? trim($user) : ''
+                'fr_aadhar'         => !empty($item['fr_aadhar']) ? trim($item['fr_aadhar']) : null,
+                'registration_code' => !empty($item['registration_code']) ? trim($item['registration_code']) : null
             ];
         }
 
         try {
             $sp_name = 'sp_clienterp_comfed_farmer_frno_update';
-            $sp_param = [json_encode($updatedRequest)];
+            $sp_param = [json_encode($updatedRequest), 'FARMER_FRNO_UPDATE_API'];
 
             Yii::$app->general->getSpData($sp_name, $sp_param, true);
 
