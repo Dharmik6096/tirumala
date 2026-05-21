@@ -2,6 +2,8 @@
 
 namespace app\modules\organisation\controllers;
 
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\product\models\TblProductSaleRateApplicability;
 use Yii;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
@@ -435,11 +437,7 @@ class TblDcsProvisionalController extends ChildController {
             $validate = 1;
             $dcsProvisional->vendor = $dcsProvisional->vendor_code;
             $dcsProvisional->milk_type_code = !empty($dcsProvisional->milk_type) ? explode(',', $dcsProvisional->milk_type) : [];
-            $dcsProvisional->created_at = '';
-            $dcsProvisional->created_by = '';
-            $dcsProvisional->updated_at = '';
-            $dcsProvisional->updated_by = '';
-            $dcsProvisional->remarks = '';
+            unset($dcsProvisional->created_at, $dcsProvisional->created_by, $dcsProvisional->updated_at, $dcsProvisional->updated_by, $dcsProvisional->remarks);
             $oldVillage = '';
             if ($dcsProvisional->provisional_from == 'mobile_update') {
                 $this->model = TblDcs::find()->where(['dcs_code' => $dcsProvisional->dcs_code])->one();
@@ -461,6 +459,25 @@ class TblDcsProvisionalController extends ChildController {
             $this->model->auto_member_create = $dcsProvisional->auto_member_create;
 
             $this->model->dcs_code = ($dcsProvisional->provisional_from == 'mobile_update') ? $dcsProvisional->dcs_code : $this->model->getCode();
+            $mapList = [];
+            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfigResult(Yii::$app->session->get('Unions'), 'product_sale_rate_applicability_auto');
+            if (!empty($productSaleRateApplicabilityAuto)) {
+                $productSaleRateApplicability = new TblProductSaleRateApplicability;
+                $productSaleRate = new TblProductSaleRate;
+                $productSaleRate = $this->model->getProductSaleRates($this->model->union_code);
+                if (!empty($productSaleRate)) {
+                    foreach ($productSaleRate as $rate) {
+                        $productSaleRateApplicability = new \app\modules\product\models\TblProductSaleRateApplicability();
+                        $productSaleRateApplicability->attributes = $rate->attributes;
+                        $productSaleRateApplicability->applicable_for = 'DCS';
+                        $productSaleRateApplicability->applicable_code = $this->model->dcs_code;
+                        $productSaleRateApplicability->created_at = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->wef_date = date('Y-m-d H:i:s');
+                        $productSaleRateApplicability->created_by = (isset(Yii::$app->user->identity)) ? Yii::$app->user->identity->id : null;
+                        array_push($mapList, $productSaleRateApplicability);
+                    }
+                }
+            }
             //set mapping data
             if ($oldVillage != $this->model->village_code) {
                 if ($dcsProvisional->provisional_from == 'mobile_update') {
