@@ -26,6 +26,9 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\product\models\TblGrnInstallmentSearch;
 use app\modules\product\models\TblGrnInstallmentHistory;
 use app\modules\product\models\TblGrnHistory;
+use app\modules\document\controllers\TblAttachmentController;
+use app\modules\document\models\TblAttachment;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblGrnController implements the CRUD actions for TblGrn model.
@@ -60,13 +63,18 @@ class TblGrnController extends \app\controllers\ChildController {
         $grnInstallmentSearchModel = new TblGrnInstallmentSearch();
         $grnInstallmentSearchModel->grn_code = $id;
         $grnInstallmentdataProvider = $grnInstallmentSearchModel->search(Yii::$app->request->queryParams);
-
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_grn']),
+        ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'grnInstallmentSearchModel' => $grnInstallmentSearchModel,
                     'grnInstallmentdataProvider' => $grnInstallmentdataProvider,
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
         ]);
     }
 
@@ -499,6 +507,14 @@ class TblGrnController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionGrnDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->grn_code;
+        $module_name = 'tbl_grn';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('grn', $id, $model, $module_code, $module_name);
     }
 
 }
