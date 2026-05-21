@@ -112,7 +112,7 @@ $grid_option = [
         'document-upload' => function ($url, $model) {
             $id = $model->grn_code;
             $url = ['/product/tbl-grn/grn-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->grn_code];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $model->grn_code];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
     ]

@@ -19,7 +19,7 @@ $grid_option = [
         'view-attachment' => function ($url, $model) {
             $attachemnt = $model->attachment;
             $url = !empty($attachemnt) ? $attachemnt : '';
-            return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
+            return Html::a('<i class="fa fa-eye"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'target' => '_blank']);
         },
     ]
 ];
