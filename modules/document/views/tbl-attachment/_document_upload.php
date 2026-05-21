@@ -26,6 +26,8 @@ if ($master_type == 'member') {
     $urls = ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code];
 } else if ($master_type == 'customer') {
     $urls = ['/organisation/tbl-customer-master/customer-document-upload', 'id' => $model->customer_code];
+} else if ($master_type == 'grn') {
+    $urls = ['/product/tbl-grn/grn-document-upload', 'id' => $model->grn_code];
 } else {
     $urls = ['/organisation/tbl-plant/plant-document-upload', 'id' => $model->plant_code];
 }
@@ -94,6 +96,11 @@ if (!empty($doc_model)) {
         $ex_code = $model['customer_code_ex'];
         $ref_code = $model['ref_code'];
         $name = $model['customer_name'];
+    } else if ($master_type == 'grn') {
+        $grn_no = $model['grn_no'];
+        $grn_date = !empty($model['grn_date']) ? Yii::$app->controls->view_date($model['grn_date']) : '';
+        $invoice_no = $model['invoice_no'];
+        $invoice_date = !empty($model['invoice_date']) ? Yii::$app->controls->view_date($model['invoice_date']) : '';
     } else {
         $code = $model['plant_code'];
         $ex_code = $model['plant_code_ex'];
@@ -151,6 +158,35 @@ if (!empty($doc_model)) {
                 <?php }
                 ?>
             </tr>
+            <tr>
+                <?php if (isset($grn_no)) {
+                    ?>
+                    <th><?= Yii::t('app', 'GRN No') ?></th>
+                    <td><?= $grn_no; ?></td>
+                <?php }
+                ?>
+                <?php if (isset($grn_date)) {
+                    ?>
+                    <th><?= Yii::t('app', 'GRN/Entry Date') ?></th>
+                    <td><?= $grn_date; ?></td>
+                <?php }
+                ?>
+            </tr>   
+            <tr>
+                <?php if (isset($invoice_no)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Document/Invoice No') ?></th>
+                    <td><?= $invoice_no; ?></td>
+                <?php }
+                ?>
+                <?php if (isset($invoice_date)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Document/Invoice Date') ?></th>
+                    <td><?= $invoice_date; ?></td>
+                <?php }
+                ?>
+            </tr>
+
         </thead>
         <tbody>
             <tr>
