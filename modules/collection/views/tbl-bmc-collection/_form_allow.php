@@ -237,12 +237,13 @@ $script = "
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'check_customer_type': 1},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
                       {
-                            $('#tblbmccollection-rtpl').val(obj.data.list.rtpl);
+                            var rtpl = parseFloat(obj.data.list.rtpl);
+                            $('#tblbmccollection-rtpl').val(rtpl.toFixed(2));
                             $('#tblbmccollection-rate_code').val(obj.data.list.purchase_rate_code);
                             amount();
                       }else{
