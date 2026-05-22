@@ -1695,6 +1695,38 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
+    public function getNextTransactionCode($model, $primaryCode, $autoInc = 1, $autoLength = 4) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $orgCode = $primaryCode . 'T';
+        $len = strlen($orgCode);
+        $tableName = $model->tableName();
+        $val = $model->find()
+                ->from([$tableName . ' (NOLOCK)'])
+                ->select(["MAX(CONVERT(INT, substring(" . $primaryKey . ", " . $len . " +1, " . $autoLength . "))) AS " . $primaryKey])
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+        return $value;
+    }
+
+    public function getNextCode($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $orgCode = 'PORTAL-' . $model->bmc_code . '-';
+        $tableName = $model->tableName();
+        $len = strlen($orgCode);
+
+        $val = $model->find()
+                ->from([$tableName . ' (NOLOCK)'])
+                ->select(["MAX(CONVERT(INT, substring(" . $primaryKey . ", " . $len . " +1, 8))) AS " . $primaryKey])
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
+                ->one();
+
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+        return $value;
+    }
+
     public function allowUpdateDelete($model) {
         return $model->originating_org_type == 'PORTAL';
     }

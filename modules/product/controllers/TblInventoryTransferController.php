@@ -91,7 +91,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
             $txModel->is_stock_posted = $isStockPosted;
             $txModel->inventory_transfer_code = $this->model->inventory_transfer_code;
             $txModel->union_code = $this->model->union_code;
-            $txModel->inventory_transfer_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->inventory_transfer_code);
+            $txModel->inventory_transfer_txn_code = Yii::$app->general->getNextTransactionCode($txModel, $txModel->inventory_transfer_code);
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 $modelSave[] = $txModel;
                 //set from stock
@@ -158,7 +158,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $receipt;
 
                 $receiptTxn = new TblProductReceiptTransaction();
-                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
+                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getNextTransactionCode($receiptTxn, $receipt->product_receipt_code);
                 $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
                 $receiptTxn->product_code = $fstockModel->product_code;
                 $receiptTxn->received_quantity = '-' . $qty;
@@ -231,7 +231,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $receiptTo->dcs_code = $stockModel->dcs_code;
                     $modelSave[] = $receiptTo;
                     $receiptTxnTo = new TblProductReceiptTransaction();
-                    $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
+                    $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getNextTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
                     $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                     $receiptTxnTo->product_code = $stockModel->product_code;
                     $receiptTxnTo->received_quantity = $qty;

@@ -96,17 +96,7 @@ class TblProductStockTransaction extends \app\models\ChildModel {
     }
 
     public function getCode($autoInc = 1) {
-        $primaryKey = 'product_stock_transaction_code';
-        $orgCode = 'PORTAL-' . $this->bmc_code . '-';
-        $len = strlen($orgCode);
-        $val = $this->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,8))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
-                ->one();
-        $code1 = (int) $val[$primaryKey] + $autoInc;
-        $value = $orgCode . $code1;
-
-        return $value;
+        return Yii::$app->general->getNextCode($this, $autoInc);
     }
 
 //    public function afterSave($insert, $changedAttributes) {
