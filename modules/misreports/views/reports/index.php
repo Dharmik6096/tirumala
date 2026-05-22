@@ -27,10 +27,15 @@ $model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmp
 $model->from_time = empty($model->from_time) ? date('H:i') : $model->from_time;
 $model->to_time = empty($model->to_time) ? date('H:i') : $model->to_time;
 $model->from_code = empty($model->from_code) ? 1 : $model->from_code;
-$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport']) ? 99999 : 9999;
+$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport']) ? 99999 : 9999;
 $model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
 $model->to_soc = empty($model->to_soc) ? 100 : $model->to_soc;
+$model->deviation_type = empty($model->deviation_type) ? '0' : $model->deviation_type;
+$model->top = empty($model->top) ? 10 : $model->top;
+$model->storage_type = empty($model->storage_type) ? 0 : $model->storage_type;
+$model->deviation_days = empty($model->deviation_days) ? 1 : $model->deviation_days;
+$model->generation_type = empty($model->generation_type) ? 1 : $model->generation_type;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
@@ -97,14 +102,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                         <div class="">
                             <?php
                             $form = ActiveForm::begin(['options' => [
-                                    'id' => 'report-form',
-                                    'field-class' => 'form-group col-sm-6'
-                                ],
-                                'method' => 'post',
-                                'validateOnBlur' => FALSE,
-                                'validateOnChange' => FALSE,
-                                'enableClientValidation' => true,
-                                'validateOnSubmit' => true,
+                                            'id' => 'report-form',
+                                            'field-class' => 'form-group col-sm-6'
+                                        ],
+                                        'method' => 'post',
+                                        'validateOnBlur' => FALSE,
+                                        'validateOnChange' => FALSE,
+                                        'enableClientValidation' => true,
+                                        'validateOnSubmit' => true,
                             ]);
                             ?>
                             <div class="row margin_0">
@@ -243,6 +248,11 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 $class .= ' number-validate MobileHideShow val_mobile_no';
                                             } else if ($field == 'no_of_farmer_edit' || $field == 'no_of_individual_farmer_edit') {
                                                 $options += ['type' => 'number', 'value' => !empty($model->{$field}) ? $model->{$field} : 0];
+                                            } else if ($field == 'deviation_days') {
+                                                echo '<div class="clearfix"></div>';
+                                                $options += ['type' => 'number'];
+                                            } else if ($field == 'deviation_value') {
+                                                $options += ['type' => 'number'];
                                             }
                                             ?>
                                             <div class="<?= $class ?>">
@@ -358,7 +368,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 $static_class = 'col-sm-6';
                                                 if ($value == 'region_type') {
@@ -376,7 +386,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-6 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));       ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));        ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -653,7 +663,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['department', 'milk_type_code'])) {
+                                        if (in_array($value, ['department', 'milk_type_code', 'financial_year'])) {
                                             $isMilkType = ($value == 'milk_type_code') ? true : false;
                                             ?>
                                             <div class="col-sm-6">
@@ -661,14 +671,27 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('language_code'))) {
+                                        $radioFieldsConfig = [
+                                            'language_code' => [0 => 'English', 1 => 'Gujarati'],
+                                            'storage_type' => [0 => 'BMC', 1 => 'CAN'],
+                                            'deviation_type' => ['0' => 'All', '1' => 'Deviation qty', '2' => 'Deviation fat'],
+                                        ];
+                                        if (array_key_exists($value, $radioFieldsConfig)) {
+                                            $radioColClass = ($value == 'language_code') ? 'col-sm-12' : 'col-sm-6';
                                             ?>
-                                            <div class="col-sm-12 radio-section">
+                                            <div class="<?= $radioColClass ?> radio-section">
                                                 <?=
-                                                $form->field($model, 'language_code')->radioList([0 => 'English', 1 => 'Gujarati'], ['class' => 'radio-container', 'item' => function ($index, $label, $name, $checked, $value) {
-                                                        return '<label class="radio-inline">' . Html::radio($name, $checked, ['value' => $value]) . ' ' . $label . '</label>';
-                                                    }
-                                                ]);
+                                                $form->field($model, $value)->radioList($radioFieldsConfig[$value],
+                                                        [
+                                                            'class' => 'radio-container',
+                                                            'item' => function ($index, $label, $name, $checked, $itemValue) {
+                                                                return '<label class="radio-inline">' .
+                                                                Html::radio($name, $checked, ['value' => $itemValue]) .
+                                                                ' ' . $label .
+                                                                '</label>';
+                                                            }
+                                                        ]
+                                                );
                                                 ?>
                                             </div>
                                             <?php
@@ -741,8 +764,8 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                 <?php if (!empty($result) && $model->output_type != 'BACKGROUND' && empty($data['excel_readonly'])) {
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-                <?php }
-                ?>
+                    <?php }
+                    ?>
             </div>
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
 
@@ -957,6 +980,13 @@ $('.mis_report_modal_toggle').on('click', function(){
             });
 	}
         
+        if(document.getElementById('reportsmodel-generation_type')){
+            hideTrucksheetDetailFields();
+            $(document).on('change', '#reportsmodel-generation_type', function() {
+                hideTrucksheetDetailFields();
+            });
+        }
+        
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -1167,6 +1197,23 @@ $('.mis_report_modal_toggle').on('click', function(){
             resetField('.val_dcs_code select');
         }else if(region_code == '0'){
             $('.val_dcs_code').show();
+        }
+    }
+    
+    function hideTrucksheetDetailFields(){
+        var generation_type = $('#reportsmodel-generation_type').val();
+        if(generation_type == '2'){ 
+            $('.shift').show();
+            if ($('.field-reportsmodel-from_shift select').val() == '') {
+                $('.field-reportsmodel-from_shift select').val(1).trigger('change');
+            }
+            if ($('.field-reportsmodel-to_shift select').val() == '') {
+                $('.field-reportsmodel-to_shift select').val(2).trigger('change');
+            }
+        }else {
+            $('.shift').hide();
+            $('.field-reportsmodel-to_date').closest('.reportDate').prev('.clearfix').hide();
+            $('.field-reportsmodel-from_shift select, .field-reportsmodel-to_shift select').val('').trigger('change');
         }
     }
 
