@@ -815,7 +815,7 @@ class GeneralFunctions extends Component {
     }
 
     public function getDefaultContactDetail($code, $module) {
-        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
+        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => (string) $code, 'module_name' => $module])->one();
         return $detail;
     }
 
