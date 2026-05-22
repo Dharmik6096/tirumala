@@ -58,8 +58,9 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                                 $('#pageloader').show();
                             }"),
                             'success' => new JsExpression('function(data){ 
-                                $(".help-block").text("");
-                                $(".form-group").removeClass("has-error");
+                                $(".help-block, .invalid-feedback").remove();
+                                $(".form-group, .mb-3").removeClass("has-error");
+                                $(".is-invalid").removeClass("is-invalid");
                                 if (data.status == "success"){
                                     $(\'#loadercontent\').hide();
                                     $(\'#pageloader\').hide();
@@ -94,11 +95,14 @@ $multiple = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->se
                                 } else {
                                     $(\'#loadercontent\').hide();
                                     $(\'#pageloader\').hide();
-                                    var cnt=0;
-                                    $(".help-block").remove();
                                     $.each(data, function(key, val) {
-                                        $("#"+key).closest(".form-group").append("<div class=\"help-block\">"+val+"</div>");
-                                        $("#"+key).closest(".form-group").addClass("has-error");
+                                        var el = $("#"+key);
+                                        var container = el.closest(".form-group, .mb-3");
+                                        if(container.length == 0) container = el.parent();
+                                        el.addClass("is-invalid");
+                                        container.addClass("has-error");
+                                        var errorMsg = Array.isArray(val) ? val.join("<br>") : val;
+                                        container.append("<div class=\"help-block invalid-feedback\" style=\"display:block\">"+errorMsg+"</div>");
                                     });
                                 }
                             }'),

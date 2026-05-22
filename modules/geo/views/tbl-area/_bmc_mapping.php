@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
+use app\components\ActiveForm;
 use yii\web\View;
 
 $title = Yii::$app->label->title('create', 'Area Mapping');
@@ -125,11 +125,13 @@ $this->title = Yii::t('app', $title);
     
     $ajaxUrl = Url::to(['get-applicability-data']);
     $dcsAjaxUrl = Url::to(['get-dcs-by-bmc']);
+    $validateAjaxUrl = Url::to(['validate-mapping']);
     $area_code = $searchModel->area_code;
     $applicable_type = $model->applicable_type;
 
     $script = "
         var applicable_type = '{$applicable_type}';
+
         if(applicable_type != '' && applicable_type != null && applicable_type != 'undefined') {
             fetchApplicabilityData();
         }
@@ -204,6 +206,7 @@ $this->title = Yii::t('app', $title);
                 success: function(response) {
                     if(response.status == 'success') {
                         $('#bmc-list').html(response.data);
+                        $('#mapping-grid-container').html(response.grid);
                     }
                 }
             });
@@ -227,11 +230,63 @@ $this->title = Yii::t('app', $title);
         });
 
         $('.save-form').on('submit', function(e) {
+            if ($(this).data('validated')) {
+                return true;
+            }
+            e.preventDefault();
+            
             var type = $('input[name=\"applicable_type\"]:checked').val();
             if ($('.data-checkbox:checked').length === 0) {
-                e.preventDefault();
                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one ' + type + '.</span></div></div>');
                 return false;
+            }
+
+            
+            var applicable_code = [];
+            $('.data-checkbox:checked').each(function() {
+                applicable_code.push($(this).val());
+            });
+            
+            var form = $(this);
+            $.ajax({
+                url: '{$validateAjaxUrl}',
+                type: 'POST',
+                data: {
+                    applicable_type: type,
+                    applicable_code: applicable_code,
+                    _csrf: yii.getCsrfToken()
+                },
+                success: function(response) {
+                    if (response.status === 'error') {
+                        var errorMsg = '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>';
+                        $.each(response.errors, function(i, err) {
+                            errorMsg += err + '<br>';
+                        });
+                        errorMsg += '</span></div></div>';
+                        bootbox.alert(errorMsg);
+                    } else if (response.status === 'success') {
+                        form.data('validated', true);
+                        form.submit();
+                    }
+                }
+            });
+            return false;
+        });
+
+        var isDeleting = false;
+        $(document).on('click', '#source-grid .delete-record', function() {
+            isDeleting = true;
+        });
+
+        $(document).on('pjax:success', '#source-grid', function(event) {
+            if (isDeleting) {
+                isDeleting = false;
+                var type = $('input[name=\"applicable_type\"]:checked').val();
+                if (type == 'DCS') {
+                    fetchDcsData();
+                } else {
+                    fetchApplicabilityData();
+                }
             }
         });
     ";

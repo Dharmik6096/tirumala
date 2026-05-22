@@ -1106,7 +1106,7 @@ class DropDown extends Component {
             $records = $records->where($where)->orderBy($tablename . '.' . $fields[1])->all();
         }
 
-        return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
+        return ArrayHelper::map($records, $fields[0], function ($array, $key) use ($fields) {
                     if (!empty($fields[2]) && !empty($array[$fields[2]]))
                         $value = $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
                     else
@@ -1206,7 +1206,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -2560,12 +2560,12 @@ class DropDown extends Component {
             'report_status_type' => [
                 'name' => 'report_status_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Sent'), 3 => Yii::t('app', 'Success'), 4 => Yii::t('app', 'Fail'), 5 => Yii::t('app', 'Conflict')],
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Success')],
             ],
             'sms_type' => [
                 'name' => 'sms_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'Otp'), 2 => Yii::t('app', 'Milk Collection')],
+                'data' => [0 => Yii::t('app', 'Otp'), 1 => Yii::t('app', 'Milk Collection')],
             ],
             'search_by_soc' => [
                 'name' => 'search_by_soc',
@@ -2586,6 +2586,11 @@ class DropDown extends Component {
                 'name' => 'report_app_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'MU App'), 2 => Yii::t('app', 'VDCS App')]
+            ],
+            'generation_type' => [
+                'name' => 'generation_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Trucksheet Date'), 2 => Yii::t('app', 'Trucksheet Date And Shift Range')]
             ],
         ];
         return $records[$l];
@@ -2751,6 +2756,7 @@ class DropDown extends Component {
             'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
             'voucher_types' => ['name' => 'voucher_type_code', 'fields' => 'voucher_type_code,voucher_type_name,local_name', 'prompt' => 'Select Voucher Types', 'model' => 'TblVoucherTypes'],
             'project' => ['name' => 'project_code', 'fields' => 'project_code,project_name', 'prompt' => 'Select Project', 'model' => 'TblProject'],
+            'financial_year' => ['name' => 'financial_year', 'fields' => 'code,code', 'prompt' => 'Select Financial Year', 'model' => 'TblFinancialYear'],
         ];
         return $label[$l];
     }
@@ -2841,7 +2847,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
