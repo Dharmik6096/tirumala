@@ -656,9 +656,7 @@ class TblInsuranceDetailController extends ChildController {
                         }
                     }
 
-                    if (empty($mobileNo)) {
-                        $errors[] = 'Mobile No cannot be blank.';
-                    } elseif (!preg_match('/^[0-9]{10}$/', $mobileNo)) {
+                    if (!empty($mobileNo) && !preg_match('/^[0-9]{10}$/', $mobileNo)) {
                         $errors[] = 'Mobile No must contain exactly 10 digits.';
                     } else {
                         $insuranceDetailModel->mobile_no = $mobileNo;
