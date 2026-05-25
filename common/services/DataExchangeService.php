@@ -117,12 +117,13 @@ class DataExchangeService {
                             $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
                             $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
                         } catch (\Throwable $e) {
-
+                            echo "Comfed-collection-data - Error : " . $e->getMessage() . PHP_EOL;
                         }
                     }
                 }
                 return true;
             } else {
+                echo "Comfed-collection-data : empty record" . PHP_EOL;
                 return false;
             }
         } catch (\Throwable $e) {
@@ -130,7 +131,7 @@ class DataExchangeService {
                 $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
                 $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
             } catch (\Throwable $e) {
-
+                echo "Comfed-collection-data : Error :" . $e->getMessage() . PHP_EOL;
             }
             return false;
         }
@@ -170,8 +171,6 @@ class DataExchangeService {
                                 'MobileNo' => $farmer->frPhoneNo,
                                 'SapVendorCode' => $farmer->frNo
                             ];
-                            \Yii::info("Comfed-farmer-sync : Farmer MemberCode : " . $generatedFarmerCode);
-                            echo "Comfed-farmer-sync : Farmer MemberCode : " . $generatedFarmerCode . PHP_EOL;
                         }
                         if (!empty($farmerCollection)) {
                             $farmerData = [];
@@ -245,7 +244,7 @@ class DataExchangeService {
             try {
                 Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250), 'product_sale_transaction'], true);
             } catch (Throwable $e) {
-
+                echo "Comfed-Local-sale-data : Error :" . $e->getMessage() . PHP_EOL;
             }
             return false;
         }
