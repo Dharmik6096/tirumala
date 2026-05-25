@@ -164,7 +164,6 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 }
                 $txn->ref_code = $bmc;
-                $bmc_data = $txn->bmcCode;
                 if (!empty($data_array['union_code'])) {
                     $txn->union_code = $data_array['union_code'];
                     $bmc_data = $txn->unionBmcCode;
