@@ -65,12 +65,12 @@ class TblFtpTxnLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['file_status', 'status'], 'default', 'value' => 0],
-                [['txn_type'], 'default', 'value' => 'EIPL'],
-                [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path', 'zip_filename', 'file_date'], 'safe'],
-                [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
-                [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
-                [['file_name'], 'unique', 'targetAttribute' => ['txn_type', 'file_name'], 'on' => 'EKOMILKZIP', 'message' => Yii::t('app/validation', 'File already uploaded')],
+            [['file_status', 'status'], 'default', 'value' => 0],
+            [['txn_type'], 'default', 'value' => 'EIPL'],
+            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path', 'zip_filename', 'file_date'], 'safe'],
+            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
+            [['file_name'], 'unique', 'targetAttribute' => ['txn_type', 'file_name'], 'on' => 'EKOMILKZIP', 'message' => Yii::t('app/validation', 'File already uploaded')],
         ];
     }
 
@@ -165,6 +165,12 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 }
                 $txn->ref_code = $bmc;
                 $bmc_data = $txn->bmcCode;
+                if (!empty($data_array['union_code'])) {
+                    $txn->union_code = $data_array['union_code'];
+                    $bmc_data = $txn->unionBmcCode;
+                } else {
+                    $bmc_data = $txn->bmcCode;
+                }
                 if (!empty($bmc_data)) {
                     $data->module_code = $bmc_data->bmc_code;
                     $data->mcc_plant_code = $bmc_data->mcc_plant_code;
@@ -173,7 +179,12 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             }
         } else {
             $txn->ref_code = $data_array['module_code'];
-            $bmc_data = $txn->bmcCode;
+            if (!empty($data_array['union_code'])) {
+                $txn->union_code = $data_array['union_code'];
+                $bmc_data = $txn->unionBmcCode;
+            } else {
+                $bmc_data = $txn->bmcCode;
+            }
             if (!empty($bmc_data)) {
                 $data->module_code = $bmc_data->bmc_code;
                 $data->mcc_plant_code = $bmc_data->mcc_plant_code;
@@ -505,6 +516,10 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function saveLogData($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall, $ftpDetails) {
         return $this->saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path, $append_ftp_collection_code, $recall, $ftpDetails);
+    }
+
+    public function getUnionBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['ref_code' => 'ref_code', 'union_code' => 'union_code']);
     }
 
 }
