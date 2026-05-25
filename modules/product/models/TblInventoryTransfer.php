@@ -266,7 +266,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             $txModel = new TblInventoryTransferTxn();
             $grnWithoutStockEntry = Yii::$app->general->getUnionConfigResult($this->union_code, 'grn_without_stock_entry', $this);
             $txModel->inventory_transfer_code = $model->inventory_transfer_code;
-            $txModel->inventory_transfer_txn_code = Yii::$app->general->getNextTransactionCode($txModel, $txModel->inventory_transfer_code);
+            $txModel->inventory_transfer_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->inventory_transfer_code);
             $txModel->product_code = $model->product_code;
             $txModel->available_stock = $model->available_stock;
             $txModel->unit_code = $model->unit_code;

@@ -609,7 +609,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $saveModel[] = $receipt;
 
                     $receiptTxn = new TblProductReceiptTransaction();
-                    $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getNextTransactionCode($receiptTxn, $receipt->product_receipt_code);
+                    $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
                     $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
                     $receiptTxn->product_code = $fstockModel->product_code;
                     $receiptTxn->received_quantity = $qty;
@@ -673,7 +673,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $saveModel[] = $receiptTo;
 
                         $receiptTxnTo = new TblProductReceiptTransaction();
-                        $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getNextTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
+                        $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
                         $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                         $receiptTxnTo->product_code = $stockModel->product_code;
                         $receiptTxnTo->received_quantity = '-' . $qty;
@@ -1096,7 +1096,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $child[] = $receipt;
 
                         $receiptTxn = new TblProductReceiptTransaction();
-                        $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getNextTransactionCode($receiptTxn, $receipt->product_receipt_code);
+                        $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
                         $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
                         $receiptTxn->product_code = $fstockModel->product_code;
                         $receiptTxn->received_quantity = '-' . $qty;
@@ -1161,7 +1161,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                             $child[] = $receiptTo;
 
                             $receiptTxnTo = new TblProductReceiptTransaction();
-                            $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getNextTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
+                            $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
                             $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                             $receiptTxnTo->product_code = $stockModel->product_code;
                             $receiptTxnTo->received_quantity = $qty;
