@@ -60,7 +60,7 @@ use common\services\InboxParseService;
 
 class SiteController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data', 'feed-summary-dashboard', 'feed-summary-dashboard-details'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary', 'schema-refresh', 'load-dashboard-mobile-data', 'merge-weight-quality-data', 'feed-summary-dashboard', 'feed-summary-dashboard-details', 'flush-redis-cache'];
 
     public function init() {
         parent::init();
@@ -504,7 +504,7 @@ class SiteController extends \app\controllers\ChildController {
     }
 
     public function actionGetAutoData() {
-        
+
     }
 
     public function actionExceltoCsv() {
@@ -1048,6 +1048,26 @@ class SiteController extends \app\controllers\ChildController {
             'milk_collection_summary' => [
                 'name' => 'sp_milk_collection_summary_status',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'inside_plant_tankers' => [
+                'name' => 'sp_portal_dashboard_PlantTankers_status',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,tanker_status=waiting_tankers|string,representation_type=1|string',
+            ],
+            'intransit_hours' => [
+                'name' => 'sp_portal_dashboard_Intransit_Hours',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,hours_type=empty|string,representation_type=1|string',
+            ],
+            'trip_wise_tanker_time_details' => [
+                'name' => 'sp_GetVehicleInTransitHours',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,category_type=1|string',
+            ],
+            'cc_plant_wise_tanker_qty_status_detail' => [
+                'name' => 'sp_bmctoplant_Intransit_tanker_details',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,category_type=1|string',
+            ],
+            'shift_wise_status_detail' => [
+                'name' => 'sp_bmctoplant_shift_old',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,category_type=1|string',
             ],
         ];
         return $array[$sp];
@@ -1690,7 +1710,7 @@ class SiteController extends \app\controllers\ChildController {
                                         }
                                         if ($savechildModel) {
                                             if ($childModel->validate() && $childModel->save(FALSE)) {
-                                                
+
                                             }
                                         }
                                     }
@@ -3331,5 +3351,274 @@ class SiteController extends \app\controllers\ChildController {
             return $this->render('_dashboard_grid_feed_summary_detail', ['blocks_data' => $blocks_data, 'model' => $model, 'output' => $output]);
         }
     }
+    public function actionVehicleWiseTankerStatus() {
+        $output = [];
+        $union = 0;
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_plant_wise_tanker_stage_time';
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union = Yii::$app->request->post('union');
+        }
+        $date = Yii::$app->request->post('Dashboard')['date'];
+        $date = date('Y-m-d', strtotime($date));
+        $sp_param[] = $union;
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = is_array($date) ? $date['from_date'] : $date . ' 00:00:00';
+        $sp_param[] = is_array($date) ? $date['to_date'] : $date . ' 23:59:00';
 
+        //$sp_param[] = '2020-01-27 06:00:00';
+        //$sp_param[] = '2029-04-30 18:00:00';
+
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $table = $this->renderAjax('_vehicle_wise_tanker_status', ['results' => $results]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'output' => $output, 'vehicle_wise_tanker_status' => $table];
+    }
+    public function actionInsidePlantTankersTab() {
+        $output = [];
+        $union = '';
+        $data = Yii::$app->request->post();
+        $union = isset($data['union']) ? $data['union'] : '';
+
+        if (!empty($union)) {
+            $union_str = $union;
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+            $union_str = ',' . $union_str . ',';
+        } else {
+            $unionModel = new TblUnions();
+            $unions = $unionModel->getActiveUnions();
+            $union_ary = \yii\helpers\ArrayHelper::getColumn($unions, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+        $plantCodes = !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : '';
+        $representation_type = isset($data['representation_type']) ? $data['representation_type'] : 'count';
+        $hours_type = isset($data['tanker_status']) ? $data['tanker_status'] : 'waiting_tankers';
+        $sp_param = [];
+        $sp_param[] = $union_str;
+        $sp_param[] = $plantCodes;
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+        $sp_param[] = $hours_type;
+        $sp_param[] = ($representation_type == 'count') ? '1' : '2';
+        $sp_name = 'sp_portal_dashboard_PlantTankers_status';
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $quality_params = [
+            'waiting_tankers' => 'Waiting Tankers',
+            'parital_unload_tankers' => 'Parital Unload Tankers',
+            'tanker_at_cleaning' => 'Tanker at Cleaning',
+            'tanker_at_quality' => 'Tanker at Quality',
+            'cleaned_not_assign_trip_vehicles' => 'Cleaned not Assign trip Vehicles',
+            'trip_assigned_tankers' => 'Trip Assigned Tankers',
+            'total_in_side' => 'Total In Side'
+        ];
+        $selected_label = isset($quality_params[$hours_type]) ? $quality_params[$hours_type] : 'Tankers';
+        $sub_title = Yii::t('app', $selected_label);
+        $full_title = Yii::t('app', 'Inside Plant Tankers') . ' - ' . $sub_title;
+
+        return $this->renderAjax('inside_plant_tankers_tab', [
+            'output' => $output,
+            'union_code' => $union,
+            'widget_title' => $full_title,
+            'representation_type' => $representation_type,
+            'selected_key_label' => $selected_label
+        ]);
+    }
+
+    public function actionIntransitHoursTab() {
+        $output = [];
+        $data = Yii::$app->request->post();
+        $union = isset($data['union']) ? $data['union'] : '';
+
+        if (!empty($union)) {
+            $union_str = $union;
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+        } else {
+            $unionModel = new TblUnions();
+            $unions = $unionModel->getActiveUnions();
+            $union_ary = \yii\helpers\ArrayHelper::getColumn($unions, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+
+        $plantCodes = !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : '';
+        $representation_type = isset($data['representation_type']) ? $data['representation_type'] : 'count';
+        $hours_type = isset($data['hours_type']) ? $data['hours_type'] : 'empty';
+        $sp_param = [];
+        $sp_param[] = $union_str;
+        $sp_param[] = $plantCodes;
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+        $sp_param[] = $hours_type;
+        $sp_param[] = ($representation_type == 'count') ? '1' : '2';
+
+        $sp_name = 'sp_portal_dashboard_Intransit_Hours';
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+        $hours_types = [
+            'empty' => 'Empty',
+            'cc_waiting' => 'CC Waiting',
+            'load' => 'Load',
+            'round_trip' => 'Round Trip'
+        ];
+        $selected_label = isset($hours_types[$hours_type]) ? $hours_types[$hours_type] : 'Empty';
+        $sub_title = Yii::t('app', $selected_label);
+        $full_title = Yii::t('app', 'Intransit Hours') . ' - ' . $sub_title;
+
+        return $this->renderAjax('intransit_hours_tab', [
+            'output' => $output,
+            'union_code' => $union,
+            'widget_title' => $full_title,
+            'representation_type' => $representation_type,
+            'selected_key_label' => $selected_label
+        ]);
+    }
+    public function actionTripWiseTankerTimeDetailsTab() {
+        $output = [];
+        $data = Yii::$app->request->post();
+        $union = isset($data['union']) ? $data['union'] : '';
+        if (!empty($union)) {
+            $union_str = $union;
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+        } else {
+            $unionModel = new TblUnions();
+            $unions = $unionModel->getActiveUnions();
+            $union_ary = \yii\helpers\ArrayHelper::getColumn($unions, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+
+        $plantCodes = !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : '';
+        $categoryTypeStr = isset($data['category_type']) ? $data['category_type'] : '1';
+        $sp_param = [];
+        $sp_param[] = $union_str;
+        $sp_param[] = $plantCodes;
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+        $sp_param[] = $categoryTypeStr;
+
+        $sp_name = 'sp_GetVehicleInTransitHours';
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $categoryTypes = [
+            '1' => 'Total Hours',
+            '2' => 'Avg Per Trip H'
+        ];
+        $selected_label = isset($categoryTypes[$categoryTypeStr]) ? $categoryTypes[$categoryTypeStr] : 'Total Hours';
+        $sub_title = Yii::t('app', $selected_label);
+        $full_title = Yii::t('app', 'Trip Wise Tanker Time Details') . ' - ' . $sub_title;
+
+        return $this->renderAjax('trip_wise_tanker_time_details_tab', [
+            'output' => $output,
+            'union_code' => $union,
+            'widget_title' => $full_title,
+            'selected_key_label' => $selected_label
+        ]);
+    }
+
+    public function actionCcPlantWiseTankerQtyStatusDetailTab() {
+        $output = [];
+        $data = Yii::$app->request->post();
+        $union = isset($data['union']) ? $data['union'] : '';
+        if (!empty($union)) {
+            $union_str = $union;
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+        } else {
+            $unionModel = new TblUnions();
+            $unions = $unionModel->getActiveUnions();
+            $union_ary = \yii\helpers\ArrayHelper::getColumn($unions, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+
+        $plantCodes = !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : '';
+        $categoryTypeStr = isset($data['category_type']) ? $data['category_type'] : '1';
+        $sp_param = [];
+        $sp_param[] = $union_str;
+        $sp_param[] = $plantCodes;
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+        $sp_param[] = $categoryTypeStr;
+
+        $sp_name = 'sp_bmctoplant_Intransit_tanker_details';
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+        $categoryTypes = [
+            '1' => 'Total',
+            '2' => 'Avg per Trip'
+        ];
+        $selected_label = isset($categoryTypes[$categoryTypeStr]) ? $categoryTypes[$categoryTypeStr] : 'Total';
+        $sub_title = Yii::t('app', $selected_label);
+        $full_title = Yii::t('app', 'CC&Plant Wise Tanker Qty/Status Detail') . ' - ' . $sub_title;
+
+        return $this->renderAjax('cc_plant_wise_tanker_qty_status_detail_tab', [
+            'output' => $output,
+            'union_code' => $union,
+            'widget_title' => $full_title,
+            'selected_key_label' => $selected_label,
+            'representation_type' => 1
+        ]);
+    }
+
+    public function actionShiftWiseStatusDetailTab() {
+        $output = [];
+        $data = Yii::$app->request->post();
+        $union = isset($data['union']) ? $data['union'] : '';
+
+        if (!empty($union)) {
+            $union_str = $union;
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+        } else {
+            $unionModel = new TblUnions();
+            $unions = $unionModel->getActiveUnions();
+            $union_ary = \yii\helpers\ArrayHelper::getColumn($unions, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+
+        $plantCodes = !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : '';
+        $categoryTypeStr = isset($data['category_type']) ? $data['category_type'] : '1';
+        $sp_param = [];
+        $sp_param[] = $union_str;
+        $sp_param[] = $plantCodes;
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+        $sp_param[] = $categoryTypeStr;
+
+        $sp_name = 'sp_bmctoplant_shift_old';
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $categoryTypes = [
+            '1' => 'Cell Count',
+            '2' => 'Trips Count'
+        ];
+        $selected_label = isset($categoryTypes[$categoryTypeStr]) ? $categoryTypes[$categoryTypeStr] : 'Cell Count';
+        $sub_title = Yii::t('app', $selected_label);
+        $full_title = Yii::t('app', 'Shift wise Status Detail') . ' - ' . $sub_title;
+
+        return $this->renderAjax('shift_wise_status_detail_tab', [
+            'output' => $output,
+            'union_code' => $union,
+            'widget_title' => $full_title,
+            'selected_key_label' => $selected_label
+        ]);
+    }
+    public function actionFlushRedisCache() {
+        if (!Yii::$app->has('redis')) {
+            return "Redis component is not configured.";
+        }
+
+        try {
+            $redis = Yii::$app->get('redis');
+            $result = $redis->flushdb();
+            
+            if ($result === 'OK' || $result === true) {
+                return "Success: Redis cache has been cleared successfully!";
+            }
+            
+            return "Error: Could not clear Redis cache.";
+        } catch (\Exception $e) {
+            Yii::error('Redis flush failed: ' . $e->getMessage(), 'redis');
+            return "Error: " . $e->getMessage();
+        }
+    }
 }

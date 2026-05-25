@@ -74,6 +74,7 @@ $attribute = [
             return Yii::$app->controls->view_date($model->date_of_joining_scheme);
         }],
     ['attribute' => 'nominee_member_name'],
+    ['attribute' => 'mobile_no', 'filter' => true],
     ['attribute' => 'originating_org_type', 'filter' => FALSE,
         'value' => function($model) {
             return Yii::$app->general->getStaticValue($model->originating_org_type, 'originating_org_type');
