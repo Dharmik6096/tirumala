@@ -739,4 +739,14 @@ class TblComplainController extends \app\controllers\ChildController {
         $allowManualCollectionRangeModel->application_type = 'MOBILE';
     }
 
+    public function actionViewAttachment($id) {
+        $attachmentModel = new TblAttachment();
+        $attachmentModel->module_code = $id;
+        $attachmentModel->module_name = 'tbl_complain';
+        $attachments = $attachmentModel->attachmentCode;
+        return $this->render('view_attachment', [
+                    'attachments' => $attachments
+        ]);
+    }
+
 }

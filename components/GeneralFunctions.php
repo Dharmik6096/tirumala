@@ -815,7 +815,7 @@ class GeneralFunctions extends Component {
     }
 
     public function getDefaultContactDetail($code, $module) {
-        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
+        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => (string) $code, 'module_name' => $module])->one();
         return $detail;
     }
 
@@ -1678,7 +1678,7 @@ class GeneralFunctions extends Component {
         $len = strlen($orgCode);
         $val = $model->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
@@ -1692,7 +1692,7 @@ class GeneralFunctions extends Component {
         $len = strlen($orgCode);
         $val = $model->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1," . $autoLength . "))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;

@@ -132,6 +132,8 @@ class TblAreaController extends ChildController {
         $historyModel = new TblAreaHistory();
         Yii::$app->operation->history($this->model, $historyModel, DELETE);
         $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], [false, 'TblContactDetails', 'TblContactDetailsHistory'], ['area_code', 'area']);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

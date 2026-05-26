@@ -71,7 +71,7 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'update' => true,
-        'delete' => ['option' => 'area_name,area_code,tbl-area/delete'],
+        'delete' => ['option' => 'area_name,area_code,tbl-area/delete,checkDelete()'],
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->area_name, 'data-val' => $model->area_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
             return GhostHtml::a('<i class="fas fa-user-circle"></i>', ['/geo/tbl-area/contact-details', 'id' => $model->area_code], $options);

@@ -59,12 +59,12 @@ class TblGateEntry extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'date_time_of_collection', 'shift_code', 'actual_arrival_time', 'route_code', 'vehicle_code'], 'required', 'except' => ['getOut']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'date_time_of_collection', 'shift_code', 'actual_arrival_time', 'route_code', 'vehicle_code'], 'required', 'except' => ['getOut', 'androidsync']],
             [['date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at', 'status', 'status_time'], 'safe'],
             [['shift_code', 'responsibility_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['dcs_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
             [['grace_time', 'late_by_time', 'no_of_filled_can', 'no_of_empty_can'], 'number', 'except' => ['getOut']],
-            [['actual_arrival_time'], 'date', 'format' => 'php:H:i', 'except' => ['getOut']],
+            [['actual_arrival_time'], 'date', 'format' => 'php:H:i', 'except' => ['getOut', 'androidsync']],
 //            [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'date_time_of_collection', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['getOut']],
             [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'date_time_of_collection', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                     $client_code = \Yii::$app->session->get('eiplCode');
