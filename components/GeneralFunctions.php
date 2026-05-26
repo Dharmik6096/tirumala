@@ -1674,7 +1674,7 @@ class GeneralFunctions extends Component {
         $len = strlen($orgCode);
         $val = $model->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
@@ -1688,7 +1688,7 @@ class GeneralFunctions extends Component {
         $len = strlen($orgCode);
         $val = $model->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1," . $autoLength . "))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
