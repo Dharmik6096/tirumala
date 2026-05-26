@@ -182,6 +182,8 @@ $this->title = Yii::t('app', $title);
                                 $('#bmc-list').html(response.data);
                             }
                             $('#mapping-grid-container').html(response.grid);
+                            $('#show-only-selected-data').removeClass('hide');
+                            $('#show-all').addClass('hide');
                         }
                     }
                 });
@@ -207,6 +209,8 @@ $this->title = Yii::t('app', $title);
                     if(response.status == 'success') {
                         $('#bmc-list').html(response.data);
                         $('#mapping-grid-container').html(response.grid);
+                        $('#show-only-selected-data').removeClass('hide');
+                        $('#show-all').addClass('hide');
                     }
                 }
             });

@@ -112,17 +112,23 @@ $this->render('approval_tabs', [
 
         $signature = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signatureOfApplicant'], 'image');
         $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Signature of Witness') . '</span>' . (trim($signature) != '' ? $signature : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+        $aadharCard = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Aadharcard Front Photo') . '</span>' . (trim($aadharCard) != '' ? $aadharCard : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+        $aadharCardBack = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCardBack'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Aadharcard Back Photo') . '</span>' . (trim($aadharCardBack) != '' ? $aadharCardBack : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
         ?>
         <div class="row theme_border_left theme_border_right theme_border_bottom">
-                <div class="col-md-12 padding_10_0">
-                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
-                        <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
-                    </div>
-                    <div class="doc-preview-container">
-                        <?= $previews ?>
-                    </div>
+            <div class="col-md-12 padding_10_0">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix margin_bottom_10">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Document Previews') ?></h4>
+                </div>
+                <div class="doc-preview-container">
+                    <?= $previews ?>
                 </div>
             </div>
+        </div>
         <div class="row">           
             <div class="col-sm-12 margin-top-10">
                 <div class="form-group">

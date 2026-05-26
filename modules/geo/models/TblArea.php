@@ -132,4 +132,12 @@ class TblArea extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'area_code', 'area_name');
     }
 
+    public function checkDelete() {
+        $mapping_count = TblAreaBmcMapping::find()->where(['area_code' => $this->area_code, 'is_active' => 1])->count();
+        if ($mapping_count > 0) {
+            return false;
+        }
+        return true;
+    }
+
 }
