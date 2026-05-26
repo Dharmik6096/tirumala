@@ -21,7 +21,7 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
     public function rules() {
         return [
             [['insurance_detail_code', 'insurance_master_code', 'age', 'is_delete', 'originating_type', 'sys_updated_by'], 'safe'],
-            [['sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'date_of_joining_scheme', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'mobile_no', 'date_of_joining_scheme', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'f_insurance_status'], 'safe'],
             [['insurance_master_code'], 'required'],
         ];
@@ -31,7 +31,7 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
      * @inheritdoc
      */
     public function scenarios() {
-// bypass scenarios() implementation in the parent class
+        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -45,7 +45,7 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
     public function search($params) {
         $query = TblInsuranceDetail::find();
 
-// add conditions that should always apply here
+        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -54,11 +54,11 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
         $this->load($params);
 
         if (!$this->validate()) {
-// uncomment the following line if you do not want to return any records when validation fails
+            // uncomment the following line if you do not want to return any records when validation fails
             $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode','insuranceMasterCode']);
+        $query->joinWith(['dcsCode', 'insuranceMasterCode']);
         $query->where(['tbl_insurance_detail.is_delete' => 0]);
         $query->andFilterWhere([
             'tbl_insurance_detail.union_code' => $this->f_union_code,
@@ -85,7 +85,7 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
                 'tbl_insurance_detail.dob' => \Yii::$app->general->encryptData($dob),
             ]);
         }
-// grid filtering conditions
+        // grid filtering conditions
         $query->andFilterWhere([
             'tbl_insurance_detail.insurance_detail_code' => $this->insurance_detail_code,
             'tbl_insurance_detail.insurance_master_code' => $this->insurance_master_code,
@@ -102,6 +102,7 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
                 ->andFilterWhere(['like', 'tbl_insurance_detail.gender_code', $this->gender_code])
                 ->andFilterWhere(['like', 'tbl_insurance_detail.nominee_adhar_no', $this->nominee_adhar_no])
                 ->andFilterWhere(['like', 'tbl_insurance_detail.nominee_member_name', $this->nominee_member_name])
+                ->andFilterWhere(['like', 'tbl_insurance_detail.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_insurance_detail.status', $this->status]);
 
         return $dataProvider;
@@ -122,5 +123,4 @@ class TblInsuranceDetailSearch extends TblInsuranceDetail {
         ]);
         return $dataProvider;
     }
-
 }

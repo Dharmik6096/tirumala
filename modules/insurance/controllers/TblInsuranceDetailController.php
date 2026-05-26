@@ -443,8 +443,9 @@ class TblInsuranceDetailController extends ChildController {
             $column_eleven = $worksheet->getCell('K1')->getValue();
             $column_twelve = $worksheet->getCell('L1')->getValue();
             $column_thirteen = $worksheet->getCell('M1')->getValue();
+            $column_fourteen = $worksheet->getCell('N1')->getValue();
 
-            if ($column_one == 'Sr No' && $column_two == 'Society Code' && $column_three == 'Society Name' && $column_four == 'Member Id' && $column_five == 'Adhar No' && $column_six == 'Member Code' && $column_seven == 'Member Name' && $column_eight == 'Gender Code' && $column_nine == 'Dob' && $column_ten == 'Age' && $column_eleven == 'Nominee Member Name' && $column_twelve == 'Date Of Joining Scheme' && $column_thirteen == 'Nominee Adhar No') {
+            if ($column_one == 'Sr No' && $column_two == 'Society Code' && $column_three == 'Society Name' && $column_four == 'Member Id' && $column_five == 'Adhar No' && $column_six == 'Member Code' && $column_seven == 'Member Name' && $column_eight == 'Gender Code' && $column_nine == 'Dob' && $column_ten == 'Age' && $column_eleven == 'Nominee Member Name' && $column_twelve == 'Date Of Joining Scheme' && $column_thirteen == 'Mobile No' && $column_fourteen == 'Nominee Adhar No') {
                 $dcsCodes = [];
                 $detailModel = new TblInsuranceDetail();
                 $insurance_detail_code = Yii::$app->general->getCodeMax($detailModel);
@@ -484,13 +485,13 @@ class TblInsuranceDetailController extends ChildController {
                         ])
                         ->where(['is_active' => 1])
                         ->andWhere(['dcs_code_ex' => $dcsCodesQuery])
-                        ->indexBy(function($row) {
+                        ->indexBy(function ($row) {
                             return $row['dcs_data'];
                         })
                         ->asArray()
                         ->all();
 
-                for ($row = 2; $row <= $worksheet->getHighestRow(); $row ++) {
+                for ($row = 2; $row <= $worksheet->getHighestRow(); $row++) {
                     $insuranceDetailModel = new TblInsuranceDetail();
                     $dcsCode = (int) $worksheet->getCell('B' . $row)->getValue();
                     $insuranceDetailModel->insurance_detail_code = $orgCode . $lastNumber;
@@ -510,7 +511,8 @@ class TblInsuranceDetailController extends ChildController {
                     $insuranceDetailModel->age = $worksheet->getCell('J' . $row)->getValue();
                     $insuranceDetailModel->nominee_member_name = $worksheet->getCell('K' . $row)->getValue();
                     $insuranceDetailModel->date_of_joining_scheme = $worksheet->getCell('L' . $row)->getValue();
-                    $nomineeAdharNo = $worksheet->getCell('M' . $row)->getValue();
+                    $mobileNo = trim($worksheet->getCell('M' . $row)->getValue());
+                    $nomineeAdharNo = $worksheet->getCell('N' . $row)->getValue();
                     $insuranceDetailModel->x_col1 = Yii::$app->general->getUuid();
                     $insuranceDetailModel->status = $insuranceMaster->status;
                     $insuranceDetailModel->is_delete = 0;
@@ -548,8 +550,7 @@ class TblInsuranceDetailController extends ChildController {
                         $dcsCode = str_pad($dcsCode, 4, '0', STR_PAD_LEFT);
                         if (!preg_match('/^\d{4}$/', $dcsCode)) {
                             $errors[] = 'Society Code must be 4 digits long.';
-                        }
-                        else if (array_key_exists($dcsCode, $dcsArray)) {
+                        } else if (array_key_exists($dcsCode, $dcsArray)) {
                             $orgData = $dcsArray[$dcsCode]['org_data'];
                             $orgDataParts = explode('###', $orgData);
                             $insuranceDetailModel->union_code = $orgDataParts[0];
@@ -575,12 +576,20 @@ class TblInsuranceDetailController extends ChildController {
                     }
 
                     if (empty($insuranceDetailModel->member_name)) {
-                        $errors[] = 'Member Name cannot be blank';
+                        $errors[] = 'Member Name cannot be blank.';
+                    } elseif (!preg_match('/^[a-zA-Z ]+$/', $insuranceDetailModel->member_name)) {
+                        $errors[] = 'Member Name should contain Alphabetic Character Only.';
+                    }
+
+                    if (!empty($insuranceDetailModel->nominee_member_name)) {
+                        if (!preg_match('/^[a-zA-Z ]+$/', $insuranceDetailModel->nominee_member_name)) {
+                            $errors[] = 'Nominee Member Name should contain Alphabetic Character Only.';
+                        }
                     }
 
                     if (empty($insuranceDetailModel->member_id)) {
                         $errors[] = 'Member Id cannot be blank.';
-                    } elseif (!ctype_digit((string)$insuranceDetailModel->member_id)) {
+                    } elseif (!ctype_digit((string) $insuranceDetailModel->member_id)) {
                         $errors[] = 'Member Id must be numeric.';
                     } elseif (!preg_match('/^\d{10}$/', $insuranceDetailModel->member_id)) {
                         $errors[] = 'Member Id must be 10 digits long.';
@@ -594,7 +603,7 @@ class TblInsuranceDetailController extends ChildController {
 
                     if (empty($adharNo)) {
                         $errors[] = 'Aadhar Number cannot be blank.';
-                    } else if(!empty($adharNo)){
+                    } else if (!empty($adharNo)) {
                         $insuranceDetailModel->adhar_no = \Yii::$app->general->encryptData($adharNo);
                     }
 
@@ -647,6 +656,12 @@ class TblInsuranceDetailController extends ChildController {
                         }
                     }
 
+                    if (!empty($mobileNo) && !preg_match('/^[0-9]{10}$/', $mobileNo)) {
+                        $errors[] = 'Mobile No must contain exactly 10 digits.';
+                    } else {
+                        $insuranceDetailModel->mobile_no = $mobileNo;
+                    }
+
                     if (!empty($errors)) {
                         $message .= implode('<br>', $errors);
                         $message = 'There is error in Record No : ' . ($row - 1) . '<br>' . $message;
@@ -658,7 +673,7 @@ class TblInsuranceDetailController extends ChildController {
 
                         $data[$i][] = $insuranceDetailModel->attributes;
                         if (count($data [$i]) == 1000) {
-                            $i ++;
+                            $i++;
                         }
                         $lastNumber++;
                         if (!in_array($insuranceDetailModel->dcs_code, $dcsCodes)) {
