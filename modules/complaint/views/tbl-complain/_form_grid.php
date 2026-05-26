@@ -3,6 +3,7 @@
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
+use yii\helpers\Html;
 ?>
 
 <?php
@@ -18,9 +19,15 @@ $attribute = [
         ['attribute' => 'plant_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'mcc_ref_code', 'label' => Yii::t('app', 'MCC').' Ref Code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+        }, 'visible' => true, 'filter' => true],
         ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS').' Ref Code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }, 'visible' => true, 'filter' => true],
         ['attribute' => 'dcs_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'visible' => true, 'filter' => false],
@@ -88,6 +95,10 @@ $grid_option = [
             $class = !isset($status) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-registered"></i>', $url, $options);
+        },
+        'view_attachment' => function($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Attachment'];
+            return Html::a('<i class="fa fa-paperclip"></i>', ['view-attachment', 'id' => $model->complain_code], $options);
         },
     ]
 ];
