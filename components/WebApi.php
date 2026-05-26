@@ -10,6 +10,7 @@ use app\models\TblPortalDataPostLog;
 class WebApi {
 
     public $serverUrl = 'http://52.32.190.89/tpi/eipl/';
+    public $timeout = 120; // default timeout in seconds
     public $authentication = [
         'user' => ['userName' => 'eipl', 'password' => 'eipl123']
     ];
@@ -44,7 +45,8 @@ class WebApi {
         if ($method == 'POST') {
             $postData = [
                 RequestOptions::JSON => $this->body,
-                RequestOptions::HEADERS => $header
+                RequestOptions::HEADERS => $header,
+                RequestOptions::TIMEOUT => $this->timeout
             ];
         }
         $resp = null;
@@ -147,6 +149,7 @@ class WebApi {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
             if ($this->return_actual) {
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);

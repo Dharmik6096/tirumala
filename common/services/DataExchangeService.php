@@ -35,6 +35,7 @@ class DataExchangeService {
             return $executionStatus;
         } catch (Throwable $e) {
             Yii::error("Comfed Process Error: " . $e->getMessage());
+            echo "Comfed Process Error: " . $e->getMessage() . PHP_EOL;
             return false;
         }
     }
@@ -91,6 +92,7 @@ class DataExchangeService {
                         $api = new WebApi();
                         $api->vendor_code = $eventId;
                         $api->serverUrl = $config->request_url;
+                        $api->timeout = 120;
                         $api->authentication = false;
                         $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
                         $api->body = json_encode($body);
@@ -115,12 +117,13 @@ class DataExchangeService {
                             $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
                             $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
                         } catch (\Throwable $e) {
-                            
+                            echo "Comfed-collection-data - Error : " . $e->getMessage() . PHP_EOL;
                         }
                     }
                 }
                 return true;
             } else {
+                echo "Comfed-collection-data : empty record" . PHP_EOL;
                 return false;
             }
         } catch (\Throwable $e) {
@@ -128,7 +131,7 @@ class DataExchangeService {
                 $sp_res_param = [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250)];
                 $records = \Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', $sp_res_param, TRUE);
             } catch (\Throwable $e) {
-                
+                echo "Comfed-collection-data : Error :" . $e->getMessage() . PHP_EOL;
             }
             return false;
         }
@@ -148,12 +151,14 @@ class DataExchangeService {
                 try {
                     $api = new WebApi();
                     $api->serverUrl = $config->request_url;
+                    $api->timeout = 120;
                     $api->authentication = false;
                     $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
                     $api->body = json_encode(["dcsNo" => (string) $sapVendorCode]);
 
                     $responseData = $api->ExchangeData();
                     \Yii::info("Comfed-farmer-sync : WebApi Status: " . $responseData->status);
+                    echo "Comfed-farmer-sync : WebApi Status: " . $responseData->status . PHP_EOL;
                     if (isset($responseData->status) && $responseData->status == 'success' && !empty($responseData->data)) {
                         foreach ($responseData->data as $farmer) {
                             $frNo = $farmer->frNo;
@@ -166,23 +171,25 @@ class DataExchangeService {
                                 'MobileNo' => $farmer->frPhoneNo,
                                 'SapVendorCode' => $farmer->frNo
                             ];
-                            \Yii::info("Comfed-farmer-sync : Farmer MemberCode : " . $generatedFarmerCode);
                         }
                         if (!empty($farmerCollection)) {
                             $farmerData = [];
                             $farmerData[] = json_encode($farmerCollection);
                             Yii::$app->general->getSpData('sp_data_exchange_update_member_info', $farmerData, TRUE);
                             \Yii::info("Comfed-farmer-sync : Farmer Member Update Successfully");
+                            echo "Comfed-farmer-sync : Farmer Member Update Successfully" . PHP_EOL;
                         }
                     }
                 } catch (Throwable $e) {
                     \Yii::info("Comfed-farmer-sync : API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage());
+                    echo "Comfed-farmer-sync : API Error for SAP Code [{$sapVendorCode}]: " . $e->getMessage() . PHP_EOL;
                     continue;
                 }
             }
             return true;
         } catch (Throwable $e) {
             \Yii::info("Comfed-farmer-sync : Farmer Sync Fatal Error: " . $e->getMessage());
+            echo "Comfed-farmer-sync : Farmer Sync Fatal Error: " . $e->getMessage() . PHP_EOL;
             return false;
         }
     }
@@ -213,6 +220,7 @@ class DataExchangeService {
             $api = new WebApi();
             $api->vendor_code = $eventId;
             $api->serverUrl = $config->request_url;
+            $api->timeout = 120;
             $api->authentication = false;
             $api->header_info = ["Authorization: Bearer " . $config->authentication_key];
             $api->body = json_encode(["data" => $payload]);
@@ -236,7 +244,7 @@ class DataExchangeService {
             try {
                 Yii::$app->general->getSpData('sp_data_exchange_log_update_comfed', [$eventId, 3, 'Error', substr($e->getMessage(), 0, 250), 'product_sale_transaction'], true);
             } catch (Throwable $e) {
-                
+                echo "Comfed-Local-sale-data : Error :" . $e->getMessage() . PHP_EOL;
             }
             return false;
         }
