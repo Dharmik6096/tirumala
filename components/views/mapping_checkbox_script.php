@@ -3,26 +3,18 @@
 use yii\web\View;
 
 $script = "
-var Checkboxes = $('.data-checkbox');
 // For checked data
 var backgroundColor = '#D6FFDE';
 function showAllBack() {
-	$('.data-checklist').each(function(){
+	$('.data-checklist, .bmc-filter-checklist').each(function(){
 		$(this).removeClass('hide');
 	});
 }
-// Highlight selected checkboxes
-Checkboxes.each(function(){
-	var _t = $(this);
-
-	if ( _t.is(':checked') )
-	{
-		_t.closest('label').css('background', backgroundColor);
-	}
+$('.data-checkbox:checked, .bmc-filter-checkbox:checked').each(function(){
+	$(this).closest('label').css('background', backgroundColor);
 });
 
-// Change background on check/uncheck
-Checkboxes.on('change', function(){
+$(document).on('change', '.data-checkbox, .bmc-filter-checkbox', function(){
 	var _t = $(this);
 
 	if ( _t.is(':checked') )
@@ -41,12 +33,21 @@ $('#show-only-selected-data').on('click', function(){
 	$(this).addClass('hide');
 	$('#show-all').removeClass('hide');
 
-	Checkboxes.each(function(){
+	$('.data-checkbox').each(function(){
 		var _t = $(this);
 
 		if ( ! _t.is(':checked') )
 		{
 			_t.closest('.data-checklist').addClass('hide');
+		}
+	});
+
+	$('.bmc-filter-checkbox').each(function(){
+		var _t = $(this);
+
+		if ( ! _t.is(':checked') )
+		{
+			_t.closest('.bmc-filter-checklist').addClass('hide');
 		}
 	});
 });

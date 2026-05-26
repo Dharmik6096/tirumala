@@ -37,7 +37,7 @@ class ChildModel extends \yii\db\ActiveRecord {
 
             if ($this->hasAttribute('description'))
                 \Yii::$app->general->validateDiscriptiveField($this, 'description');
-                $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             if ($insert) {
                 if ($this->hasAttribute('created_by') && $this->created_by == NULL)
                     $this->created_by = $user;
@@ -174,7 +174,7 @@ class ChildModel extends \yii\db\ActiveRecord {
 
     public function validateAttributesSingleSpace($attributeNames) {
         $union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->session->get('Unions');
-        $double_space_validation = isset(Yii::$app->session->get('unionConfig')[$union_code]['double_space_validation']) ? Yii::$app->session->get('unionConfig')[$union_code]['double_space_validation'] : 0;
+        $double_space_validation = isset(Yii::$app->session->get('unionConfig')[$union_code]['double_space_validation']) ? Yii::$app->session->get('unionConfig')[$union_code]['double_space_validation'] : Yii::$app->general->getUnionConfiguration($union_code, 'double_space_validation', 'PORTAL');
         if ($double_space_validation == 1) {
             foreach ($attributeNames as $attribute) {
                 $attributeValue = $this->$attribute;
