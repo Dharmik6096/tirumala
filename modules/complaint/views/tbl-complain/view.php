@@ -42,6 +42,22 @@ $this->params['breadcrumbs'][] = $this->title;
                         'columns' => [
                                 [
                                 'attribute' => 'mcc_plant_code',
+                                'label' => Yii::t('app', 'MCC').' Ref Code',
+                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'dcs_code',
+                                'label' => Yii::t('app', 'DCS').' Ref Code',
+                                'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'mcc_plant_code',
                                 'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
