@@ -23,6 +23,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\tankermovement\models\TblVehicleTrip;
 
 /**
  * Default controller for the `restservices` module
@@ -105,6 +106,7 @@ class MasterController extends ActiveController {
         $bmc = [];
         $dcs = [];
         $member = [];
+        $driver = [];
         $loginorg = [];
         if (strtolower(Yii::$app->eiplapp->identity->login_type) == 'member' || empty(Yii::$app->eiplapp->identity->loginOrg)) {
             $loginorg['organization_type'] = Yii::$app->eiplapp->identity->login_type;
@@ -150,6 +152,11 @@ class MasterController extends ActiveController {
                     $dcs[] = $detail->from_dest;
                     $this->setDcsUpperData($union, $plant, $mcc, $bmc, $detail->from_dest);
                 }
+            } else if ($value['organization_type'] == 'DRIVER') {
+                $driver[] = $value['organization_code'];
+                if (!empty(Yii::$app->eiplapp->identity->union_code) && !in_array(Yii::$app->eiplapp->identity->union_code, $union)) {
+                    $union[] = Yii::$app->eiplapp->identity->union_code;
+                }
             }
         }
         $data['union'] = $union;
@@ -158,6 +165,7 @@ class MasterController extends ActiveController {
         $data['mcc'] = $mcc;
         $data['plant'] = $plant;
         $data['member'] = $member;
+        $data['driver'] = $driver;
         $data['organization_type'] = $loginorg['organization_type'];
         $data['device_id'] = Yii::$app->eiplapp->identity->device_id;
         $data['department'] = Yii::$app->eiplapp->identity->department;

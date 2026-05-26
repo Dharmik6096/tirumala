@@ -98,10 +98,10 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
             $query->andFilterWhere(['like', 'tbl_dcs_provisional.registration_date', date('Y-m-d', strtotime($this->registration_date))]);
 
         $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'cast(tbl_dcs_provisional.created_at as date)', $this->from_date]);
+        $query->andFilterWhere(['>=', 'tbl_dcs_provisional.registration_date', $this->from_date]);
 
         $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'cast(tbl_dcs_provisional.created_at as date)', $this->to_date]);
+        $query->andFilterWhere(['<=', 'tbl_dcs_provisional.registration_date', $this->to_date]);
 
         $query->andFilterWhere(['like', 'tbl_dcs_provisional.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'tbl_dcs_provisional.address', $this->address])

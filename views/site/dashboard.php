@@ -646,11 +646,12 @@ $('.dpu_data_icon').click(function(){
                     'dashboard_farmer_status',
                     'intransit_tanker_milk_detail',
                     'plant_wise_tanker_status',
+                    'vehicle_wise_tanker_status',
                     'plant_wise_tanker_milk_detail',
                     'intransit_tanker_status_detail',
                     'plant_tanker_capacity_wise_tanker_status',
                     'feed_summary_dashboard',
-                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
+                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary','shift_wise_status_detail','cc_plant_wise_tanker_qty_status_detail','trip_wise_tanker_time_details','intransit_hours','inside_plant_tankers'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
                     }
@@ -1353,6 +1354,26 @@ $('.dpu_data_icon').click(function(){
                             }
                         });
                     }
+
+                    else if(['vehicle_wise_tanker_status'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'sp_portal_dashboard_vehicle_wise_tanker_status'; 
+                    var union= '" . $unionCode . "';
+                        $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/site/vehicle-wise-tanker-status']) . "',
+                            data: blockDataString+'&sp='+id+'&union='+union,
+                            success: function(data) {
+                                var obj1 = data;
+                                if (obj1.status == 'success') {
+                                  $('#vehicle_wise_tanker_status').html(obj1.vehicle_wise_tanker_status);
+                                }
+                            },
+                            error:function(data){
+//                                alert('Your data has not been submitted.Please try again');
+                            }
+                        });
+                    } 
                     else if(['plant_wise_tanker_milk_detail'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
                     var id= 'sp_portal_dashboard_plant_wise_tanker_status'; 

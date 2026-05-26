@@ -174,19 +174,13 @@ $attribute = [
             return isset($model->is_dispatch_mandate) ? Yii::$app->dropdown->getRecords('is_dispatch_mandate')['data'][$model->is_dispatch_mandate] : '';
         }, 'visible' => false
     ],
-//    [
-//        'attribute' => 'is_weight_manual', 'filter' => false,
-//        'value' => function($model) {
-//            return ($model->is_weight_manual == 1) ? 'Yes' : 'No';
-//        }, 'visible' => FALSE
-//    ],
-//    [
-//        'attribute' => 'is_quality_manual', 'filter' => false,
-//        'value' => function($model) {
-//            return ($model->is_quality_manual == 1) ? 'Yes' : 'No';
-//        }, 'visible' => FALSE
-//    ],
-    [
+        ['attribute' => 'is_weight_manual', 'filter' => false, 'value' => function ($model) {
+            return isset($model->is_weight_manual) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->is_weight_manual] : '';
+        }, 'visible' => false],
+        ['attribute' => 'is_quality_manual', 'filter' => false, 'value' => function ($model) {
+            return isset($model->is_quality_manual) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->is_quality_manual] : '';
+        }, 'visible' => false],
+        [
         'attribute' => 'is_bmc', 'filter' => false,
         'value' => function($model) {
             return ($model->is_bmc == 1) ? 'Yes' : 'No';

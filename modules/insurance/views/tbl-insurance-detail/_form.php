@@ -58,6 +58,9 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'nominee_member_name')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length', 'maxlength' => 10, 'placeholder' => 'Enter 10-digit mobile No']) ?>
+    </div>
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'nominee_adhar_no')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

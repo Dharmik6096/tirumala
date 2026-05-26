@@ -404,13 +404,26 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
     }
 
     public function actionRfcRePush($id) {
+        $saveModel = [];
         $this->model = $this->findModel($id);
         $historyModel = new TblInventoryTransferHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
         $this->model->data_post_status = 0;
-        $record = [];
-        if ($this->model->save(true, false)) {
-            $historyModel->save();
+        $saveModel[] = $this->model;
+        $transactionModels = TblInventoryTransferTxn::find()->where(['inventory_transfer_code' => $id, 'data_post_status'=> 3])->all();
+        if ($transactionModels) {
+            foreach ($transactionModels as $transactionModel) {
+                $historyModel = new TblInventoryTransferTxnHistory();
+                Yii::$app->operation->history($transactionModel, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $transactionModel->data_post_status = 0;
+                $saveModel[] = $transactionModel;
+            }
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Inventory Transfer', 'edit']);
+        \Yii::$app->session->removeAllFlashes();
+        if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Inventory Transfer re-pushed successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Failed to re-push Inventory Transfer.'];

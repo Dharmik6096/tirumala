@@ -126,7 +126,7 @@ class ChildController extends Controller {
         ];
     }
 
-    public function RegisterReportRequest($report_type, $config, $controls) {
+    public function RegisterReportRequest($report_type, $config, $controls, $search_param = NULL) {
         $model = new TblReportTxnLog();
         $txnLogExistRecord = $model->find()->where(['status' => 0, 'user_code' => \Yii::$app->user->identity->user_code])->one();
         if (empty($txnLogExistRecord)) {
@@ -134,7 +134,7 @@ class ChildController extends Controller {
             $model->report_title = $config['title'];
             $model->sp_name = $report_type == 'mis' ? $config['sp_name'] : $config['path'];
             $model->input_param = json_encode($controls);
-            $model->search_param = NULL;
+            $model->search_param = $search_param;
             $model->export_file_name = isset($config['export_file_name']) ? $config['export_file_name'] : NULL;
             $model->decrypt_data = isset($config['to_decrypt']) ? json_encode($config['to_decrypt']) : NULL;
             $model->file_type = $report_type == 'mis' ? 'xls' : 'pdf';

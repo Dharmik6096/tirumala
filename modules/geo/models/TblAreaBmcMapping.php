@@ -35,7 +35,7 @@ class TblAreaBmcMapping extends \app\models\ChildModel {
         return [
             [['bmc_code', 'created_by', 'updated_by'], 'string'],
             [['is_active'], 'integer'],
-            [['area_code', 'created_at', 'updated_at'], 'safe'],
+            [['area_code', 'created_at', 'updated_at', 'applicable_code', 'applicable_type'], 'safe'],
             [['is_active'], 'default', 'value' => '1'],
         ];
     }
@@ -71,6 +71,10 @@ class TblAreaBmcMapping extends \app\models\ChildModel {
 
     public function getTblDcsCode() {
         return $this->hasMany(TblDcs::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getTblDcs() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     public function getBMCList($bmcCode, $RLS = 'TRUE', $hasBMC = false, $concateSelf = true) {

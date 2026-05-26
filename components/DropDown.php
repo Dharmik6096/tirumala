@@ -198,14 +198,14 @@ class DropDown extends Component {
         }
     }
 
-    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
+    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $multiple = false, $addAll = false) {
         $check_list = '';
         $label = $label ? Yii::t('app', $label) : false;
         if (!empty(Yii::$app->session->get('Dcs'))) {
             $check_list = explode(',', Yii::$app->session->get('Dcs'));
             $check_list = implode('-', $check_list);
         }
-        return $this->depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
+        return $this->depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list, $multiple, '', false, true, $multiple, true, false, $addAll);
     }
 
     public function union_routes($model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
@@ -902,7 +902,7 @@ class DropDown extends Component {
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true, $listView = false) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true, $multiselect2Dropdown = false, $async = true, $listView = false, $addAll = false) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
@@ -943,7 +943,7 @@ class DropDown extends Component {
                     'pluginOptions' => [
                         'depends' => $depends,
                         'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
+                        'url' => Url::to([$url, 'addAll' => $addAll ? 1 : 0]),
                         'allParam' => $allParam,
                         'initialize' => true,
                         'ajaxSettings' => [
@@ -1063,7 +1063,7 @@ class DropDown extends Component {
             $records = $records->where($where)->orderBy($tablename . '.' . $fields[1])->all();
         }
 
-        return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
+        return ArrayHelper::map($records, $fields[0], function ($array, $key) use ($fields) {
                     if (!empty($fields[2]) && !empty($array[$fields[2]]))
                         $value = $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
                     else
@@ -1160,7 +1160,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -2406,6 +2406,146 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Posting Type'),
                 'data' => [1 => Yii::t('app', 'Consolidate'), 2 => Yii::t('app', 'Day'), 3 => Yii::t('app', 'Payment Cycle')],
             ],
+            'sort_type' => [
+                'name' => 'sort_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'FarmerCode'), 2 => Yii::t('app', 'Time'), 3 => Yii::t('app', 'FarmerCode Desc'), 4 => Yii::t('app', 'Time Desc')],
+            ],
+            'member_types' => [
+                'name' => 'member_types',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Specific'), 2 => Yii::t('app', 'Range')],
+            ],
+            'payment_method' => [
+                'name' => 'payment_method',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Cash'), 2 => Yii::t('app', 'Credit')],
+            ],
+            'report_rate_type' => [
+                'name' => 'report_rate_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Farmer Rate')],
+            ],
+            'search_by' => [
+                'name' => 'search_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Search by Society'), 2 => Yii::t('app', 'Search by Region')],
+            ],
+            'edit_type' => [
+                'name' => 'edit_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'ManualEdit'), 2 => Yii::t('app', 'ManualOnlineEdit'), 3 => Yii::t('app', 'MilkEditRequestEdit'), 4 => Yii::t('app', 'AlcoholicShiftEdit')],
+            ],
+            'sort_by' => [
+                'name' => 'sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'FarmerCode'), 2 => Yii::t('app', 'Shift'), 3 => Yii::t('app', 'FarmerCode Desc'), 4 => Yii::t('app', 'Shift Desc'), 5 => Yii::t('app', 'Transactiondate'), 6 => Yii::t('app', 'Transactiondate Desc')],
+            ],
+            'amount_variation' => [
+                'name' => 'amount_variation',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'ALL'), 1 => Yii::t('app', 'Plus'), 2 => Yii::t('app', 'Minus')],
+            ],
+            'search_type' => [
+                'name' => 'search_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Search by Society'), 2 => Yii::t('app', 'Search by Interval')],
+            ],
+            'report_sort_by' => [
+                'name' => 'report_sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Code'), 3 => Yii::t('app', 'Time')],
+            ],
+            'sort_direction' => [
+                'name' => 'sort_direction',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Ascending'), 2 => Yii::t('app', 'Decending')],
+            ],
+            'report_member_type' => [
+                'name' => 'report_member_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Member'), 2 => Yii::t('app', 'NonMember')],
+            ],
+            'farmer_type' => [
+                'name' => 'farmer_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Large Farmer'), 2 => Yii::t('app', 'Small'), 3 => Yii::t('app', 'Shriman'), 4 => Yii::t('app', 'Land Employee'), 5 => Yii::t('app', 'Other'), 6 => Yii::t('app', 'Side Agency'), 7 => Yii::t('app', 'Medium'), 8 => Yii::t('app', 'BMC Facilitator')],
+            ],
+            'filter_type' => [
+                'name' => 'filter_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Qty'), 2 => Yii::t('app', 'No Of Farmer'), 3 => Yii::t('app', 'Percentage Of Qty')],
+            ],
+            'milk_sort_by' => [
+                'name' => 'milk_sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Diff Amount'), 2 => Yii::t('app', 'Diff Qty')],
+            ],
+            'status_type' => [
+                'name' => 'status_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Active'), 2 => Yii::t('app', 'InActive')],
+            ],
+            'society_type' => [
+                'name' => 'society_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'AMCS'), 2 => Yii::t('app', 'Logistic')],
+            ],
+            'region_type' => [
+                'name' => 'region_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'State'), 2 => Yii::t('app', 'District'), 3 => Yii::t('app', 'Sub District'), 4 => Yii::t('app', 'Village')],
+            ],
+            'registered_type' => [
+                'name' => 'registered_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Register'), 2 => Yii::t('app', 'NonRegister')]
+            ],
+            'farmer_sort_type' => [
+                'name' => 'farmer_sort_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Farmer Code'), 1 => Yii::t('app', 'Mobole No')],
+            ],
+            'soc_type' => [
+                'name' => 'soc_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Offline'), 2 => Yii::t('app', 'Online'), 3 => Yii::t('app', 'Do not show offline')],
+            ],
+            'report_status_type' => [
+                'name' => 'report_status_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Success')],
+            ],
+            'sms_type' => [
+                'name' => 'sms_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Otp'), 1 => Yii::t('app', 'Milk Collection')],
+            ],
+            'search_by_soc' => [
+                'name' => 'search_by_soc',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Search by Society')],
+            ],
+            'report_gender' => [
+                'name' => 'report_gender',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Male'), 2 => Yii::t('app', 'Female'), 3 => Yii::t('app', 'Other')]
+            ],
+            'manual_type' => [
+                'name' => 'manual_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'Fat'), 2 => Yii::t('app', 'Weight'), 3 => Yii::t('app', 'Snf')]
+            ],
+            'report_app_type' => [
+                'name' => 'report_app_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'MU App'), 2 => Yii::t('app', 'VDCS App')]
+            ],
+            'generation_type' => [
+                'name' => 'generation_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Trucksheet Date'), 2 => Yii::t('app', 'Trucksheet Date And Shift Range')]
+            ],
         ];
         return $records[$l];
     }
@@ -2570,6 +2710,7 @@ class DropDown extends Component {
             'ledger_mapping' => ['name' => 'ledger_code', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Ledger', 'model' => 'TblLedgers'],
             'voucher_types' => ['name' => 'voucher_type_code', 'fields' => 'voucher_type_code,voucher_type_name,local_name', 'prompt' => 'Select Voucher Types', 'model' => 'TblVoucherTypes'],
             'project' => ['name' => 'project_code', 'fields' => 'project_code,project_name', 'prompt' => 'Select Project', 'model' => 'TblProject'],
+            'financial_year' => ['name' => 'financial_year', 'fields' => 'code,code', 'prompt' => 'Select Financial Year', 'model' => 'TblFinancialYear'],
         ];
         return $label[$l];
     }
@@ -2657,7 +2798,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -2707,7 +2848,7 @@ class DropDown extends Component {
 
     public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {
         $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
-        $value = ArrayHelper::map($records, 'id', function($records) {
+        $value = ArrayHelper::map($records, 'id', function ($records) {
                     return !empty($records['name']) ? $records['name'] : '';
                 });
         echo $form->field($model, $flag)->widget(Select2::classname(), [

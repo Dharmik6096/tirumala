@@ -654,7 +654,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $controls['p_bmc_milk_dispatch_code'] = $id;
         $controls['p_report_name'] = 'Tanker Dispatch Challan';
         $reportPath = 'vsp/TankerDispatchChallan';
-        if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+        if (in_array(Yii::$app->session->get('eiplCode'), ['DODLA', 'ABT'])) {
             $reportPath = 'vsp/DispatchChallan';
         }
         $this->printDocument($controls, $reportPath, 'TankerDispatchChallan', 'pdf');

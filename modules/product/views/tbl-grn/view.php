@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\payment\models\TblProductSale */
@@ -150,5 +151,29 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
             <?php
         }
         ?>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Document Upload</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('_document_grid', [
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
+                ])
+                ?>
+            </div> 
+        </div>
     </div>
 </div>
+<?php
+$script = "
+
+$(document).ready(function() {
+    $('.btn-toolbar.kv-grid-toolbar').hide();
+});
+
+";
+
+$this->registerJs($script, View::POS_END, 'grn_view');
+?>

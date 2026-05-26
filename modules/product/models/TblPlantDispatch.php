@@ -37,7 +37,7 @@ use app\modules\organisation\models\TblDcsBmc;
  */
 class TblPlantDispatch extends \app\models\ChildModel {
 
-    public $product_code, $rate, $qty, $sap_batch_no, $lr_no;
+    public $product_code, $rate, $qty, $sap_batch_no, $lr_no, $product_mrp, $distributor_landing_rate, $sachiv_price, $member_price;
 
     /**
      * @inheritdoc
@@ -52,7 +52,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
     public function rules() {
         return [
             [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv', 'clienterp_cargill']],
-            [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no', 'vendor_master_code'], 'safe'],
+            [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no', 'vendor_master_code', 'product_mrp', 'distributor_landing_rate', 'sachiv_price', 'member_price'], 'safe'],
             [['bmc_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
             [['product_code', 'rate', 'qty'], 'required', 'on' => ['importCsv']],
             [['sap_batch_no'], 'required', 'on' => ['importCsv'], 'when' => function ($model) {
@@ -150,6 +150,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
                     $txn_model->qty = $model->qty;
                     $txn_model->amount = ($txn_model->qty) * $txn_model->rate;
                     $txn_model->grn_missing_qty = $txn_model->qty;
+                    $txn_model->product_mrp = $model->product_mrp;
+                    $txn_model->distributor_landing_rate = $model->distributor_landing_rate;
+                    $txn_model->sachiv_price = $model->sachiv_price;
+                    $txn_model->member_price = $model->member_price;
                     if (!$txn_model->validate()) {
                         $errors[] = $txn_model->getErrors();
                     }
@@ -169,6 +173,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
                 $txn_model->qty = $model->qty;
                 $txn_model->amount = ($txn_model->qty) * $txn_model->rate;
                 $txn_model->grn_missing_qty = $txn_model->qty;
+                $txn_model->product_mrp = $model->product_mrp;
+                $txn_model->distributor_landing_rate = $model->distributor_landing_rate;
+                $txn_model->sachiv_price = $model->sachiv_price;
+                $txn_model->member_price = $model->member_price;
                 if (!$txn_model->validate()) {
                     $errors[] = $txn_model->getErrors();
                 }

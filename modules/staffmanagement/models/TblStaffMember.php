@@ -121,7 +121,7 @@ class TblStaffMember extends \app\models\ChildModel {
         }, 'on' => 'importCsv'],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'district_code', 'sub_district_code', 'hamlet_code', 'state_code', 'village_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'except' => ['importCsv']],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'hamlet_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'on' => ['importCsv']],
-            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no'], 'safe'],
+            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no', 'approved_date', 'salary', 'member_code'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'designation_code', 'gender_code'], 'integer'],
             [['bank_account_no'], 'string', 'max' => 20],
             [['aadhar_card_no'], 'string', 'max' => 16],
@@ -188,7 +188,7 @@ class TblStaffMember extends \app\models\ChildModel {
             Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
         }, 'skipOnEmpty' => false,],
             //required due to dependency in attendance
-            [['is_on_role'], 'required'],
+            [['is_on_role'], 'required', 'except' => ['androidsync']],
             [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblStaffMember', $this->form_validation_type);

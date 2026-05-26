@@ -145,6 +145,10 @@ class TblConfigMapping extends \app\models\ChildModel {
                 }
             }
         }
+        if ($this->union_code) {
+            $configCacheKey = 'bmc_dispatch_config_union_' . $this->union_code;
+            Yii::$app->general->removeRedisCache($configCacheKey);
+        }
     }
 
     public function afterDelete() {
@@ -166,6 +170,10 @@ class TblConfigMapping extends \app\models\ChildModel {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
+        }
+        if ($this->union_code) {
+            $configCacheKey = 'bmc_dispatch_config_union_' . $this->union_code;
+            Yii::$app->general->removeRedisCache($configCacheKey);
         }
     }
 

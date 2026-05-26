@@ -815,7 +815,7 @@ class GeneralFunctions extends Component {
     }
 
     public function getDefaultContactDetail($code, $module) {
-        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
+        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => (string) $code, 'module_name' => $module])->one();
         return $detail;
     }
 
@@ -1667,14 +1667,14 @@ class GeneralFunctions extends Component {
         return sprintf('%0.2f', $value);
     }
 
-    public function getPrimaryCode($model, $autoInc = 1) {
+    public function getPrimaryCode($model, $autoInc = 1, $prefix = 'PORTAL') {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
-        $orgCode = 'PORTAL-' . $organizations_code . '-';
+        $orgCode = $prefix . '-' . $organizations_code . '-';
         $len = strlen($orgCode);
         $val = $model->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
@@ -1688,7 +1688,7 @@ class GeneralFunctions extends Component {
         $len = strlen($orgCode);
         $val = $model->find()
                 ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1," . $autoLength . "))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->where(['like', $primaryKey, trim($orgCode) . '%', false])
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
@@ -3175,4 +3175,11 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function removeRedisCache($key) {
+        if (Yii::$app->has('redis')) {
+            $redis = Yii::$app->get('redis');
+            return $redis->del($key);
+        }
+        return false;
+    }
 }

@@ -111,6 +111,12 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-2 mt15">
+            <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-2 mt15">
+            <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
