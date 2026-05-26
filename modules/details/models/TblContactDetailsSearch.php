@@ -66,7 +66,7 @@ class TblContactDetailsSearch extends TblContactDetails {
             'detail_code' => $this->detail_code,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'module_code' => $this->module_code,
+            'module_code' => (string) $this->module_code,
             'module_name' => $this->module_name,
         ]);
 

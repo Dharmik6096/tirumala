@@ -24,117 +24,117 @@ $this->render('approval_view_tabs', [
         <div class="table-responsive">
             <?php
             $attributes = [
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'union_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'plant_code',
                             'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'mcc_plant_code',
                             'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'bmc_code',
                             'value' => Yii::$app->general->getforeignkey($model->tblDcsBmc, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'dcs_code',
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'application_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'member_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'father_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'gender_code',
                             'value' => Yii::$app->general->getforeignkey($model->genderCode, 'gender'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'dob',
                             'value' => Yii::$app->controls->view_date($model->dob),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'age',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'qualification_code',
                             'value' => Yii::$app->general->getforeignkey($model->qualificationCode, 'qualification_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'caste_category_code',
                             'value' => Yii::$app->general->getforeignkey($model->casteCategoryCode, 'caste_category_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'religion_code',
                             'value' => Yii::$app->general->getforeignkey($model->religionCode, 'religion'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'member_type_code',
                             'value' => Yii::$app->general->getforeignkey($model->memberTypeCode, 'member_type_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'registration_date',
                             'value' => Yii::$app->controls->view_date($model->registration_date),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
@@ -162,6 +162,12 @@ $this->render('approval_view_tabs', [
 
         $signature = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['signatureOfApplicant'], 'image');
         $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Signature of Witness') . '</span>' . (trim($signature) != '' ? $signature : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+        $aadharCard = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCard'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Aadharcard Front Photo') . '</span>' . (trim($aadharCard) != '' ? $aadharCard : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
+
+        $aadharCardBack = Yii::$app->general->getDisplayDocumentLink($model->provisional_member_code, 'tbl_member_provisional', ['aadharCardBack'], 'image');
+        $previews .= '<div class="doc-preview-card"><span class="doc-preview-header">' . Yii::t('app', 'Aadharcard Back Photo') . '</span>' . (trim($aadharCardBack) != '' ? $aadharCardBack : '<div class="no-attachment">' . Yii::t('app', 'No Attachment') . '</div>') . '</div>';
         ?>
         <div class="row theme_border_left theme_border_right theme_border_bottom">
             <div class="col-md-12 padding_10_0">

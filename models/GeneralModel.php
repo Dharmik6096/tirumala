@@ -461,7 +461,7 @@ class GeneralModel {
     public function deleteContacts($modelName, $code, $type) {
 
         $model = Yii::$app->path->define($modelName[0]);
-        $data = $model::find()->where(['module_code' => $code])->all();
+        $data = $model::find()->where(['module_code' => (string) $code])->all();
         if ($data) {
             foreach ($data as $row) {
                 $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
