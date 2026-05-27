@@ -13,8 +13,11 @@ use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
+use app\modules\tankermovement\models\TblBmcDispatchInspection;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
+use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
+use app\modules\tankermovement\models\TblBmcMilkDispatchTxnHistory;
 use app\modules\tankermovement\models\TblVehicleQaInspection;
 use app\modules\tankermovement\models\TblVehicleQaInspectionHistory;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
@@ -31,7 +34,7 @@ use app\modules\tankermovement\models\TblVehicleTripTracking;
  */
 class TblVehicleTripController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list', 'get-vehicle-detail'];
+    public $freeAccessActions = ['open-trip-list', 'open-trip-detail-list', 'get-vehicle-detail', 'get-trip-detail-html', 'get-vehicle-detail-html'];
 
     /**
      * Lists all TblVehicleTrip models.
@@ -531,14 +534,14 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1]) && ($parents[1] == 'milk_entry_qlty' || $parents[1] == 'milk_entry_qlty_merge' || !empty($parents[2]))) {
+            if (!empty($parents[0]) && !empty($parents[1]) && ($parents[1] == 'milk_entry_qlty' || $parents[1] == 'milk_entry_qlty_merge' || !empty($parents[2]) || $parents[1] == 'replace_tanker')) {
                 $trip = new TblVehicleTripDetail();
 
                 if ($parents[1] != 'cleaning_inspection' || $parents[1] != 'qa_inspection') {
                     $parents[2] = isset($parents[2]) ? $parents[2] : '';
                 }
                 $data = $trip->getOpenTripDetailList($parents[0], $parents[1], $parents[2]);
-                $data = ArrayHelper::map($data, 'trip_code', $parents[1] == 'milk_entry_qlty' ? function ($tripData) {
+                $data = ArrayHelper::map($data, 'trip_code', ($parents[1] == 'milk_entry_qlty' || $parents[1] == 'replace_tanker') ? function ($tripData) {
                             return $tripData['parsing_no'] . ' (' . $tripData['trip_code'] . ')';
                         } : 'trip_code');
                 foreach ($data as $key => $val) {
@@ -875,6 +878,187 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     'tripTrack' => $tripTrack,
                     'parsingNo' => $parsingNo,
         ]);
+    }
+
+    public function actionReplaceTanker($old_trip_code = null) {
+        $model = new TblVehicleTrip();
+        $model->scenario = 'replaceTanker';
+        
+        if ($old_trip_code) {
+            $oldTrip = TblVehicleTrip::find()->where(['trip_code' => $old_trip_code])->one();
+            if ($oldTrip) {
+                $model->union_code = $oldTrip->union_code;
+                $model->old_trip_code = $oldTrip->trip_code;
+            }
+        }
+
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post()) && $model->validate()) {
+            $oldTrip = TblVehicleTrip::find()->where(['trip_code' => $model->old_trip_code])->one();
+            if ($oldTrip) {
+                $saveModel = [];
+                $oldTripCode = $oldTrip->trip_code;
+                $oldTripHistory = new TblVehicleTripHistory();
+                Yii::$app->operation->history($oldTrip, $oldTripHistory, UPDATE);
+                $saveModel[] = $oldTripHistory;
+             
+                $newTrip = new TblVehicleTrip();
+                $newTrip->scenario = 'createTrip';
+                $newTrip->attributes = $oldTrip->attributes;
+                $newTrip->vehicle_trip_code = Yii::$app->general->getPrimaryCode($newTrip);                
+                $newTrip->vehicle_code = $model->vehicle_code;
+                $newTrip->trip_code = $newTrip->generateTripCode();
+                $newTrip->driver_name = $model->driver_name;
+                $newTrip->mobile_no = $model->mobile_no;
+                $newTrip->old_trip_code = $oldTripCode;
+                unset($newTrip->created_at, $newTrip->updated_at, $newTrip->created_by, $newTrip->updated_by);
+                $saveModel[] = $newTrip;
+
+                $oldTrip->scenario = 'closetrip';
+                $oldTrip->trip_status = 'closed';
+                $oldTrip->trip_sub_status = 'cleaning_pending';
+                $oldTrip->force_close = 1;
+                $oldTrip->force_close_remarks = 'Replaced with ' . $newTrip->trip_code;
+                $saveModel[] = $oldTrip;
+
+                $oldTripDetail = TblVehicleTripDetail::findAll(['trip_code' => $oldTripCode]);
+                if($oldTripDetail){
+                    foreach($oldTripDetail as $index => $detail){
+                        $tripDetail = new TblVehicleTripDetail();
+                        $tripDetail->attributes = $detail->attributes;
+                        $tripDetail->vehicle_trip_code = $newTrip->vehicle_trip_code;
+                        $tripDetail->vehicle_trip_detail_code = $newTrip->vehicle_trip_code . 'T' . ($index + 1);
+                        $tripDetail->trip_code = $newTrip->trip_code;
+                        $tripDetail->vehicle_code = $newTrip->vehicle_code;
+                        $tripDetail->scenario = 'on_crete_trip';
+                        unset($tripDetail->created_at, $tripDetail->updated_at, $tripDetail->created_by, $tripDetail->updated_by);
+                        $saveModel[] = $tripDetail;
+                    }
+                }
+
+                $oldTrackings = TblVehicleTripTracking::findAll(['trip_code' => $oldTripCode]);
+                if($oldTrackings){
+                    foreach($oldTrackings as $tracking){
+                        $trackingDetail = new TblVehicleTripTracking();
+                        $trackingDetail->attributes = $tracking->attributes;
+                        $trackingDetail->trip_code = $newTrip->trip_code;
+                        $trackingDetail->vehicle_code = $newTrip->vehicle_code;
+                        unset($trackingDetail->created_at, $trackingDetail->updated_at, $trackingDetail->created_by, $trackingDetail->updated_by);
+                        $saveModel[] = $trackingDetail;
+                    }
+                }
+
+                $oldInspection = TblBmcDispatchInspection::findOne(['trip_code' => $oldTripCode]);
+                if($oldInspection){
+                    $inspections = new TblBmcDispatchInspection();
+                    $inspections->attributes = $oldInspection->attributes;
+                    $inspections->trip_code = $newTrip->trip_code;
+                    $inspections->vehicle_code = $newTrip->vehicle_code;
+                    $inspections->remarks = $oldInspection->remarks . ' | Replaced with ' . $newTrip->trip_code;
+                    unset($inspections->created_at, $inspections->updated_at, $inspections->created_by, $inspections->updated_by);
+                    $saveModel[] = $inspections;
+                }
+
+                $dispatches = TblBmcMilkDispatch::find()->where(['trip_code' => $oldTripCode])->all();
+                foreach ($dispatches as $dispatch) {
+                    $dispatchHistory = new TblBmcMilkDispatchHistory();
+                    Yii::$app->operation->history($dispatch, $dispatchHistory, UPDATE);
+                    $dispatch->trip_code = $newTrip->trip_code;
+                    $dispatch->vehicle_code = $newTrip->vehicle_code;
+                    $dispatch->scenario = 'tripUpdate';
+                    $saveModel[] = $dispatchHistory;
+                    $saveModel[] = $dispatch;
+                }
+
+                $qaModel = new TblVehicleQaInspection();
+                $qaRecords = $qaModel->getVehicleQaInpection($model->vehicle_code);
+                if (!empty($qaRecords)) {
+                    foreach ($qaRecords as $qa) {
+                        $historyModel = new TblVehicleQaInspectionHistory();
+                        Yii::$app->operation->history($qa, $historyModel, UPDATE);
+                        $qa->status = 'closed';
+                        $saveModel[] = $historyModel;
+                        $saveModel[] = $qa;
+                    }
+                }
+
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle Trip Replaced', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    $trackingDetail = ['visibility_status' => 1, 'module_code' => null, 'module_type' => null];
+                    Yii::$app->general->setVehicleTripTrackingDetail($oldTrip, $trackingDetail, 'Trip forcefully closed due to tanker breakdown.');
+                    Yii::$app->getSession()->setFlash('success', [
+                        'type' => 'success',
+                        'message' => 'Tanker replaced successfully! New Trip Code: ' . $newTrip->trip_code
+                    ]);
+                    return $this->redirect(['index']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Trip not found.'
+                ]);
+            }
+        }
+
+        return $this->render('replace_tanker', [
+            'model' => $model
+        ]);
+    }
+
+    public function actionGetTripDetailHtml()
+    {
+        $postData = Yii::$app->request->post();
+
+        if (!empty($postData['trip_code'])) {
+
+            $trip = TblVehicleTrip::find()
+                ->select([
+                    'vehicle_trip_code',
+                    'trip_code',
+                    'vehicle_code',
+                    'driver_name',
+                    'mobile_no',
+                    'status' => new \yii\db\Expression('UPPER(trip_status)'),
+                    'sub_status' => 'trip_sub_status',
+                    'transaction_date' => new \yii\db\Expression("ISNULL(FORMAT(transaction_date, 'dd-MM-yyyy'), 'N/A')")
+                ])
+                ->where(['trip_code' => $postData['trip_code']])
+                ->asArray()
+                ->one();
+
+            if ($trip) {
+                $trip['routes'] = TblVehicleTripDetail::find()
+                    ->where(['vehicle_trip_code' => $trip['vehicle_trip_code']])
+                    ->orderBy(['sequence_no' => SORT_ASC])
+                    ->all();
+                return $this->renderAjax('_trip_detail_html', [
+                    'trip' => $trip
+                ]);
+            }
+        }
+        return '<div class="text-center py-2 text-danger">Trip details not available</div>';
+    }
+
+    public function actionGetVehicleDetailHtml() {
+        $postData = Yii::$app->request->post();
+        if (!empty($postData['vehicle_code'])) {
+            $vehicleData = TblVehicleMaster::find()->alias('vm')
+                ->select(['vm.driver_name', 'vm.driver_contact_no', 'vm.transporter_code', 'count(vcd.compartment_no) as compartment_no', 'sum(vcd.capacity) as capacity', 'tr.transporter_name'])
+                ->join('INNER JOIN', 'tbl_transporter as tr', 'tr.transporter_code = vm.transporter_code')
+                ->join('INNER JOIN', 'tbl_vehicle_compartment_detail as vcd', 'vcd.vehicle_code = vm.vehicle_code')
+                ->where(['vm.vehicle_code' => $postData['vehicle_code']])
+                ->groupBy(['vm.driver_name', 'vm.driver_contact_no', 'vm.transporter_code', 'tr.transporter_name'])
+                ->asArray()
+                ->one();
+            
+            if ($vehicleData) {
+                $html = $this->renderAjax('_vehicle_detail_html', [
+                    'vehicleData' => $vehicleData
+                ]);
+                return Json::encode(['status' => 'success', 'html' => $html]);
+            }
+        }
+        $vehicleName = !empty($postData['vehicle_name']) ? $postData['vehicle_name'] : $postData['vehicle_code'];
+        return Json::encode(['status' => 'error', 'msg' => 'Compartment not available for selected vehicle: ' . $vehicleName]);
     }
 
 }
