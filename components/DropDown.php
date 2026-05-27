@@ -1481,7 +1481,7 @@ class DropDown extends Component {
             'bank_type' => [
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'BOM' => Yii::t('app', 'BOM')],
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'BOM' => Yii::t('app', 'BOM'), 'KYB' => Yii::t('app', 'KYB'), 'KYB-other' => Yii::t('app', 'KYB-other')],
                 'client_wise_rmv' => [
                     'ABT' => ['AU', 'Federal', 'IOB', 'NEFT']
                 ]
@@ -2374,7 +2374,7 @@ class DropDown extends Component {
             'p_bank_type' => [
                 'name' => 'p_bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+                'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'KYB' => Yii::t('app', 'KYB'), 'KYB-other' => Yii::t('app', 'KYB-other')],
             ],
             'bipl_type' => [
                 'name' => 'bipl_type',
@@ -2849,8 +2849,8 @@ class DropDown extends Component {
     public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {
         $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
         $value = ArrayHelper::map($records, 'id', function ($records) {
-                    return !empty($records['name']) ? $records['name'] : '';
-                });
+            return !empty($records['name']) ? $records['name'] : '';
+        });
         echo $form->field($model, $flag)->widget(Select2::classname(), [
             'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]]
         )->label($label);
@@ -3019,5 +3019,4 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/veterinary/tbl-medicine-stock/medicine-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
-
 }
