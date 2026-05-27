@@ -6651,7 +6651,6 @@ select:focus > option:checked {
     padding: 8px;
     border: 1px solid #ddd;
 }
-
 .empty-placeholder {
     min-height: 200px;
     display: flex;
@@ -6662,4 +6661,5 @@ select:focus > option:checked {
     border-radius: 4px;
     padding: 15px;
     margin-top: 15px;
+
 }

@@ -16,7 +16,8 @@
                 <th>Source Ref Code</th>
                 <th>Dest.</th>
                 <th>Dest. Ref Code</th>
-                <th>Arrival</th>
+                <th>GeteIn Time</th>
+                <th>GeteOut Time</th>
             </tr>
         </thead>
         <tbody>
@@ -66,7 +67,8 @@
                     }
                 }
                 
-                $arrivalStr = empty($model->arrival_time) ? 'Not Yet Arrived' : Yii::$app->controls->view_datetime($model->arrival_time);
+                $arrivalStr = empty($model->arrival_time) ? '' : Yii::$app->controls->view_datetime($model->arrival_time);
+                $departureStr = empty($model->departure_time) ? '' : Yii::$app->controls->view_datetime($model->departure_time);
             ?>
             <tr>
                 <td><?= $sourceStr ?></td>
@@ -74,6 +76,7 @@
                 <td><?= $destStr ?></td>
                 <td><?= $destRefStr ?></td>
                 <td><?= $arrivalStr ?></td>
+                <td><?= $departureStr ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>
