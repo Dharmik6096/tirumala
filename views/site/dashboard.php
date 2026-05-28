@@ -821,6 +821,8 @@ $('.dpu_data_icon').click(function(){
                             var obj1 = data;
                             if (obj1.status == 'success'){
                                 $('#total_complain').text(obj1.res.total_complain);
+                                $('#created_complain').text(obj1.res.created_complain);
+                                $('#assigned_complain').text(obj1.res.assigned_complain);
                                 $('#inprogress_complain').text(obj1.res.inprogress_complain);
                                 $('#close_complain').text(obj1.res.close_complain);
                                 $('#resolved_complain').text(obj1.res.resolved_complain);
