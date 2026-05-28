@@ -90,7 +90,6 @@ $date = date('Y-m-d');
                                                 <tr>
                                                     <th class="custom_grid_header">#</th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Union') ?></th>
-                                                    <!-- <th class="custom_grid_header"><? //Yii::t('app', 'Plant Code') ?></th> -->
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Plant Name') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'MCC Ref Code') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'MCC Name') ?></th>
@@ -119,7 +118,6 @@ $date = date('Y-m-d');
                                                         <tr>
                                                             <td class="custom_grid_normal"><?= ++$i; ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= Html::encode($data['union_name']) ?></td>
-                                                            <!-- <td class="grid_left_align custom_grid_normal"><? // Html::encode($data['plant_code']) ?></td> -->
                                                             <td class="grid_left_align custom_grid_normal"><?= Html::encode($data['plant_name']) ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= Html::encode($data['mcc_ref_code']) ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= Html::encode($data['mcc_name']) ?></td>
