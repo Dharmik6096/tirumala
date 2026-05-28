@@ -202,21 +202,32 @@ class DataExchangeService {
             }
 
             $eventId = !empty($records[0]['event_id']) ? $records[0]['event_id'] : '';
-            $floats = ['lsd_by_cash', 'lsd_by_credit', 'lsd_grand_total', 'quantity', 'standard_rate'];
-            $payload = array_map(function ($record) use ($floats) {
-                unset($record['event_id']);
-                foreach ($record as $key => $val) {
-                    if (in_array($key, $floats)) {
-                        $record[$key] = (float) $val;
-                    } elseif ($key === 'lsd_is_active') {
-                        $record[$key] = (bool) $val;
-                    } else {
-                        $record[$key] = (string) $val;
-                    }
-                }
-                return $record;
-            }, $records);
+            $floats = ['lsd_by_cash', 'lsd_by_credit', 'lsd_grand_total'];
+            $floatsItemKeys = ['quantity', 'standard_rate'];
+            $itemKeys = array_merge(['item_group', 'product_code', 'product_name'], $floatsItemKeys);
+            $grouped = [];
 
+            foreach ($records as $record) {
+                unset($record['event_id']);
+                $invoiceName = (string) $record['lsd_inovice_name'];
+
+                if (empty($grouped[$invoiceName])) {
+                    $header = [];
+                    foreach ($record as $key => $val) {
+                        $header[$key] = in_array($key, $floats) ? (float) $val : ($key === 'lsd_is_active' ? (bool) $val : (string) $val);
+                    }
+                    $header['items'] = [];
+                    $grouped[$invoiceName] = $header;
+                }
+
+                $item = [];
+                foreach ($itemKeys as $key) {
+                    $item[$key] = (in_array($key, $floatsItemKeys)) ? (float) $record[$key] : (string) $record[$key];
+                }
+                $grouped[$invoiceName]['items'][] = $item;
+            }
+
+            $payload = array_values($grouped);
             $api = new WebApi();
             $api->vendor_code = $eventId;
             $api->serverUrl = $config->request_url;
