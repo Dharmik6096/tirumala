@@ -1111,7 +1111,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BANAS Reports') . ' <b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'AMCS Reports') . ' <b class="caret"></b></a>',
                     'visible' => TRUE,
                     'items' => [
                         [
