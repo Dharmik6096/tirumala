@@ -1206,7 +1206,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1527,7 +1527,7 @@ class DropDown extends Component {
             'bank_type' => [
                 'name' => 'bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'BOM' => Yii::t('app', 'BOM')],
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal'), 'AU' => Yii::t('app', 'AU'), 'NEFT' => Yii::t('app', 'NEFT'), 'HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'BOM' => Yii::t('app', 'BOM'), 'KYB' => Yii::t('app', 'KYB'), 'KYB-other' => Yii::t('app', 'KYB-other')],
                 'client_wise_rmv' => [
                     'ABT' => ['AU', 'Federal', 'IOB', 'NEFT']
                 ]
@@ -2420,7 +2420,7 @@ class DropDown extends Component {
             'p_bank_type' => [
                 'name' => 'p_bank_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC')],
+                'data' => ['HDFCNEFT' => Yii::t('app', 'HDFCNEFT'), 'HDFC' => Yii::t('app', 'HDFC'), 'KYB' => Yii::t('app', 'KYB'), 'KYB-other' => Yii::t('app', 'KYB-other')],
             ],
             'bipl_type' => [
                 'name' => 'bipl_type',
@@ -2847,7 +2847,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'pluginOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
