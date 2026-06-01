@@ -22,6 +22,8 @@ class RequestMasterController extends MasterController {
         $data = V1::getLabels($endpoint);
         $response = [];
         if (!empty($data) && !empty($data['sp']) && (!isset($data['call_action']) || !$data['call_action'])) {
+            $is_cache = isset($data['redis']) && $data['redis'] === true;
+            $cache_key = '';
             $sp_name = $data['sp'];
             $sp_param = [];
             $param = !empty($data['param']) ? explode('#', $data['param']) : [];
@@ -38,6 +40,23 @@ class RequestMasterController extends MasterController {
                 $param_val = empty($param_val) && isset($org_codes[$value]) ? (!empty($org_codes[$value]) && (!$orgToZero || in_array($value, $rlsArray)) ? (is_array($org_codes[$value]) ? (',' . implode(',', $org_codes[$value]) . ',') : $org_codes[$value]) : '0' ) : ((is_array($param_val) ? (',' . implode(',', $param_val) . ',') : $param_val));
                 $sp_param[] = $param_val;
             }
+            if ($is_cache && Yii::$app->has('redis')) {
+                try {
+                    $redis = Yii::$app->get('redis');
+                    $endpoint_key = str_replace('/', '_', $endpoint);
+                    $cache_key = 'eipl_api_v1_' . $endpoint_key . '_' . $sp_name . '_' . md5(json_encode($sp_param));
+                    $cached_data = $redis->get($cache_key);
+                    if ($cached_data !== false && $cached_data !== null) {
+                        $response = json_decode($cached_data, true);
+                        if (!empty($response)) {
+                            $this->response->setData($response);
+                            return $this->response;
+                        }
+                    }
+                } catch (\Exception $e) {
+                }
+            }
+
             $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
             if (!empty($response)) {
                 $dataToDecrypt = !empty($data['to_decrypt']) ? $data['to_decrypt'] : [];
@@ -53,6 +72,13 @@ class RequestMasterController extends MasterController {
             }
             if (isset($data['as_object']) && $data['as_object']) {
                 $response = !empty($response) ? $response[0] : NULL;
+            }
+            if ($is_cache && !empty($response) && !empty($cache_key) && Yii::$app->has('redis')) {
+                try {
+                    $redis = Yii::$app->get('redis');
+                    $redis->setex($cache_key, 86400, json_encode($response));
+                } catch (\Exception $e) {
+                }
             }
         } else {
             $endpoint_array = explode('/', $endpoint);

@@ -23,6 +23,9 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
         $this->model->app_type = $mappingModel->app_type;
         $menuArray = $this->model->getActionDetail();
         $selectedArray = [];
+        if($mappingModel->app_type == 4 && $mappingModel->login_type == 'DRIVER'){
+            $mappingModel->department = 'DRIVER';
+        }
 //        $mappingModel->department = $mappingModel->login_type == 'MEMBER' ? 'MEMBER' : $mappingModel->department;
         $selectedArray = $mappingModel->getExistMapingMenu();
 
@@ -33,9 +36,14 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
             $loginType = Yii::$app->request->post('login_type');
             $unionCode = Yii::$app->request->post('union_code');
             $department = !empty(Yii::$app->request->post('department')) ? Yii::$app->request->post('department') : NULL;
-            if($appType == 4){
-                $loginType = 'DRIVER';
-                $department = NULL;
+            if ($appType == 4) {
+                if ($loginType == 'DRIVER') {
+                    $department = 'DRIVER';
+                } else {
+                    if ($department == 'DRIVER') {
+                        $department = NULL;
+                    }
+                }
             }
             $master = [];
             $auto_inc = 1;

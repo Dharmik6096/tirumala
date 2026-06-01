@@ -58,7 +58,7 @@ class TblInsuranceDetailHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['id', 'insurance_detail_code', 'insurance_master_code', 'sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'age', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'date_of_joining_scheme','status', 'is_delete', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'sys_updated_by'], 'safe'],
+            [['id', 'insurance_detail_code', 'insurance_master_code', 'sr_no', 'union_code', 'plant_code', 'bmc_code', 'mcc_plant_code', 'dcs_code', 'dcs_name', 'member_id', 'member_code', 'member_name', 'adhar_no', 'dob', 'age', 'gender_code', 'nominee_adhar_no', 'nominee_member_name', 'mobile_no', 'date_of_joining_scheme', 'status', 'is_delete', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'history_created_at', 'history_created_by', 'operation_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'sys_updated_by'], 'safe'],
         ];
     }
 
@@ -106,5 +106,4 @@ class TblInsuranceDetailHistory extends \yii\db\ActiveRecord {
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
-
 }

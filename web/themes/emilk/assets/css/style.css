@@ -6441,10 +6441,10 @@ div#dashboardFarmerPopup {
     margin-top: 25px;
     margin-bottom: 0px;
 }
-
 .checkbox_padding_0:has(.field-reportsmodel-last_rate) {
     margin-top: 0px !important;
 }
+
 .mt3 {
     margin-top: 3px !important;
 }
@@ -6456,4 +6456,39 @@ div#dashboardFarmerPopup {
 }
 #report-form .field-reportsmodel-milk_sort_by{
     margin-bottom: 16px;
+}
+
+.pd0 {
+    padding: 0px;
+}
+.replacement-body {
+    padding: 15px;
+    min-height: 250px;
+}
+.route-table {
+    width: 100%;
+    font-size: 0.85em;
+    margin-top: 10px;
+    background: #fff;
+}
+.route-table th {
+    background: #f1f1f1;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+.route-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.empty-placeholder {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
 }

@@ -16,6 +16,7 @@ use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblApiMaster;
+use app\modules\usermanagement\models\TblEiplAppMenuActionsMapping;
 
 class EiplAppController extends MasterController {
 
@@ -356,5 +357,4 @@ class EiplAppController extends MasterController {
         }
         return \Yii::$app->general->getSpData($sp_name, $sp_param);
     }
-
 }
