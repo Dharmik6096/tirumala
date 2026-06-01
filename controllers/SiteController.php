@@ -3632,7 +3632,7 @@ class SiteController extends \app\controllers\ChildController {
             }
         }
 
-        $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/dashboardLayout.php";
         return $this->render('mcc_complain_list', [
             'tableData' => $tableData,
             'blockData' => $blockData,
