@@ -1184,7 +1184,8 @@ class SchedulerController extends ChildController {
             foreach ($data as $value) {
                 $update_ids = [];
                 try {
-                    $output = \Yii::$app->general->getSpData($value->sp_name, [$value->union_code]);
+                    $spParam = $value->tbl_name == 'TblProductSaleTransaction' ? [$value->union_code] : [];
+                    $output = \Yii::$app->general->getSpData($value->sp_name, $spParam);
                     
                     if (!empty($output)) {
                         $modelName = $value->tbl_name;
