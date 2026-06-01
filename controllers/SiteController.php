@@ -3607,6 +3607,44 @@ class SiteController extends Controller {
             'selected_key_label' => $selected_label
         ]);
     }
+
+    public function actionMccComplainList() {
+        $union = !empty(Yii::$app->session->get('Unions')) ? Yii::$app->session->get('Unions') : 0;
+        $plant = !empty(Yii::$app->session->get('Plant')) ? Yii::$app->session->get('Plant') : 0;
+        $mcc = !empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0;
+
+        $tableData = \Yii::$app->general->getSpData('get_mcc_complain_list', [
+            $union, $plant, $mcc
+        ]);
+
+        $blockData = [
+            'total_complain' => 0,
+            'created_complain' => 0,
+            'assign_complain' => 0,
+            'inprogress_complain' => 0,
+            'close_complain' => 0,
+            'resolved_complain' => 0,
+        ];
+
+        if (!empty($tableData)) {
+            foreach ($tableData as $row) {
+                $blockData['total_complain'] += $row['Total_Complain'] ?? 0;
+                $blockData['created_complain'] += $row['complaint_created'] ?? 0;
+                $blockData['assign_complain'] += $row['complaint_assigend'] ?? 0;
+                $blockData['inprogress_complain'] += $row['complaint_inprogress'] ?? 0;
+                $blockData['close_complain'] += $row['complaint_closed'] ?? 0;
+                $blockData['resolved_complain'] += $row['complaint_resolved'] ?? 0;
+            }
+        }
+
+        $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
+        return $this->render('mcc_complain_list', [
+            'tableData' => $tableData,
+            'blockData' => $blockData,
+            'breadcrum_title' => 'Dashboard > Complain List',
+        ]);
+    }
+
     public function actionFlushRedisCache() {
         if (!Yii::$app->has('redis')) {
             return "Redis component is not configured.";
