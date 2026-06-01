@@ -51,6 +51,7 @@ class BmcMilkDispatchController extends MasterController {
         $dispatchDetail = [
             'destination_type' => $tripCombined['destination_type'],
             'destination_code' => $tripCombined['destination_code'],
+            'is_last_destination' => $tripCombined['is_last_destination'],
             'destination_name' => '',
             'trip_code' => $tripCombined['trip_code'],
             'vehicle_code' => $tripCombined['vehicle_code'],
@@ -531,13 +532,17 @@ class BmcMilkDispatchController extends MasterController {
         $transaction = $this->generalModel->saveTransaction($saveModels, ['BMC Milk Dispatch', 'create']);
         if ($transaction === 'customRedirect') {
             $savedTxns = [];
-            foreach ($txnModels as $txn) {
-                $savedTxns[] = $txn->attributes;
+            foreach ($txnModels as $index => $txn) {
+                $txnData = $txn->attributes;
+                $txnData['silo_no'] = $dispatchTxnData[$index]['silo_no'];
+                $savedTxns[] = $txnData;
             }
-
+            $dispatchData = $model->attributes;
+            $dispatchData['trip_status'] = $tripModel->trip_status;
+            $dispatchData['parsing_no'] = $reqData['parsing_no'];
             $this->response->setData([
                 'message' => 'Dispatch saved successfully.',
-                'dispatch_data' => $model->attributes,
+                'dispatch_data' => $dispatchData,
                 'transaction_data' => $savedTxns
             ]);
             return $this->response;
