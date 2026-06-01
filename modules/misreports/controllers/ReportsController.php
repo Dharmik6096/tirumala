@@ -2652,7 +2652,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_collection_shift_report',
                 'scenario' => 'BmcCollectionShiftReport',
                 'title' => '201 - BMC Collection Shift Report',
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'bkg_export' => TRUE,
             ],
             //202
             'BmcCollDateShiftWiseSummary' => [
