@@ -31,11 +31,12 @@ class EiplRequest {
                         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
                     }, array_keys($post_data)), array_values($post_data));
             foreach ($post_data as $key => $val) {
-                if (is_array($post_data[$key])) {
-                    $arr1 = array_combine(array_map(function($str) {
-                                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
-                            }, array_keys($post_data[$key])), array_values($post_data[$key]));
-                    $post_data[$key] = $arr1;
+                if (is_array($val)) {
+                    $post_data[$key] = $this->camelCaseToUnderscore($val);
+                    // $arr1 = array_combine(array_map(function($str) {
+                    //             return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                    //         }, array_keys($post_data[$key])), array_values($post_data[$key]));
+                    // $post_data[$key] = $arr1;
                 }
             }
             return $post_data;
