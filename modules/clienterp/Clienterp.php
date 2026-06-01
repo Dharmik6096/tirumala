@@ -37,6 +37,9 @@ class Clienterp extends \yii\base\Module {
             'tally' => [
                 'class' => 'app\modules\clienterp\tally\Tally',
             ],
+            'comfed' => [
+                'class' => 'app\modules\clienterp\comfed\Comfed',
+            ],
         ];
     }
 
