@@ -292,6 +292,7 @@ class BmcMilkDispatchController extends MasterController {
         $tripModel->trip_code = $model->trip_code;
         $tripModel = $tripModel->getTripData();
         if ($tripModel) {
+            $tripModel->trip_status = 'open';
             if($model->is_last_destination == 1){
                 $tripModelHistory = new TblVehicleTripHistory();
                 Yii::$app->operation->history($tripModel, $tripModelHistory, 'UPDATE');
