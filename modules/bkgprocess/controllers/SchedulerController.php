@@ -1213,7 +1213,7 @@ class SchedulerController extends ChildController {
                                 return $item;
                             }, $output);
                         }
-                        if (!empty($update_ids)) {
+                        if (!empty($update_ids) && $value->tbl_name != 'TblProductSaleTransaction') {
                             $model->updateAll([$updateStatus => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['in', $modelKey, $update_ids]);
                         }
                         $fileName = $name . date('YmdHis') . '.xlsx';
