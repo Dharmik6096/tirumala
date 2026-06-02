@@ -999,6 +999,7 @@ echo GhostMenu::widget([
                                 ['label' => Yii::t('app', 'MRG Report'), 'url' => ['/jasperreports/default/cc-sub-standard-mrg']],
                                 ['label' => Yii::t('app', 'BMC Check List'), 'url' => ['/jasperreports/default/dmr-check-list']],
                                 ['label' => Yii::t('app', 'Route wise Weighted Average'), 'url' => ['/jasperreports/default/dmr-weighted-average']],
+                                ['label' => Yii::t('app', 'Union Active Summary'), 'url' => ['/misreports/reports/union-active-summary']],
                             ]
                         ],
                         ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],

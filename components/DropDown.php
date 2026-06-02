@@ -2592,6 +2592,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Trucksheet Date'), 2 => Yii::t('app', 'Trucksheet Date And Shift Range')]
             ],
+            'transaction_type' => [
+                'name' => 'transaction_type',
+                'prompt' => Yii::t('app', 'Select'),
+                    'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
+            ],
         ];
         return $records[$l];
     }
