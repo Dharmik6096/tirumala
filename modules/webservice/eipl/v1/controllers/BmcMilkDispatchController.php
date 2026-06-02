@@ -303,6 +303,11 @@ class BmcMilkDispatchController extends MasterController {
             $model->driver_contact_no = $tripModel->mobile_no;
         }
 
+        $tripDetailModel = TblVehicleTripDetail::find()->where(['trip_code' => $model->trip_code, 'destination_code' => $model->destination_code, 'destination_type' => $model->destination_type, 'source_org_code' => $model->bmc_code, 'source_org_type' => 'bmc'])->andWhere(['IS', 'challan_no', null])->one();
+        if ($tripDetailModel) {
+            $tripDetailModel->challan_no = $model->challan_no;
+            $saveModels[] = $tripDetailModel;
+        }
         $dispatchTxnData = !empty($reqData['dispatch_txn']) ? $reqData['dispatch_txn'] : [$reqData];
         $txnModels = [];
         $trackedStocks = [];

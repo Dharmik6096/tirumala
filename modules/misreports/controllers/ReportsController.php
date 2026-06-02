@@ -2518,6 +2518,10 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RdoSalaryStructure';
         return $this->actionIndex();
     }
+    public function actionUnionActiveSummary() {
+        $this->report = 'UnionActiveSummary';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5620,6 +5624,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_Rdo_Salary_abt',
                 'scenario' => 'RdoSalaryStructure',
                 'title' => 'Rdo Salary Structure',
+            ],
+            'UnionActiveSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,transaction_type:static:transaction_type',
+                'sp_name' => 'sp_erp_union_active_summary',
+                'scenario' => 'UnionActiveSummary',
+                'title' => 'Union Active Summary',
             ]
         ];
         return $label[$l];
