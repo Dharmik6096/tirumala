@@ -43,6 +43,7 @@ class SchedulerController extends \yii\console\Controller {
             try {
                 $dataExchangeService->processComfedCollection() ? sleep(20) : sleep(120);
             } catch (\Throwable $ex) {
+                echo "Comfed data exchange service : Error: " . $ex->getMessage() . PHP_EOL;
                 sleep(120);
             }
         }
