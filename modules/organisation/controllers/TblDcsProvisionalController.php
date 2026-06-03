@@ -820,7 +820,7 @@ class TblDcsProvisionalController extends ChildController {
         }
         $this->model->gender_code = $this->model->gender;
         $model_save = $all_doc = $dcsdoc = $unlink_files = $attachments = [];
-        $message = '';
+        $message = [];
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
             $this->setModel();
             if ($this->model->validate()) {
@@ -846,16 +846,27 @@ class TblDcsProvisionalController extends ChildController {
                 }
                 $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
                 $this->model->vendor_code = $this->model->vendor;
-                $model_save[] = $this->model;
-                $this->createDcs($this->model, $model_save, $all_doc, $dcsdoc, $message, false, true, $unlink_files, $attachments);
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['DcsProvisional', 'edit']);
+                $dcsProvisionalModel = clone $this->model;
+                $model_save[] = $dcsProvisionalModel;
+                $transaction = $this->createDcs($this->model, $model_save, $all_doc, $dcsdoc, $message, false, true, $unlink_files, $attachments);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['sap-error-data-list']);
+                } else {
+                    $flashMessage = is_array($message) ? implode(', ', $message) : $message;
+                    if (empty($flashMessage)) {
+                        $flashMessage = 'Something went wrong while processing.';
+                    }
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $flashMessage]);
+                    $dcsProvisionalModel->addError('error', $flashMessage);
                 }
+            } else {
+                $dcsProvisionalModel = $this->model;
             }
+        } else {
+            $dcsProvisionalModel = $this->model;
         }
         return $this->render($this->viewFile, [
-                    'model' => $this->model,
+                    'model' => $dcsProvisionalModel,
                     'bankDetails' => $this->bankDetails,
                     'contactDetails' => $this->contactDetails,
                     'showIsBMC' => $this->showIsBMC,
