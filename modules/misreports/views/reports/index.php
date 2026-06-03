@@ -36,6 +36,7 @@ $model->top = empty($model->top) ? 10 : $model->top;
 $model->storage_type = empty($model->storage_type) ? 0 : $model->storage_type;
 $model->deviation_days = empty($model->deviation_days) ? 1 : $model->deviation_days;
 $model->generation_type = empty($model->generation_type) ? 1 : $model->generation_type;
+$model->for = empty($model->for) ? '0' : $model->for;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
@@ -368,7 +369,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type', 'transaction_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type', 'transaction_type', 'show_account_code_no', 'sorttype'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 $static_class = 'col-sm-6';
                                                 if ($value == 'region_type') {
@@ -675,6 +676,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             'language_code' => [0 => 'English', 1 => 'Gujarati'],
                                             'storage_type' => [0 => 'BMC', 1 => 'CAN'],
                                             'deviation_type' => ['0' => 'All', '1' => 'Deviation qty', '2' => 'Deviation fat'],
+                                            'for' => ['0' => 'Combine', '1' => 'Individual'],
                                         ];
                                         if (array_key_exists($value, $radioFieldsConfig)) {
                                             $radioColClass = ($value == 'language_code') ? 'col-sm-12' : 'col-sm-6';
@@ -696,7 +698,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val'])) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val', 'is_department', 'balance_separate', 'zero_bal_acc_show', 'show_seprate_acc_head'])) {
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>

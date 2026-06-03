@@ -2549,7 +2549,17 @@ class DropDown extends Component {
             'transaction_type' => [
                 'name' => 'transaction_type',
                 'prompt' => Yii::t('app', 'Select'),
-                    'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
+                'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
+            ],
+            'sorttype' => [
+                'name' => 'sorttype',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'AccountNo'), 2 => Yii::t('app', 'AccountName'), 3 => Yii::t('app', 'AccountNo Desc'), 4 => Yii::t('app', 'AccountName Desc'), 5 => Yii::t('app', 'AccountCode'), 6 => Yii::t('app', 'AccountCode Desc')]
+            ],
+            'show_account_code_no' => [
+                'name' => 'show_account_code_no',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'None'), 1 => Yii::t('app', 'Show Account No'), 2 => Yii::t('app', 'Show Account Code')]
             ],
         ];
         return $records[$l];
@@ -2854,8 +2864,8 @@ class DropDown extends Component {
     public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {
         $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
         $value = ArrayHelper::map($records, 'id', function ($records) {
-            return !empty($records['name']) ? $records['name'] : '';
-        });
+                    return !empty($records['name']) ? $records['name'] : '';
+                });
         echo $form->field($model, $flag)->widget(Select2::classname(), [
             'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]]
         )->label($label);
@@ -3024,4 +3034,5 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/veterinary/tbl-medicine-stock/medicine-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
+
 }

@@ -1223,6 +1223,16 @@ echo GhostMenu::widget([
                         ],
                         [
                             'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Account Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => 'A - 109 -' . Yii::t('app', 'Trial Balance Report'), 'url' => ['/misreports/reports/trial-balance-report']],
+//                                ['label' => 'A - 110 -' . Yii::t('app', 'Trading Account Report'), 'url' => ['/misreports/reports/trading-account-report']],
+                                ['label' => 'A - 112 -' . Yii::t('app', 'Profit And Loss Report'), 'url' => ['/misreports/reports/profit-and-loss-report']],
+                                ['label' => 'A - 113 -' . Yii::t('app', 'Balance Sheet'), 'url' => ['/misreports/reports/balance-sheet-report']],
+                            ],
+                        ],
+                        [
+                            'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other Reports') . '<b class="caret"></b></a>',
                             'items' => [
                                 ['label' => 'O - 101 -' . Yii::t('app', 'Union Wise Message'), 'url' => ['/misreports/reports/union-wise-message-report']],

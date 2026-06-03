@@ -2518,8 +2518,29 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RdoSalaryStructure';
         return $this->actionIndex();
     }
+
     public function actionUnionActiveSummary() {
         $this->report = 'UnionActiveSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionTradingAccountReport() {
+        $this->report = 'TradingAccountReport';
+        return $this->actionIndex();
+    }
+
+    public function actionProfitAndLossReport() {
+        $this->report = 'ProfitAndLossReport';
+        return $this->actionIndex();
+    }
+
+    public function actionBalanceSheetReport() {
+        $this->report = 'BalanceSheetReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTrialBalanceReport() {
+        $this->report = 'TrialBalanceReport';
         return $this->actionIndex();
     }
 
@@ -5630,7 +5651,39 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_erp_union_active_summary',
                 'scenario' => 'UnionActiveSummary',
                 'title' => 'Union Active Summary',
-            ]
+            ],
+            'TradingAccountReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no,for,is_department',
+                'sp_name' => '',
+                'scenario' => 'TradingAccountReport',
+                'title' => 'A - 110 - Trading Account Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ProfitAndLossReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no,for,is_department',
+                'sp_name' => '',
+                'scenario' => 'ProfitAndLossReport',
+                'title' => 'A - 112 - Profit And Loss Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'BalanceSheetReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no',
+                'sp_name' => '',
+                'scenario' => 'BalanceSheetReport',
+                'title' => 'A - 113 - Balance Sheet Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrialBalanceReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no,balance_separate,zero_bal_acc_show,show_seprate_acc_head',
+                'sp_name' => '',
+                'scenario' => 'TrialBalanceReport',
+                'title' => 'A - 109 - Trial Balance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
         ];
         return $label[$l];
     }
