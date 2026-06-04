@@ -1181,11 +1181,12 @@ class SchedulerController extends ChildController {
 
     public function generateSaveFile($data) {
         if (!empty($data)) {
-            $decriptFields = ['PAN', 'Aadhaar'];
             foreach ($data as $value) {
                 $update_ids = [];
                 try {
-                    $output = \Yii::$app->general->getSpData($value->sp_name, []);
+                    $spParam = $value->tbl_name == 'TblProductSaleTransaction' ? [$value->union_code] : [];
+                    $output = \Yii::$app->general->getSpData($value->sp_name, $spParam);
+                    
                     if (!empty($output)) {
                         $modelName = $value->tbl_name;
                         $model_name = Yii::$app->path->define($modelName);
@@ -1193,14 +1194,27 @@ class SchedulerController extends ChildController {
                         $modelKey = $value->update_key;
                         $updateKey = $value->update_key_with;
                         $update_ids = array_column($output, $updateKey);
-                        if (!empty($update_ids)) {
-                            $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['in', $modelKey, $update_ids]);
-                        }
+                        
+                        $decriptFields = ['PAN', 'Aadhaar'];
+                        $updateStatus = 'data_post_status';
                         $name = 'DF_';
+                        $ftpPath = 'vendor-data/';
                         if ($value->tbl_name == 'TblDcsProvisional') {
                             $name = 'VLCC_';
                         } else if ($value->tbl_name == 'TblMemberProvisional') {
                             $name = 'Farmer_';
+                        } else if ($value->tbl_name == 'TblProductSaleTransaction') {
+                            $name = 'PS_';
+                            $decriptFields = [];
+                            $updateStatus = 'send_status';
+                            $ftpPath = 'Product_Sales/Data/';
+                            $output = array_map(function($item) {
+                                unset($item['data_post_id']);
+                                return $item;
+                            }, $output);
+                        }
+                        if (!empty($update_ids) && $value->tbl_name != 'TblProductSaleTransaction') {
+                            $model->updateAll([$updateStatus => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['in', $modelKey, $update_ids]);
                         }
                         $fileName = $name . date('YmdHis') . '.xlsx';
                         $folder = \Yii::$app->params['sap_data_files'] . 'vendor-data/';
@@ -1241,11 +1255,11 @@ class SchedulerController extends ChildController {
                             $logData->union_code = $value->union_code;
                             $logData->module_code = $value->union_code;
 
-                            $res = $ftp_model->saveLogData($logData, $path, $fileName, count($output), false, 'vendor-data/', false, false, 'AWS', false, []);
+                            $res = $ftp_model->saveLogData($logData, $path, $fileName, count($output), false, $ftpPath, false, false, 'AWS', false, []);
                             if ($res && !empty($update_ids)) {
-                                $model->updateAll(['data_post_status' => 2, 'response_datetime' => date('Y-m-d H:i:s'), 'resp_desc' => $fileName], ['in', $modelKey, $update_ids]);
+                                $model->updateAll([$updateStatus => 2, 'response_datetime' => date('Y-m-d H:i:s'), 'resp_desc' => $fileName], ['in', $modelKey, $update_ids]);
                             } else {
-                                $model->updateAll(['data_post_status' => 3, 'response_datetime' => date('Y-m-d H:i:s'), 'resp_desc' => 'Log entry failed'], ['in', $modelKey, $update_ids]);
+                                $model->updateAll([$updateStatus => 3, 'response_datetime' => date('Y-m-d H:i:s'), 'resp_desc' => 'Log entry failed'], ['in', $modelKey, $update_ids]);
                             }
                         }
                     }
