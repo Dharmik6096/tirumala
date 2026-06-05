@@ -2543,6 +2543,38 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'TrialBalanceReport';
         return $this->actionIndex();
     }
+    public function actionItemPurchaseGstReport() {
+        $this->report = 'ItemPurchaseGstReport';
+        return $this->actionIndex();
+    }
+    public function actionItemSalesGstReport() {
+        $this->report = 'ItemSalesGstReport';
+        return $this->actionIndex();
+    }
+    public function actionStockStatementReport() {
+        $this->report = 'StockStatementReport';
+        return $this->actionIndex();
+    }
+    public function actionStockLedgerReport() {
+        $this->report = 'StockLedgerReport';
+        return $this->actionIndex();
+    }
+    public function actionCashBookReport() {
+        $this->report = 'CashBookReport';
+        return $this->actionIndex();
+    }
+    public function actionLedgerReport() {
+        $this->report = 'LedgerReport';
+        return $this->actionIndex();
+    }
+    public function actionDateWiseCashBalanceReport() {
+        $this->report = 'DateWiseCashBalanceReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerDeductionLedgerReport() {
+        $this->report = 'FarmerDeductionLedgerReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5653,7 +5685,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Union Active Summary',
             ],
             'TradingAccountReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no,for,is_department',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
                 'sp_name' => '',
                 'scenario' => 'TradingAccountReport',
                 'title' => 'A - 110 - Trading Account Report',
@@ -5661,7 +5693,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'ProfitAndLossReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no,for,is_department',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
                 'sp_name' => '',
                 'scenario' => 'ProfitAndLossReport',
                 'title' => 'A - 112 - Profit And Loss Report',
@@ -5669,7 +5701,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'BalanceSheetReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
                 'sp_name' => '',
                 'scenario' => 'BalanceSheetReport',
                 'title' => 'A - 113 - Balance Sheet Report',
@@ -5677,10 +5709,76 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'TrialBalanceReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,sorttype:static:sorttype,show_account_code_no:static:show_account_code_no,balance_separate,zero_bal_acc_show,show_seprate_acc_head',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
                 'sp_name' => '',
                 'scenario' => 'TrialBalanceReport',
                 'title' => 'A - 109 - Trial Balance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemPurchaseGstReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,show_detail,purchase_type',
+                'sp_name' => 'Mis_Set_Item_Purchase_Gst_Report',
+                'multiple_sheet' => ['summary' => 'Mis_Set_Item_Purchase_Gst_Report_Summary'],
+                'scenario' => 'ItemPurchaseGstReport',
+                'title' => 'A - 101 - Item Purchase GST Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemSalesGstReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,show_detail,payment_method:static:payment_method,sales_type',
+                'sp_name' => 'Mis_Set_Item_Sale_Gst_Report',
+                'multiple_sheet' => ['summary' => 'Mis_Set_Item_Sale_Gst_Report_Summary'],
+                'scenario' => 'ItemSalesGstReport',
+                'title' => 'A - 102 - Item Sales GST Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'StockStatementReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_statement',
+                'scenario' => 'StockStatementReport',
+                'title' => 'A - 103 - Stock Statement Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'StockLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,item,is_date_wise_group',
+                'sp_name' => 'mis_stock_ledger',
+                'scenario' => 'StockLedgerReport',
+                'title' => 'A - 104 - Stock Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'CashBookReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'CashBookReport',
+                'title' => 'A - 106 - Cash Book Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'LedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,item,show_detail',
+                'sp_name' => 'Mis_Set_Ledger_Report',
+                'scenario' => 'LedgerReport',
+                'title' => 'A - 107 - Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'DateWiseCashBalanceReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code:txt,to_code:txt,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'DateWiseCashBalanceReport',
+                'title' => 'A - 108 - DateWise CashBalance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerDeductionLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code:txt,to_code:txt,from_date:string,to_date:string,item',
+                'sp_name' => 'Farmer_Deduction_Ledger',
+                'scenario' => 'FarmerDeductionLedgerReport',
+                'title' => 'A - 111 - Farmer Deduction Ledger Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],

@@ -27,7 +27,7 @@ $model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmp
 $model->from_time = empty($model->from_time) ? date('H:i') : $model->from_time;
 $model->to_time = empty($model->to_time) ? date('H:i') : $model->to_time;
 $model->from_code = empty($model->from_code) ? 1 : $model->from_code;
-$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport']) ? 99999 : 9999;
+$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport']) ? 99999 : 9999;
 $model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
 $model->to_soc = empty($model->to_soc) ? 100 : $model->to_soc;
@@ -369,7 +369,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type', 'transaction_type', 'show_account_code_no', 'sorttype'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type', 'transaction_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 $static_class = 'col-sm-6';
                                                 if ($value == 'region_type') {
@@ -698,7 +698,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val', 'is_department', 'balance_separate', 'zero_bal_acc_show', 'show_seprate_acc_head'])) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val', 'balance_separate', 'zero_bal_acc_show', 'show_seprate_acc_head', 'show_detail', 'is_date_wise_group'])) {
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
@@ -710,6 +710,29 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value)->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+                                            </div>
+                                            <?php
+                                        }
+
+                                        if (in_array($value, array('purchase_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('purchase_ledger', $model, $form, '', $model->getAttributeLabel('purchase_type'), false, 'purchase_type', TRUE); ?>
+                                            </div>
+                                            <?php
+                                        }
+
+                                        if (in_array($value, array('sales_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('sales_ledger', $model, $form, '', $model->getAttributeLabel('sales_type'), false, 'sales_type', TRUE); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('item'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('item', $model, $form, '', $model->getAttributeLabel('item'), false, 'item', TRUE); ?>
                                             </div>
                                             <?php
                                         }
@@ -1194,6 +1217,16 @@ $('.mis_report_modal_toggle').on('click', function(){
             $('#reportsmodel-from_time, #reportsmodel-to_time').prop('readonly', true);
         }
         var region_code = $('#reportsmodel-region_code').val();
+        if('" . $report . "'=='DateWiseCashBalanceReport' && region_code === '0') {
+            $('.val_from_code').hide();
+            $('.val_to_code').hide();
+            $('#reportsmodel-from_code').val('1');
+            $('#reportsmodel-to_code').val('9999');
+        } else {
+            $('.val_from_code').show();
+            $('.val_to_code').show();
+        }
+  
         if(region_code != '0' && region_code != '' && region_code != null){
             $('.val_dcs_code').hide();
             resetField('.val_dcs_code select');
