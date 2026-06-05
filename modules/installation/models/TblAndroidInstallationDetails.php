@@ -32,6 +32,8 @@ use app\models\GeneralModel;
  */
 class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
+    public static $cacheActiveDeviceData = [];
+
     /**
      * @inheritdoc
      */
@@ -138,10 +140,15 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
     }
 
     public function getActiveDeviceData($dest_org_id, $dest_org_type, $device = '') {
+        $cacheKey = md5(json_encode([$dest_org_id, $dest_org_type, $device]));
+        if (isset(self::$cacheActiveDeviceData[$cacheKey])) {
+            return self::$cacheActiveDeviceData[$cacheKey];
+        }
         $query = $this->find()
                 ->select('tbl_android_installation_details.device_id')
                 ->distinct()
-                ->joinWith(['androidInstallationCode'])
+                ->from(static::tableName() . ' tbl_android_installation_details WITH (NOLOCK)')
+                ->leftJoin('tbl_android_installation tbl_android_installation WITH (NOLOCK)', 'tbl_android_installation_details.android_installation_id = tbl_android_installation.android_installation_id')
                 ->where([
             'tbl_android_installation_details.is_active' => 1,
             'tbl_android_installation_details.is_expired' => 0,
@@ -152,7 +159,9 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         if (!empty($device)) {
             $query->andWhere(['tbl_android_installation_details.device_id' => $device]);
         }
-        return $query->all();
+        $result = $query->all();
+        self::$cacheActiveDeviceData[$cacheKey] = $result;
+        return $result;
     }
 
     public function getActiveDeviceDataForOrganizations($dest_org_id, $dest_org_type, $device = '') {

@@ -262,7 +262,10 @@ class TblRoleController extends \app\controllers\ChildController {
             $transaction = $db->beginTransaction();
             try {
                 if (!empty($toRevoke)) {
-                    TblRoleActionMapping::deleteAll(['action_code' => $toRevoke, 'role_code' => $id]);
+                    $revokeChunks = array_chunk($toRevoke, 1000);
+                    foreach ($revokeChunks as $rChunk) {
+                        Yii::$app->db->createCommand()->delete('tbl_role_action_mapping', ['action_code' => $rChunk, 'role_code' => $id])->execute();
+                    }
                 }
 
                 if (!empty($roleActionModels)) {
@@ -270,7 +273,10 @@ class TblRoleController extends \app\controllers\ChildController {
                 }
 
                 if (!empty($ackIdsToUpdate)) {
-                    TblUserDownloadAck::updateAll(['download_pending' => 3], ['ack_id' => $ackIdsToUpdate]);
+                    $ackChunks = array_chunk($ackIdsToUpdate, 1000);
+                    foreach ($ackChunks as $aChunk) {
+                        Yii::$app->db->createCommand()->update('tbl_user_download_ack', ['download_pending' => 3], ['ack_id' => $aChunk])->execute();
+                    }
                 }
 
                 if (!empty($saveModels)) {
@@ -324,11 +330,9 @@ class TblRoleController extends \app\controllers\ChildController {
                 $orgData = $this->getOrgType($ackModel);
                 $dest_org_type = $orgData['type'];
                 $dest_org_id = $orgData['code'];
-                $existAck = $ackModel->getExistDataAck($dest_org_type);
+                $existAck = $ackModel->getExistDataAckCached($dest_org_type);
                 if (!empty($existAck)) {
-                    foreach ($existAck as $exist) {
-                        $ackIdsToUpdate[] = $exist['ack_id'];
-                    }
+                    $ackIdsToUpdate = array_merge($ackIdsToUpdate, $existAck);
                 }
                 $androidInstallationDetail = new TblAndroidInstallationDetails();
                 $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
