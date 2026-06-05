@@ -715,6 +715,9 @@ class TblDcsProvisionalController extends ChildController {
             foreach ($childModel as $m) {
                 $child->decryptModel($m);
             }
+            foreach ($provisionalModel as $m) {
+                $child->decryptModel($m);
+            }
             $transaction->rollback();
             $errorMsg = !empty($allErrors) ? substr(implode(' | ', $allErrors), 0, 500) : 'Your transaction is not saved successfully';
             if ($isWeb) {
