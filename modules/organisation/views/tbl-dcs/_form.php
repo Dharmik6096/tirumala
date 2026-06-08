@@ -284,7 +284,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'aadhaar_no')->textInput()->label(Yii::t('app', 'aadhaar_no')) ?>
+        <?= $form->field($model, 'aadhaar_no')->textInput(); ?>
     </div>
 </div>
 <div class="col-md-12 padding_10_0 theme-box theme_border_top">
