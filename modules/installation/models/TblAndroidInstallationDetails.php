@@ -32,8 +32,6 @@ use app\models\GeneralModel;
  */
 class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
-    public static $cacheActiveDeviceData = [];
-
     /**
      * @inheritdoc
      */
@@ -140,28 +138,32 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
     }
 
     public function getActiveDeviceData($dest_org_id, $dest_org_type, $device = '') {
-        $cacheKey = md5(json_encode([$dest_org_id, $dest_org_type, $device]));
-        if (isset(self::$cacheActiveDeviceData[$cacheKey])) {
-            return self::$cacheActiveDeviceData[$cacheKey];
-        }
+        $isArray = is_array($dest_org_id);
         $query = $this->find()
-                ->select('tbl_android_installation_details.device_id')
+                ->select($isArray ? ['tbl_android_installation_details.device_id', 'tbl_android_installation.organization_code'] : 'tbl_android_installation_details.device_id')
                 ->distinct()
-                ->from(static::tableName() . ' tbl_android_installation_details WITH (NOLOCK)')
-                ->leftJoin('tbl_android_installation tbl_android_installation WITH (NOLOCK)', 'tbl_android_installation_details.android_installation_id = tbl_android_installation.android_installation_id')
                 ->where([
             'tbl_android_installation_details.is_active' => 1,
             'tbl_android_installation_details.is_expired' => 0,
-            'tbl_android_installation.organization_code' => (string) $dest_org_id,
             'tbl_android_installation.organization_type' => (string) $dest_org_type
         ]);
+
+        if ($isArray) {
+            $query->innerJoin('tbl_android_installation', 'tbl_android_installation.android_installation_id = tbl_android_installation_details.android_installation_id');
+            $query->andWhere(['tbl_android_installation.organization_code' => $dest_org_id]);
+        } else {
+            $query->joinWith(['androidInstallationCode']);
+            $query->andWhere(['tbl_android_installation.organization_code' => (string) $dest_org_id]);
+        }
 
         if (!empty($device)) {
             $query->andWhere(['tbl_android_installation_details.device_id' => $device]);
         }
-        $result = $query->all();
-        self::$cacheActiveDeviceData[$cacheKey] = $result;
-        return $result;
+
+        if ($isArray) {
+            return $query->asArray()->all();
+        }
+        return $query->all();
     }
 
     public function getActiveDeviceDataForOrganizations($dest_org_id, $dest_org_type, $device = '') {

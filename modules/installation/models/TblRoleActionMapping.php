@@ -44,7 +44,6 @@ class TblRoleActionMapping extends \yii\db\ActiveRecord {
     public function getExistMapingMenu($id) {
         $codes = $this->find()
                 ->select(['action_code'])
-                ->from(static::tableName() . ' WITH (NOLOCK)')
                 ->where(['role_code' => $id])
                 ->column();
         return array_combine($codes, $codes);
