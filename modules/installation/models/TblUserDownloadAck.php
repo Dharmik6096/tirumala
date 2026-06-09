@@ -37,8 +37,6 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblUserDownloadAck extends \app\models\ChildModel {
 
-    public static $cacheExistDataAck = [];
-
     /**
      * @inheritdoc
      */

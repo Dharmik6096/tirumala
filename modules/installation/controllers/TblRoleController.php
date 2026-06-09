@@ -264,17 +264,17 @@ class TblRoleController extends \app\controllers\ChildController {
                 if (!empty($toRevoke)) {
                     $revokeChunks = array_chunk($toRevoke, 1000);
                     foreach ($revokeChunks as $rChunk) {
-                        Yii::$app->db->createCommand()->delete('tbl_role_action_mapping', ['action_code' => $rChunk, 'role_code' => $id])->execute();
+                        $db->createCommand()->delete('tbl_role_action_mapping', ['action_code' => $rChunk, 'role_code' => $id])->execute();
                     }
                 }
 
                 if (!empty($roleActionModels)) {
-                    Yii::$app->getDb()->createCommand()->batchInsert('tbl_role_action_mapping', ['action_code', 'role_code'], $roleActionModels)->execute();
+                    $db->createCommand()->batchInsert('tbl_role_action_mapping', ['action_code', 'role_code'], $roleActionModels)->execute();
                 }
 
                 if (!empty($updateConditions)) {
                     $orCondition = array_merge(['or'], $updateConditions);
-                    Yii::$app->db->createCommand()
+                    $db->createCommand()
                         ->update('tbl_user_download_ack', ['download_pending' => 3], $orCondition)
                         ->execute();
                 }
@@ -296,7 +296,7 @@ class TblRoleController extends \app\controllers\ChildController {
                             }
                             $rows[] = $row;
                         }
-                        Yii::$app->getDb()->createCommand()->batchInsert('tbl_user_download_ack', $columns, $rows)->execute();
+                        $db->createCommand()->batchInsert('tbl_user_download_ack', $columns, $rows)->execute();
                     }
                 }
 
