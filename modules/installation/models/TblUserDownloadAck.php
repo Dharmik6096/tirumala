@@ -146,21 +146,21 @@ class TblUserDownloadAck extends \app\models\ChildModel {
     }
 
     public function getExistDataAck($org_type, $check_device_id = false) {
-        $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
+        $query = $this->find()->from(static::tableName() . ' WITH (NOLOCK)')->where(['download_pending' => 1]);
         if ($check_device_id) {
             $query->andWhere(['device_id' => $this->device_id]);
         }
-        if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
-        } elseif ($org_type == 'BMC') {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
-        } elseif ($org_type == 'VLC') {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
-        } elseif ($org_type == 'PLANT') {
-            $query->andWhere(['plant_code' => $this->plant_code])->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', '']);
+
+        if (strtoupper($org_type) == 'MCC') {
+            $query->andWhere(['=', 'ISNULL(bmc_code,\'\')', ''])->andWhere(['mcc_plant_code' => $this->mcc_plant_code, 'plant_code' => $this->plant_code]);
+        } elseif (strtoupper($org_type) == 'BMC') {
+            $query->andWhere(['=', 'ISNULL(dcs_code,\'\')', ''])->andWhere(['bmc_code' => $this->bmc_code, 'mcc_plant_code' => $this->mcc_plant_code, 'plant_code' => $this->plant_code]);
+        } elseif (strtoupper($org_type) == 'VLC') {
+            $query->andWhere(['dcs_code' => $this->dcs_code, 'bmc_code' => $this->bmc_code, 'mcc_plant_code' => $this->mcc_plant_code, 'plant_code' => $this->plant_code]);
+        } elseif (strtoupper($org_type) == 'PLANT') {
+            $query->andWhere(['=', 'ISNULL(mcc_plant_code,\'\')', ''])->andWhere(['plant_code' => $this->plant_code]);
         }
-        $bmc = $query->all();
+        $bmc = $query->andWhere(['union_code' => $this->union_code])->all();
         return $bmc;
     }
-
 }
