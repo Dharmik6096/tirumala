@@ -137,6 +137,10 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
                 }
             }
         }
+        if (!empty($this->bmc_code)) {
+            $masterCacheKey = 'bmc_dispatch_master_union_' . $this->union_code . '_bmc_' . $this->bmc_code;
+            Yii::$app->general->removeRedisCache($masterCacheKey);
+        }
     }
 
     private function sentboxModel($code, $type) {

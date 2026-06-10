@@ -127,8 +127,7 @@ $this->title = Yii::$app->label->title('view', 'Insurance Details');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'nominee_adhar_no',
-                            'value' => Yii::$app->general->maskAadhar($model->nominee_adhar_no),
+                            'attribute' => 'mobile_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -136,13 +135,22 @@ $this->title = Yii::$app->label->title('view', 'Insurance Details');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'status',
+                            'attribute' => 'nominee_adhar_no',
+                            'value' => Yii::$app->general->maskAadhar($model->nominee_adhar_no),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
+                            'attribute' => 'status',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'originating_org_type',
                             'value' => Yii::$app->general->getStaticValue($model->originating_org_type, 'originating_org_type'),
-                            'valueColOptions' => ['style' => 'width:30%']
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],

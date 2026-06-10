@@ -258,6 +258,12 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                             } else if (empty($model->filename)) {
                                 $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
                             }
+                        } else if ($model->notification_type == 8) {
+                            if (file_exists($new_directory . $model->filename)) {
+                                $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
+                            } else if (empty($model->filename)) {
+                                $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
+                            }
                         } else {
                             $this->createApplicabilityData($saveModel, $auto_key_config, $model, $i);
                         }

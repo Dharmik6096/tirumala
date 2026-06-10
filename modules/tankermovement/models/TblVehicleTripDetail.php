@@ -241,6 +241,9 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             if (!empty($plants)) {
                 $query->andWhere(['vtd.is_last_destination' => 1, 'vtd.source_org_type' => 'plant', 'vtd.source_org_code' => $plants]);
             }
+        } else if ($trip_process == 'replace_tanker') {
+            $query->andWhere(['vt.trip_status' => ['generated', 'open', 'tankerfull']]);
+            $query->andWhere(['vt.trip_sub_status' => ['gate_out', 'gate_in']]);
         }
 
         if (!empty($vehicle_code)) {
@@ -354,6 +357,29 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $trackingDetail = ['visibility_status' => $visibility_status, 'module_code' => $model->vehicle_trip_detail_code, 'module_type' => 'tbl_vehicle_trip_detail'];
             Yii::$app->general->setVehicleTripTrackingDetail($trip, $trackingDetail, $remarks);
         }
+    }
+
+    public static function getTripDispatchDetail($trip_code, $bmc_code) {
+        return self::find()->alias('td')
+            ->select([
+                'td.destination_type', 'td.destination_code', 'td.is_last_destination', 'td.arrival_time', 'td.vehicle_trip_detail_code',
+                't.vehicle_code', 't.trip_code', 't.transaction_date', 't.union_code', 't.is_auto_trip',
+                't.driver_name', 't.mobile_no', 'v.parsing_no'
+            ])
+            ->innerJoin('tbl_vehicle_trip t', 't.trip_code = td.trip_code')
+            ->innerJoin('tbl_vehicle_master v', 'v.vehicle_code = t.vehicle_code')
+            ->where([
+                'td.trip_code' => $trip_code,
+                'td.source_org_type' => 'bmc',
+                'td.source_org_code' => $bmc_code,
+                't.trip_status' => ['generated', 'open']
+            ])
+            ->andWhere(['IS', 'td.challan_no', NULL])
+            ->andWhere(['IS NOT', 'td.arrival_time', null])
+            ->andWhere(['IS', 'td.departure_time', null])
+            ->orderBy(['td.sequence_no' => SORT_ASC])
+            ->asArray()
+            ->one();
     }
 
 }

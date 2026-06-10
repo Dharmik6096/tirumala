@@ -61,8 +61,8 @@ class TblInsuranceMaster extends ChildModel {
             [['insurance_master_code'], 'required', 'on' => ['import_insurance_detail']],
             [['status'], 'default', 'value' => 'DRAFT'],
             // [['insurance_description'], function ($attribute, $params) {
-            //     Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
-            // },'skipOnEmpty'=> false],
+            //     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+            // }, 'skipOnEmpty' => false],
         ];
     }
 
