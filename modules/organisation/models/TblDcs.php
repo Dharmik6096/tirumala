@@ -308,9 +308,7 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv', 'createDcs'], 'when' => function ($model) {
                     return $model->isAttributeChanged('dcs_code_ex', FALSE);
                 }],
-                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv'], 'when' => function ($model) {
-                    return $model->isAttributeChanged('aadhaar_no', FALSE);
-                }],
+                [['aadhaar_no'], 'validateAadhaarNoUnique', 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
@@ -468,6 +466,7 @@ class TblDcs extends ChildModel {
             'sim_network' => Yii::t('app', 'Sim Network'),
             'sim_no' => Yii::t('app', 'Sim No'),
             'is_aadhar_verify' => Yii::t('app', 'Is Aadhar Verify'),
+            'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
         ];
     }
 
@@ -1833,6 +1832,27 @@ class TblDcs extends ChildModel {
 
     public function updateStatus($updateData, $ids) {
         return $this->updateAll($updateData, ['ref_code' => $ids]);
+    }
+
+    public function validateAadhaarNoUnique($attribute, $params) {
+        $adharNo = $this->$attribute;
+
+        if (!empty($adharNo)) {
+            $encryptedAdharNo = Yii::$app->general->encryptData($adharNo);
+            $existsInDcs = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1])
+                    ->andWhere(['or', ['aadhaar_no' => $adharNo], ['aadhaar_no' => $encryptedAdharNo]]);
+            if (!empty($this->dcs_code)) {
+                $existsInDcs->andWhere(['<>', 'dcs_code', $this->dcs_code]);
+            }
+            $existsInDcs = $existsInDcs->one();
+            if ($existsInDcs) {
+                $isDeactive = Yii::$app->general->getDeactivateRecords($existsInDcs->dcs_code, TblDcsDeactive::class, 'dcs_code');
+                if (empty($isDeactive)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Aadhaar No "' . $adharNo . '" has already been taken.'));
+                    return false;
+                }
+            }
+        }
     }
 
 }
