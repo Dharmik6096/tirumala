@@ -1142,18 +1142,21 @@ class ReportsController extends \app\controllers\ChildController {
             }
         } else {
             $headerIncluded = isset($this->data['header_included']) && $this->data['header_included'] === true ? true : false;
+            $header_info_arr = [];
             if ($headerIncluded) {
                 $header_labels = Yii::$app->request->post('header_labels');
                 $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
-                $header_info = [
+                $header_info_arr = [
                     'header_included' => $headerIncluded,
                     'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
-                    'search_params' => $this->getSearchParams($header_labels_arr, $model)
+                    'search_params' => $this->getSearchParams($header_labels_arr, $model),
+                    'username' => (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available',
                 ];
-                $header_info = json_encode($header_info);
-            } else {
-                $header_info = NULL;
             }
+            if (isset($this->data['multiple_sheet'])) {
+                $header_info_arr['multiple_sheet'] = $this->data['multiple_sheet'];
+            }
+            $header_info = !empty($header_info_arr) ? json_encode($header_info_arr) : NULL;
 
             $output = $this->RegisterReportRequest('mis', $this->data, $controls, $header_info);
         }
@@ -5887,24 +5890,45 @@ class ReportsController extends \app\controllers\ChildController {
                 $file_header[] = 'attachment_link';
             }
             $header_rows = 1;
+            $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+            $currentDateTime = date('d-m-Y H:i:s');
+
             if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
                 $colCount = count($file_header);
                 $lastCol = ($colCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($colCount - 1) : 'A';
-                $header_rows = 4;
+                $header_rows = 5;
                 $header_labels = Yii::$app->request->post('header_labels');
                 $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
                 $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
                 $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
                 $searchParams = $this->getSearchParams($header_labels_arr, $model);
+
+                $lastColBefore = ($colCount > 1) ? \PHPExcel_Cell::stringFromColumnIndex($colCount - 2) : 'A';
                 $sheet->setCellValue('A1', $companyName);
-                $sheet->setCellValue('A2', $reportTitle);
-                $sheet->setCellValue('A3', $searchParams);
-                $sheet->mergeCells("A1:{$lastCol}1");
-                $sheet->mergeCells("A2:{$lastCol}2");
+                $sheet->setCellValue('A3', $reportTitle);
+                $sheet->setCellValue('A4', $searchParams);
+                $sheet->setCellValue($lastCol . '1', 'Username : ' . $username);
+                $sheet->setCellValue($lastCol . '2', 'Printed on : ' . $currentDateTime);
+
+                $sheet->mergeCells("A1:{$lastColBefore}2");
                 $sheet->mergeCells("A3:{$lastCol}3");
-                $sheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-                $sheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-                $sheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $sheet->mergeCells("A4:{$lastCol}4");
+
+                $sheet->getStyle("A1:{$lastColBefore}2")->getFont()->setBold(true);
+                $sheet->getStyle("A1:{$lastColBefore}2")->getFont()->setSize(14);
+                $sheet->getStyle("A1:{$lastColBefore}2")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("A1:{$lastColBefore}2")->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+                $sheet->getStyle("A3:{$lastCol}4")->getFont()->setBold(true);
+                $sheet->getStyle("A3:{$lastCol}3")->getFont()->setSize(14);
+                $sheet->getStyle("A3:{$lastCol}4")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                
+                $sheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setBold(true);
+                $sheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setSize(10);
+                $sheet->getStyle($lastCol . '1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle($lastCol . '2')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle($lastCol . '1')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $sheet->getStyle($lastCol . '2')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
             }
             /* $file_header = array_map(function($file_header) {
               return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
@@ -5961,17 +5985,37 @@ class ReportsController extends \app\controllers\ChildController {
                     if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
                         $newColCount = count($new_file_header);
                         $newLastCol = ($newColCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 1) : 'A';
-                        $new_header_rows = 4;
+                        $new_header_rows = 5;
+                        $newLastColBefore = ($newColCount > 1) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 2) : 'A';
+
+                        $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+                        $currentDateTime = date('d-m-Y H:i:s');
 
                         $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
-                        $newsheet->setCellValue('A2', isset($reportTitle) ? $reportTitle : '');
-                        $newsheet->setCellValue('A3', isset($searchParams) ? $searchParams : '');
-                        $newsheet->mergeCells("A1:{$newLastCol}1");
-                        $newsheet->mergeCells("A2:{$newLastCol}2");
+                        $newsheet->setCellValue('A3', isset($reportTitle) ? $reportTitle : '');
+                        $newsheet->setCellValue('A4', isset($searchParams) ? $searchParams : '');
+                        $newsheet->setCellValue($newLastCol . '1', 'Username : ' . $username);
+                        $newsheet->setCellValue($newLastCol . '2', 'Printed on : ' . $currentDateTime);
+
+                        $newsheet->mergeCells("A1:{$newLastColBefore}2");
                         $newsheet->mergeCells("A3:{$newLastCol}3");
-                        $newsheet->getStyle("A1:{$newLastCol}3")->getFont()->setBold(true);
-                        $newsheet->getStyle("A1:{$newLastCol}2")->getFont()->setSize(14);
-                        $newsheet->getStyle("A1:{$newLastCol}3")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        $newsheet->mergeCells("A4:{$newLastCol}4");
+
+                        $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setBold(true);
+                        $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setSize(14);
+                        $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+                        $newsheet->getStyle("A3:{$newLastCol}4")->getFont()->setBold(true);
+                        $newsheet->getStyle("A3:{$newLastCol}3")->getFont()->setSize(14);
+                        $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                        $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setBold(true);
+                        $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setSize(10);
+                        $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                        $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                        $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                        $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     }
 
                     $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);

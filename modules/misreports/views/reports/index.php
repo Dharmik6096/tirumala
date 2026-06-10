@@ -44,8 +44,15 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
 
-    <?php if (!empty($result) && !empty($data['header_included']) && $data['header_included'] == true) { ?>
-        <div class="text-center report-header-info mt23 mb15">
+    <?php if (!empty($result) && !empty($data['header_included']) && $data['header_included'] == true) { 
+        $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+        $currentDateTime = date('d-m-Y H:i:s');
+        ?>
+        <div class="text-center report-header-info mt23 mb15 report-grid">
+            <div class="report-export-info">
+                <div class="export-username"><b>Username : <?= Html::encode($username) ?></b></div>
+                <div class="export-printed"><b>Printed on : <?= Html::encode($currentDateTime) ?></b></div>
+            </div>
             <h3 class="label_heading mt3"><b><?= Html::encode($companyName) ?></b></h3>
             <h4 class="text-info mt3"><b><?= Yii::t('app', $data['title']) ?></b></h4>
             <p class="search-params mt3"><b><?= Html::encode($searchParams) ?></b></p>
