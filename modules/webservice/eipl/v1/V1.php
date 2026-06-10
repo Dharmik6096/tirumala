@@ -280,7 +280,8 @@ class V1 extends \yii\base\Module {
             ],
             'menu/master' => [
                 'param' => 'union#login_type#department',
-                'sp' => 'sp_app_eipl_v1_menu_master'
+                'sp' => 'sp_app_eipl_v1_menu_master',
+                'redis' => true
             ],
             'user-widget/list' => [
                 'param' => 'union#login_type#department',

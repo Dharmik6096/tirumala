@@ -50,7 +50,7 @@ class TblVehicleTripHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['history_created_at', 'transaction_date', 'created_at', 'updated_at', 'no_of_compartment', 'vehicle_capacity', 'remark', 'force_close', 'force_close_remarks'], 'safe'],
+                [['history_created_at', 'transaction_date', 'created_at', 'updated_at', 'no_of_compartment', 'vehicle_capacity', 'remark', 'force_close', 'force_close_remarks','old_trip_code'], 'safe'],
                 [['originating_type'], 'safe'],
                 [['operation_type', 'trip_mode'], 'safe'],
                 [['history_created_by', 'created_by', 'updated_by'], 'safe'],

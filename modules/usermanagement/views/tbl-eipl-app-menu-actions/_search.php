@@ -32,12 +32,16 @@ use yii\web\View;
 </div>
 <?php
 $script = "
+    var selectedLoginType = '" . ($model->login_type ?? '') . "';
     updateGrid();
+    manageDriverOption();
     $('#tbleiplappmenuactionsmapping-app_type').change(function() {
+        manageDriverOption();
         $('.login_type_div').show();
         submitForm();
     });
     $('#tbleiplappmenuactionsmapping-login_type').change(function() {
+        selectedLoginType = $(this).val();
         submitForm();
     });
     $('#tbleiplappmenuactionsmapping-department').change(function() {
@@ -46,6 +50,22 @@ $script = "
     $('#tbleiplappmenuactionsmapping-union_code').change(function() {
         submitForm();
     });
+
+    function manageDriverOption() {
+        var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
+        var loginDropdown = $('#tbleiplappmenuactionsmapping-login_type');
+        if (appType == 4) {
+            if (loginDropdown.find('option[value=\"DRIVER\"]').length == 0) {
+                loginDropdown.append('<option value=\"DRIVER\">Driver</option>');
+            }
+            if (selectedLoginType === 'DRIVER') {
+                loginDropdown.val('DRIVER');
+            }
+        } else {
+            loginDropdown.find('option[value=\"DRIVER\"]').remove();
+        }
+        updateGrid();
+    }
 
     function submitForm(){
         var appType = $('#tbleiplappmenuactionsmapping-app_type').val();
@@ -58,10 +78,16 @@ $script = "
         }
         if(appType != '' && appType != null && appType != undefined && appType != 'Loading ...'){
             if(appType == 4) {
-                $('#tbleiplappmenuactionsmapping-login_type').val('');
-                $('#tbleiplappmenuactionsmapping-department').val('');
-                $('.department_div').hide();
-                $('.login_type_div').hide();
+                $('.login_type_div').show();
+                if (login == 'DRIVER') {
+                    $('#tbleiplappmenuactionsmapping-department').val('DRIVER');
+                    $('.department_div').hide();
+                } else {
+                    if ($('#tbleiplappmenuactionsmapping-department').val() == 'DRIVER') {
+                        $('#tbleiplappmenuactionsmapping-department').val('');
+                    }
+                    $('.department_div').show();
+                }
                 $('form#app-menu-mapping-search').submit();
                 setTimeout(function() {
                     $('.showHideData').show();
@@ -98,11 +124,19 @@ $script = "
         var login = $('#tbleiplappmenuactionsmapping-login_type').val();
         var department = $('#tbleiplappmenuactionsmapping-department').val();
         if(appType == 4) {
-            $('.department_div').hide();
-            $('.login_type_div').hide();
+            $('.login_type_div').show();
+            if (login == 'DRIVER') {
+                $('.department_div').hide();
+            } else {
+                $('.department_div').show();
+            }
+            $('.showHideData').show();
         } else if(login =='farmer' || login == 'MEMBER') {
             $('.showHideData').show();
         } else if(login !='') {
+            if(login == 'DRIVER'){
+                $('#tbleiplappmenuactionsmapping-login_type').val('');
+            }
             $('.showHideData').show();
             $('.department_div').show();
         } else {
