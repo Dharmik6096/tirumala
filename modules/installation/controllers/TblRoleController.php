@@ -254,9 +254,9 @@ class TblRoleController extends \app\controllers\ChildController {
             }
 
             $data = Yii::$app->general->getSpData('portal_role_wise_identity_user', [$id]);
-            $ackIdsToUpdate = [];
+            $updateConditions = [];
             $saveModels = [];
-            $this->setDownloadAckBatch($data, $saveModels, $ackIdsToUpdate);
+            $this->setDownloadAckBatch($data, $saveModels, $updateConditions);
 
             $db = Yii::$app->getDb();
             $transaction = $db->beginTransaction();
@@ -264,32 +264,39 @@ class TblRoleController extends \app\controllers\ChildController {
                 if (!empty($toRevoke)) {
                     $revokeChunks = array_chunk($toRevoke, 1000);
                     foreach ($revokeChunks as $rChunk) {
-                        Yii::$app->db->createCommand()->delete('tbl_role_action_mapping', ['action_code' => $rChunk, 'role_code' => $id])->execute();
+                        $db->createCommand()->delete('tbl_role_action_mapping', ['action_code' => $rChunk, 'role_code' => $id])->execute();
                     }
                 }
 
                 if (!empty($roleActionModels)) {
-                    Yii::$app->getDb()->createCommand()->batchInsert('tbl_role_action_mapping', ['action_code', 'role_code'], $roleActionModels)->execute();
+                    $db->createCommand()->batchInsert('tbl_role_action_mapping', ['action_code', 'role_code'], $roleActionModels)->execute();
                 }
 
-                if (!empty($ackIdsToUpdate)) {
-                    $ackChunks = array_chunk($ackIdsToUpdate, 1000);
-                    foreach ($ackChunks as $aChunk) {
-                        Yii::$app->db->createCommand()->update('tbl_user_download_ack', ['download_pending' => 3], ['ack_id' => $aChunk])->execute();
-                    }
+                if (!empty($updateConditions)) {
+                    $orCondition = array_merge(['or'], $updateConditions);
+                    $db->createCommand()
+                        ->update('tbl_user_download_ack', ['download_pending' => 3], $orCondition)
+                        ->execute();
                 }
 
                 if (!empty($saveModels)) {
-                    $firstAttributesModel = $saveModels[0]->attributes();
-                    unset($firstAttributesModel[0]);
+                    $columns = $saveModels[0]->attributes();
+                    if (($key = array_search('ack_id', $columns)) !== false) {
+                        unset($columns[$key]);
+                    }
+                    $columns = array_values($columns);
+
                     $chunks = array_chunk($saveModels, 1000);
                     foreach ($chunks as $chunk) {
-                        $rows = array_map(function ($model) {
-                            $attributes = $model->attributes;
-                            unset($attributes['ack_id']);
-                            return $attributes;
-                        }, $chunk);
-                        Yii::$app->getDb()->createCommand()->batchInsert('tbl_user_download_ack', $firstAttributesModel, $rows)->execute();
+                        $rows = [];
+                        foreach ($chunk as $model) {
+                            $row = [];
+                            foreach ($columns as $col) {
+                                $row[] = $model->$col;
+                            }
+                            $rows[] = $row;
+                        }
+                        $db->createCommand()->batchInsert('tbl_user_download_ack', $columns, $rows)->execute();
                     }
                 }
 
@@ -322,38 +329,144 @@ class TblRoleController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function setDownloadAckBatch($model, &$saveModel, &$ackIdsToUpdate) {
-        if (!empty($model)) {
-            foreach ($model as $a) {
-                $ackModel = new TblUserDownloadAck();
-                $ackModel->setAttributes($a);
-                $orgData = $this->getOrgType($ackModel);
-                $dest_org_type = $orgData['type'];
-                $dest_org_id = $orgData['code'];
-                $existAck = $ackModel->getExistDataAckCached($dest_org_type);
-                if (!empty($existAck)) {
-                    $ackIdsToUpdate = array_merge($ackIdsToUpdate, $existAck);
-                }
-                $androidInstallationDetail = new TblAndroidInstallationDetails();
-                $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
-                if (!empty($activeDevice)) {
-                    foreach ($activeDevice as $value) {
-                        $newAckModel = new TblUserDownloadAck();
-                        $newAckModel->setAttributes($a);
-                        $newAckModel->device_id = $value->device_id;
-                        $newAckModel->hash_key = NULL;
-                        $newAckModel->download_pending = 1;
-                        $newAckModel->created_at = date('Y-m-d H:i:s');
-                        $newAckModel->created_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                        $newAckModel->originating_org_code = \Yii::$app->session->get('organizations_code');
-                        $newAckModel->originating_org_type = 'PORTAL';
-                        $newAckModel->originating_type = 0;
-                        $saveModel[] = $newAckModel;
-                    }
-                }
+    public function setDownloadAckBatch($model, &$saveModel, &$updateConditions) {
+        if (empty($model)) {
+            return;
+        }
+
+        [$orgDataCache, $orgTypesAndCodes] = $this->buildAckUpdateConditions($model, $updateConditions);
+
+        $allActiveDevices = [];
+        $androidInstallationDetail = new TblAndroidInstallationDetails();
+        foreach ($orgTypesAndCodes as $type => $codes) {
+            $codes = array_values(array_filter(array_unique($codes)));
+            if (empty($codes)) continue;
+
+            $rows = $androidInstallationDetail->getActiveDeviceData($codes, $type);
+            if (empty($rows)) continue;
+
+            foreach ($rows as $row) {
+                $allActiveDevices[$type][$row['organization_code']][] = $row['device_id'];
             }
         }
-        $ackIdsToUpdate = array_values(array_unique($ackIdsToUpdate));
+
+        $createdAt = date('Y-m-d H:i:s');
+        $createdBy = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+        $originatingOrgCode = \Yii::$app->session->get('organizations_code');
+
+        foreach ($model as $idx => $a) {
+            $orgData = $orgDataCache[$idx] ?? null;
+            if (empty($orgData)) continue;
+
+            $dest_org_type = $orgData['type'];
+            $dest_org_id   = $orgData['code'];
+
+            if (!isset($allActiveDevices[$dest_org_type][$dest_org_id])) continue;
+
+            foreach (array_unique($allActiveDevices[$dest_org_type][$dest_org_id]) as $deviceId) {
+                $newAckModel = new TblUserDownloadAck();
+                $newAckModel->setAttributes($a);
+                $newAckModel->device_id = $deviceId;
+                $newAckModel->hash_key = null;
+                $newAckModel->download_pending = 1;
+                $newAckModel->created_at = $createdAt;
+                $newAckModel->created_by = $createdBy;
+                $newAckModel->originating_org_code = $originatingOrgCode;
+                $newAckModel->originating_org_type = 'PORTAL';
+                $newAckModel->originating_type = 0;
+                $saveModel[] = $newAckModel;
+            }
+        }
+    }
+
+    /**
+     * Collects org-type criteria from SP data and builds WHERE conditions
+     * for bulk-updating tbl_user_download_ack (download_pending → 3).
+     * No DB queries are run here.
+     *
+     * @param array  $model SP result rows
+     * @param array  &$updateConditions condition array (by reference)
+     * @return array [$orgDataCache, $orgTypesAndCodes]
+     */
+    private function buildAckUpdateConditions(array $model, array &$updateConditions): array {
+        $unionCodes = [];
+        $vlcCriteria = [];
+        $bmcCriteria = [];
+        $mccCriteria = [];
+        $plantCriteria = [];
+        $orgTypesAndCodes = [];
+        $orgDataCache = [];
+
+        foreach ($model as $idx => $a) {
+            $ackModel = new TblUserDownloadAck();
+            $ackModel->setAttributes($a);
+            $orgData = $this->getOrgType($ackModel);
+
+            if (empty($orgData)) {
+                $orgDataCache[$idx] = null;
+                continue;
+            }
+
+            $orgDataCache[$idx] = $orgData;
+            $dest_org_type      = $orgData['type'];
+            $dest_org_id        = $orgData['code'];
+
+            if (!empty($a['union_code'])) {
+                $unionCodes[] = $a['union_code'];
+            }
+
+            if ($dest_org_type === 'VLC' && !empty($a['dcs_code'])) {
+                $vlcCriteria[] = $a['dcs_code'];
+            } elseif ($dest_org_type === 'BMC' && !empty($a['bmc_code'])) {
+                $bmcCriteria[] = $a['bmc_code'];
+            } elseif ($dest_org_type === 'MCC' && !empty($a['mcc_plant_code'])) {
+                $mccCriteria[] = $a['mcc_plant_code'];
+            } elseif ($dest_org_type === 'PLANT' && !empty($a['plant_code'])) {
+                $plantCriteria[] = $a['plant_code'];
+            }
+
+            $orgTypesAndCodes[$dest_org_type][] = (string) $dest_org_id;
+        }
+
+        $unionCodes = array_filter(array_unique($unionCodes));
+
+        $vlcCriteria = array_filter(array_unique($vlcCriteria));
+        if (!empty($vlcCriteria)) {
+            foreach (array_chunk($vlcCriteria, 1000) as $chunk) {
+                $cond = ['and', ['download_pending' => 1], ['in', 'dcs_code', $chunk]];
+                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+                $updateConditions[] = $cond;
+            }
+        }
+
+        $bmcCriteria = array_filter(array_unique($bmcCriteria));
+        if (!empty($bmcCriteria)) {
+            foreach (array_chunk($bmcCriteria, 1000) as $chunk) {
+                $cond = ['and', ['download_pending' => 1], ['in', 'bmc_code', $chunk], ['=', "ISNULL(dcs_code,'')", '']];
+                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+                $updateConditions[] = $cond;
+            }
+        }
+
+        $mccCriteria = array_filter(array_unique($mccCriteria));
+        if (!empty($mccCriteria)) {
+            foreach (array_chunk($mccCriteria, 1000) as $chunk) {
+                $cond = ['and', ['download_pending' => 1], ['in', 'mcc_plant_code', $chunk], ['=', "ISNULL(bmc_code,'')", '']];
+                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+                $updateConditions[] = $cond;
+            }
+        }
+
+        $plantCriteria = array_filter(array_unique($plantCriteria));
+        if (!empty($plantCriteria)) {
+            foreach (array_chunk($plantCriteria, 1000) as $chunk) {
+                $cond = ['and', ['download_pending' => 1], ['in', 'plant_code', $chunk], ['=', "ISNULL(mcc_plant_code,'')", '']];
+                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+                $updateConditions[] = $cond;
+            }
+        }
+
+        return [$orgDataCache, $orgTypesAndCodes];
     }
 
     public function getOrgType($data) {
