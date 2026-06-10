@@ -85,6 +85,7 @@ class TblGrn extends \app\models\ChildModel {
                 'whenClient' => "function (attribute, value) { return $('#tblgrn-payment_mode').is(':checked') }"
             ],
             [['deduction_start_date'], 'dateValidate'],
+            [['invoice_date'], 'validateInvoiceDate'],
             [['data_post_status'], 'default', 'value' => 0],
             [['ref_no'], 'unique', 'targetAttribute' => ['grn_no', 'ref_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
@@ -287,6 +288,20 @@ class TblGrn extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             if ($this->deduction_start_date < $this->invoice_date) {
                 $this->addError('deduction_start_date', Yii::t('app/validation', 'Deduction Start Date must be greater than or equal to Invoice Date'));
+            }
+        }
+    }
+
+    public function validateInvoiceDate() {
+        if (empty($this->getErrors('invoice_date'))) {
+            if (!empty($this->ref_no)) {
+                $dispModel = new TblPlantDispatch();
+                $dispatchData = $dispModel->find()->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code, 'document_no' => $this->ref_no])->one();
+                if (!empty($dispatchData) && !empty($dispatchData->document_date)) {
+                    if ($this->invoice_date < $dispatchData->document_date) {
+                        $this->addError('invoice_date', \Yii::t('app/validation', 'Invoice Date cannot be less than Document Date (' . date('d-m-Y', strtotime($dispatchData->document_date)) . ')'));
+                    }
+                }
             }
         }
     }
