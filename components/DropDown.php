@@ -2595,7 +2595,7 @@ class DropDown extends Component {
             'transaction_type' => [
                 'name' => 'transaction_type',
                 'prompt' => Yii::t('app', 'Select'),
-                    'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
+                'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
             ],
         ];
         return $records[$l];
@@ -2762,6 +2762,9 @@ class DropDown extends Component {
             'voucher_types' => ['name' => 'voucher_type_code', 'fields' => 'voucher_type_code,voucher_type_name,local_name', 'prompt' => 'Select Voucher Types', 'model' => 'TblVoucherTypes'],
             'project' => ['name' => 'project_code', 'fields' => 'project_code,project_name', 'prompt' => 'Select Project', 'model' => 'TblProject'],
             'financial_year' => ['name' => 'financial_year', 'fields' => 'code,code', 'prompt' => 'Select Financial Year', 'model' => 'TblFinancialYear'],
+            'purchase_ledger' => ['name' => 'purchase_type', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Purchase Ledger', 'model' => 'TblLedgers', 'whereCondition' => ['ledger_group_code' => 2]],
+            'sales_ledger' => ['name' => 'sales_type', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select Sales Ledger', 'model' => 'TblLedgers', 'whereCondition' => ['ledger_group_code' => 1]],
+            'item' => ['name' => 'item', 'fields' => 'ledger_code,ledger_name,local_name', 'prompt' => 'Select', 'model' => 'TblLedgers'],
         ];
         return $label[$l];
     }

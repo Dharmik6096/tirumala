@@ -141,6 +141,8 @@ class CronjobController extends \yii\console\Controller {
 
         $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
         $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
+        $username = !empty($header_info['username']) ? $header_info['username'] : 'Not Available';
+        $PrintedOnDateTime = !empty($model->created_at) ? date('d-m-Y H:i:s', strtotime($model->created_at)) : date('d-m-Y H:i:s');
 
         $header_rows = 1;
         if ($header_included) {
@@ -185,6 +187,64 @@ class CronjobController extends \yii\console\Controller {
             $a++;
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
+        
+        $multiple_sheet = !empty($header_info['multiple_sheet']) ? $header_info['multiple_sheet'] : null;
+        if (!empty($multiple_sheet)) {
+            $controls = json_decode($model->input_param, TRUE);
+            foreach ($multiple_sheet as $new_sheet_name => $new_sp_name) {
+                $newsheet = $objPHPExcel->createSheet($sheet_no);
+                $newsheet->setTitle($new_sheet_name);
+                $newoutput = \Yii::$app->general->getSpData($new_sp_name, $controls);
+                $new_file_header = !empty($newoutput) ? array_keys($newoutput[0]) : [];
+                foreach ($new_file_header as $key => $value) {
+                    $new_file_header[$key] = \Yii::t('app', $value);
+                }
+                
+                $new_header_rows = 1;
+                if ($header_included) {
+                    $newColCount = count($new_file_header);
+                    $newLastCol = ($newColCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 1) : 'A';
+                    $new_header_rows = 5;
+                    $newLastColBefore = ($newColCount > 1) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 2) : 'A';
+
+                    $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
+                    $newsheet->setCellValue('A3', isset($reportTitle) ? $reportTitle : '');
+                    $newsheet->setCellValue('A4', isset($searchParams) ? $searchParams : '');
+                    $newsheet->setCellValue($newLastCol . '1', 'Username : ' . $username);
+                    $newsheet->setCellValue($newLastCol . '2', 'Printed on : ' . $PrintedOnDateTime);
+
+                    $newsheet->mergeCells("A1:{$newLastColBefore}2");
+                    $newsheet->mergeCells("A3:{$newLastCol}3");
+                    $newsheet->mergeCells("A4:{$newLastCol}4");
+
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setBold(true);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setSize(14);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getFont()->setBold(true);
+                    $newsheet->getStyle("A3:{$newLastCol}3")->getFont()->setSize(14);
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setBold(true);
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setSize(10);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                }
+
+                $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
+                if (!empty($newoutput)) {
+                    $newsheet->fromArray($newoutput, NULL, 'A' . ($new_header_rows + 1));
+                }
+
+                if ($header_included && isset($newLastCol)) {
+                    $newsheet->getStyle("A{$new_header_rows}:{$newLastCol}{$new_header_rows}")->getFont()->setBold(true);
+                }
+                $sheet_no++;
+            }
+        }
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = date('YmdHis') . '_' . $model->user_code . '_' . $model->report_txn_log_id . '_' . str_replace('/', '_', $model->report_title);
         $fileName = $labelT . '.' . $header['extension'];

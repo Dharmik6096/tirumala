@@ -20,7 +20,7 @@ class TblProductReceiptSearch extends TblProductReceipt {
     public function rules() {
         return [
                 [['product_receipt_code', 'from_date', 'to_date', 'customer_name', 'grn_no', 'grn_date', 'challan_no', 'challan_date', 'description', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['challan_verified', 'originating_type'], 'safe'],
+                [['challan_verified', 'originating_type', 'bill_no'], 'safe'],
         ];
     }
 
@@ -87,7 +87,8 @@ class TblProductReceiptSearch extends TblProductReceipt {
                 ->andFilterWhere(['like', 'tbl_product_receipt.description', $this->description])
                 ->andFilterWhere(['like', 'tbl_product_receipt.product_receipt_code', $this->product_receipt_code])
                 ->andFilterWhere(['like', 'tbl_product_receipt.grn_no', $this->grn_no])
-                ->andFilterWhere(['like', 'tbl_product_receipt.challan_no', $this->challan_no]);
+                ->andFilterWhere(['like', 'tbl_product_receipt.challan_no', $this->challan_no])
+                ->andFilterWhere(['like', 'tbl_product_receipt.bill_no', $this->bill_no]);
 
         return $dataProvider;
     }

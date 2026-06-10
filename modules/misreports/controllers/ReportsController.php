@@ -1145,18 +1145,21 @@ class ReportsController extends \app\controllers\ChildController {
             }
         } else {
             $headerIncluded = isset($this->data['header_included']) && $this->data['header_included'] === true ? true : false;
+            $header_info_arr = [];
             if ($headerIncluded) {
                 $header_labels = Yii::$app->request->post('header_labels');
                 $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
-                $header_info = [
+                $header_info_arr = [
                     'header_included' => $headerIncluded,
                     'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
-                    'search_params' => $this->getSearchParams($header_labels_arr, $model)
+                    'search_params' => $this->getSearchParams($header_labels_arr, $model),
+                    'username' => (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available',
                 ];
-                $header_info = json_encode($header_info);
-            } else {
-                $header_info = NULL;
             }
+            if (isset($this->data['multiple_sheet'])) {
+                $header_info_arr['multiple_sheet'] = $this->data['multiple_sheet'];
+            }
+            $header_info = !empty($header_info_arr) ? json_encode($header_info_arr) : NULL;
 
             $output = $this->RegisterReportRequest('mis', $this->data, $controls, $header_info);
         }
@@ -2526,8 +2529,61 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RdoSalaryStructure';
         return $this->actionIndex();
     }
+
     public function actionUnionActiveSummary() {
         $this->report = 'UnionActiveSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionTradingAccountReport() {
+        $this->report = 'TradingAccountReport';
+        return $this->actionIndex();
+    }
+
+    public function actionProfitAndLossReport() {
+        $this->report = 'ProfitAndLossReport';
+        return $this->actionIndex();
+    }
+
+    public function actionBalanceSheetReport() {
+        $this->report = 'BalanceSheetReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTrialBalanceReport() {
+        $this->report = 'TrialBalanceReport';
+        return $this->actionIndex();
+    }
+    public function actionItemPurchaseGstReport() {
+        $this->report = 'ItemPurchaseGstReport';
+        return $this->actionIndex();
+    }
+    public function actionItemSalesGstReport() {
+        $this->report = 'ItemSalesGstReport';
+        return $this->actionIndex();
+    }
+    public function actionStockStatementReport() {
+        $this->report = 'StockStatementReport';
+        return $this->actionIndex();
+    }
+    public function actionStockLedgerReport() {
+        $this->report = 'StockLedgerReport';
+        return $this->actionIndex();
+    }
+    public function actionCashBookReport() {
+        $this->report = 'CashBookReport';
+        return $this->actionIndex();
+    }
+    public function actionLedgerReport() {
+        $this->report = 'LedgerReport';
+        return $this->actionIndex();
+    }
+    public function actionDateWiseCashBalanceReport() {
+        $this->report = 'DateWiseCashBalanceReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerDeductionLedgerReport() {
+        $this->report = 'FarmerDeductionLedgerReport';
         return $this->actionIndex();
     }
 
@@ -5645,7 +5701,105 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_erp_union_active_summary',
                 'scenario' => 'UnionActiveSummary',
                 'title' => 'Union Active Summary',
-            ]
+            ],
+            'TradingAccountReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
+                'sp_name' => '',
+                'scenario' => 'TradingAccountReport',
+                'title' => 'A - 110 - Trading Account Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ProfitAndLossReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
+                'sp_name' => '',
+                'scenario' => 'ProfitAndLossReport',
+                'title' => 'A - 112 - Profit And Loss Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'BalanceSheetReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'BalanceSheetReport',
+                'title' => 'A - 113 - Balance Sheet Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrialBalanceReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_trial_balance',
+                'scenario' => 'TrialBalanceReport',
+                'title' => 'A - 109 - Trial Balance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemPurchaseGstReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,show_detail,purchase_type',
+                'sp_name' => 'Mis_Set_Item_Purchase_Gst_Report',
+                'multiple_sheet' => ['summary' => 'Mis_Set_Item_Purchase_Gst_Report_Summary'],
+                'scenario' => 'ItemPurchaseGstReport',
+                'title' => 'A - 101 - Item Purchase GST Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemSalesGstReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,show_detail,payment_method:static:payment_method,sales_type',
+                'sp_name' => 'Mis_Set_Item_Sale_Gst_Report',
+                'multiple_sheet' => ['summary' => 'Mis_Set_Item_Sale_Gst_Report_Summary'],
+                'scenario' => 'ItemSalesGstReport',
+                'title' => 'A - 102 - Item Sales GST Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'StockStatementReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_statement',
+                'scenario' => 'StockStatementReport',
+                'title' => 'A - 103 - Stock Statement Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'StockLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,item,is_date_wise_group',
+                'sp_name' => 'mis_stock_ledger',
+                'scenario' => 'StockLedgerReport',
+                'title' => 'A - 104 - Stock Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'CashBookReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'CashBookReport',
+                'title' => 'A - 106 - Cash Book Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'LedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,item,show_detail',
+                'sp_name' => 'Mis_Set_Ledger_Report',
+                'scenario' => 'LedgerReport',
+                'title' => 'A - 107 - Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'DateWiseCashBalanceReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code:txt,to_code:txt,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'DateWiseCashBalanceReport',
+                'title' => 'A - 108 - DateWise CashBalance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerDeductionLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code:txt,to_code:txt,from_date:string,to_date:string,item',
+                'sp_name' => 'Farmer_Deduction_Ledger',
+                'scenario' => 'FarmerDeductionLedgerReport',
+                'title' => 'A - 111 - Farmer Deduction Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
         ];
         return $label[$l];
     }

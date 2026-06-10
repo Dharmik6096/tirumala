@@ -62,7 +62,7 @@ class TblLocalMilkSaleHistory extends \yii\db\ActiveRecord
     {
         return [
             [['local_milk_sale_code', 'milk_type_code', 'milk_class', 'shift_code', 'qty_mode', 'converted_qty_mode', 'originating_type'], 'integer'],
-            [['datetime_of_sale', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['datetime_of_sale', 'created_at', 'updated_at', 'history_created_at', 'voucher_code'], 'safe'],
             [['qty', 'converted_qty', 'rate', 'discount', 'amount', 'credit', 'coupon', 'cash'], 'number'],
             [['member_code'], 'string', 'max' => 20],
             [['payment_mode', 'operation_type'], 'string', 'max' => 10],

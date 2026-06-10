@@ -60,7 +60,7 @@ class TblProductReceipt extends \app\models\ChildModel {
                 [['product_receipt_code'], 'required', 'on' => ['androidsync']],
                 [['product_receipt_code', 'grn_no', 'challan_no', 'description', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['grn_date', 'challan_date', 'created_at', 'updated_at'], 'safe'],
-                [['challan_verified', 'originating_type'], 'safe'],
+                [['challan_verified', 'originating_type', 'bill_no'], 'safe'],
                 [['challan_verified'], 'default', 'value' => 0],
         ];
     }
@@ -96,6 +96,7 @@ class TblProductReceipt extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'bill_no' => Yii::t('app', 'Bill No.'),
         ];
     }
 

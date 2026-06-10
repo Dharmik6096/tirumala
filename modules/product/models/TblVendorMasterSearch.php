@@ -17,7 +17,7 @@ class TblVendorMasterSearch extends TblVendorMaster {
      */
     public function rules() {
         return [
-            [['vendor_master_code', 'vendor_code', 'vendor_name', 'pan_no', 'aadhaar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['vendor_master_code', 'vendor_code', 'vendor_name', 'pan_no', 'aadhaar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'local_name'], 'safe'],
             [['originating_type', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active'], 'integer'],
         ];
     }
