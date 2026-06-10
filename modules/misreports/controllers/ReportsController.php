@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use app\modules\usermanagement\models\User;
 use PHPExcel_Cell_DataType;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 /**
  * Default controller for the `JasperReports` module
@@ -5902,24 +5903,45 @@ class ReportsController extends \app\controllers\ChildController {
         $objPHPExcel->addSheet($customWorksheet);
         $objPHPExcel->removeSheetByIndex(0);
         $header_rows = 1;
+        $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+        $currentDateTime = date('d-m-Y H:i:s');
+
         if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
             $colCount = count($file_header);
             $lastCol = ($colCount > 0) ? Coordinate::stringFromColumnIndex($colCount) : 'A';
-            $header_rows = 4;
+            $header_rows = 5;
             $header_labels = Yii::$app->request->post('header_labels');
             $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
             $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
             $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
             $searchParams = $this->getSearchParams($header_labels_arr, $model);
+
+            $lastColBefore = ($colCount > 1) ? Coordinate::stringFromColumnIndex($colCount - 1) : 'A';
             $customWorksheet->setCellValue('A1', $companyName);
-            $customWorksheet->setCellValue('A2', $reportTitle);
-            $customWorksheet->setCellValue('A3', $searchParams);
-            $customWorksheet->mergeCells("A1:{$lastCol}1");
-            $customWorksheet->mergeCells("A2:{$lastCol}2");
+            $customWorksheet->setCellValue('A3', $reportTitle);
+            $customWorksheet->setCellValue('A4', $searchParams);
+            $customWorksheet->setCellValue($lastCol . '1', 'Username : ' . $username);
+            $customWorksheet->setCellValue($lastCol . '2', 'Printed on : ' . $currentDateTime);
+
+            $customWorksheet->mergeCells("A1:{$lastColBefore}2");
             $customWorksheet->mergeCells("A3:{$lastCol}3");
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-            $customWorksheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->mergeCells("A4:{$lastCol}4");
+
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setSize(14);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+            $customWorksheet->getStyle("A3:{$lastCol}4")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A3:{$lastCol}3")->getFont()->setSize(14);
+            $customWorksheet->getStyle("A3:{$lastCol}4")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setBold(true);
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setSize(10);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         }
 
         $customWorksheet->fromArray($file_header, NULL, 'A' . $header_rows);
@@ -6028,17 +6050,38 @@ class ReportsController extends \app\controllers\ChildController {
                 $new_header_rows = 1;
                 if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
                     $newColCount = count($new_file_header);
-                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
-                    $new_header_rows = 4;
-                    $newsheet->setCellValue('A1', $companyName);
-                    $newsheet->setCellValue('A2', $reportTitle);
-                    $newsheet->setCellValue('A3', $searchParams);
-                    $newsheet->mergeCells("A1:{$lastCol}1");
-                    $newsheet->mergeCells("A2:{$lastCol}2");
-                    $newsheet->mergeCells("A3:{$lastCol}3");
-                    $newsheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-                    $newsheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-                    $newsheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount) : 'A';
+                    $new_header_rows = 5;
+                    $newLastColBefore = ($newColCount > 1) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
+
+                    $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+                    $currentDateTime = date('d-m-Y H:i:s');
+
+                    $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
+                    $newsheet->setCellValue('A3', isset($reportTitle) ? $reportTitle : '');
+                    $newsheet->setCellValue('A4', isset($searchParams) ? $searchParams : '');
+                    $newsheet->setCellValue($newLastCol . '1', 'Username : ' . $username);
+                    $newsheet->setCellValue($newLastCol . '2', 'Printed on : ' . $currentDateTime);
+
+                    $newsheet->mergeCells("A1:{$newLastColBefore}2");
+                    $newsheet->mergeCells("A3:{$newLastCol}3");
+                    $newsheet->mergeCells("A4:{$newLastCol}4");
+
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setBold(true);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setSize(14);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getFont()->setBold(true);
+                    $newsheet->getStyle("A3:{$newLastCol}3")->getFont()->setSize(14);
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setBold(true);
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setSize(10);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                 }
                 $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
                 $newsheet->fromArray($newoutput, NULL, 'A' . ($new_header_rows + 1));

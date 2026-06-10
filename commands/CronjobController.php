@@ -9,6 +9,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use yii\helpers\Url;
 use Jaspersoft\Client\Client;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class CronjobController extends \yii\console\Controller {
 
@@ -147,21 +149,38 @@ class CronjobController extends \yii\console\Controller {
         $header_rows = 1;
         if ($header_included) {
             $colCount = count($file_header);
-            $lastCol = ($colCount > 0) ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colCount) : 'A';
-            $header_rows = 4;
+            $lastCol = ($colCount > 0) ? Coordinate::stringFromColumnIndex($colCount) : 'A';
+            $header_rows = 5;
             $companyName = isset($header_info['organization_name']) ? $header_info['organization_name'] : 'Everest Instruments Pvt. Ltd.';
             $reportTitle = $model->report_title;
             $searchParams = isset($header_info['search_params']) ? $header_info['search_params'] : '';
 
+            $lastColBefore = ($colCount > 1) ? Coordinate::stringFromColumnIndex($colCount - 1) : 'A';
             $customWorksheet->setCellValue('A1', $companyName);
-            $customWorksheet->setCellValue('A2', $reportTitle);
-            $customWorksheet->setCellValue('A3', $searchParams);
-            $customWorksheet->mergeCells("A1:{$lastCol}1");
-            $customWorksheet->mergeCells("A2:{$lastCol}2");
+            $customWorksheet->setCellValue('A3', $reportTitle);
+            $customWorksheet->setCellValue('A4', $searchParams);
+            $customWorksheet->setCellValue($lastCol . '1', 'Username : ' . $username);
+            $customWorksheet->setCellValue($lastCol . '2', 'Printed on : ' . $PrintedOnDateTime);
+
+            $customWorksheet->mergeCells("A1:{$lastColBefore}2");
             $customWorksheet->mergeCells("A3:{$lastCol}3");
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-            $customWorksheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->mergeCells("A4:{$lastCol}4");
+
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setSize(14);
+            $customWorksheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->getStyle('A1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+            $customWorksheet->getStyle("A3:{$lastCol}4")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A3:{$lastCol}3")->getFont()->setSize(14);
+            $customWorksheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setBold(true);
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setSize(10);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         }
 
         $customWorksheet->fromArray($file_header, NULL, 'A' . $header_rows);
@@ -203,9 +222,9 @@ class CronjobController extends \yii\console\Controller {
                 $new_header_rows = 1;
                 if ($header_included) {
                     $newColCount = count($new_file_header);
-                    $newLastCol = ($newColCount > 0) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 1) : 'A';
+                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount) : 'A';
                     $new_header_rows = 5;
-                    $newLastColBefore = ($newColCount > 1) ? \PHPExcel_Cell::stringFromColumnIndex($newColCount - 2) : 'A';
+                    $newLastColBefore = ($newColCount > 1) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
 
                     $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
                     $newsheet->setCellValue('A3', isset($reportTitle) ? $reportTitle : '');
@@ -219,19 +238,19 @@ class CronjobController extends \yii\console\Controller {
 
                     $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setBold(true);
                     $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setSize(14);
-                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
                     $newsheet->getStyle("A3:{$newLastCol}4")->getFont()->setBold(true);
                     $newsheet->getStyle("A3:{$newLastCol}3")->getFont()->setSize(14);
-                    $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                     $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setBold(true);
                     $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setSize(10);
-                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                 }
 
                 $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
