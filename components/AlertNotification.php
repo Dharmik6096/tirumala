@@ -28,11 +28,13 @@ class AlertNotification {
                 } elseif (!empty($a['header_flag']) && $a['header_flag'] == 1) {
                     $headers[$a['parameter_key']] = $value; // Add to headers
                 } elseif (!empty($a['parent_tag'])) {
-                    if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
+                    if (!empty($a['parent_type']) && strtolower($a['parent_type']) == 'string') {
                         $param[$a['parent_tag']][$a['parameter_key']] = $value; //set parent key to key as single
                     } else {
                         $param[$a['parent_tag']][0][$a['parameter_key']] = $value; //set parent key to key as array
                     }
+                }  elseif(!empty($a['parent_type']) && strtolower($a['parent_type']) == 'json') {
+                    $param[$a['parameter_key']] = json_decode($value);
                 } else {
                     $param[$a['parameter_key']] = $value;  //assign value to key and generate dynemic array
                 }
