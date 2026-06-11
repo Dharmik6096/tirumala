@@ -653,6 +653,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'My Report Request'), 'url' => ['/configuration/tbl-report-txn-log/index']],
                         ['label' => Yii::t('app', 'Block Report Request'), 'url' => ['/configuration/tbl-report-txn-log/block-request']],
                         ['label' => Yii::t('app', 'All Report Request'), 'url' => ['/misreports/reports/all-report-request']],
+                        ['label' => Yii::t('app', 'My Email Notifications'), 'url' => ['/sms/tbl-alert-notification-portal/index'], 'active' => ($cntrl == 'tbl-alert-notification-portal')],
                     ],
                 ],
                 [

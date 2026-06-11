@@ -2549,7 +2549,12 @@ class DropDown extends Component {
             'transaction_type' => [
                 'name' => 'transaction_type',
                 'prompt' => Yii::t('app', 'Select'),
-                    'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
+                'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
+            ],
+            'module_type' => [
+                'name' => 'module_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tbl_milk_vehicle_entry_transaction' => Yii::t('app', 'Milk Receipt'), 'tbl_raw_fg_material_receipt' => Yii::t('app', 'Material Receipt')],
             ],
         ];
         return $records[$l];
@@ -2854,8 +2859,8 @@ class DropDown extends Component {
     public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {
         $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
         $value = ArrayHelper::map($records, 'id', function ($records) {
-            return !empty($records['name']) ? $records['name'] : '';
-        });
+                    return !empty($records['name']) ? $records['name'] : '';
+                });
         echo $form->field($model, $flag)->widget(Select2::classname(), [
             'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]]
         )->label($label);
@@ -3024,4 +3029,5 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/veterinary/tbl-medicine-stock/medicine-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
+
 }

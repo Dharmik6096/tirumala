@@ -3,6 +3,7 @@
 namespace app\modules\sms\models;
 
 use Yii;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_alert_notification".
@@ -34,8 +35,10 @@ class TblAlertNotificationPortal extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['receiver_detail', 'receiver_type', 'message', 'header_info', 'status', 'send_status', 'refecence_code', 'module_type'], 'safe'],
-                [['entry_datetime', 'response_datetime', 'created_by'], 'safe'],
+            [['receiver_detail', 'receiver_type', 'message', 'header_info', 'status', 'send_status', 'refecence_code', 'module_type'], 'safe'],
+            [['entry_datetime', 'response_datetime', 'created_by', 'send_mail', 'mail_receiver_detail', 'refecence_code', 'module_type', 'report_param', 'report_path'], 'safe'],
+            [['mail_receiver_detail'], 'email', 'on' => ['sendMail']],
+            [['mail_receiver_detail'], 'required', 'on' => ['sendMail']],
         ];
     }
 
@@ -47,8 +50,8 @@ class TblAlertNotificationPortal extends \app\models\ChildModel {
             'alert_notification_id' => Yii::t('app', 'Alert Notification ID'),
             'receiver_detail' => Yii::t('app', 'Receiver Detail'),
             'receiver_type' => Yii::t('app', 'Receiver Type'),
-            'message' => Yii::t('app', 'Message'),
-            'header_info' => Yii::t('app', 'Header Info'),
+            'message' => Yii::t('app', 'Email Body'),
+            'header_info' => Yii::t('app', 'Email Subject'),
             'status' => Yii::t('app', 'Status'),
             'send_status' => Yii::t('app', 'Send Status'),
             'content_id' => Yii::t('app', 'Content ID'),
@@ -56,7 +59,12 @@ class TblAlertNotificationPortal extends \app\models\ChildModel {
             'module_type' => Yii::t('app', 'Module Type'),
             'entry_datetime' => Yii::t('app', 'Entry Datetime'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
+            'mail_receiver_detail' => Yii::t('app', 'Receiver Email'),
         ];
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'receiver_detail']);
     }
 
 }
