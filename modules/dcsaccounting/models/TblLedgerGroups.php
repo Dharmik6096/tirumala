@@ -42,6 +42,7 @@ class TblLedgerGroups extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+                [['ledger_group_name'], 'required', 'on' => ['androidsync']],
                 [['ledger_group_name', 'ledger_group_code', 'ledger_type_code', 'is_active', 'local_name', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'created_by', 'updated_by', 'originating_type', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'ref_code', 'is_cash'], 'safe'],
                 [['ledger_type_code', 'ledger_group_name', 'union_code'], 'required'],
                 [['local_name'], function ($attribute, $params) {

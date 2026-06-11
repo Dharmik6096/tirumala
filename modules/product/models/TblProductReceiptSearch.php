@@ -87,8 +87,7 @@ class TblProductReceiptSearch extends TblProductReceipt {
                 ->andFilterWhere(['like', 'tbl_product_receipt.description', $this->description])
                 ->andFilterWhere(['like', 'tbl_product_receipt.product_receipt_code', $this->product_receipt_code])
                 ->andFilterWhere(['like', 'tbl_product_receipt.grn_no', $this->grn_no])
-                ->andFilterWhere(['like', 'tbl_product_receipt.challan_no', $this->challan_no])
-                ->andFilterWhere(['like', 'tbl_product_receipt.bill_no', $this->bill_no]);
+                ->andFilterWhere(['like', 'tbl_product_receipt.challan_no', $this->challan_no]);
 
         return $dataProvider;
     }
