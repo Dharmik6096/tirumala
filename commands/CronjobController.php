@@ -131,7 +131,7 @@ class CronjobController extends \yii\console\Controller {
         $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
         $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
         $username = !empty($header_info['username']) ? $header_info['username'] : 'Not Available';
-        $PrintedOnDateTime = !empty($model->created_at) ? date('d-m-Y H:i:s', strtotime($model->created_at)) : date('d-m-Y H:i:s');
+        $PrintedOnDateTime = date('d-m-Y H:i:s');
 
         $header_rows = 1;
         if ($header_included) {
