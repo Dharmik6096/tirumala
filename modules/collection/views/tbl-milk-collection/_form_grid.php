@@ -116,6 +116,7 @@ $attribute = [
         ['attribute' => 'device_long', 'filter' => FALSE],
         ['attribute' => 'mob_lat', 'filter' => FALSE],
         ['attribute' => 'mob_long', 'filter' => FALSE],
+        ['attribute' => 'voucher_code', 'filter' => FALSE, 'visible' => false],
         ['label' => 'Sample Date', 'attribute' => 'qlty_time',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

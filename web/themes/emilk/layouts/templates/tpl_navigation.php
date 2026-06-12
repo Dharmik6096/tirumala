@@ -142,6 +142,9 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Approved Attachment Details'), 'url' => ['/organisation/tbl-customer-master-provisional/approved-attachment-details'], 'active' => ($cntrl == 'tbl-customer-master-provisional')],
                     ]
                 ],
+                ['label' => Yii::t('app', 'Message'), 'url' => ['/sms/tbl-message/index']],
+                ['label' => Yii::t('app', 'Narration Type'), 'url' => ['/dcsaccounting/tbl-narration-type/index']],
+                ['label' => Yii::t('app', 'Narration'), 'url' => ['/dcsaccounting/tbl-narration/index']],
             ],
         ],
         [
@@ -360,6 +363,8 @@ echo GhostMenu::widget([
                     ]
                 ],
                 ['label' => 'Aadesh Master', 'url' => ['/product/tbl-aadesh-master/index'], 'active' => ($cntrl == 'tbl-aadesh-master')],
+                ['label' => Yii::t('app', 'Dead Stock'), 'url' => ['/product/tbl-dead-stock/index']],
+                ['label' => Yii::t('app', 'Product Stock Valuation'), 'url' => ['/product/tbl-product-stock-valuation/index']],
             ],
         ],
         [

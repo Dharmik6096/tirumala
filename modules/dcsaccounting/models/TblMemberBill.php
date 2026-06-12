@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\dcsaccounting\models;
 
 use Yii;
 use yii\db\ActiveRecord;
@@ -66,6 +66,7 @@ class MemberBill extends ActiveRecord
     public function rules()
     {
         return [
+            [['code'], 'required', 'on' => ['androidsync']],
             [[
                 'code', 'society_code', 'union_code', 'member_code', 'society_payment_cycle_code',
                 'milk_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'kg_fat', 'kg_snf',
@@ -87,9 +88,9 @@ class MemberBill extends ActiveRecord
     {
         return [
             'code' => 'Code',
-            'society_code' => 'Society Code',
-            'union_code' => 'Union Code',
-            'member_code' => 'Member Code',
+            'society_code' => 'Society',
+            'union_code' => 'Union',
+            'member_code' => 'Member',
             'society_payment_cycle_code' => 'Society Payment Cycle Code',
             'milk_qty' => 'Milk Qty',
             'avg_fat' => 'Avg Fat',
