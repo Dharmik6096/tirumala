@@ -4,6 +4,7 @@ namespace app\modules\sms\models;
 
 use Yii;
 use app\modules\usermanagement\models\User;
+use app\modules\sms\models\TblApiMaster;
 
 /**
  * This is the model class for table "tbl_alert_notification".
@@ -39,6 +40,7 @@ class TblAlertNotificationPortal extends \app\models\ChildModel {
             [['entry_datetime', 'response_datetime', 'created_by', 'send_mail', 'mail_receiver_detail', 'refecence_code', 'module_type', 'report_param', 'report_path'], 'safe'],
             [['mail_receiver_detail'], 'email', 'on' => ['sendMail']],
             [['mail_receiver_detail'], 'required', 'on' => ['sendMail']],
+            [['mail_receiver_detail'], 'checkApiMaster', 'on' => ['sendMail']],
         ];
     }
 
@@ -65,6 +67,14 @@ class TblAlertNotificationPortal extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'receiver_detail']);
+    }
+
+    public function checkApiMaster($attribute, $params) {
+        $apiMaster = TblApiMaster::find()->where(['union_code' => Yii::$app->session->get('Unions'), 'receiver_type' => 'EMAIL', 'is_active' => 1])->one();
+        if (!$apiMaster) {
+            $this->addError($attribute, 'Mail host not configured.');
+            return false;
+        }
     }
 
 }

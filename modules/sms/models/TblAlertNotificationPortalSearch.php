@@ -32,20 +32,25 @@ class TblAlertNotificationPortalSearch extends TblAlertNotificationPortal {
     public function search($params) {
         $query = TblAlertNotificationPortal::find();
 
-        $query->andWhere(['>=', 'send_mail', 1]);
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         $query->joinWith(['userCode']);
 
         $this->load($params);
-        $query->andWhere(['receiver_detail' => Yii::$app->session->get('UserCode')]);
+
         $this->from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime('-5 days'));
-        $query->andFilterWhere(['>=', 'cast(tbl_alert_notification_portal.entry_datetime as date)', $this->from_date]);
+        $from_datetime = $this->from_date . ' 00:00:00';
 
         $this->to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'cast(tbl_alert_notification_portal.entry_datetime as date)', $this->to_date]);
+        $to_datetime = $this->to_date . ' 23:59:59';
+
+        $query->andFilterWhere(['>=', 'tbl_alert_notification_portal.entry_datetime', $from_datetime]);
+        $query->andFilterWhere(['<=', 'tbl_alert_notification_portal.entry_datetime', $to_datetime]);
+
+        $query->andWhere(['receiver_detail' => Yii::$app->session->get('UserCode')]);
+
+        $query->andWhere(['>=', 'send_mail', 1]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
