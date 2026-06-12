@@ -54,6 +54,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     }
                     if ($operation == 'approve') {
                         $historyFlag = 'DELETE';
+                        $existData->selection_codes = $value;
                         if ($existData->validate()) {
                             if ($collection_config == 2 && !empty($approval_code)) {
                                 $status = 1;

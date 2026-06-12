@@ -104,6 +104,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public $qty_auto_sum, $qty_manual_sum, $bmc_collection_amount;
     public $amount_auto_sum, $amount_manual_sum;
     public $is_sentbox = False;
+    public $selection_codes;
 
     /**
      * @inheritdoc
@@ -320,6 +321,10 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     }
 
     public function validateCollectionAlias($attribute, $params) {
+        $checkAmountBmcApprove = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_bmc_amount_while_approve', 'PORTAL');
+        if ($checkAmountBmcApprove != 1) {
+            return;
+        }
         if (empty($this->getErrors($attribute))) {
             $bmcCollection = TblBmcCollection::find()
                 ->where([
@@ -329,7 +334,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                 ->andWhere(['CAST(date_time_of_collection AS DATE)' => Yii::$app->formatter->asDate($this->date_time_of_collection, 'php:Y-m-d')])
                 ->sum('amount');
             
-            $bmcCollectionQty = (float)$bmcCollection;
+            $bmcCollectionAmount = (float)$bmcCollection;
 
             $farmerCollection = TblMilkCollection::find()
                 ->where([
@@ -339,21 +344,12 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                 ->andWhere(['CAST(date_time_of_collection AS DATE)' => Yii::$app->formatter->asDate($this->date_time_of_collection, 'php:Y-m-d')])
                 ->sum('amount');
                 
-            $farmerCollectionQty = (float)$farmerCollection;
+            $farmerCollectionAmount = (float)$farmerCollection;
             
-            $selection = Yii::$app->request->post('selection');
-            $isBatchApprove = (!empty($selection) && is_array($selection));
-
-            if ($isBatchApprove) {
-                $aliasCodes = [];
-                foreach ($selection as $val) {
-                    $codes = explode('###', $val);
-                    $aliasCodes[] = $codes[0];
-                }
-                
-                // Get all selected pending models for this DCS and Shift
+            $selection = $this->selection_codes;
+            if (!empty($selection)) {
                 $selectedModels = TblCollectionDataAlias::find()
-                    ->where(['collection_data_alias_code' => $aliasCodes])
+                    ->where(['collection_data_alias_code' => $selection])
                     ->andWhere(['dcs_code' => $this->dcs_code, 'shift_code' => $this->shift_code])
                     ->andWhere(['CAST(date_time_of_collection AS DATE)' => Yii::$app->formatter->asDate($this->date_time_of_collection, 'php:Y-m-d')])
                     ->andWhere(['approval_status' => ['Pending', 'Inprogress']])
@@ -369,18 +365,19 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                         $batchAmountDelta += (float)$model->amount;
                     }
                 }
-                $totalFarmerQty = $farmerCollectionQty + $batchAmountDelta;
+                $totalFarmerAmount = $farmerCollectionAmount + $batchAmountDelta;
             } else {
+                $totalFarmerAmount = $farmerCollectionAmount;
                 if ($this->action_perform == 'UPDATE') {
-                    $farmerCollectionQty -= (float)$this->old_amount;
+                    $totalFarmerAmount = $farmerCollectionAmount - (float)$this->old_amount + (float)$this->amount;
                 } else if ($this->action_perform == 'DELETE') {
-                    $farmerCollectionQty -= (float)$this->old_amount;
-                    $this->amount = 0;
+                    $totalFarmerAmount = $farmerCollectionAmount - (float)$this->old_amount;
+                } else {
+                    $totalFarmerAmount = $farmerCollectionAmount + (float)$this->amount;
                 }
-                $totalFarmerQty = $farmerCollectionQty + (float)$this->amount;
             }
 
-            if ($totalFarmerQty > $bmcCollectionQty) {
+            if ($totalFarmerAmount > $bmcCollectionAmount) {
                 $this->addError($attribute, Yii::t('app', 'FAMER collection not greater than BMC collection of respective MPP for date and shift'));
             }
         }
