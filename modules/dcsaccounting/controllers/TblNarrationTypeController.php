@@ -2,10 +2,11 @@
 
 namespace app\modules\dcsaccounting\controllers;
 
+use app\controllers\ChildController;
 use Yii;
-use yii\web\Controller;
 use app\modules\dcsaccounting\models\TblNarrationTypeSearch;
-class TblNarrationTypeController extends Controller
+
+class TblNarrationTypeController extends ChildController
 {
     public function actionIndex()
     {
