@@ -20,7 +20,7 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date', 'rate', 'tax_amount', 'commission', 'product_name', 'product_desc'], 'safe'],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date', 'rate', 'tax_amount', 'commission', 'product_name', 'product_desc', 'voucher_code'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
             [['is_installment', 'no_of_installment'], 'integer'],
             [['plant_code', 'union_code', 'bmc_code', 'mcc_plant_code', 'from_date', 'to_date'], 'required', 'on' => ['memberBulkDelete', 'memberBulkDeleteApproval']],

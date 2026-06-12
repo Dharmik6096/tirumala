@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use app\modules\usermanagement\models\User;
 use PHPExcel_Cell_DataType;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 /**
  * Default controller for the `JasperReports` module
@@ -1145,18 +1146,21 @@ class ReportsController extends \app\controllers\ChildController {
             }
         } else {
             $headerIncluded = isset($this->data['header_included']) && $this->data['header_included'] === true ? true : false;
+            $header_info_arr = [];
             if ($headerIncluded) {
                 $header_labels = Yii::$app->request->post('header_labels');
                 $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
-                $header_info = [
+                $header_info_arr = [
                     'header_included' => $headerIncluded,
                     'organization_name' => !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.'),
-                    'search_params' => $this->getSearchParams($header_labels_arr, $model)
+                    'search_params' => $this->getSearchParams($header_labels_arr, $model),
+                    'username' => (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available',
                 ];
-                $header_info = json_encode($header_info);
-            } else {
-                $header_info = NULL;
             }
+            if (isset($this->data['multiple_sheet'])) {
+                $header_info_arr['multiple_sheet'] = $this->data['multiple_sheet'];
+            }
+            $header_info = !empty($header_info_arr) ? json_encode($header_info_arr) : NULL;
 
             $output = $this->RegisterReportRequest('mis', $this->data, $controls, $header_info);
         }
@@ -2526,8 +2530,61 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'RdoSalaryStructure';
         return $this->actionIndex();
     }
+
     public function actionUnionActiveSummary() {
         $this->report = 'UnionActiveSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionTradingAccountReport() {
+        $this->report = 'TradingAccountReport';
+        return $this->actionIndex();
+    }
+
+    public function actionProfitAndLossReport() {
+        $this->report = 'ProfitAndLossReport';
+        return $this->actionIndex();
+    }
+
+    public function actionBalanceSheetReport() {
+        $this->report = 'BalanceSheetReport';
+        return $this->actionIndex();
+    }
+
+    public function actionTrialBalanceReport() {
+        $this->report = 'TrialBalanceReport';
+        return $this->actionIndex();
+    }
+    public function actionItemPurchaseGstReport() {
+        $this->report = 'ItemPurchaseGstReport';
+        return $this->actionIndex();
+    }
+    public function actionItemSalesGstReport() {
+        $this->report = 'ItemSalesGstReport';
+        return $this->actionIndex();
+    }
+    public function actionStockStatementReport() {
+        $this->report = 'StockStatementReport';
+        return $this->actionIndex();
+    }
+    public function actionStockLedgerReport() {
+        $this->report = 'StockLedgerReport';
+        return $this->actionIndex();
+    }
+    public function actionCashBookReport() {
+        $this->report = 'CashBookReport';
+        return $this->actionIndex();
+    }
+    public function actionLedgerReport() {
+        $this->report = 'LedgerReport';
+        return $this->actionIndex();
+    }
+    public function actionDateWiseCashBalanceReport() {
+        $this->report = 'DateWiseCashBalanceReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerDeductionLedgerReport() {
+        $this->report = 'FarmerDeductionLedgerReport';
         return $this->actionIndex();
     }
 
@@ -5645,7 +5702,105 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_erp_union_active_summary',
                 'scenario' => 'UnionActiveSummary',
                 'title' => 'Union Active Summary',
-            ]
+            ],
+            'TradingAccountReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
+                'sp_name' => '',
+                'scenario' => 'TradingAccountReport',
+                'title' => 'A - 110 - Trading Account Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ProfitAndLossReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
+                'sp_name' => '',
+                'scenario' => 'ProfitAndLossReport',
+                'title' => 'A - 112 - Profit And Loss Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'BalanceSheetReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'BalanceSheetReport',
+                'title' => 'A - 113 - Balance Sheet Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'TrialBalanceReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_trial_balance',
+                'scenario' => 'TrialBalanceReport',
+                'title' => 'A - 109 - Trial Balance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemPurchaseGstReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,show_detail,purchase_type',
+                'sp_name' => 'Mis_Set_Item_Purchase_Gst_Report',
+                'multiple_sheet' => ['summary' => 'Mis_Set_Item_Purchase_Gst_Report_Summary'],
+                'scenario' => 'ItemPurchaseGstReport',
+                'title' => 'A - 101 - Item Purchase GST Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemSalesGstReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,show_detail,payment_method:static:payment_method,sales_type',
+                'sp_name' => 'Mis_Set_Item_Sale_Gst_Report',
+                'multiple_sheet' => ['summary' => 'Mis_Set_Item_Sale_Gst_Report_Summary'],
+                'scenario' => 'ItemSalesGstReport',
+                'title' => 'A - 102 - Item Sales GST Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'StockStatementReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_statement',
+                'scenario' => 'StockStatementReport',
+                'title' => 'A - 103 - Stock Statement Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'StockLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,item,is_date_wise_group',
+                'sp_name' => 'mis_stock_ledger',
+                'scenario' => 'StockLedgerReport',
+                'title' => 'A - 104 - Stock Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'CashBookReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'CashBookReport',
+                'title' => 'A - 106 - Cash Book Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'LedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,item,show_detail',
+                'sp_name' => 'Mis_Set_Ledger_Report',
+                'scenario' => 'LedgerReport',
+                'title' => 'A - 107 - Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'DateWiseCashBalanceReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_code:txt,to_code:txt,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'DateWiseCashBalanceReport',
+                'title' => 'A - 108 - DateWise CashBalance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerDeductionLedgerReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_code:txt,to_code:txt,from_date:string,to_date:string,item',
+                'sp_name' => 'Farmer_Deduction_Ledger',
+                'scenario' => 'FarmerDeductionLedgerReport',
+                'title' => 'A - 111 - Farmer Deduction Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
         ];
         return $label[$l];
     }
@@ -5748,24 +5903,45 @@ class ReportsController extends \app\controllers\ChildController {
         $objPHPExcel->addSheet($customWorksheet);
         $objPHPExcel->removeSheetByIndex(0);
         $header_rows = 1;
+        $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+        $currentDateTime = date('d-m-Y H:i:s');
+
         if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
             $colCount = count($file_header);
             $lastCol = ($colCount > 0) ? Coordinate::stringFromColumnIndex($colCount) : 'A';
-            $header_rows = 4;
+            $header_rows = 5;
             $header_labels = Yii::$app->request->post('header_labels');
             $header_labels_arr = !empty($header_labels) ? json_decode($header_labels, true) : [];
             $companyName = !empty($header_labels_arr['union_code']) ? $header_labels_arr['union_code'] : (!empty(Yii::$app->session->get('OrganizationName')) ? Yii::$app->session->get('OrganizationName') : 'Everest Instruments Pvt. Ltd.');
             $reportTitle = isset($this->data['title']) ? $this->data['title'] : 'Report';
             $searchParams = $this->getSearchParams($header_labels_arr, $model);
+
+            $lastColBefore = ($colCount > 1) ? Coordinate::stringFromColumnIndex($colCount - 1) : 'A';
             $customWorksheet->setCellValue('A1', $companyName);
-            $customWorksheet->setCellValue('A2', $reportTitle);
-            $customWorksheet->setCellValue('A3', $searchParams);
-            $customWorksheet->mergeCells("A1:{$lastCol}1");
-            $customWorksheet->mergeCells("A2:{$lastCol}2");
+            $customWorksheet->setCellValue('A3', $reportTitle);
+            $customWorksheet->setCellValue('A4', $searchParams);
+            $customWorksheet->setCellValue($lastCol . '1', 'Username : ' . $username);
+            $customWorksheet->setCellValue($lastCol . '2', 'Printed on : ' . $currentDateTime);
+
+            $customWorksheet->mergeCells("A1:{$lastColBefore}2");
             $customWorksheet->mergeCells("A3:{$lastCol}3");
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-            $customWorksheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->mergeCells("A4:{$lastCol}4");
+
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setSize(14);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+            $customWorksheet->getStyle("A3:{$lastCol}4")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A3:{$lastCol}3")->getFont()->setSize(14);
+            $customWorksheet->getStyle("A3:{$lastCol}4")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setBold(true);
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setSize(10);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         }
 
         $customWorksheet->fromArray($file_header, NULL, 'A' . $header_rows);
@@ -5874,17 +6050,38 @@ class ReportsController extends \app\controllers\ChildController {
                 $new_header_rows = 1;
                 if (isset($this->data['header_included']) && $this->data['header_included'] === true) {
                     $newColCount = count($new_file_header);
-                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
-                    $new_header_rows = 4;
-                    $newsheet->setCellValue('A1', $companyName);
-                    $newsheet->setCellValue('A2', $reportTitle);
-                    $newsheet->setCellValue('A3', $searchParams);
-                    $newsheet->mergeCells("A1:{$lastCol}1");
-                    $newsheet->mergeCells("A2:{$lastCol}2");
-                    $newsheet->mergeCells("A3:{$lastCol}3");
-                    $newsheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-                    $newsheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-                    $newsheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount) : 'A';
+                    $new_header_rows = 5;
+                    $newLastColBefore = ($newColCount > 1) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
+
+                    $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+                    $currentDateTime = date('d-m-Y H:i:s');
+
+                    $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
+                    $newsheet->setCellValue('A3', isset($reportTitle) ? $reportTitle : '');
+                    $newsheet->setCellValue('A4', isset($searchParams) ? $searchParams : '');
+                    $newsheet->setCellValue($newLastCol . '1', 'Username : ' . $username);
+                    $newsheet->setCellValue($newLastCol . '2', 'Printed on : ' . $currentDateTime);
+
+                    $newsheet->mergeCells("A1:{$newLastColBefore}2");
+                    $newsheet->mergeCells("A3:{$newLastCol}3");
+                    $newsheet->mergeCells("A4:{$newLastCol}4");
+
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setBold(true);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setSize(14);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getFont()->setBold(true);
+                    $newsheet->getStyle("A3:{$newLastCol}3")->getFont()->setSize(14);
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setBold(true);
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setSize(10);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                 }
                 $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
                 $newsheet->fromArray($newoutput, NULL, 'A' . ($new_header_rows + 1));

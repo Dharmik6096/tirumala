@@ -6628,6 +6628,13 @@ select:focus > option:checked {
 .mt3 {
     margin-top: 3px !important;
 }
+.report-export-info {
+    position: absolute;
+    right: 15px;
+    top: 0;
+    text-align: left;
+    font-size: 12px;
+}
 
 .pd0 {
     padding: 0px;
