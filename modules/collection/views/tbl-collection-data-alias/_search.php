@@ -49,7 +49,7 @@ use yii\web\View;
         </div>  
     <?php } ?>
     <!-- <div class="clearfix"></div> -->
-    <div class="col-sm-2">
+    <div class="col-sm-2 mb-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
     </div>
     <div class="col-sm-2 shift">
