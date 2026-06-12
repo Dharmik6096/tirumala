@@ -22,6 +22,7 @@ use kartik\grid\GridView;
 </div>
 <?php
 $script = "
+    var currentDocDate = null;
 
     function setData(field = ''){
         if(field != '' && field != null && field != undefined && field != 'Loading ...'){
@@ -241,8 +242,10 @@ $script = "
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
                         {
+                            currentDocDate = obj.document_date;
                             $('#tblgrn-invoice_no').val(obj.document_no);
                             $('#tblgrn-invoice_date').parent().kvDatepicker('update',obj.document_date);
+                            $('#tblgrn-invoice_date').parent().kvDatepicker('setStartDate',obj.document_date);
                         }
                     },
                     error:function(data){
@@ -267,6 +270,23 @@ $script = "
         }
     }
     
+    $('#grn-form-other').on('beforeValidate', function (e) {
+        var invoiceDateStr = $('#tblgrn-invoice_date').val();
+        if (currentDocDate && invoiceDateStr) {
+            var invParts = invoiceDateStr.match(/(\d+)/g);
+            var docParts = currentDocDate.match(/(\d+)/g);
+            if (invParts && docParts && invParts.length >= 3 && docParts.length >= 3) {
+                var invDate = new Date(invParts[2], invParts[1] - 1, invParts[0]);
+                var docDate = new Date(docParts[2], docParts[1] - 1, docParts[0]);
+                if (invDate < docDate) {
+                    $('#grn-form-other').yiiActiveForm('updateAttribute', 'tblgrn-invoice_date', ['Invoice Date cannot be less than Document Date (' + currentDocDate + ')']);
+                    return false;
+                }
+            }
+        }
+        return true;
+    });
+
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

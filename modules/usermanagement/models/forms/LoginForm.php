@@ -211,7 +211,7 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
             if (!empty($overDuePayment)) {
                 $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
                 Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
-                    'message' => 'Dear Customer, Your payment for the Solution Services are due, services are terminated on ' . $overDueDate]);
+                    'message' => 'Due to an outstanding commercial balance, your Cloud services may be interrupted and will be terminated on ' . $overDueDate]);
                 return false;
             } else {
                 $pendingPayment = $model->getPendingPaymentCount($union);
