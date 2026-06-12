@@ -12,6 +12,7 @@ use yii\web\View;
 <div class="grid-search search-filter large-search">
 
     <?php
+    $checkAmountBmcApprove = Yii::$app->general->getUnionConfiguration($model->union_code, 'check_bmc_amount_while_approve', 'PORTAL');
     $form = ActiveForm::begin([
                 'method' => 'get',
     ]);
@@ -63,7 +64,12 @@ use yii\web\View;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('action_perform', $model, $form, 'form-group', $model->getAttributeLabel('action_perform'), false, 'action_perform'); ?>
     </div>
-
+    <?php 
+    if (isset($showGroupBy) && $showGroupBy && $checkAmountBmcApprove) { ?>
+        <div class="col-sm-2 hide_section">
+            <?= Yii::$app->dropdown->dropdownStatic('indent_group_by', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Group By'), false, 'group_by') ?>
+        </div>
+    <?php } ?>
     <div class="col-sm-2 mt23">
         <?= Yii::$app->controls->search(); ?>
     </div>
