@@ -44,7 +44,7 @@ class TblVoucherTransactionHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['history_created_at', 'operation_type', 'history_created_by', 'created_at', 'updated_at', 'credit_debit', 'originating_type', 'voucher_transaction_code', 'narration', 'voucher_code', 'ledger_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['history_created_at', 'operation_type', 'history_created_by', 'created_at', 'updated_at', 'credit_debit', 'originating_type', 'voucher_transaction_code', 'narration', 'voucher_code', 'ledger_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'auto_posted_screen'], 'safe'],
                 [['amount'], 'number'],
         ];
     }

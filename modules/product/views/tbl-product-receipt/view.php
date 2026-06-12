@@ -64,10 +64,18 @@ $this->title = Yii::$app->label->title('view', 'Product Receipt');
                         [
                         'columns' => [
                                 [
+                                'attribute' => 'bill_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
                                 'attribute' => 'challan_verified',
                                 'value' => ($model->challan_verified == 1) ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'vendor_type',
                                 'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
