@@ -32,7 +32,6 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $allowSentbox = Yii::$app->general->getUnionConfiguration($union, 'collection_approval_sentbox', 'PORTAL');
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
-                echo 'sasa'; die;
                 $succCount = 0;
                 $errorCount = 0;
                 $deletedata = Yii::$app->request->post('selection');
