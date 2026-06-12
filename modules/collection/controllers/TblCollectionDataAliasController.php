@@ -32,6 +32,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $allowSentbox = Yii::$app->general->getUnionConfiguration($union, 'collection_approval_sentbox', 'PORTAL');
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
+                echo 'sasa'; die;
                 $succCount = 0;
                 $errorCount = 0;
                 $deletedata = Yii::$app->request->post('selection');
@@ -156,12 +157,12 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $showFarmer = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
         $searchModel->table_name = 'tbl_milk_collection';
+        $searchModel->scenario = 'approvalCollection';
         if ($collection_config == 2) {
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
         } else {
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
-        $searchModel->scenario = 'approvalCollection';
         $actionPerform = $searchModel->action_perform ? strtolower($searchModel->action_perform) : 'default';
         $id = 'milk-collection-approve-' . $actionPerform;
         $url = 'milk-collection-approve';
