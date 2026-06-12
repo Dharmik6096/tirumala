@@ -88,6 +88,7 @@ $attribute = [
             return Yii::$app->controls->view_datetime($model->response_datetime, 'php:d-m-Y H:i:s');
         }, 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'resp_desc', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'voucher_code', 'vAlign' => 'middle'],
 ];
 $gridId = 'product-sale-list';
 $grid_option = [

@@ -109,6 +109,14 @@ $this->title = Yii::t('app', Yii::$app->label->title('view', 'Local Milk Sale'))
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                            [
+                                    'attribute' => 'voucher_code',
+                                    'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget

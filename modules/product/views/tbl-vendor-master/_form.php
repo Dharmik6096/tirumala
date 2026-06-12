@@ -42,6 +42,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'vendor_type')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'local_name')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->active($model, $form); ?>
         </div>
