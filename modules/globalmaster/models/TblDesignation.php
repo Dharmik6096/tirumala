@@ -40,6 +40,7 @@ class TblDesignation extends ChildModel {
      */
     public function rules() {
         return [
+            [['designation_name'], 'required', 'on' => ['androidsync']],
             [['created_at', 'deleted_at', 'updated_at', 'local_name', 'is_active'], 'safe'],
             [['designation_name', 'designation_type'], 'required'],
             [['designation_name'], 'unique'],

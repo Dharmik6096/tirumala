@@ -6457,7 +6457,13 @@ div#dashboardFarmerPopup {
 #report-form .field-reportsmodel-milk_sort_by{
     margin-bottom: 16px;
 }
-
+.report-export-info {
+    position: absolute;
+    right: 15px;
+    top: 0;
+    text-align: left;
+    font-size: 12px;
+}
 .pd0 {
     padding: 0px;
 }
