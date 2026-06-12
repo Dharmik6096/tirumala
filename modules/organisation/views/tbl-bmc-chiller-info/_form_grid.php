@@ -63,7 +63,7 @@ $grid_option = [
         },
         'default' => function ($url, $model) {
             $class = empty($model->is_default) && $model->is_active == 1 ? '' : 'disabled';
-            $options = ['data-name' => $model->owner_name, 'data-val' => $model->chiller_info_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default ' . $class];
+            $options = ['data-name' => $model->owner_name, 'data-val' => $model->chiller_info_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Set as Default', 'class' => 'set-default ' . $class];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/organisation/tbl-dcs-bmc/set-default-bmc-chiller', 'id' => $model->chiller_info_code], $options);
         },
     ]
