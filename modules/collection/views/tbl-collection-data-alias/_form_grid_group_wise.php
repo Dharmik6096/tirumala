@@ -1,12 +1,9 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
+use app\components\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use app\modules\globalmaster\models\TblAnimalType;
-use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <div class="grid-search no-effect" >
     <?php
@@ -103,11 +100,11 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 </div>
 <div class="panel-footer" >
     <?php if (!empty($dataProvider->getModels())) { ?>
-        <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
-        <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
+        <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
+        <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', $url); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', $url,'','btn-login'); ?>
 </div>
 
 <?php ActiveForm::end(); ?>

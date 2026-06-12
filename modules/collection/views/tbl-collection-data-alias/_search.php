@@ -12,7 +12,7 @@ use yii\web\View;
 <div class="grid-search search-filter large-search">
 
     <?php
-    $checkAmountBmcApprove = Yii::$app->general->getUnionConfiguration($model->union_code, 'check_bmc_amount_while_approve', 'PORTAL');
+    $checkAmountBmcApprove = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'check_bmc_amount_while_approve', 'PORTAL');
     $form = ActiveForm::begin([
                 'method' => 'get',
     ]);
@@ -48,7 +48,7 @@ use yii\web\View;
             <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcollectiondataaliassearch-bmc_code,tblcollectiondataaliassearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
         </div>  
     <?php } ?>
-    <div class="clearfix"></div>
+    <!-- <div class="clearfix"></div> -->
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
     </div>
