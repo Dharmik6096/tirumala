@@ -32,7 +32,7 @@ $grid_option = [
     'actions' => [
         'view-detail' => function ($url, $model) {
             $url = Url::to(['/sms/tbl-alert-notification-portal/send-mail', 'alert_notification_id' => $model->alert_notification_id]);
-            return GhostHtml::a('<i class="fa fa-paper-plane"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Send Mail', 'class' => 'send-mail', 'data-alert_notification_id' => $model->alert_notification_id]);
+            return GhostHtml::a('<i class="fa fa-paper-plane"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Send Mail', 'class' => 'send-mail', 'data-alert_notification_id' => $model->alert_notification_id]);
         },
     ]
 ];
