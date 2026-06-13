@@ -42,7 +42,7 @@ class TblDesignationHistory extends \yii\db\ActiveRecord {
             [['designation_name'], 'safe'],
             [['designation_name'], 'safe'],
             [['operation_type', 'created_by', 'updated_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'local_name'], 'safe'],
         ];
     }
 

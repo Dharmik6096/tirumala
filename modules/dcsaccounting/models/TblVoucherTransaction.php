@@ -41,7 +41,7 @@ class TblVoucherTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['created_at', 'updated_at', 'credit_debit', 'originating_type', 'voucher_transaction_code', 'narration', 'voucher_code', 'ledger_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['created_at', 'updated_at', 'credit_debit', 'originating_type', 'voucher_transaction_code', 'narration', 'voucher_code', 'ledger_code', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'auto_posted_screen'], 'safe'],
                 [['voucher_transaction_code'], 'required'],
                 [['amount'], 'number', 'except' => ['androidsync']],
         ];
@@ -70,6 +70,7 @@ class TblVoucherTransaction extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'auto_posted_screen' => Yii::t('app', 'Auto Posted Screen'),
         ];
     }
 

@@ -26,6 +26,7 @@ $attribute = [
     ['attribute' => 'cash', 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => false, 'filter' => false,],
     ['attribute' => 'coupon', 'value' => 'coupon', 'visible' => false, 'filter' => false,],
     ['attribute' => 'credit', 'value' => 'credit', 'visible' => false, 'filter' => false,],
+    ['attribute' => 'voucher_code'],
     ['attribute' => 'member_code', 'value' => 'memberCode.member_name', 'visible' => false, 'filter' => false,],
     ['attribute' => 'milk_class', 'value' => 'milkClass.class_name', 'visible' => false, 'filter' => false,],
 ];

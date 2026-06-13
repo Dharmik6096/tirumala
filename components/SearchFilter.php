@@ -733,6 +733,21 @@ class SearchFilter {
             'TblAlertNotificationPortalSearch' => [
                 'filter' => ['from_date', 'to_date'],
             ],
+            'TblNarrationSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblDeadStockSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblProductStockValuationSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
+            ],
+            'TblMessageSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblNarrationTypeSearch' => [
+                'filter' => ['f_union_code'],
+            ]
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

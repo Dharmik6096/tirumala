@@ -20,6 +20,7 @@ $attribute = [
             return isset($data[$model->credit_debit]) ? $data[$model->credit_debit] : '';
         }, 'filter' => false],
         ['attribute' => 'narration', 'filter' => false],
+        ['attribute' => 'auto_posted_screen', 'format' => 'boolean', 'filter' => false],
 ];
 
 $grid_option = [

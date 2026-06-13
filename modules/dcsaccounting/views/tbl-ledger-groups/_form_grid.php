@@ -14,6 +14,7 @@ $attribute = [
         ['attribute' => 'ledger_group_name'],
         ['attribute' => 'local_name'],
         ['attribute' => 'ref_code'],
+        ['attribute' => 'is_cash'],
 ];
 
 $grid_option = [

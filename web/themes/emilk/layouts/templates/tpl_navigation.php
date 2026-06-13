@@ -142,6 +142,9 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Approved Attachment Details'), 'url' => ['/organisation/tbl-customer-master-provisional/approved-attachment-details'], 'active' => ($cntrl == 'tbl-customer-master-provisional')],
                     ]
                 ],
+                ['label' => Yii::t('app', 'Message'), 'url' => ['/sms/tbl-message/index']],
+                ['label' => Yii::t('app', 'Narration Type'), 'url' => ['/dcsaccounting/tbl-narration-type/index']],
+                ['label' => Yii::t('app', 'Narration'), 'url' => ['/dcsaccounting/tbl-narration/index']],
             ],
         ],
         [
@@ -360,6 +363,8 @@ echo GhostMenu::widget([
                     ]
                 ],
                 ['label' => 'Aadesh Master', 'url' => ['/product/tbl-aadesh-master/index'], 'active' => ($cntrl == 'tbl-aadesh-master')],
+                ['label' => Yii::t('app', 'Dead Stock'), 'url' => ['/product/tbl-dead-stock/index']],
+                ['label' => Yii::t('app', 'Product Stock Valuation'), 'url' => ['/product/tbl-product-stock-valuation/index']],
             ],
         ],
         [
@@ -1220,6 +1225,24 @@ echo GhostMenu::widget([
                                 ['label' => 'S - 105 -' . Yii::t('app', 'Union Wise Message Detail'), 'url' => ['/misreports/reports/union-wise-message-detail-report']],
                                 ['label' => 'S - 106 -' . Yii::t('app', 'Milk Rate Publish'), 'url' => ['/misreports/reports/milk-rate-publish-report']],
                                 ['label' => 'S - 107 -' . Yii::t('app', 'Farmer Wise Yearly Edit'), 'url' => ['/misreports/reports/farmer-wise-yearly-edit-report']],
+                            ],
+                        ],
+                        [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Account Reports') . '<b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => 'A - 101 -' . Yii::t('app', 'Item Purchase GST Report'), 'url' => ['/misreports/reports/item-purchase-gst-report']],
+                                ['label' => 'A - 102 -' . Yii::t('app', 'Item Sales GST Report'), 'url' => ['/misreports/reports/item-sales-gst-report']],
+                                ['label' => 'A - 103 -' . Yii::t('app', 'Stock Statement Report'), 'url' => ['/misreports/reports/stock-statement-report']],
+                                ['label' => 'A - 104 -' . Yii::t('app', 'Stock Ledger Report'), 'url' => ['/misreports/reports/stock-ledger-report']],
+                                ['label' => 'A - 106 -' . Yii::t('app', 'Cash Book Report'), 'url' => ['/misreports/reports/cash-book-report']],
+                                ['label' => 'A - 107 -' . Yii::t('app', 'Ledger Report'), 'url' => ['/misreports/reports/ledger-report']],
+                                ['label' => 'A - 108 -' . Yii::t('app', 'DateWise CashBalance Report'), 'url' => ['/misreports/reports/date-wise-cash-balance-report']],
+                                ['label' => 'A - 109 -' . Yii::t('app', 'Trial Balance Report'), 'url' => ['/misreports/reports/trial-balance-report']],
+                                ['label' => 'A - 110 -' . Yii::t('app', 'Trading Account Report'), 'url' => ['/misreports/reports/trading-account-report']],
+                                ['label' => 'A - 111 -' . Yii::t('app', 'Farmer Deduction Ledger Report'), 'url' => ['/misreports/reports/farmer-deduction-ledger-report']],
+                                ['label' => 'A - 112 -' . Yii::t('app', 'Profit And Loss Report'), 'url' => ['/misreports/reports/profit-and-loss-report']],
+                                ['label' => 'A - 113 -' . Yii::t('app', 'Balance Sheet'), 'url' => ['/misreports/reports/balance-sheet-report']],
                             ],
                         ],
                         [
