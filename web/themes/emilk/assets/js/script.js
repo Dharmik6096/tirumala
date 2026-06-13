@@ -122,6 +122,20 @@ var initDepdropMs;
         //     });
         // }
 
+        function applyEllipsis() {
+            $("td.is_ellipsis").each(function () {
+                var $td = $(this);
+                if (!$td.attr("title")) {
+                    var text = $td.text().trim();
+                    if (text.length > 10) {
+                        $td.attr("title", text);
+                        $td.text(text.substr(0, 10) + '...');
+                    }
+                }
+            });
+        }
+        applyEllipsis();
+
         $('.shift select option[value=\'3\']').remove();
         var toolbar = $('#importModal');
 //        $toolbar.parent().after($toolbar);
@@ -295,6 +309,7 @@ var initDepdropMs;
 
         $(document).on('pjax:success', function () {
             setHeight();
+            applyEllipsis();
         });
 //window.setInterval(function(){setHeight();}, 1);
 
