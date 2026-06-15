@@ -26,10 +26,10 @@ class TblAlertTemplate extends \yii\db\ActiveRecord {
 
     /**
      * {@inheritdoc}
-     */
+     */ 
     public function rules() {
         return [
-            [['receiver_type', 'message', 'header_info', 'module_type', 'union_code'], 'string'],
+            [['receiver_type', 'message', 'header_info', 'module_type', 'union_code', 'department', 'report_path'], 'safe'],
             [['language_code'], 'integer'],
         ];
     }
@@ -46,6 +46,7 @@ class TblAlertTemplate extends \yii\db\ActiveRecord {
             'module_type' => 'Module Type',
             'language_code' => 'Language Code',
             'union_code' => 'Union Code',
+            'department' => 'Department',
         ];
     }
 
