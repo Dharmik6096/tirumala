@@ -2551,6 +2551,41 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
             ],
+            'farmer_sort_by' => [
+                'name' => 'farmer_sort_by',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'FarmerCode'), 2 => Yii::t('app', 'Shift'), 3 => Yii::t('app', 'FarmerCode Desc'), 4 => Yii::t('app', 'Shift Desc')],
+            ],
+            'farmer_status' => [
+                'name' => 'farmer_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'All'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Rejected')],
+            ],
+            'bank_account' => [
+                'name' => 'bank_account',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'All'), 1 => Yii::t('app', 'With Bank'), 2 => Yii::t('app', 'Without Bank')],
+            ],
+            'filter_by' => [
+                'name' => 'filter_by',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'Weight'), 1 => Yii::t('app', 'Fat'), 2 => Yii::t('app', 'Farmer')],
+            ],
+            'order_by' => [
+                'name' => 'order_by',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'Mandali Code'), 1 => Yii::t('app', 'Perc (%) Desc')],
+            ],
+            'from_validation_type' => [
+                'name' => 'from_validation_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'Is Greater Than'), 1 => Yii::t('app', 'Is Less Than')],
+            ],
+            'to_validation_type' => [
+                'name' => 'to_validation_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'Is Greater Than'), 1 => Yii::t('app', 'Is Less Than')],
+            ],
         ];
         return $records[$l];
     }

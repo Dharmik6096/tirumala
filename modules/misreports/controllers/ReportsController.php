@@ -2578,6 +2578,68 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'FarmerDeductionLedgerReport';
         return $this->actionIndex();
     }
+    public function actionMilkEditOnlineReport() {
+        $this->report = 'MilkEditOnlineReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerRequestStatusForVdcsReport() {
+        $this->report = 'FarmerRequestStatusForVdcsReport';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerPaymentRegisterReport() {
+        $this->report = 'FarmerPaymentRegisterReport';
+        return $this->actionIndex();
+    }
+
+
+
+
+
+
+    public function actionItemRateReport() {
+        $this->report = 'ItemRateReport';
+        return $this->actionIndex();
+    }
+    public function actionFatAndWeightDeviationReport() {
+        $this->report = 'FatAndWeightDeviationReport';
+        return $this->actionIndex();
+    }
+    public function actionManualCollectionDetailReport() {
+        $this->report = 'ManualCollectionDetailReport';
+        return $this->actionIndex();
+    }
+    public function actionUserAttendanceTransactionDetailReport() {
+        $this->report = 'UserAttendanceTransactionDetailReport';
+        return $this->actionIndex();
+    }
+    public function actionSocietyWiseToleranceReport() {
+        $this->report = 'SocietyWiseToleranceReport';
+        return $this->actionIndex();
+    }
+    public function actionFarmerWiseToleranceReport() {
+        $this->report = 'FarmerWiseToleranceReport';
+        return $this->actionIndex();
+    }
+    public function actionMilkEditForSlipReport() {
+        $this->report = 'MilkEditForSlipReport';
+        return $this->actionIndex();
+    }
+    public function actionMilkoScreenReport() {
+        $this->report = 'MilkoScreenReport';
+        return $this->actionIndex();
+    }
+    public function actionMilkoscreenAdultrationSummaryReport() {
+        $this->report = 'MilkoscreenAdultrationSummaryReport';
+        return $this->actionIndex();
+    }
+    public function actionUserAttendanceReport() {
+        $this->report = 'UserAttendanceReport';
+        return $this->actionIndex();
+    }public function actionUserAttendanceSummaryReport() {
+        $this->report = 'UserAttendanceSummaryReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -5755,7 +5817,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'CashBookReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
-                'sp_name' => '',
+                'sp_name' => 'mis_cashbook',
                 'scenario' => 'CashBookReport',
                 'title' => 'A - 106 - Cash Book Report',
                 'header_included' => TRUE,
@@ -5782,6 +5844,119 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'Farmer_Deduction_Ledger',
                 'scenario' => 'FarmerDeductionLedgerReport',
                 'title' => 'A - 111 - Farmer Deduction Ledger Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkEditOnlineReport' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,from_code:txt,to_code:txt,farmer_sort_by:static:farmer_sort_by,amount_variation:static:amount_variation',
+                'sp_name' => 'mis_milk_edit_online',
+                'scenario' => 'MilkEditOnlineReport',
+                'title' => 'M - 115 - Milk Edit Online Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerRequestStatusForVdcsReport' => [
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,farmer_status:static:farmer_status',
+                'sp_name' => 'mis_farmer_request_status_for_vdcs',
+                'scenario' => 'FarmerRequestStatusForVdcsReport',
+                'title' => 'M - 120 - Farmer Request Status For Vdcs Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerPaymentRegisterReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,search_type:static:search_type,from_code:txt,to_code:txt,from_date:string:from_shift,to_date:string:to_shift,ded_from_date:string,ded_to_date:string,report_member_type:static:report_member_type,farmer_type:static:farmer_type,bank_account:static:bank_account,only,consider_op_bal,show_report_in_single_row,consider_sample_milk,show_centralize_payment_only',
+                'sp_name' => 'mis_farmer_payment_register',
+                'multiple_sheet' => ['summary' => 'mis_farmer_payment_register_summary'],
+                'scenario' => 'FarmerPaymentRegisterReport',
+                'title' => 'S - 108 - Farmer Payment Register Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ItemRateReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,date:string',
+                'sp_name' => 'mis_item_rate',
+                'scenario' => 'ItemRateReport',
+                'title' => 'S - 109 - Item Rate Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FatAndWeightDeviationReport' => [
+                'param' => 'language_code,union_code,date:string:shift,from_soc:txt,to_soc:txt,milk_type_code,deviation_days:txt,report_deviation_type,deviation_qty:txt,deviation_fat:txt',
+                'sp_name' => '',
+                'scenario' => 'FatAndWeightDeviationReport',
+                'title' => 'SP - 107 - Fat and Weight Deviation Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'ManualCollectionDetailReport' => [
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,manual_type:static:manual_type',
+                'sp_name' => 'mis_manual_collection_detail',
+                'scenario' => 'ManualCollectionDetailReport',
+                'title' => 'S - 113 - Manual Collection Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'UserAttendanceTransactionDetailReport' => [
+                'param' => 'from_date:string,to_date:string,user_code',
+                'sp_name' => '',
+                'scenario' => 'UserAttendanceTransactionDetailReport',
+                'title' => 'APP - 104 - User Attendance Transaction Detail Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'SocietyWiseToleranceReport' => [
+                'param' => 'language_code,union_code,region_code:union_code:all,from_soc:txt,to_soc:txt,from_date:string,to_date:string,compare_from_date:string,compare_to_date:string,from_validation:txt,to_validation:txt,filter_by:static:filter_by,order_by:static:order_by,do_not_show_zero',
+                'sp_name' => 'mis_society_wise_tolerance',
+                'scenario' => 'SocietyWiseToleranceReport',
+                'title' => 'M - 108 - Society Wise Tolerance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'FarmerWiseToleranceReport' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,from_validation_type:static:from_validation_type,from_validation:txt,to_validation_type:static:to_validation_type,to_validation:txt,filter_by:static:filter_by,order_by:static:order_by,from_code:txt,to_code:txt,do_not_show_zero',
+                'sp_name' => '',
+                'scenario' => 'FarmerWiseToleranceReport',
+                'title' => 'M - 109 - Farmer Wise Tolerance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkEditForSlipReport' => [
+                'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,from_code:txt,to_code:txt,sort_by:static:sort_by,amount_variation:static:amount_variation',
+                'sp_name' => 'mis_milk_edit_for_slip',
+                'scenario' => 'MilkEditForSlipReport',
+                'title' => 'M - 114 - Milk Edit For Slip Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkoScreenReport' => [
+                'param' => 'language_code,union_code,region_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,member_types:static:member_types,from_code:txt,to_code:txt,sort_type:static:sort_type,show_milko_screen_sample',
+                'sp_name' => '',
+                'scenario' => 'MilkoScreenReport',
+                'title' => 'M - 118 - Milko Screen Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'MilkoscreenAdultrationSummaryReport' => [
+                'param' => 'language_code,union_code,from_soc:txt,to_soc:txt,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => '',
+                'scenario' => 'MilkoscreenAdultrationSummaryReport',
+                'title' => 'M - 119 - Milkoscreen Adultration Summary Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'UserAttendanceReport' => [
+                'param' => 'language_code,union_code,user_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'UserAttendanceReport',
+                'title' => 'APP - 102 - User Attendance Report',
+                'header_included' => TRUE,
+                'bkg_export' => TRUE
+            ],
+            'UserAttendanceSummaryReport' => [
+                'param' => 'language_code,union_code,user_code,from_date:string,to_date:string',
+                'sp_name' => '',
+                'scenario' => 'UserAttendanceSummaryReport',
+                'title' => 'APP - 103 - User Attendance Summary Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],
