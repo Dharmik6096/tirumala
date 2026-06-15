@@ -21,6 +21,10 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
 $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
 $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
+$model->ded_to_date = empty($model->ded_to_date) ? date('d-m-Y') : $model->ded_to_date;
+$model->ded_from_date = empty($model->ded_from_date) ? date('d-m-Y') : $model->ded_from_date;
+$model->compare_from_date = empty($model->compare_from_date) ? date('d-m-Y') : $model->compare_from_date;
+$model->compare_to_date = empty($model->compare_to_date) ? date('d-m-Y') : $model->compare_to_date;
 $model->f_spr_date = empty($model->f_spr_date) ? date('d-m-Y') : $model->f_spr_date;
 $model->t_spr_date = empty($model->t_spr_date) ? date('d-m-Y') : $model->t_spr_date;
 $model->f_cmpr_date = empty($model->f_cmpr_date) ? date('d-m-Y') : $model->f_cmpr_date;
@@ -31,7 +35,7 @@ $model->from_code = empty($model->from_code) ? 1 : $model->from_code;
 $toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport', 'MilkEditOnlineReport']) ? 99999 : 9999;
 $model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
-$model->to_soc = empty($model->to_soc) ? (in_array($model->scenario, ['FarmerRequestStatusForVdcsReport', 'SocietyWiseToleranceReport']) ? 99999 : 100) : $model->to_soc;
+$model->to_soc = empty($model->to_soc) ? (in_array($model->scenario, ['FarmerRequestStatusForVdcsReport', 'SocietyWiseToleranceReport', 'FatAndWeightDeviationReport']) ? 99999 : 100) : $model->to_soc;
 $model->from_validation = ($model->from_validation == '') ? -9999 : $model->from_validation;
 $model->to_validation = ($model->to_validation == '') ? 9999 : $model->to_validation;
 $model->report_deviation_type = empty($model->report_deviation_type) ? 0 : $model->report_deviation_type;
@@ -1270,6 +1274,14 @@ $('.mis_report_modal_toggle').on('click', function(){
         }
     }
 
+    function handleDeviationVisibility() {
+            var isVisible = $('#reportsmodel-report_deviation_type input:checked').val() === '1';
+            $('#reportsmodel-deviation_qty, #reportsmodel-deviation_fat').closest('.col-sm-6').toggle(isVisible);
+        }
+        if ($('#reportsmodel-report_deviation_type').length) {
+            handleDeviationVisibility();
+            $(document).on('change', '#reportsmodel-report_deviation_type input', handleDeviationVisibility);
+        }
     $(document).on('submit', '#report-form', function() {
         var labels = {};
         $(this).find('select, input[type=\"text\"], input[type=\"radio\"]:checked').each(function() {
