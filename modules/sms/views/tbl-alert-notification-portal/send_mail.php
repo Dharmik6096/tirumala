@@ -32,6 +32,9 @@ use yii\web\View;
                         <?= $form->field($model, 'header_info')->textInput(['readonly' => true]) ?>
                     </div>
                     <div class="col-sm-12">
+                        <?php
+                        $model->message = str_replace(['<br/>'], "\n", $model->message);
+                        ?>
                         <?= $form->field($model, 'message')->textarea(['readonly' => true]) ?>
                     </div>
                 </div>

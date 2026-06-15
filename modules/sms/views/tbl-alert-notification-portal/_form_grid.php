@@ -10,11 +10,10 @@ $attribute = [
     ['attribute' => 'receiver_detail', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }],
-    ['attribute' => 'message', 'contentOptions' => ['class' => 'is_ellipsis']],
+    ['attribute' => 'message', 'value' => function ($model) {
+            return str_replace('<br/>', "\n", $model->message);
+        }, 'contentOptions' => ['class' => 'is_ellipsis']],
     ['attribute' => 'header_info'],
-    ['attribute' => 'send_status', 'value' => function ($model) {
-            return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->send_status] : 'Pending';
-        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('send_status', $searchModel, 'send_status')],
     ['attribute' => 'module_type', 'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('module_type')['data'][$model->module_type]) ? Yii::$app->dropdown->getRecords('module_type')['data'][$model->module_type] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('module_type', $searchModel, 'module_type')],
