@@ -2592,11 +2592,6 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-
-
-
-
-
     public function actionItemRateReport() {
         $this->report = 'ItemRateReport';
         return $this->actionIndex();
@@ -5892,7 +5887,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,milk_type_code,manual_type:static:manual_type',
                 'sp_name' => 'mis_manual_collection_detail',
                 'scenario' => 'ManualCollectionDetailReport',
-                'title' => 'S - 113 - Manual Collection Detail Report',
+                'title' => 'SP - 113 - Manual Collection Detail Report',
                 'header_included' => TRUE,
                 'bkg_export' => TRUE
             ],

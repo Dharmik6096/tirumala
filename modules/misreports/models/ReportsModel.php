@@ -28,8 +28,8 @@ class ReportsModel extends Model {
     public function rules() {
         return [
             [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code', 'main_customer_type', 'transporter_code', 'vehicle_code', 'product_type', 'animal_type', 'no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'default', 'value' => 0],
-            [['from_code', 'from_soc'], 'default', 'value' => 1, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport', 'MilkRatePublishReport', 'FarmerWiseYearlyEditReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport']],
-            [['to_code'], 'default', 'value' => 9999, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'MilkEditReport', 'MilkPurchaseAnalysis', 'FarmerListReport', 'MilkCompare', 'SmsDetailReport', 'FarmerWiseYearlyEditReport']],
+            [['from_code', 'from_soc'], 'default', 'value' => 1, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport', 'MilkRatePublishReport', 'FarmerWiseYearlyEditReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport','MilkoScreenReport']],
+            [['to_code'], 'default', 'value' => 9999, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'MilkEditReport', 'MilkPurchaseAnalysis', 'FarmerListReport', 'MilkCompare', 'SmsDetailReport', 'FarmerWiseYearlyEditReport','MilkoScreenReport']],
             [['to_code'], 'default', 'value' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport', 'MilkEditOnlineReport']],
             [['to_soc'], 'default', 'value' => 100, 'on' => ['FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
             [['from_validation'], 'default', 'value' => -9999, 'on' => ['SocietyWiseToleranceReport']],
@@ -42,9 +42,9 @@ class ReportsModel extends Model {
                     return $model->member_types != 0;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-member_types').val() != 0;
-                }", 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'MilkRatePublishReport', 'FarmerWiseYearlyEditReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport']],
-            [['to_code'], 'number', 'max' => 9999, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'MilkEditReport', 'MilkPurchaseAnalysis', 'FarmerListReport', 'MilkCompare', 'SmsDetailReport', 'FarmerWiseYearlyEditReport']],
-            [['to_code', 'to_soc'], 'number', 'max' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport', 'FarmerRequestStatusForVdcsReport']],
+                }", 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'LocalSaleReport', 'MilkRateDetailReport', 'MilkEditReport', 'DateWiseMilkPurchaseSummary', 'MilkPurchaseAnalysis', 'FarmerListReport', 'FatWiseQtyAnalysis', 'MilkCompare', 'UnionWiseMessageDetailReport', 'SmsDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'MilkRatePublishReport', 'FarmerWiseYearlyEditReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'MilkoScreenReport']],
+            [['to_code'], 'number', 'max' => 9999, 'on' => ['MilkPurchaseRegisterReport', 'FarmerLedgerReport', 'MemberWiseSummaryReport', 'MilkEditReport', 'MilkPurchaseAnalysis', 'FarmerListReport', 'MilkCompare', 'SmsDetailReport', 'FarmerWiseYearlyEditReport', 'MilkoScreenReport']],
+            [['to_code', 'to_soc'], 'number', 'max' => 99999, 'on' => ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'FarmerListReport', 'MilkRatePublishReport', 'ManualCollectionSummaryReport', 'MilkEditForFarmerReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport', 'FarmerRequestStatusForVdcsReport', 'FatAndWeightDeviationReport']],
             [['from_soc'], 'number', 'min' => 1, 'on' => ['ManualCollectionSummaryReport', 'MilkEditForFarmerReport']],
             [['top'], 'number', 'min' => 1, 'max' => 50, 'on' => ['TopSocietyMilkCollectionReport', 'TopFarmerMilkCollectionReport', 'TopRegionsMilkCollectionReport']],
             [['no_of_farmer_edit', 'no_of_individual_farmer_edit'], 'number', 'min' => 0, 'on' => ['MilkEditForFarmerReport']],
@@ -231,12 +231,12 @@ class ReportsModel extends Model {
                     return $model->search_by == 1;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-search_by').val() == '1';
-                }", 'on' => ['MilkEditReport', 'MilkEditSummary', 'SocietyList', 'MilkEditOnlineReport']],
+                }", 'on' => ['MilkEditReport', 'MilkEditSummary', 'SocietyList', 'MilkEditOnlineReport', 'FarmerWiseToleranceReport', 'MilkEditForSlipReport']],
             [['region_code'], 'required', 'when' => function ($model) {
                     return $model->search_by == 2;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('#reportsmodel-search_by').val() == '2';
-                }", 'on' => ['MilkEditReport', 'MilkEditSummary', 'MilkEditOnlineReport']],
+                }", 'on' => ['MilkEditReport', 'MilkEditSummary', 'MilkEditOnlineReport', 'FarmerWiseToleranceReport', 'MilkEditForSlipReport']],
             [['language_code', 'union_code', 'region_code', 'search_type', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'from_code', 'to_code'], 'required', 'on' => ['DateWiseMilkPurchaseSummary']],
             [['language_code', 'union_code', 'dcs_code', 'date', 'shift_code', 'milk_type_code', 'member_types', 'from_code', 'to_code', 'report_sort_by', 'sort_direction'], 'required', 'on' => ['MilkPurchaseAnalysis']],
             [['language_code', 'union_code', 'from_soc', 'to_soc', 'report_member_type', 'member_types', 'from_code', 'to_code', 'farmer_type'], 'required', 'on' => ['FarmerListReport']],
@@ -302,21 +302,21 @@ class ReportsModel extends Model {
             [['language_code', 'union_code', 'dcs_code', 'from_date', 'to_date', 'item'], 'required', 'on' => ['StockLedgerReport', 'LedgerReport']],
             [['language_code', 'union_code', 'region_code', 'from_code', 'to_code', 'from_date', 'to_date'], 'required', 'on' => ['DateWiseCashBalanceReport']],
             [['language_code', 'union_code', 'dcs_code', 'from_code', 'to_code', 'from_date', 'to_date', 'item'], 'required', 'on' => ['FarmerDeductionLedgerReport']],
-            [['language_code', 'union_code', 'search_by', 'region_code', 'dcs_code','from_code', 'to_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'farmer_sort_by', 'amount_variation'], 'required', 'on' => ['MilkEditOnlineReport']],
+            [['language_code', 'union_code', 'search_by', 'from_code', 'to_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'farmer_sort_by', 'amount_variation'], 'required', 'on' => ['MilkEditOnlineReport']],
             [['language_code', 'union_code', 'from_soc', 'to_soc', 'farmer_status'], 'required', 'on' => ['FarmerRequestStatusForVdcsReport']],
             [['language_code', 'union_code', 'dcs_code', 'date'], 'required', 'on' => ['ItemRateReport']],
             [['language_code', 'union_code', 'date', 'shift', 'from_soc', 'to_soc', 'milk_type_code', 'deviation_days', 'report_deviation_type'], 'required', 'on' => ['FatAndWeightDeviationReport']],
             [['deviation_fat'], 'number', 'min' => 1, 'max' => 100, 'on' => ['FatAndWeightDeviationReport']],
             [['deviation_qty'], 'number', 'min' => 1, 'max' => 65365, 'on' => ['FatAndWeightDeviationReport']],
-            [['language_code', 'union_code', 'region_code', 'search_type', 'from_code', 'to_code', 'from_soc', 'to_soc', 'from_date', 'to_date', 'ded_from_date', 'ded_to_date', 'report_member_type', 'farmer_type', 'bank_account'], 'required', 'on' => ['FarmerPaymentRegisterReport']],
+            [['language_code', 'union_code', 'region_code', 'search_type', 'from_code', 'to_code', 'from_date', 'to_date', 'ded_from_date', 'ded_to_date', 'report_member_type', 'farmer_type', 'bank_account'], 'required', 'on' => ['FarmerPaymentRegisterReport']],
             [['language_code', 'union_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'milk_type_code', 'manual_type'], 'required', 'on' => ['ManualCollectionDetailReport']],
             [['from_date', 'to_date', 'user_code'], 'required', 'on' => ['UserAttendanceTransactionDetailReport']],
             [['language_code', 'union_code', 'region_code', 'from_soc', 'to_soc', 'from_date', 'to_date', 'compare_from_date', 'compare_to_date', 'from_validation', 'to_validation', 'filter_by', 'order_by'], 'required', 'on' => ['SocietyWiseToleranceReport']],
             [['from_validation', 'to_validation'], 'number', 'min' => -9999, 'max' => 9999, 'on' => ['SocietyWiseToleranceReport']],
-            [['language_code', 'union_code', 'search_by', 'region_code', 'dcs_code', 'from_soc', 'to_soc', 'from_date', 'to_date', 'compare_from_date', 'to_validation_type', 'from_validation_type', 'compare_to_date', 'from_validation', 'to_validation', 'filter_by', 'order_by'], 'required', 'on' => ['FarmerWiseToleranceReport']],
-            [['language_code', 'union_code', 'search_by', 'region_code', 'dcs_code', 'from_code', 'to_code', 'from_date', 'to_date', 'sort_by', 'amount_variation'], 'required', 'on' => ['MilkEditForSlipReport']],
-            [['language_code', 'region_code', 'dcs_code', 'from_date', 'to_date',  'from_shift', 'to_shift', 'milk_type', 'member_types', 'sort_type', 'show_milko_screen_sample'], 'required', 'on' => ['MilkoScreenReport']],
-            [['language_code', 'region_code', 'from_soc', 'to_soc', 'from_date', 'to_date',  'from_shift', 'to_shift'], 'required', 'on' => ['MilkoscreenAdultrationSummaryReport']],
+            [['language_code', 'union_code', 'search_by', 'from_date', 'from_shift', 'to_date', 'to_shift', 'to_validation_type', 'to_validation', 'from_validation_type', 'from_validation', 'from_code', 'to_code', 'filter_by', 'order_by'], 'required', 'on' => ['FarmerWiseToleranceReport']],
+            [['language_code', 'union_code', 'search_by', 'from_code', 'to_code', 'from_date', 'to_date', 'sort_by', 'amount_variation'], 'required', 'on' => ['MilkEditForSlipReport']],
+            [['language_code', 'region_code', 'from_date', 'to_date',  'from_shift', 'to_shift', 'milk_type_code', 'member_types', 'sort_type'], 'required', 'on' => ['MilkoScreenReport']],
+            [['language_code', 'from_soc', 'to_soc', 'from_date', 'to_date',  'from_shift', 'to_shift'], 'required', 'on' => ['MilkoscreenAdultrationSummaryReport']],
             [['language_code', 'union_code', 'from_date', 'to_date', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['UserAttendanceReport']],
             [['language_code', 'union_code', 'from_date', 'to_date', 'user_code', 'from_date', 'to_date'], 'required', 'on' => ['UserAttendanceSummaryReport']],
         ];
