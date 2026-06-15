@@ -28,10 +28,13 @@ $model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmp
 $model->from_time = empty($model->from_time) ? date('H:i') : $model->from_time;
 $model->to_time = empty($model->to_time) ? date('H:i') : $model->to_time;
 $model->from_code = empty($model->from_code) ? 1 : $model->from_code;
-$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport']) ? 99999 : 9999;
+$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport', 'MilkEditOnlineReport']) ? 99999 : 9999;
 $model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
-$model->to_soc = empty($model->to_soc) ? 100 : $model->to_soc;
+$model->to_soc = empty($model->to_soc) ? (in_array($model->scenario, ['FarmerRequestStatusForVdcsReport', 'SocietyWiseToleranceReport']) ? 99999 : 100) : $model->to_soc;
+$model->from_validation = ($model->from_validation == '') ? -9999 : $model->from_validation;
+$model->to_validation = ($model->to_validation == '') ? 9999 : $model->to_validation;
+$model->report_deviation_type = empty($model->report_deviation_type) ? 0 : $model->report_deviation_type;
 $model->deviation_type = empty($model->deviation_type) ? '0' : $model->deviation_type;
 $model->top = empty($model->top) ? 10 : $model->top;
 $model->storage_type = empty($model->storage_type) ? 0 : $model->storage_type;
@@ -262,6 +265,12 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 $options += ['type' => 'number'];
                                             } else if ($field == 'deviation_value') {
                                                 $options += ['type' => 'number'];
+                                            } else if ($field == 'deviation_fat') {
+                                                $options += ['type' => 'number', 'min' => 0, 'max' => 100];
+                                            } else if ($field == 'deviation_qty') {
+                                                $options += ['type' => 'number', 'min' => 0, 'max' => 65365];
+                                             } else if ($field == 'from_validation' || $field == 'to_validation') {
+                                                $options += ['type' => 'number', 'min' => -9999, 'max' => 9999];
                                             }
                                             ?>
                                             <div class="<?= $class ?>">
@@ -377,9 +386,9 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             <?php
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type', 'transaction_type'))) {
-                                            if (isset($value_array[1]) && $value_array[1] == 'static') {
-                                                $static_class = 'col-sm-6 mb15';
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file', 'top_collection_on', 'param_type', 'login_type', 'current_status', 'milk_sale_on', 'billing_on', 'dispatch_type', 'is_groupbyserial', 'p_product_type', 'master_type', 'sort_type', 'member_types', 'payment_method', 'report_rate_type', 'amount_variation', 'sort_by', 'edit_type', 'search_by', 'search_type', 'report_sort_by', 'sort_direction', 'farmer_type', 'report_member_type', 'filter_type', 'milk_sort_by', 'society_type', 'status_type', 'farmer_sort_type', 'registered_type', 'soc_type', 'report_status_type', 'sms_type', 'search_by_soc', 'report_gender', 'manual_type', 'report_app_type', 'region_type', 'generation_type', 'transaction_type', 'farmer_sort_by', 'farmer_status', 'bank_account', 'filter_by', 'order_by', 'from_validation_type', 'to_validation_type'))) {
+                                            if (isset($value_array[1], $value_array[2]) && $value_array[1] == 'static') {
+                                               $static_class = 'col-sm-6 mb15';
                                                 if ($value == 'region_type') {
                                                     $static_class .= ' val_region_code';
                                                 }
@@ -685,6 +694,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             'storage_type' => [0 => 'BMC', 1 => 'CAN'],
                                             'deviation_type' => ['0' => 'All', '1' => 'Deviation qty', '2' => 'Deviation fat'],
                                             'for' => ['0' => 'Combine', '1' => 'Individual'],
+                                            'report_deviation_type' => ['0' => 'All', '1' => 'Only Deviation'],
                                         ];
                                         if (array_key_exists($value, $radioFieldsConfig)) {
                                             $radioColClass = ($value == 'language_code') ? 'col-sm-12' : 'col-sm-6';
@@ -706,7 +716,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val', 'balance_separate', 'zero_bal_acc_show', 'show_seprate_acc_head', 'show_detail', 'is_date_wise_group'])) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val', 'balance_separate', 'zero_bal_acc_show', 'show_seprate_acc_head', 'show_detail', 'is_date_wise_group', 'only', 'consider_op_bal', 'show_report_in_single_row', 'consider_sample_milk', 'show_centralize_payment_only', 'do_not_show_zero', 'show_milko_screen_sample'])) {
                                             ?>
                                             <div class="col-sm-6 mt15 mb-5 checkbox_padding_0">
                                                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, $value); ?>
