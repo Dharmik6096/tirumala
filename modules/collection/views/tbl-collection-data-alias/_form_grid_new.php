@@ -51,7 +51,7 @@
                 return Yii::$app->general->getCustomer($m, $m->customer_type);
             }, 'filter' => false, 'visible' => !empty($showType) ? TRUE : FALSE],
             ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($m) {
-                return substr($m->member_code, -4);
+                return !empty($m->member_code) ? substr($m->member_code, -4) : '';
             }, 'visible' => !empty($showFarmer) ? TRUE : FALSE, 'filter' => false],
             ['attribute' => 'member_code', 'value' => function($m) {
                 return Yii::$app->general->getforeignkey($m->memberCode, 'member_name');
