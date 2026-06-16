@@ -42,10 +42,11 @@ class TblRoleActionMapping extends \yii\db\ActiveRecord {
     }
 
     public function getExistMapingMenu($id) {
-        $query = $this->find()
+        $codes = $this->find()
+                ->select(['action_code'])
                 ->where(['role_code' => $id])
-                ->all();
-        return ArrayHelper::map($query, 'action_code', 'action_code');
+                ->column();
+        return array_combine($codes, $codes);
     }
 
     public function getExistMappedmenus() {
