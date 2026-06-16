@@ -2597,6 +2597,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Union Wise'), 1 => Yii::t('app', 'Dcs Wise'), 2 => Yii::t('app', 'Bmc Wise')]
             ],
+            'module_type' => [
+                'name' => 'module_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['tbl_milk_vehicle_entry_transaction' => Yii::t('app', 'Milk Receipt'), 'tbl_raw_fg_material_receipt' => Yii::t('app', 'Material Receipt')],
+            ],
         ];
         return $records[$l];
     }
