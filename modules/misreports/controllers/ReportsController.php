@@ -5909,7 +5909,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'UserAttendanceTransactionDetailReport' => [
                 'param' => 'from_date:string,to_date:string,user_code',
-                'sp_name' => '',
+                'sp_name' => 'mis_user_attendance_transaction_detail',
                 'scenario' => 'UserAttendanceTransactionDetailReport',
                 'title' => 'APP - 104 - User Attendance Transaction Detail Report',
                 'header_included' => TRUE,
@@ -5925,7 +5925,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'FarmerWiseToleranceReport' => [
                 'param' => 'language_code,union_code,search_by:static:search_by,region_code:union_code,dcs_code:union_code,from_date:string:from_shift,to_date:string:to_shift,from_validation_type:static:from_validation_type,from_validation:txt,to_validation_type:static:to_validation_type,to_validation:txt,filter_by:static:filter_by,order_by:static:order_by,from_code:txt,to_code:txt,do_not_show_zero',
-                'sp_name' => '',
+                'sp_name' => 'mis_farmer_wise_tolerance',
                 'scenario' => 'FarmerWiseToleranceReport',
                 'title' => 'M - 109 - Farmer Wise Tolerance Report',
                 'header_included' => TRUE,

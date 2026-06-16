@@ -100,7 +100,7 @@ use app\modules\details\models\TblContactDetails;
  */
 class TblMember extends ChildModel {
 
-    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code;
+    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code, $is_milk_machine, $is_piyet_land, $is_chaf_cutter, $is_toilet;
     public $operation, $verifie_for, $file_name, $dcs_ref_code;
     public $check_is_dcs_member = 1;
     public $import_eipl_code, $import_union_code, $special_code;
@@ -136,7 +136,7 @@ class TblMember extends ChildModel {
                 [['email'], 'email', 'except' => ['androidsync', 'specialCodeImportCsv']],
                 [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string', 'except' => ['androidsync', 'verification', 'specialCodeImportCsv']],
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync', 'specialCodeImportCsv']],
-                [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name', 'max_allowed_qty', 'response_datetime', 'rate_class', 'operation', 'is_verified', 'is_contact_verified', 'file_name', 'vendor_code', 'bank_remarks', 'contact_remarks', 'sap_farmer_code', 'latitude', 'longitude', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'application_no', 'emilk_sync_status', 'emilk_sync_timestamp', 'is_kyc_verified', 'reference_id', 'name_at_bank', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address', 'beneficiary_id', 'land', 'land_type', 'farmer_type', 'is_educated', 'is_cooking_gas', 'marital_status', 'registration_no'], 'safe'],
+                [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name', 'max_allowed_qty', 'response_datetime', 'rate_class', 'operation', 'is_verified', 'is_contact_verified', 'file_name', 'vendor_code', 'bank_remarks', 'contact_remarks', 'sap_farmer_code', 'latitude', 'longitude', 'aadhaar_card_address', 'is_email_verify', 'email_relation', 'member_identity_no', 'applicant_relation', 'application_no', 'emilk_sync_status', 'emilk_sync_timestamp', 'is_kyc_verified', 'reference_id', 'name_at_bank', 'city', 'branch', 'micr', 'name_match_result', 'name_match_score', 'account_status', 'account_status_code', 'utr', 'ifsc_code', 'has_available_branch_info', 'branch_address', 'beneficiary_id', 'land', 'land_type', 'farmer_type', 'is_educated', 'is_cooking_gas', 'marital_status', 'registration_no', 'is_milk_machine', 'is_piyet_land', 'is_chaf_cutter', 'is_toilet'], 'safe'],
                 [['sap_farmer_code'], 'unique', 'targetAttribute' => ['sap_farmer_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification', 'specialCodeImportCsv']],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync', 'specialCodeImportCsv', 'kycVerify']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
@@ -296,6 +296,11 @@ class TblMember extends ChildModel {
             'region_code' => Yii::t('app', 'Region Name'),
             'dcs_ref_code' => Yii::t('app', 'Society Ref Code'),
             'x_col5' => Yii::t('app', 'Special Code'),
+            'is_milk_machine' => Yii::t('app', 'Is Milk Machine'),
+            'is_piyet_land' => Yii::t('app', 'Is Piyet Land'),
+            'is_chaf_cutter' => Yii::t('app', 'Is Chaf Cutter'),
+            'is_toilet' => Yii::t('app', 'Is Toilet'),
+
         ];
     }
 
