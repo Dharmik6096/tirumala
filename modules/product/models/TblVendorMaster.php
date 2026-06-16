@@ -47,7 +47,7 @@ class TblVendorMaster extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
             [['vendor_code', 'vendor_name', 'is_active'], 'required'],
-            [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active'], 'safe'],
+            [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active', 'local_name'], 'safe'],
             [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
             [['vendor_code'], 'integer'],
             [['pan_no'], function ($attribute, $params) {
@@ -78,6 +78,9 @@ class TblVendorMaster extends \app\models\ChildModel {
             [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            [['local_name'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['ifsc'], 'setBankDetail', 'when' => function ($model) {
                     return !empty($model->ifsc);
                 }, 'on' => ['importCsv']],

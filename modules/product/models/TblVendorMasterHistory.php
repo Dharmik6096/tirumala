@@ -52,7 +52,7 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
             [['pan_no', 'aadhaar_no'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
-            [['operation_type', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active'], 'safe'],
+            [['operation_type', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active', 'local_name'], 'safe'],
         ];
     }
 

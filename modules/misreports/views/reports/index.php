@@ -27,7 +27,7 @@ $model->t_cmpr_date = empty($model->t_cmpr_date) ? date('d-m-Y') : $model->t_cmp
 $model->from_time = empty($model->from_time) ? date('H:i') : $model->from_time;
 $model->to_time = empty($model->to_time) ? date('H:i') : $model->to_time;
 $model->from_code = empty($model->from_code) ? 1 : $model->from_code;
-$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport']) ? 99999 : 9999;
+$toCodeDefault = in_array($model->scenario, ['LocalSaleReport', 'MilkRateDetailReport', 'DateWiseMilkPurchaseSummary', 'FatWiseQtyAnalysis', 'UnionWiseMessageDetailReport', 'SocietyWiseSummaryReport', 'FarmerNotSubmittingMilkReport', 'TrucksheetComparisionReport', 'TrucksheetDetailReport', 'DateWiseCashBalanceReport']) ? 99999 : 9999;
 $model->to_code = empty($model->to_code) ? $toCodeDefault : $model->to_code;
 $model->from_soc = empty($model->from_soc) ? 1 : $model->from_soc;
 $model->to_soc = empty($model->to_soc) ? 100 : $model->to_soc;
@@ -36,6 +36,7 @@ $model->top = empty($model->top) ? 10 : $model->top;
 $model->storage_type = empty($model->storage_type) ? 0 : $model->storage_type;
 $model->deviation_days = empty($model->deviation_days) ? 1 : $model->deviation_days;
 $model->generation_type = empty($model->generation_type) ? 1 : $model->generation_type;
+$model->for = empty($model->for) ? '0' : $model->for;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
@@ -43,8 +44,15 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
 
-    <?php if (!empty($result) && !empty($data['header_included']) && $data['header_included'] == true) { ?>
-        <div class="text-center report-header-info mt23 mb15">
+    <?php if (!empty($result) && !empty($data['header_included']) && $data['header_included'] == true) { 
+        $username = (!empty(Yii::$app->user->identity->username)) ? Yii::$app->general->getUserName(Yii::$app->user->identity->username) : 'Not Available';
+        $currentDateTime = date('d-m-Y H:i:s');
+        ?>
+        <div class="text-center report-header-info mt23 mb15 report-grid">
+            <div class="report-export-info">
+                <div class="export-username"><b>Username : <?= Html::encode($username) ?></b></div>
+                <div class="export-printed"><b>Printed on : <?= Html::encode($currentDateTime) ?></b></div>
+            </div>
             <h3 class="label_heading mt3"><b><?= Html::encode($companyName) ?></b></h3>
             <h4 class="text-info mt3"><b><?= Yii::t('app', $data['title']) ?></b></h4>
             <p class="search-params mt3"><b><?= Html::encode($searchParams) ?></b></p>
@@ -675,6 +683,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             'language_code' => [0 => 'English', 1 => 'Gujarati'],
                                             'storage_type' => [0 => 'BMC', 1 => 'CAN'],
                                             'deviation_type' => ['0' => 'All', '1' => 'Deviation qty', '2' => 'Deviation fat'],
+                                            'for' => ['0' => 'Combine', '1' => 'Individual'],
                                         ];
                                         if (array_key_exists($value, $radioFieldsConfig)) {
                                             $radioColClass = ($value == 'language_code') ? 'col-sm-12' : 'col-sm-6';
@@ -696,7 +705,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val'])) {
+                                        if (in_array($value, ['is_show_zero_val', 'is_group_by_society', 'last_rate', 'group_by_region', 'show_only_received_data', 'show_val', 'balance_separate', 'zero_bal_acc_show', 'show_seprate_acc_head', 'show_detail', 'is_date_wise_group'])) {
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value, ['checkboxTemplate' => "<div class='checkbox mt-25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
@@ -708,6 +717,29 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= $form->field($model, $value)->widget(MaskedInput::className(), ['mask' => '99:99']); ?>
+                                            </div>
+                                            <?php
+                                        }
+
+                                        if (in_array($value, array('purchase_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('purchase_ledger', $model, $form, '', $model->getAttributeLabel('purchase_type'), false, 'purchase_type', TRUE); ?>
+                                            </div>
+                                            <?php
+                                        }
+
+                                        if (in_array($value, array('sales_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('sales_ledger', $model, $form, '', $model->getAttributeLabel('sales_type'), false, 'sales_type', TRUE); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('item'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('item', $model, $form, '', $model->getAttributeLabel('item'), false, 'item', TRUE); ?>
                                             </div>
                                             <?php
                                         }
@@ -1192,6 +1224,16 @@ $('.mis_report_modal_toggle').on('click', function(){
             $('#reportsmodel-from_time, #reportsmodel-to_time').prop('readonly', true);
         }
         var region_code = $('#reportsmodel-region_code').val();
+        if('" . $report . "'=='DateWiseCashBalanceReport' && region_code === '0') {
+            $('.val_from_code').hide();
+            $('.val_to_code').hide();
+            $('#reportsmodel-from_code').val('1');
+            $('#reportsmodel-to_code').val('9999');
+        } else {
+            $('.val_from_code').show();
+            $('.val_to_code').show();
+        }
+  
         if(region_code != '0' && region_code != '' && region_code != null){
             $('.val_dcs_code').hide();
             resetField('.val_dcs_code select');

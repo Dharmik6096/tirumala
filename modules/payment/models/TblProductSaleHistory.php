@@ -68,7 +68,7 @@ class TblProductSaleHistory extends \yii\db\ActiveRecord {
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['operation_type'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'voucher_code'], 'safe'],
         ];
     }
 
@@ -112,6 +112,7 @@ class TblProductSaleHistory extends \yii\db\ActiveRecord {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'voucher_code' => Yii::t('app', 'Voucher Code'),
         ];
     }
 
