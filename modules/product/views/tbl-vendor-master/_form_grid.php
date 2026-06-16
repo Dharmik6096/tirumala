@@ -20,6 +20,7 @@ $attribute = [
     ['attribute' => 'adhar_no', 'visible' => true, 'filter' => false],
     ['attribute' => 'pan_no', 'visible' => true, 'filter' => false],
     ['attribute' => 'vendor_type', 'filter' => true],
+    ['attribute' => 'local_name'],
     ['attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
         'value' => function($model) {
             return Yii::$app->general->getRecordStatus($model->is_active);

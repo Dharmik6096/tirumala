@@ -165,7 +165,10 @@ $setProductRateBatchWise = ($batchNoWiseInventory == 1 && $batchNoWiseProductRat
                 </div>  
                 <div class="col-sm-2 dedStartDate reset_field">
                     <?= Yii::$app->controls->date($model, $form, 'deduction_start_date', '', date('Y-m-d'), false, false); ?>
-                </div>  
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'voucher_code')->textInput() ?>
+                </div>
                 <?php if ($cashSale) { ?>
                     <div class="col-sm-1 reset_field">
                         <?= $form->field($detailModel, 'transaction_no')->textInput() ?>

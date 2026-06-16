@@ -20,9 +20,18 @@ var exportThisWithParameter = (function () {
             var cName = $reportHeader.find('.label_heading').text().trim();
             var title = $reportHeader.find('.text-info').text().trim();
             var params = $reportHeader.find('.search-params').text().trim();
-
-            if (cName) {
-                headerHtml += '<tr><th colspan="' + colspan + '" style="text-align:center; font-size:19px; font-weight:bold;">' + cName + '</th></tr>';
+            var expUser = $reportHeader.find('.export-username').text().trim();
+            var expPrint = $reportHeader.find('.export-printed').text().trim();
+            var col1 = colspan > 1 ? colspan - 1 : 1;
+            var col2 = 1;
+            if (cName || expUser || expPrint) {
+                headerHtml += '<tr>';
+                headerHtml += '<th colspan="' + col1 + '" rowspan="2" style="text-align:center; vertical-align:middle; font-size:19px; font-weight:bold;">' + (cName ? cName : '') + '</th>';
+                headerHtml += '<td colspan="' + col2 + '"><b>' + (expUser ? expUser : '') + '</b></td>';
+                headerHtml += '</tr>';
+                headerHtml += '<tr>';
+                headerHtml += '<td colspan="' + col2 + '"><b>' + (expPrint ? expPrint : '') + '</b></td>';
+                headerHtml += '</tr>';
             }
             if (title) {
                 headerHtml += '<tr><th colspan="' + colspan + '" style="text-align:center; font-size:16px; font-weight:bold;">' + title + '</th></tr>';

@@ -16,6 +16,7 @@ $attribute = [
         }, 'vAlign' => 'middle'],
         ['attribute' => 'grn_no', 'vAlign' => 'middle'],
         ['attribute' => 'challan_no', 'vAlign' => 'middle'],
+        ['attribute' => 'bill_no', 'vAlign' => 'middle'],
         [
         'attribute' => 'grn_date', 'vAlign' => 'middle',
         'filterType' => GridView::FILTER_DATE,

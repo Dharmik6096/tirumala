@@ -168,7 +168,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll', 'ho_sync_create', 'importApproval', 'ho_sync_update', 'ho_sync_delete']],
                 [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
                 [['antibiotic_sms_sent'], 'default', 'value' => 0],
-                [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading'], 'safe'],
+                [['scheme_rate', 'scheme_rate_code', 'actual_rate', 'other_reading', 'voucher_code'], 'safe'],
                 [['qty'], 'qtyValidate', 'on' => ['create', 'update', 'ho_sync_create', 'ho_sync_update']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'date_time_of_collection', 'milk_type_code', 'shift_code', 'dcs_code', 'fat', 'snf', 'bmc_code', 'qty', 'milk_quality_type_code', 'amount', 'member_code'], 'required', 'on' => ['ho_sync_create']],
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'on' => ['ho_sync_create']],

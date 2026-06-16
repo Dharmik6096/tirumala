@@ -142,7 +142,12 @@ $this->title = Yii::$app->label->title('view', 'Product Sales');
                                 'attribute' => 'deduction_start_date',
                                 'format' => 'html',
                                 'value' => !empty($model->deduction_start_date) ? date('d-m-Y', strtotime($model->deduction_start_date)) : date('d-m-Y', strtotime($model->invoice_date)),
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                    'attribute' => 'voucher_code',
+                                    'label' => Yii::t('app', 'Voucher Code'),
+                                    'valueColOptions' => ['style' => 'width:30%']
                             ],
                           
                         ],

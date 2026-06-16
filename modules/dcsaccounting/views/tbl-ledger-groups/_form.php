@@ -27,6 +27,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'ref_code')->textInput() ?>
     </div>
+    <div class="col-sm-2 mt10">
+        <?= $form->field($model, 'is_cash', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>

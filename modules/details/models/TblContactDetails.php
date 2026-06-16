@@ -40,7 +40,7 @@ class TblContactDetails extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
                 [['detail_code'], 'required'],
-                [['detail_code'], 'required', 'on' => ['additional']],
+                [['detail_code'], 'required', 'on' => ['additional','androidsync']],
                 [['detail_code'], 'required', 'except' => ['additional']],
                 [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
                 [['detail_code', 'mobile_no'], 'integer'],
@@ -55,7 +55,7 @@ class TblContactDetails extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             // [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['module_name', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code', 'from_date', 'to_date', 'primary_parent', 'secondary_parent'], 'safe'],
+                [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc', 'union_code', 'from_date', 'to_date', 'primary_parent', 'secondary_parent', 'x_col1', 'x_col2', 'x_col3'], 'safe'],
                 [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],

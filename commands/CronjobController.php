@@ -9,6 +9,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use yii\helpers\Url;
 use Jaspersoft\Client\Client;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class CronjobController extends \yii\console\Controller {
 
@@ -141,25 +143,44 @@ class CronjobController extends \yii\console\Controller {
 
         $header_info = !empty($model->search_param) ? json_decode($model->search_param, true) : [];
         $header_included = !empty($header_info['header_included']) ? $header_info['header_included'] : false;
+        $username = !empty($header_info['username']) ? $header_info['username'] : 'Not Available';
+        $PrintedOnDateTime = date('d-m-Y H:i:s');
 
         $header_rows = 1;
         if ($header_included) {
             $colCount = count($file_header);
-            $lastCol = ($colCount > 0) ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colCount) : 'A';
-            $header_rows = 4;
+            $lastCol = ($colCount > 0) ? Coordinate::stringFromColumnIndex($colCount) : 'A';
+            $header_rows = 5;
             $companyName = isset($header_info['organization_name']) ? $header_info['organization_name'] : 'Everest Instruments Pvt. Ltd.';
             $reportTitle = $model->report_title;
             $searchParams = isset($header_info['search_params']) ? $header_info['search_params'] : '';
 
+            $lastColBefore = ($colCount > 1) ? Coordinate::stringFromColumnIndex($colCount - 1) : 'A';
             $customWorksheet->setCellValue('A1', $companyName);
-            $customWorksheet->setCellValue('A2', $reportTitle);
-            $customWorksheet->setCellValue('A3', $searchParams);
-            $customWorksheet->mergeCells("A1:{$lastCol}1");
-            $customWorksheet->mergeCells("A2:{$lastCol}2");
+            $customWorksheet->setCellValue('A3', $reportTitle);
+            $customWorksheet->setCellValue('A4', $searchParams);
+            $customWorksheet->setCellValue($lastCol . '1', 'Username : ' . $username);
+            $customWorksheet->setCellValue($lastCol . '2', 'Printed on : ' . $PrintedOnDateTime);
+
+            $customWorksheet->mergeCells("A1:{$lastColBefore}2");
             $customWorksheet->mergeCells("A3:{$lastCol}3");
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getFont()->setBold(true);
-            $customWorksheet->getStyle("A1:{$lastCol}2")->getFont()->setSize(14);
-            $customWorksheet->getStyle("A1:{$lastCol}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->mergeCells("A4:{$lastCol}4");
+
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A1:{$lastColBefore}2")->getFont()->setSize(14);
+            $customWorksheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $customWorksheet->getStyle('A1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+            $customWorksheet->getStyle("A3:{$lastCol}4")->getFont()->setBold(true);
+            $customWorksheet->getStyle("A3:{$lastCol}3")->getFont()->setSize(14);
+            $customWorksheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setBold(true);
+            $customWorksheet->getStyle($lastCol . '1:' . $lastCol . '2')->getFont()->setSize(10);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $customWorksheet->getStyle($lastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+            $customWorksheet->getStyle($lastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         }
 
         $customWorksheet->fromArray($file_header, NULL, 'A' . $header_rows);
@@ -185,6 +206,64 @@ class CronjobController extends \yii\console\Controller {
             $a++;
         }
         //  var_dump(date('YmdHis') . 'report_txn_log_id=' . $this->model->report_txn_log_id . 'MIS SaveExcel excel Data written');
+        
+        $multiple_sheet = !empty($header_info['multiple_sheet']) ? $header_info['multiple_sheet'] : null;
+        if (!empty($multiple_sheet)) {
+            $controls = json_decode($model->input_param, TRUE);
+            foreach ($multiple_sheet as $new_sheet_name => $new_sp_name) {
+                $newsheet = $objPHPExcel->createSheet($sheet_no);
+                $newsheet->setTitle($new_sheet_name);
+                $newoutput = \Yii::$app->general->getSpData($new_sp_name, $controls);
+                $new_file_header = !empty($newoutput) ? array_keys($newoutput[0]) : [];
+                foreach ($new_file_header as $key => $value) {
+                    $new_file_header[$key] = \Yii::t('app', $value);
+                }
+                
+                $new_header_rows = 1;
+                if ($header_included) {
+                    $newColCount = count($new_file_header);
+                    $newLastCol = ($newColCount > 0) ? Coordinate::stringFromColumnIndex($newColCount) : 'A';
+                    $new_header_rows = 5;
+                    $newLastColBefore = ($newColCount > 1) ? Coordinate::stringFromColumnIndex($newColCount - 1) : 'A';
+
+                    $newsheet->setCellValue('A1', isset($companyName) ? $companyName : '');
+                    $newsheet->setCellValue('A3', isset($reportTitle) ? $reportTitle : '');
+                    $newsheet->setCellValue('A4', isset($searchParams) ? $searchParams : '');
+                    $newsheet->setCellValue($newLastCol . '1', 'Username : ' . $username);
+                    $newsheet->setCellValue($newLastCol . '2', 'Printed on : ' . $PrintedOnDateTime);
+
+                    $newsheet->mergeCells("A1:{$newLastColBefore}2");
+                    $newsheet->mergeCells("A3:{$newLastCol}3");
+                    $newsheet->mergeCells("A4:{$newLastCol}4");
+
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setBold(true);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getFont()->setSize(14);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $newsheet->getStyle("A1:{$newLastColBefore}2")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getFont()->setBold(true);
+                    $newsheet->getStyle("A3:{$newLastCol}3")->getFont()->setSize(14);
+                    $newsheet->getStyle("A3:{$newLastCol}4")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setBold(true);
+                    $newsheet->getStyle($newLastCol . '1:' . $newLastCol . '2')->getFont()->setSize(10);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $newsheet->getStyle($newLastCol . '1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                    $newsheet->getStyle($newLastCol . '2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                }
+
+                $newsheet->fromArray($new_file_header, NULL, 'A' . $new_header_rows);
+                if (!empty($newoutput)) {
+                    $newsheet->fromArray($newoutput, NULL, 'A' . ($new_header_rows + 1));
+                }
+
+                if ($header_included && isset($newLastCol)) {
+                    $newsheet->getStyle("A{$new_header_rows}:{$newLastCol}{$new_header_rows}")->getFont()->setBold(true);
+                }
+                $sheet_no++;
+            }
+        }
         //  $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $labelT = date('YmdHis') . '_' . $model->user_code . '_' . $model->report_txn_log_id . '_' . str_replace('/', '_', $model->report_title);
         $fileName = $labelT . '.' . $header['extension'];

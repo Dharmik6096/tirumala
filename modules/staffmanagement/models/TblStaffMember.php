@@ -121,7 +121,7 @@ class TblStaffMember extends \app\models\ChildModel {
         }, 'on' => 'importCsv'],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'district_code', 'sub_district_code', 'hamlet_code', 'state_code', 'village_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'except' => ['importCsv']],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'hamlet_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'on' => ['importCsv']],
-            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no', 'approved_date', 'salary', 'member_code'], 'safe'],
+            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no', 'approved_date', 'salary', 'member_code', 'is_committee', 'is_disabled', 'is_trained', 'nominee_name', 'nominee_relation', 'guarantor_name', 'guarantor_mobile', 'pf_loan_amount', 'pf_amount'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'designation_code', 'gender_code'], 'integer'],
             [['bank_account_no'], 'string', 'max' => 20],
             [['aadhar_card_no'], 'string', 'max' => 16],
