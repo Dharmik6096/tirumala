@@ -91,7 +91,11 @@
             ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
             ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
             ['attribute' => 'created_by', 'value' => function($m) {
-                return Yii::$app->general->getforeignkey($m->createdBy, 'name');
+                $createdBy = $m->createdBy;
+                if (!empty($createdBy)) {
+                    return !empty($createdBy->contact_person) ? $createdBy->contact_person : $createdBy->firstname;
+                }
+                return null;
             }, 'filter' => FALSE],
             ['attribute' => 'error_desc', 'filter' => false],
         ];

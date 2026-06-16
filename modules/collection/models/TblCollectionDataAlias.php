@@ -13,10 +13,10 @@ use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
+use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\syncutility\models\TblSentbox;
-use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_collection_data_alias".
@@ -455,7 +455,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     }
 
     public function getCreatedBy() {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'created_by']);
     }
 
     public function afterSave($insert, $changedAttributes) {

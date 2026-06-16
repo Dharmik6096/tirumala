@@ -224,4 +224,17 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         ]);
     }
 
+    public function actionComplainActivityAjax($id) {
+        $manualCollectionModel = $this->findModel($id);
+        $manualCollectionSearchModel = new TblAllowManualCollectionRangeSearch();
+        $manualCollectionSearchModel->dcs_code = $manualCollectionModel->dcs_code;
+        $manualCollectionSearchModel->from_date = date('Y-m-d H:i:s', strtotime('-2 months'));
+        $manualCollectionSearchModel->to_date = date('Y-m-d H:i:s');
+        $dataProvider = $manualCollectionSearchModel->search(Yii::$app->request->queryParams, false, false, true);
+        return $this->renderAjax('_complaint_activity', [
+                    'model' => $manualCollectionModel,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $manualCollectionSearchModel,
+        ]);
+    }
 }

@@ -27,7 +27,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
                 [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'qlty_time', 'qty_time', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'date_time_of_testing', 'vehicle_no', 'route_arrival_time', 'challan_no', 'destination_code', 'vehicle_in_time', 'vehicle_out_time', 'old_milk_type_code', 'old_milk_quality_type_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'temperature', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount', 'approved_at', 'approved_by', 'approval_status', 'vehicle_code', 'group_by'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalCollection']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalDispatch']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalQtyImport']],
         ];
@@ -79,8 +79,9 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
             'tbl_collection_data_alias.union_code' => $this->union_code,
             'tbl_collection_data_alias.plant_code' => $this->plant_code,
             'tbl_collection_data_alias.mcc_plant_code' => $this->mcc_plant_code,
-            'tbl_collection_data_alias.bmc_code' => $this->bmc_code,
             'tbl_collection_data_alias.table_name' => $this->table_name]);
+
+        $query->andFilterWhere(['bmc_code' => $this->bmc_code]);
 
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
