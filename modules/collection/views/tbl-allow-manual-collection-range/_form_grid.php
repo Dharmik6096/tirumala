@@ -74,6 +74,13 @@ $attribute = [
         ['attribute' => 'remark', 'filter' => false],
         ['attribute' => 'originating_org_type', 'filter' => false],
         ['attribute' => 'action_perform', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('action_perform', $searchModel, 'action_perform'),],
+        ['attribute' => 'created_by', 'value' => function($m) {
+            $createdBy = $m->createdBy;
+            if (!empty($createdBy)) {
+                return !empty($createdBy->contact_person) ? $createdBy->contact_person : $createdBy->firstname;
+            }
+            return null;
+        }, 'filter' => FALSE],
 ];
 
 $grid_option = [

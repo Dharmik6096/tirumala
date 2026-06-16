@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\details\models\TblContactDetails;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
@@ -341,4 +342,7 @@ class TblAllowManualCollectionRange extends \app\models\ChildModel {
         return $this->hasOne(TblComplain::className(), ['complain_code' => 'complain_code']);
     }
 
+    public function getCreatedBy() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'created_by']);
+    }
 }

@@ -45,6 +45,8 @@ use kartik\grid\GridView;
                 'expandAllTitle' => 'View All Details',
                 'collapseTitle' => 'Hide Details',
                 'collapseAllTitle' => 'Hide All Details',
+                'defaultHeaderState' => GridView::ROW_EXPANDED,
+                'enableCache' => false,
                 'value' => function ($model, $key, $index, $column) {
                     return GridView::ROW_EXPANDED;
                 },
@@ -52,7 +54,7 @@ use kartik\grid\GridView;
                     return Yii::$app->controller->renderPartial('_form_grid_new', ['model' => $model, 'form' => $form, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'is_concate' => $is_concate, 'showFarmer' => $showFarmer, 'showType' => $showType, 'is_dcs_editable' => $is_dcs_editable, 'parent_index' => $index]);
                 },
                 'headerOptions' => ['class' => 'kartik-sheet-style'],
-                'detailRowCssClass' => 'child-grid',
+                'detailRowCssClass' => 'child-grid expanded-row-fix',
             ],
             ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');

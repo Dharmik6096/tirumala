@@ -97,6 +97,13 @@ use app\modules\usermanagement\components\GhostHtml;
             ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
             ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
             ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
+            ['attribute' => 'created_by', 'value' => function($m) {
+                $createdBy = $m->createdBy;
+                if (!empty($createdBy)) {
+                    return !empty($createdBy->contact_person) ? $createdBy->contact_person : $createdBy->firstname;
+                }
+                return null;
+            }, 'filter' => FALSE],
             ['attribute' => 'error_desc', 'filter' => false],
     ];
 
