@@ -46,12 +46,14 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
         $dataProviderOther = new ActiveDataProvider([
             'query' => $attachment->find()->where(['module_code' => (string) $id, 'module_name' => 'tbl_allow_manual_collection_range']),
         ]);
+        $tableApprovalList = TblProcessApproval::find()->where(['process_code' => (string) $id, 'process_name' => $this->model->table_name])->orderBy('level ASC')->all();
         return $this->render('view', [
                     'model' => $this->model,
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
                     'dataProviderOther' => $dataProviderOther,
                     'attachment' => $attachment,
+                    'tableApprovalList' => $tableApprovalList,
         ]);
     }
 
@@ -227,10 +229,14 @@ class TblAllowManualCollectionRangeController extends \app\controllers\ChildCont
     public function actionComplainActivityAjax($id) {
         $manualCollectionModel = $this->findModel($id);
         $manualCollectionSearchModel = new TblAllowManualCollectionRangeSearch();
+        $manualCollectionSearchModel->bmc_code = $manualCollectionModel->bmc_code;
         $manualCollectionSearchModel->dcs_code = $manualCollectionModel->dcs_code;
         $manualCollectionSearchModel->from_date = date('Y-m-d H:i:s', strtotime('-2 months'));
         $manualCollectionSearchModel->to_date = date('Y-m-d H:i:s');
-        $dataProvider = $manualCollectionSearchModel->search(Yii::$app->request->queryParams, false, false, true);
+        $dataProvider = $manualCollectionSearchModel->search(Yii::$app->request->queryParams, false, true, true);
+        if (empty($manualCollectionModel->dcs_code)) {
+            $dataProvider->query->andWhere(['OR', ['tbl_allow_manual_collection_range.dcs_code' => null], ['tbl_allow_manual_collection_range.dcs_code' => '']]);
+        }
         return $this->renderAjax('_complaint_activity', [
                     'model' => $manualCollectionModel,
                     'dataProvider' => $dataProvider,
