@@ -432,38 +432,38 @@ class TblRoleController extends \app\controllers\ChildController {
 
         $vlcCriteria = array_filter(array_unique($vlcCriteria));
         if (!empty($vlcCriteria)) {
-            foreach (array_chunk($vlcCriteria, 1000) as $chunk) {
-                $cond = ['and', ['download_pending' => 1], ['in', 'dcs_code', $chunk]];
-                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
-                $updateConditions[] = $cond;
-            }
+            $org_string = "'" . implode(',', $vlcCriteria) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $cond = ['and', ['download_pending' => 1], "dcs_code in (" . $command->sql . ")"];
+            if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+            $updateConditions[] = $cond;
         }
 
         $bmcCriteria = array_filter(array_unique($bmcCriteria));
         if (!empty($bmcCriteria)) {
-            foreach (array_chunk($bmcCriteria, 1000) as $chunk) {
-                $cond = ['and', ['download_pending' => 1], ['in', 'bmc_code', $chunk], ['=', "ISNULL(dcs_code,'')", '']];
-                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
-                $updateConditions[] = $cond;
-            }
+            $org_string = "'" . implode(',', $bmcCriteria) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $cond = ['and', ['download_pending' => 1], "bmc_code in (" . $command->sql . ")", ['=', "ISNULL(dcs_code,'')", '']];
+            if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+            $updateConditions[] = $cond;
         }
 
         $mccCriteria = array_filter(array_unique($mccCriteria));
         if (!empty($mccCriteria)) {
-            foreach (array_chunk($mccCriteria, 1000) as $chunk) {
-                $cond = ['and', ['download_pending' => 1], ['in', 'mcc_plant_code', $chunk], ['=', "ISNULL(bmc_code,'')", '']];
-                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
-                $updateConditions[] = $cond;
-            }
+            $org_string = "'" . implode(',', $mccCriteria) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $cond = ['and', ['download_pending' => 1], "mcc_plant_code in (" . $command->sql . ")", ['=', "ISNULL(bmc_code,'')", '']];
+            if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+            $updateConditions[] = $cond;
         }
 
         $plantCriteria = array_filter(array_unique($plantCriteria));
         if (!empty($plantCriteria)) {
-            foreach (array_chunk($plantCriteria, 1000) as $chunk) {
-                $cond = ['and', ['download_pending' => 1], ['in', 'plant_code', $chunk], ['=', "ISNULL(mcc_plant_code,'')", '']];
-                if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
-                $updateConditions[] = $cond;
-            }
+            $org_string = "'" . implode(',', $plantCriteria) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $cond = ['and', ['download_pending' => 1], "plant_code in (" . $command->sql . ")", ['=', "ISNULL(mcc_plant_code,'')", '']];
+            if (!empty($unionCodes)) $cond[] = ['in', 'union_code', $unionCodes];
+            $updateConditions[] = $cond;
         }
 
         return [$orgDataCache, $orgTypesAndCodes];
