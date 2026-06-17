@@ -460,7 +460,7 @@ class TblDcsProvisionalController extends ChildController {
 
             $this->model->dcs_code = ($dcsProvisional->provisional_from == 'mobile_update') ? $dcsProvisional->dcs_code : $this->model->getCode();
             $mapList = [];
-            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'product_sale_rate_applicability_auto');
+            $productSaleRateApplicabilityAuto = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'product_sale_rate_applicability_auto', 'PORTAL');
             if (!empty($productSaleRateApplicabilityAuto)) {
                 $productSaleRateApplicability = new TblProductSaleRateApplicability;
                 $productSaleRate = new TblProductSaleRate;

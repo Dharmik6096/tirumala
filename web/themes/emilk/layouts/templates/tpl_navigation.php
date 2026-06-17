@@ -1208,11 +1208,18 @@ echo GhostMenu::widget([
                                 ['label' => 'M - 105 -' . Yii::t('app', 'Local Sale Report'), 'url' => ['/misreports/reports/local-sale-report']],
                                 ['label' => 'M - 106 -' . Yii::t('app', 'Local Sale Detail Report'), 'url' => ['/misreports/reports/local-sale-detail-report']],
                                 ['label' => 'M - 107 -' . Yii::t('app', 'Date Wise Milk Purchase Summary'), 'url' => ['/misreports/reports/date-wise-milk-purchase-summary']],
+                                ['label' => 'M - 108 -' . Yii::t('app', 'Society Wise Tolerance'), 'url' => ['/misreports/reports/society-wise-tolerance-report']],
+                                ['label' => 'M - 109 -' . Yii::t('app', 'Farmer Wise Tolerance'), 'url' => ['/misreports/reports/farmer-wise-tolerance-report']],
                                 ['label' => 'M - 110 -' . Yii::t('app', 'Milk Rate Detail'), 'url' => ['/misreports/reports/milk-rate-detail-report']],
                                 ['label' => 'M - 111 -' . Yii::t('app', 'Milk Purchase Analysis'), 'url' => ['/misreports/reports/milk-purchase-analysis-report']],
                                 ['label' => 'M - 112 -' . Yii::t('app', 'Milk Edit Summary'), 'url' => ['/misreports/reports/milk-edit-summary']],
                                 ['label' => 'M - 113 -' . Yii::t('app', 'Fat Wise Qty Analysis'), 'url' => ['/misreports/reports/fat-wise-qty-analysis']],
+                                ['label' => 'M - 114 -' . Yii::t('app', 'Milk edit for slip'), 'url' => ['/misreports/reports/milk-edit-for-slip-report']],
+                                ['label' => 'M - 115 -' . Yii::t('app', 'Milk Edit Online Report'), 'url' => ['/misreports/reports/milk-edit-online-report']],
                                 ['label' => 'M - 117 -' . Yii::t('app', 'Milk Compare'), 'url' => ['/misreports/reports/milk-compare']],
+                                ['label' => 'M - 118 -' . Yii::t('app', 'Milko Screen Report'), 'url' => ['/misreports/reports/milko-screen-report']],
+                                ['label' => 'M - 119 -' . Yii::t('app', 'Milkoscreen Adultration Summary Report'), 'url' => ['/misreports/reports/milkoscreen-adultration-summary-report']],
+                                ['label' => 'M - 120 -' . Yii::t('app', 'Farmer Request status for VDCS'), 'url' => ['/misreports/reports/farmer-request-status-for-vdcs-report']],
                             ],
                         ],
                         [
@@ -1225,6 +1232,8 @@ echo GhostMenu::widget([
                                 ['label' => 'S - 105 -' . Yii::t('app', 'Union Wise Message Detail'), 'url' => ['/misreports/reports/union-wise-message-detail-report']],
                                 ['label' => 'S - 106 -' . Yii::t('app', 'Milk Rate Publish'), 'url' => ['/misreports/reports/milk-rate-publish-report']],
                                 ['label' => 'S - 107 -' . Yii::t('app', 'Farmer Wise Yearly Edit'), 'url' => ['/misreports/reports/farmer-wise-yearly-edit-report']],
+                                ['label' => 'S - 108 -' . Yii::t('app', 'Farmer Payment Register'), 'url' => ['/misreports/reports/farmer-payment-register-report']],
+                                ['label' => 'S - 109 -' . Yii::t('app', 'Item Rate'), 'url' => ['/misreports/reports/item-rate-report']],
                             ],
                         ],
                         [
@@ -1264,11 +1273,13 @@ echo GhostMenu::widget([
                                 ['label' => 'SP - 104 -' . Yii::t('app', 'Society Wise Summary'), 'url' => ['/misreports/reports/society-wise-summary-report']],
                                 ['label' => 'SP - 105 -' . Yii::t('app', 'Farmer Not Submitting Milk'), 'url' => ['/misreports/reports/farmer-not-submitting-milk-report']],
                                 ['label' => 'SP - 106 -' . Yii::t('app', 'Society Sample'), 'url' => ['/misreports/reports/society-sample-report']],
+                                ['label' => 'SP - 107 -' . Yii::t('app', 'Fat and Weight Deviation'), 'url' => ['/misreports/reports/fat-and-weight-deviation-report']],
                                 ['label' => 'SP - 108 -' . Yii::t('app', 'Daily Summary'), 'url' => ['/misreports/reports/daily-summary-report']],
                                 ['label' => 'SP - 109 -' . Yii::t('app', 'Farmer Manual Entry'), 'url' => ['/misreports/reports/farmer-manual-entry-report']],
-//                                ['label' => 'SP - 110 -' . Yii::t('app', 'Farmer Fat And Wt Deviation'), 'url' => ['/misreports/reports/farmer-fat-and-wt-deviation-report']],
+                                ['label' => 'SP - 110 -' . Yii::t('app', 'Farmer Fat And Wt Deviation'), 'url' => ['/misreports/reports/farmer-fat-and-wt-deviation-report']],
                                 ['label' => 'SP - 111 -' . Yii::t('app', 'Manual Collection Summary'), 'url' => ['/misreports/reports/manual-collection-summary-report']],
                                 ['label' => 'SP - 112 -' . Yii::t('app', 'Milk Edit For Farmer'), 'url' => ['/misreports/reports/milk-edit-for-farmer-report']],
+                                ['label' => 'SP - 113 -' . Yii::t('app', 'Manual Collection Detail'), 'url' => ['/misreports/reports/manual-collection-detail-report']],
                                 ['label' => 'SP - 114 -' . Yii::t('app', 'Trucksheet Comparision'), 'url' => ['/misreports/reports/trucksheet-comparision-report']],
                                 ['label' => 'SP - 115 -' . Yii::t('app', 'Trucksheet Detail'), 'url' => ['/misreports/reports/trucksheet-detail-report']],
                             ]
@@ -1278,6 +1289,9 @@ echo GhostMenu::widget([
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'MU App Report') . '<b class="caret"></b></a>',
                             'items' => [
                                 ['label' => 'App - 101 -' . Yii::t('app', 'MU App VDCS APP User Report'), 'url' => ['/misreports/reports/mu-app-vdcs-app-user-report']],
+                                ['label' => 'App - 102 -' . Yii::t('app', 'User Attendance Detail'), 'url' => ['/misreports/reports/user-attendance-detail-report']],
+                                ['label' => 'App - 103 -' . Yii::t('app', 'User Attendance Summary Detail'), 'url' => ['/misreports/reports/user-attendance-summary-detail-report']],
+                                ['label' => 'App - 104 -' . Yii::t('app', 'User Attendance Transaction Detail'), 'url' => ['/misreports/reports/user-attendance-transaction-detail-report']],
                             ]
                         ],
                     ]
