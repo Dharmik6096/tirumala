@@ -596,7 +596,6 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 $modelSave[] = $historyModel;
                 $update = TRUE;
             } else {
-                $model->scenario = 'createChillerInfo';
                 $bmc_data = TblDcsBmc::findOne($id);
                 $data = Yii::$app->request->post()['TblBmcChillerInfo'];
                 $model->attributes = $data;
@@ -604,6 +603,8 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 $model->mcc_plant_code = $bmc_data->mcc_plant_code;
                 $model->plant_code = $bmc_data->plant_code;
                 $model->union_code = $bmc_data->union_code;
+                $existingActiveCount = TblBmcChillerInfo::find()->where(['bmc_code' => $bmc_data->bmc_code, 'is_active' => 1])->count();
+                $model->is_default = ($existingActiveCount == 0) ? 1 : 0;
             }
             $model->installation_date = !empty($model->installation_date) ? date('Y-m-d', strtotime($model->installation_date)) : '';
             $model->agreement_from_date = !empty($model->agreement_from_date) ? date('Y-m-d', strtotime($model->agreement_from_date)) : '';
@@ -645,16 +646,63 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     public function actionDeactivateBmcChiller($id) {
         $model = TblBmcChillerInfo::findOne($id);
+        $model->scenario = 'deactivateBmcChiller';
+        if ($model->is_default == 1) {
+            $activeRecord = TblBmcChillerInfo::find()->where(['<>', 'chiller_info_code', $id])->andWhere(['bmc_code' => $model->bmc_code, 'is_active' => 1])->all();
+            if (count($activeRecord) == 1) {
+                $newDefaultModel = $activeRecord[0];
+                $newDefaultModel->scenario = 'deactivateBmcChiller';
+                $historyNewDefault = new TblBmcChillerInfoHistory();
+                Yii::$app->operation->history($newDefaultModel, $historyNewDefault, UPDATE);
+                $modelSave[] = $historyNewDefault;
+                $newDefaultModel->is_default = 1;
+                $modelSave[] = $newDefaultModel;
+            }
+        }
         $historyModel = new TblBmcChillerInfoHistory();
         Yii::$app->operation->history($model, $historyModel, UPDATE);
-        $model->is_active = 0;
-        $transaction = $this->generalModel->saveTransaction([$model, $historyModel], ['BMC Chiller Info', 'edit']);
+        $model->is_active = $model->is_default = 0;
+        $modelSave[] = $model;
+        $modelSave[] = $historyModel;
+
+        $transaction = $this->generalModel->saveTransaction($modelSave, ['BMC Chiller Info', 'edit']);
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'BMC Chiller Deactivated Successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'BMC Chiller Not Deactivated.'];
         }
         Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionSetDefault($id) {
+        $model = TblBmcChillerInfo::findOne($id);
+        $modelSave = [];
+        $defaultChiller = TblBmcChillerInfo::find()->where(['bmc_code' => $model->bmc_code, 'is_default' => 1, 'is_active' => 1])->one();
+        if (!empty($defaultChiller)) {
+            $defaultChiller->scenario = 'setDefaultBmcChiller';
+            $historyDefault = new TblBmcChillerInfoHistory();
+            Yii::$app->operation->history($defaultChiller, $historyDefault, UPDATE);
+            $defaultChiller->is_default = 0;
+            $modelSave[] = $defaultChiller;
+            $modelSave[] = $historyDefault;
+        }
+
+        $model->scenario = 'setDefaultBmcChiller';
+        $historyModel = new TblBmcChillerInfoHistory();
+        Yii::$app->operation->history($model, $historyModel, UPDATE);
+        $model->is_default = 1;
+        $modelSave[] = $model;
+        $modelSave[] = $historyModel;
+
+        $transaction = $this->generalModel->saveTransaction($modelSave, ['BMC Chiller Info', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'BMC Chiller set as default successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'BMC Chiller could not be set as default.'];
+        }
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
