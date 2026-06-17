@@ -100,7 +100,7 @@ use app\modules\details\models\TblContactDetails;
  */
 class TblMember extends ChildModel {
 
-    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code, $is_milk_machine, $is_piyet_land, $is_chaf_cutter, $is_toilet;
+    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern, $bmc_code;
     public $operation, $verifie_for, $file_name, $dcs_ref_code;
     public $check_is_dcs_member = 1;
     public $import_eipl_code, $import_union_code, $special_code;

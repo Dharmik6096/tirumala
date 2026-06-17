@@ -150,7 +150,10 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
         if ($isArray) {
             $query->innerJoin('tbl_android_installation', 'tbl_android_installation.android_installation_id = tbl_android_installation_details.android_installation_id');
-            $query->andWhere(['tbl_android_installation.organization_code' => $dest_org_id]);
+            $org_string = "'" . implode(',', $dest_org_id) . "'";
+            $command_dest_org_id = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $organization_code = $command_dest_org_id->sql;
+            $query->andWhere('tbl_android_installation.organization_code in (' . $organization_code . ')');
         } else {
             $query->joinWith(['androidInstallationCode']);
             $query->andWhere(['tbl_android_installation.organization_code' => (string) $dest_org_id]);
