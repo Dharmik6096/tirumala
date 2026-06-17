@@ -5811,7 +5811,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'CashBookReport' => [
-                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
+                'param' => 'language_code,union_code,dcs_code:union_code,from_date:string',
                 'sp_name' => 'mis_cashbook',
                 'scenario' => 'CashBookReport',
                 'title' => 'A - 106 - Cash Book Report',
