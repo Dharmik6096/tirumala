@@ -52,7 +52,7 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
             [['pan_no', 'aadhaar_no'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
-            [['operation_type', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active', 'local_name'], 'safe'],
+            [['operation_type', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active', 'local_name', 'ledger_code'], 'safe'],
         ];
     }
 
@@ -89,6 +89,7 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
             'vendor_type' => Yii::t('app', 'Vendor Type'),
             'is_active' => Yii::t('app', 'Is Active'),
+            'ledger_code' => Yii::t('app', 'Ledger Code'),
         ];
     }
 

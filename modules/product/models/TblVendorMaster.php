@@ -35,7 +35,7 @@ class TblVendorMaster extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $department, $middle_name, $surname, $local_middlename, $local_surname, $contact_person, $local_contact_person, $mobile_no, $email;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname, $contact_person, $local_contact_person, $mobile_no, $email, $ledger_code;
 
     public static function tableName() {
         return 'tbl_vendor_master';
@@ -47,7 +47,7 @@ class TblVendorMaster extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
             [['vendor_code', 'vendor_name', 'is_active'], 'required'],
-            [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active', 'local_name'], 'safe'],
+            [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'vendor_type', 'is_active', 'local_name', 'ledger_code'], 'safe'],
             [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
             [['vendor_code'], 'integer'],
             [['pan_no'], function ($attribute, $params) {
@@ -119,6 +119,7 @@ class TblVendorMaster extends \app\models\ChildModel {
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
             'vendor_type' => Yii::t('app', 'Vendor Type'),
             'is_active' => Yii::t('app', 'Is Active'),
+            'ledger_code' => Yii::t('app', 'Ledger Code'),
         ];
     }
 
