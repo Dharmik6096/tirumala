@@ -104,7 +104,7 @@ $form = ActiveForm::begin([
     <div class="modal-dialog modal-lg">
         <div class="modal-content hide-grid-settings">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?= Yii::t('app', 'Last 2 month Request Details') ?></h4>
             </div>
             <div class="modal-body" id="requestDetailsModalContent">
