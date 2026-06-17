@@ -35,7 +35,7 @@ class TblVendorMaster extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $department, $middle_name, $surname, $local_middlename, $local_surname, $contact_person, $local_contact_person, $mobile_no, $email, $ledger_code;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname, $contact_person, $local_contact_person, $mobile_no, $email;
 
     public static function tableName() {
         return 'tbl_vendor_master';

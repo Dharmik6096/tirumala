@@ -5762,7 +5762,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'TradingAccountReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
-                'sp_name' => '',
+                'sp_name' => 'mis_trading_account_report',
                 'scenario' => 'TradingAccountReport',
                 'title' => 'A - 110 - Trading Account Report',
                 'header_included' => TRUE,
@@ -5770,7 +5770,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'ProfitAndLossReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string,for',
-                'sp_name' => '',
+                'sp_name' => 'mis_profit_and_loss_report',
                 'scenario' => 'ProfitAndLossReport',
                 'title' => 'A - 112 - Profit And Loss Report',
                 'header_included' => TRUE,
@@ -5778,7 +5778,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'BalanceSheetReport' => [
                 'param' => 'language_code,union_code,dcs_code:union_code,from_date:string,to_date:string',
-                'sp_name' => '',
+                'sp_name' => 'mis_balance_sheet',
                 'scenario' => 'BalanceSheetReport',
                 'title' => 'A - 113 - Balance Sheet Report',
                 'header_included' => TRUE,
@@ -5844,7 +5844,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'DateWiseCashBalanceReport' => [
                 'param' => 'language_code,union_code,region_code:union_code:all,from_code:txt,to_code:txt,from_date:string,to_date:string',
-                'sp_name' => '',
+                'sp_name' => 'mis_datewise_cash_balance',
                 'scenario' => 'DateWiseCashBalanceReport',
                 'title' => 'A - 108 - DateWise CashBalance Report',
                 'header_included' => TRUE,
@@ -5916,7 +5916,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'bkg_export' => TRUE
             ],
             'SocietyWiseToleranceReport' => [
-                'param' => 'language_code,union_code,region_code:union_code:all,from_soc:txt,to_soc:txt,from_date:string,to_date:string,compare_from_date:string,compare_to_date:string,from_validation:txt,to_validation:txt,filter_by:static:filter_by,order_by:static:order_by,do_not_show_zero',
+                'param' => 'language_code,union_code,region_code:union_code:all,from_soc:txt,to_soc:txt,from_date:string,to_date:string,ded_from_date:string,ded_to_date:string,from_validation:txt,to_validation:txt,filter_by:static:filter_by,order_by:static:order_by,do_not_show_zero',
                 'sp_name' => 'mis_society_wise_tolerance',
                 'scenario' => 'SocietyWiseToleranceReport',
                 'title' => 'M - 108 - Society Wise Tolerance Report',
