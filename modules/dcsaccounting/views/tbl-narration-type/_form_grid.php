@@ -14,7 +14,7 @@ $attribute = [
 ];
 
 $grid_option = [
-    'id' => 'narration-grid',
+    'id' => 'narration-grid-type',
     'attributes' => $attribute,
     'active_column' => false,
 ];

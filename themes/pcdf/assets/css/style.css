@@ -6626,7 +6626,7 @@ select:focus > option:checked {
 
 .mt-25 {
     margin-top: 25px;
-    margin-bottom: 0px;
+    margin-bottom: 1px;
 }
 .mt3 {
     margin-top: 3px !important;

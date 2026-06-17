@@ -67,16 +67,7 @@ class MemberBill extends ActiveRecord
     {
         return [
             [['code'], 'required', 'on' => ['androidsync']],
-            [[
-                'code', 'society_code', 'union_code', 'member_code', 'society_payment_cycle_code',
-                'milk_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'kg_fat', 'kg_snf',
-                'milk_amount', 'product_sale_amount', 'local_sale_amount', 'loan_amount',
-                'other_add_amount', 'other_ded_amount', 'net_amount', 'status', 'payment_mode',
-                'bank_code', 'bank_acno', 'ifsc', 'payment_ref', 'is_disbursed', 'disbursed_date',
-                'voucher_no', 'created_at', 'created_by', 'updated_at', 'updated_by',
-                'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5',
-                'originating_type', 'originating_org_code', 'originating_org_type'
-            ], 'safe'],
+            [['code', 'society_code', 'union_code', 'member_code', 'society_payment_cycle_code', 'milk_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'kg_fat', 'kg_snf', 'milk_amount', 'product_sale_amount', 'local_sale_amount', 'loan_amount', 'other_add_amount', 'other_ded_amount', 'net_amount', 'status', 'payment_mode', 'bank_code', 'bank_acno', 'ifsc', 'payment_ref', 'is_disbursed', 'disbursed_date', 'voucher_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'originating_org_code', 'originating_org_type', 'deduction_from_date', 'deduction_to_date',], 'safe'],
         ];
     }
 
@@ -126,6 +117,8 @@ class MemberBill extends ActiveRecord
             'originating_type' => 'Originating Type',
             'originating_org_code' => 'Originating Org Code',
             'originating_org_type' => 'Originating Org Type',
+            'deduction_from_date' => 'Deduction From Date',
+            'deduction_to_date' => 'Deduction To Date',
         ];
     }
 }
