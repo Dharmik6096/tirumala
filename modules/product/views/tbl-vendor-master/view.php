@@ -105,6 +105,10 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-c
                                         [
                                                 'attribute' => 'local_name',
                                                 'valueColOptions' => ['style' => 'width:30%']
+                                        ],
+                                        [
+                                                'attribute' => 'ledger_code',
+                                                'valueColOptions' => ['style' => 'width:30%']
                                         ]
                                 ],
 

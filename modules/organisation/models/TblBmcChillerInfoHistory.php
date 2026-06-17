@@ -51,7 +51,7 @@ class TblBmcChillerInfoHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['chiller_info_code', 'bmc_code', 'owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'fix_rent', 'billing_method', 'sap_vendor_code'], 'safe'],
+            [['chiller_info_code', 'bmc_code', 'owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'is_active', 'is_default', 'union_code', 'plant_code', 'mcc_plant_code', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'fix_rent', 'billing_method', 'sap_vendor_code'], 'safe'],
         ];
     }
 

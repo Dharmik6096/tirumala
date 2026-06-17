@@ -269,11 +269,39 @@ if ($model->is_active == 1) {
                     [
                     'columns' => [
                             [
-                            'attribute' => 'place',
-                            'valueColOptions' => ['style' => 'width:80%']
+                                'attribute' => 'place',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'is_milk_machine',
+                                'value' => ($model->is_milk_machine == 1) ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                         ],
                     ],
-                ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_piyet_land',
+                                'value' => ($model->is_piyet_land == 1) ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'is_chaf_cutter',
+                                'value' => ($model->is_chaf_cutter == 1) ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_toilet',
+                                'value' => ($model->is_toilet == 1) ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                     [
                     'group' => true,
                     'label' => 'Animal Details',
