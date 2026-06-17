@@ -79,9 +79,7 @@ $form = ActiveForm::begin([
                 }
             },
             'request-details' => function ($url, $model) {
-                if ($model->table_name == 'tbl_milk_collection') {
-                    return Html::a('<i class="fa fa-history"></i>', 'javascript:void(0);', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Request Details', 'class' => 'view-request-details-btn', 'data-id' => $model->allow_manual_collection_code]);
-                }
+                return Html::a('<i class="fa fa-history"></i>', 'javascript:void(0);', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Request Details', 'class' => 'view-request-details-btn', 'data-id' => $model->allow_manual_collection_code]);
             },
         ]
     ];
