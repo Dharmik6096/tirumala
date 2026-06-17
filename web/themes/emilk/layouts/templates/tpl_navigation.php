@@ -204,7 +204,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'BMC Collection'), 'url' => ['/collection/tbl-bmc-collection/index'], 'active' => ($cntrl == 'tbl-bmc-collection' && $action == 'index')],
                 ['label' => Yii::t('app', 'Milk Rejection'), 'url' => ['/collection/tbl-milk-reject/index'], 'active' => ($cntrl == 'tbl-milk-reject')],
                 ['label' => Yii::t('app', 'BMC Dispatch'), 'url' => ['/collection/tbl-bmc-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch')], //                ['label' => 'Local Milk Sale', 'url' => ['/collection/tbl-tab-local-sale/index'], 'active' => ($cntrl == 'tbl-tab-local-sale')],
-                ['label' => 'Local Milk Sale', 'url' => ['/collection/collection-farmer-local-sale/index'], 'active' => ($cntrl == 'collection-farmer-local-sale')],
+                ['label' => 'Collection Farmer Local Sale', 'url' => ['/collection/collection-farmer-local-sale/index'], 'active' => ($cntrl == 'collection-farmer-local-sale')],
                 //                ['label' => 'DPU Shift End Summary', 'url' => ['/collection/tbl-dpu-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-dpu-shift-end-summary')],
                 ['label' => Yii::t('app', 'BMC(FCT)/RCD Shift Summary'), 'url' => ['/collection/tbl-shift-summary/index'], 'active' => ($cntrl == 'tbl-shift-summary')],
                 ['label' => Yii::t('app', 'Milk Collection Summary'), 'url' => ['/collection/tbl-milk-collection-summary/index'], 'active' => ($cntrl == 'tbl-milk-collection-summary')],
@@ -268,7 +268,6 @@ echo GhostMenu::widget([
                 ],
                 ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                 ['label' => Yii::t('app', 'Milk Collection Audit'), 'url' => ['/collection/tbl-milk-collection-audit/index'], 'active' => ($cntrl == 'tbl-milk-collection-audit')],
-                ['label' => 'Local Milk Sale', 'url' => ['/dcsoperation/tbl-local-milk-sale/index'], 'active' => ($cntrl == 'tbl-local-milk-sale')],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Operations & Quality <b class="caret"></b></a>',
