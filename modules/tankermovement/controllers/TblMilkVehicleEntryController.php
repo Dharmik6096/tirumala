@@ -145,6 +145,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                         $tripModel->trip_sub_status = 'cleaning_pending';
                         $tripModel->sub_status_time = date('Y-m-d H:i:s');
                         $modelSave[] = $tripModel;
+                        $tripModel->plant_code = $txn_model->receipt_at == 'PLANT' ? $txn_model->receipt_at_code : $tripExist->plant_code;
                         /*  $tripDetailModel = new TblVehicleTripDetail();
                           $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
                           $trhistoryModel = new TblVehicleTripDetailHistory();
