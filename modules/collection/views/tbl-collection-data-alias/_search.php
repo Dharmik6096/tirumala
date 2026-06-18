@@ -12,6 +12,7 @@ use yii\web\View;
 <div class="grid-search search-filter large-search">
 
     <?php
+    $checkAmountBmcApprove = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'check_bmc_amount_while_approve', 'PORTAL');
     $form = ActiveForm::begin([
                 'method' => 'get',
     ]);
@@ -47,15 +48,15 @@ use yii\web\View;
             <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcollectiondataaliassearch-bmc_code,tblcollectiondataaliassearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
         </div>  
     <?php } ?>
-    <div class="clearfix"></div>
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
+    <!-- <div class="clearfix"></div> -->
+    <div class="col-sm-2 mb-2">
+        <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', true, false, false, TRUE); ?>
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('from_shift'), false, 'from_shift'); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
+        <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', true, false, false, TRUE); ?>
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('to_shift'), false, 'to_shift'); ?>
@@ -63,7 +64,12 @@ use yii\web\View;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('action_perform', $model, $form, 'form-group', $model->getAttributeLabel('action_perform'), false, 'action_perform'); ?>
     </div>
-
+    <?php 
+    if (isset($showGroupBy) && $showGroupBy && $checkAmountBmcApprove) { ?>
+        <div class="col-sm-2 hide_section">
+            <?= Yii::$app->dropdown->dropdownStatic('indent_group_by', $model, $form, 'form-group padding-right-5', Yii::t('app', 'Group By'), false, 'group_by') ?>
+        </div>
+    <?php } ?>
     <div class="col-sm-2 mt23">
         <?= Yii::$app->controls->search(); ?>
     </div>

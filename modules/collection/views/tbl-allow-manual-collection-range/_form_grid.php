@@ -2,6 +2,8 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\web\View;
 
 ?>
 <?php
@@ -74,6 +76,13 @@ $attribute = [
         ['attribute' => 'remark', 'filter' => false],
         ['attribute' => 'originating_org_type', 'filter' => false],
         ['attribute' => 'action_perform', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('action_perform', $searchModel, 'action_perform'),],
+        ['attribute' => 'created_by', 'value' => function($m) {
+            $createdBy = $m->createdBy;
+            if (!empty($createdBy)) {
+                return !empty($createdBy->contact_person) ? $createdBy->contact_person : $createdBy->firstname;
+            }
+            return null;
+        }, 'filter' => FALSE],
 ];
 
 $grid_option = [
@@ -84,9 +93,44 @@ $grid_option = [
         'views' => function($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Manual Collection Request View'];
             return Html::a('<i class="fa fa-eye"></i>', ['/collection/tbl-allow-manual-collection-range/view', 'id' => $model->allow_manual_collection_code], $options);
+        },
+        'request-details' => function ($url, $model) {
+            return Html::a('<i class="fa fa-history"></i>', 'javascript:void(0);', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Request Details', 'class' => 'view-request-details-btn', 'data-id' => $model->allow_manual_collection_code]);
         }
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
+
+<div class="modal fade" id="requestDetailsModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content hide-grid-settings">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?= Yii::t('app', 'Last 2 month Request Details') ?></h4>
+            </div>
+            <div class="modal-body" id="requestDetailsModalContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+$ajaxUrl = Url::to(['tbl-allow-manual-collection-range/complain-activity-ajax']);
+$script = '
+    $(document).on("click", ".view-request-details-btn", function() {
+        var id = $(this).data("id");
+        $.ajax({
+            url: "' . $ajaxUrl . '",
+            type: "GET",
+            data: {id: id},
+            success: function(data) {
+                $("#requestDetailsModalContent").html(data);
+                $("#requestDetailsModal").modal("show");
+            }
+        });
+    });
+';
+$this->registerJs($script, View::POS_END, 'allow-collection-list-request-details');
 ?>

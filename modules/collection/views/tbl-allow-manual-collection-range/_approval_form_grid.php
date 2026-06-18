@@ -78,6 +78,9 @@ $form = ActiveForm::begin([
                     return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank',]);
                 }
             },
+            'request-details' => function ($url, $model) {
+                return Html::a('<i class="fa fa-history"></i>', 'javascript:void(0);', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Request Details', 'class' => 'view-request-details-btn', 'data-id' => $model->allow_manual_collection_code]);
+            },
         ]
     ];
 
@@ -97,7 +100,21 @@ $form = ActiveForm::begin([
 
 <?php ActiveForm::end(); ?>
 
+<div class="modal fade" id="requestDetailsModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content hide-grid-settings">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?= Yii::t('app', 'Last 2 month Request Details') ?></h4>
+            </div>
+            <div class="modal-body" id="requestDetailsModalContent">
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
+$ajaxUrl = Url::to(['tbl-allow-manual-collection-range/complain-activity-ajax']);
 $script = '
     $(".kv-panel-before").hide();
     $(".submit").click(function() {
@@ -112,6 +129,18 @@ $script = '
         } else {
             $("#approve-manual-collection").submit();
         }
+    });
+    $(document).on("click", ".view-request-details-btn", function() {
+        var id = $(this).data("id");
+        $.ajax({
+            url: "' . $ajaxUrl . '",
+            type: "GET",
+            data: {id: id},
+            success: function(data) {
+                $("#requestDetailsModalContent").html(data);
+                $("#requestDetailsModal").modal("show");
+            }
+        });
     });
 ';
 $this->registerJs($script, View::POS_END, 'approve-manual-collection');

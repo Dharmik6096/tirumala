@@ -54,6 +54,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     }
                     if ($operation == 'approve') {
                         $historyFlag = 'DELETE';
+                        $existData->selection_codes = $value;
                         if ($existData->validate()) {
                             if ($collection_config == 2 && !empty($approval_code)) {
                                 $status = 1;
@@ -156,12 +157,12 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $showFarmer = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
         $searchModel->table_name = 'tbl_milk_collection';
+        $searchModel->scenario = 'approvalCollection';
         if ($collection_config == 2) {
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
         } else {
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
-        $searchModel->scenario = 'approvalCollection';
         $actionPerform = $searchModel->action_perform ? strtolower($searchModel->action_perform) : 'default';
         $id = 'milk-collection-approve-' . $actionPerform;
         $url = 'milk-collection-approve';

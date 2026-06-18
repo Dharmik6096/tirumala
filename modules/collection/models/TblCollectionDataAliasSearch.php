@@ -7,11 +7,16 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\general\models\TblProcessApproval;
+use yii\db\Expression;
+use yii\db\Query;
 
 /**
  * TblCollectionDataAliasSearch represents the model behind the search form about `app\modules\collection\models\TblCollectionDataAlias`.
  */
 class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
+
+    public $is_pending_approval = false;
+    public $group_by;
 
     /**
      * @inheritdoc
@@ -21,8 +26,8 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
                 [['collection_data_alias_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'qlty_auto', 'qty_auto', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'dispatch_type', 'destination_type', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'integer'],
                 [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'qlty_time', 'qty_time', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'date_time_of_testing', 'vehicle_no', 'route_arrival_time', 'challan_no', 'destination_code', 'vehicle_in_time', 'vehicle_out_time', 'old_milk_type_code', 'old_milk_quality_type_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'temperature', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount', 'approved_at', 'approved_by', 'approval_status', 'vehicle_code'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalCollection']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'converted_amount', 'approved_at', 'approved_by', 'approval_status', 'vehicle_code', 'group_by'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalDispatch']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['approvalQtyImport']],
         ];
@@ -44,6 +49,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
      * @return ActiveDataProvider
      */
     public function search($params, $pending_approval = false) {
+        $this->is_pending_approval = $pending_approval;
         $query = TblCollectionDataAlias::find();
 
         // add conditions that should always apply here
@@ -57,7 +63,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
         if ($pending_approval) {
@@ -73,8 +79,9 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
             'tbl_collection_data_alias.union_code' => $this->union_code,
             'tbl_collection_data_alias.plant_code' => $this->plant_code,
             'tbl_collection_data_alias.mcc_plant_code' => $this->mcc_plant_code,
-            'tbl_collection_data_alias.bmc_code' => $this->bmc_code,
             'tbl_collection_data_alias.table_name' => $this->table_name]);
+
+        $query->andFilterWhere(['bmc_code' => $this->bmc_code]);
 
         if (empty($this->from_date)) {
             $this->from_date = date('d-m-Y');
@@ -104,6 +111,41 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
         $query->andFilterWhere(['like', 'customer_code', $this->customer_code]);
         $query->andFilterWhere(['like', 'customer_type', $this->customer_type]);
         $query->andFilterWhere(['like', 'action_perform', $this->action_perform]);
+
+        if (!empty($this->group_by)) {
+            $subQueryBmcQty = (new Query())
+                ->select(['SUM(amount)'])
+                ->from('tbl_bmc_collection')
+                ->where('tbl_bmc_collection.customer_code = tbl_collection_data_alias.dcs_code')
+                ->andWhere('CAST(tbl_bmc_collection.date_time_of_collection AS DATE) = CAST(tbl_collection_data_alias.date_time_of_collection AS DATE)')
+                ->andWhere('tbl_bmc_collection.shift_code = tbl_collection_data_alias.shift_code');
+
+            $subQueryMilkQty = (new Query())
+                ->select(['SUM(amount)'])
+                ->from('tbl_milk_collection')
+                ->where('tbl_milk_collection.dcs_code = tbl_collection_data_alias.dcs_code')
+                ->andWhere('CAST(tbl_milk_collection.date_time_of_collection AS DATE) = CAST(tbl_collection_data_alias.date_time_of_collection AS DATE)')
+                ->andWhere('tbl_milk_collection.shift_code = tbl_collection_data_alias.shift_code');
+
+            $query->select([
+                'tbl_collection_data_alias.bmc_code',
+                'tbl_collection_data_alias.dcs_code',
+                'tbl_collection_data_alias.date_time_of_collection',
+                'tbl_collection_data_alias.shift_code',
+                'amount_auto_sum' => $subQueryMilkQty,
+                'amount_manual_sum' => new Expression('0'),
+                'qty' => 'SUM(tbl_collection_data_alias.qty)', 
+                'amount' => 'SUM(tbl_collection_data_alias.amount)',
+                'bmc_collection_amount' => $subQueryBmcQty
+            ]);
+            $query->groupBy([
+                'tbl_collection_data_alias.bmc_code',
+                'tbl_collection_data_alias.dcs_code',
+                'tbl_collection_data_alias.date_time_of_collection',
+                'tbl_collection_data_alias.shift_code'
+            ]);
+        }
+
         return $dataProvider;
     }
 
@@ -151,6 +193,17 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
             'tbl_collection_data_alias.bmc_code' => $this->bmc_code,
             'dcs_code' => $this->dcs_code]);
         return $dataProvider;
+    }
+
+    public function searchChild($model, $params, $pending_approval = false) {
+        $params['TblCollectionDataAliasSearch']['dcs_code'] = $model->dcs_code;
+        $date = date('d-m-Y', strtotime($model->date_time_of_collection));
+        $params['TblCollectionDataAliasSearch']['from_date'] = $date;
+        $params['TblCollectionDataAliasSearch']['to_date'] = $date;
+        $params['TblCollectionDataAliasSearch']['from_shift'] = $model->shift_code;
+        $params['TblCollectionDataAliasSearch']['to_shift'] = $model->shift_code;
+        $params['TblCollectionDataAliasSearch']['group_by'] = ''; 
+        return $this->search($params, $pending_approval);
     }
 
 }
