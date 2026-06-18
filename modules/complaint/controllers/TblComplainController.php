@@ -693,10 +693,20 @@ class TblComplainController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
-                $user = new User();
-                $data = $user->getAssignList($parents[0], $parents[1]);
-                foreach ($data as $key => $val) {
-                    $out[] = array('id' => $key, 'name' => $val);
+                $sp_param = [];
+                $sp_param[] = $parents[0];
+                $sp_param[] = $parents[1];
+                $data = \Yii::$app->general->getSpData('sp_app_get_user_list_for_complain_assisgn', $sp_param);
+                if (!empty($data)) {
+                    foreach ($data as $val) {
+                        $mobile = trim($val['mobile_no'] ?? '');
+                        $type = !empty($val['login_type']) ? ' - ' . trim($val['login_type']) : '';
+                        $empId = !empty($val['employee_id']) ? ' - ' . trim($val['employee_id']) : '';
+                        $out[] = array(
+                            'id' => $val['user_id'],
+                            'name' => trim($val['user_name']) . " ($mobile$type)$empId"
+                        );
+                    }
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }

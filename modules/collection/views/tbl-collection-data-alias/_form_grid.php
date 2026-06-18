@@ -46,7 +46,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false, 'visible' => !empty($showType) ? FALSE : TRUE],
             ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
-                return substr($model->member_code, -4);
+                return !empty($model->member_code) ? substr($model->member_code, -4) : '';
             }, 'visible' => !empty($showFarmer) ? TRUE : FALSE, 'filter' => false],
             ['attribute' => 'member_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
@@ -97,6 +97,13 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
             ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
             ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
+            ['attribute' => 'created_by', 'value' => function($m) {
+                $createdBy = $m->createdBy;
+                if (!empty($createdBy)) {
+                    return !empty($createdBy->contact_person) ? $createdBy->contact_person : $createdBy->firstname;
+                }
+                return null;
+            }, 'filter' => FALSE],
             ['attribute' => 'error_desc', 'filter' => false],
     ];
 

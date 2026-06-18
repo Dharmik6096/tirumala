@@ -173,7 +173,7 @@ $url = Url::to(['/complaint/tbl-complain/index']);
                     <div class="col-sm-6 pt15 pb15 pl8">
                         <?php echo Html::hiddenInput('location_type', $location_type_name, ['id' => 'location_type']); ?>
                         <?php echo Html::hiddenInput('code', $code, ['id' => 'code']); ?>
-                        <?= Yii::$app->dropdown->assign_list($model, $form, 'location_type,code', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>               
+                        <?= Yii::$app->dropdown->assign_list($model, $form, 'code,location_type', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>
                     </div>
                     <div class = "col-sm-3 pt15 pb15 pl8">
                         <?= $form->field($model, 'remarks')->textarea() ?>

@@ -107,7 +107,8 @@ class TblAllowManualCollectionRangeSearch extends TblAllowManualCollectionRange 
                 ->andFilterWhere(['like', 'approved_by', $this->approved_by])
                 ->andFilterWhere(['like', 'approval_status', $this->approval_status])
                 ->andFilterWhere(['like', 'complain_type', $this->complain_type])
-                ->andFilterWhere(['like', 'action_perform', $this->action_perform]);
+                ->andFilterWhere(['like', 'action_perform', $this->action_perform])
+                ->orderBy('tbl_allow_manual_collection_range.from_date ASC');
 
         return $dataProvider;
     }
