@@ -20,7 +20,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'no_of_compartment', 'vehicle_capacity', 'remark', 'parsing_no', 'force_close', 'force_close_remarks'], 'safe'],
+            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active', 'trip_sub_status', 'sub_status_time', 'driver_name', 'mobile_no', 'transporter_code', 'from_date', 'to_date', 'is_auto_trip', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'no_of_compartment', 'vehicle_capacity', 'remark', 'parsing_no', 'force_close', 'force_close_remarks', 'source_name', 'source_code', 'ref_code', 'source_type'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -43,6 +43,10 @@ class TblVehicleTripSearch extends TblVehicleTrip {
     public function search($params) {
         $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status', 't.driver_name', 't.mobile_no',
             't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip',
+            'source_code' => 'td.destination_code',
+            'source_type' => 'UPPER(td.destination_type)',
+            'source_name' => "COALESCE(bmc.bmc_name, plant.name, party.party_name)",
+            'ref_code' => "COALESCE(bmc.ref_code, plant.ref_code, party.sap_vendor_code)",
             'challan_no' => "STUFF((
           SELECT ',' + d.challan_no
           FROM tbl_bmc_milk_dispatch d WHERE d.trip_code=t.trip_code
@@ -59,6 +63,10 @@ class TblVehicleTripSearch extends TblVehicleTrip {
         ]);
 
         // add conditions that should always apply here
+        $query->innerJoin('tbl_vehicle_trip_detail td', 'td.vehicle_trip_code = t.vehicle_trip_code AND td.sequence_no = 1');
+        $query->leftJoin('tbl_bmc bmc', "td.destination_type = 'bmc' AND bmc.bmc_code = td.destination_code");
+        $query->leftJoin('tbl_plant plant', "td.destination_type = 'plant' AND plant.plant_code = td.destination_code");
+        $query->leftJoin('tbl_party_master party', "td.destination_type = 'party' AND party.party_master_code = td.destination_code");
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -123,8 +131,11 @@ class TblVehicleTripSearch extends TblVehicleTrip {
                 ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->parsing_no])
                 ->andFilterWhere(['like', 't.driver_name', $this->driver_name])
                 ->andFilterWhere(['like', 't.force_close_remarks', $this->force_close_remarks]);
+        if (!empty($this->ref_code)) {
+            $query->andWhere(['or', ['like', 'bmc.ref_code', $this->ref_code], ['like', 'plant.ref_code', $this->ref_code], ['like', 'party.sap_vendor_code', $this->ref_code]]);
+        }
         $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
-            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name', 't.mobile_no', 't.remark', 't.vehicle_capacity', 't.no_of_compartment', 't.force_close', 't.force_close_remarks']);
+            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code', 't.trip_sub_status', 't.trip_for', 't.is_auto_trip', 't.driver_name', 't.mobile_no', 't.remark', 't.vehicle_capacity', 't.no_of_compartment', 't.force_close', 't.force_close_remarks', 'td.destination_code', 'td.destination_type', 'bmc.bmc_name', 'plant.name', 'party.party_name', 'bmc.ref_code', 'plant.ref_code', 'party.sap_vendor_code']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);
         return $dataProvider;
     }
