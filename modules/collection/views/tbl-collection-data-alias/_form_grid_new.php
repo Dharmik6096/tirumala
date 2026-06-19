@@ -18,8 +18,6 @@
                 'headerOptions' => ['class' => 'skip-export'],
                 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($m, $key, $index) use ($model, $is_concate, $parent_index) {
-                    echo Html::activeHiddenInput($m, 'action_perform', ['value' => $m->action_perform]);
-                    echo Html::activeHiddenInput($m, 'operation', ['value' => $m->operation, 'class' => 'set_operation']);
                     $code = $m['collection_data_alias_code'] . '###' . $m['action_perform'];
                     if (!empty($is_concate)) {
                         $code = $m['collection_data_alias_code'] . '###' . $m['process_approval_code'] . '###' . $m['action_perform'];

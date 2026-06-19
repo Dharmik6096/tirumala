@@ -14,15 +14,15 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                 'id' => 'approve-milk-collection',
     ]);
     ?>
+    <input type="hidden" name="TblCollectionDataAlias[operation]" class="set_operation" value="" />
 
     <?php
     $attribute = [
             ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+            'hiddenFromExport' => true,
             'checkboxOptions' => function($model, $key, $index) use ($is_concate) {
-                echo Html::activeHiddenInput($model, 'action_perform', ['value' => $model->action_perform]);
-                echo Html::activeHiddenInput($model, 'operation', ['value' => $model->operation, 'class' => 'set_operation']);
                 $code = $model['collection_data_alias_code'] . '###' . $model['action_perform'];
                 if (!empty($is_concate)) {
                     $code = $model['collection_data_alias_code'] . '###' . $model['process_approval_code'] . '###' . $model['action_perform'];
@@ -32,25 +32,34 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'action_perform', 'filter' => false, 'visible' => TRUE],
             ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
-            }, 'filter' => FALSE, 'visible' => !empty($showType) ? TRUE : FALSE],
-            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code'), 'filter' => false, 'visible' => !empty($showType) ? TRUE : FALSE],
+            }, 'filter' => FALSE, 'visible' => !empty($showType) ? TRUE : FALSE, 'hiddenFromExport' => empty($showType)],
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code'), 'filter' => false, 'visible' => !empty($showType) ? TRUE : FALSE, 'hiddenFromExport' => empty($showType)],
             ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
-            }, 'visible' => !empty($showType) ? TRUE : FALSE],
+            }, 'visible' => !empty($showType) ? TRUE : FALSE, 'hiddenFromExport' => empty($showType)],
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type);
-            }, 'filter' => false, 'visible' => !empty($showType) ? TRUE : FALSE],
-            ['header' => Yii::t('app', 'DCS Code'), 'attribute' => 'dcs_code', 'filter' => false, 'visible' => !empty($showType) ? FALSE : TRUE],
+            }, 'filter' => false, 'visible' => !empty($showType) ? TRUE : FALSE, 'hiddenFromExport' => empty($showType)],
+            ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC').'  Ref Code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+            }, 'filter' => FALSE],
+            ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC Name'), 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+            }, 'filter' => FALSE],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS').' Ref Code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+            }, 'filter' => FALSE],
+            ['header' => Yii::t('app', 'DCS Code'), 'attribute' => 'dcs_code', 'filter' => false, 'visible' => !empty($showType) ? FALSE : TRUE, 'hiddenFromExport' => !empty($showType)],
             ['attribute' => 'dcs_code',
             'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-            }, 'filter' => false, 'visible' => !empty($showType) ? FALSE : TRUE],
+            }, 'filter' => false, 'visible' => !empty($showType) ? FALSE : TRUE, 'hiddenFromExport' => !empty($showType)],
             ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
                 return !empty($model->member_code) ? substr($model->member_code, -4) : '';
-            }, 'visible' => !empty($showFarmer) ? TRUE : FALSE, 'filter' => false],
+            }, 'visible' => !empty($showFarmer) ? TRUE : FALSE, 'filter' => false, 'hiddenFromExport' => empty($showFarmer)],
             ['attribute' => 'member_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-            }, 'filter' => false, 'visible' => !empty($showFarmer) ? TRUE : FALSE],
+            }, 'filter' => false, 'visible' => !empty($showFarmer) ? TRUE : FALSE, 'hiddenFromExport' => empty($showFarmer)],
             ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
@@ -70,7 +79,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'old_route_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldRouteCode, 'route_name');
             }, 'filter' => FALSE],
-            ['attribute' => 'old_customer_code', 'filter' => false, 'visible' => (isset($is_dcs_editable) && $is_dcs_editable)],
+            ['attribute' => 'old_customer_code', 'filter' => false, 'visible' => (isset($is_dcs_editable) && $is_dcs_editable), 'hiddenFromExport' => !(isset($is_dcs_editable) && $is_dcs_editable)],
             ['attribute' => 'old_milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldMilkTypeCode, 'animal_type_name');
             }, 'filter' => false, 'visible' => TRUE],
@@ -95,8 +104,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'actual_rate', 'filter' => false],
             ['attribute' => 'rtpl', 'filter' => false],
             ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
-            ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
-            ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
+            ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE, 'hiddenFromExport' => !empty($showFarmer)],
+            ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE, 'hiddenFromExport' => !empty($showFarmer)],
             ['attribute' => 'created_by', 'value' => function($m) {
                 $createdBy = $m->createdBy;
                 if (!empty($createdBy)) {
@@ -130,7 +139,6 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 <?php
 $script = '
-    $(".kv-panel-before").hide();
     $(".submit").click(function() {
      var id= $(this).attr("value");
      $(".set_operation").val(id);

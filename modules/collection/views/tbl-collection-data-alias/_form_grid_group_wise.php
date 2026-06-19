@@ -14,7 +14,7 @@ use kartik\grid\GridView;
     $showType = $showType ?? null;
     $is_dcs_editable = $is_dcs_editable ?? null;
     ?>
-    <?php echo Html::hiddenInput('operation', '', ['class' => 'set_operation']); ?>
+    <input type="hidden" name="TblCollectionDataAlias[operation]" class="set_operation" value="" />
 
     <?php
     $attribute = [
@@ -62,7 +62,7 @@ use kartik\grid\GridView;
             ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC Name'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
             }, 'filter' => FALSE],
-            ['attribute' => 'mpp_code_ref', 'label' => Yii::t('app', 'Ref Code'), 'value' => function($model) {
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS').' Ref Code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
             }, 'filter' => FALSE],
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
