@@ -25,44 +25,12 @@ $attribute = [
             return Yii::$app->general->getmultiforeignkey($model->vehicleCode, ['transporter'], 'transporter_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false
     ],
-    [
-        'attribute' => 'bmc_code',
-        'label' => Yii::t('app', 'Source Type'),
-        'value' => function ($model) {
-            return !empty($model->bmc_code) ? 'BMC' : 'PLANT';
-        },
-        'vAlign' => 'middle',
-        'filter' => false
-    ],
-    [
-        'attribute' => 'bmc_name',
-        'label' => Yii::t('app', 'Source Name'),
-        'value' => function ($model) {
-            $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
-            $sourceCode = !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
-            $response = Yii::$app->general->getColumnName($sourceType);
-            if (!empty($response['rel']))
-                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['name']) . '-' . $sourceCode;
-        }, 'vAlign' => 'middle', 'filter' => false
-    ],
-    [
-        'attribute' => 'bmc_code',
-        'label' => Yii::t('app', 'Source Code'),
-        'value' => function ($model) {
-            return !empty($model->bmc_code) ? $model->bmc_code : $model->plant_code;
-        },
-        'vAlign' => 'middle', 'filter' => false
-    ],
-    [
-        'attribute' => 'bmc_code',
-        'label' => (Yii::t('app', 'Source Ref.Code')),
-        'value' => function ($model) {
-            $sourceType = !empty($model->bmc_code) ? 'BMC' : 'PLANT';
-            $response = Yii::$app->general->getColumnName($sourceType);
-            if (!empty($response['rel']))
-                return Yii::$app->general->getforeignkey($model->{$response['rel']}, $response['ref_code']);
-        }, 'vAlign' => 'middle'
-    ],
+    ['attribute' => 'source_type', 'label' => Yii::t('app', 'Source Type'), 'vAlign' => 'middle', 'filter' => false, 'visible' => true],
+    ['attribute' => 'source_name', 'label' => Yii::t('app', 'Source Name'), 'value' => function ($model) {
+        return $model->source_name . (!empty($model->ref_code) ? ' - ' . $model->ref_code : '');
+    }, 'vAlign' => 'middle', 'visible' => true, 'filter' => false],
+    ['attribute' => 'source_code', 'label' => Yii::t('app', 'Source Code'), 'vAlign' => 'middle', 'visible' => true, 'filter' => false],
+    ['attribute' => 'ref_code', 'label' => (Yii::t('app', 'Source Ref.Code')), 'vAlign' => 'middle', 'visible' => true],
     [
         'attribute' => 'transaction_date',
         'filterType' => GridView::FILTER_DATE,
