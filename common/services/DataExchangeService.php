@@ -36,6 +36,17 @@ class DataExchangeService {
         } catch (Throwable $e) {
             Yii::error("Comfed Process Error: " . $e->getMessage());
             echo "Comfed Process Error: " . $e->getMessage() . PHP_EOL;
+            if ($e instanceof \yii\db\Exception || $e instanceof \PDOException || strpos($e->getMessage(), 'IMC06') !== false || strpos($e->getMessage(), 'The connection is broken') !== false) {
+                try {
+                    Yii::$app->db->close();
+                    Yii::$app->db->pdo = null;
+                    sleep(5);
+                    Yii::$app->db->open();
+                    echo "Comfed Process Error: DB connection successfully reset." . PHP_EOL;
+                } catch (\Throwable $ex) {
+                    echo 'Comfed Process Error : DB Connection Error: ' . $ex->getMessage() . PHP_EOL;
+                }
+            }
             return false;
         }
     }
