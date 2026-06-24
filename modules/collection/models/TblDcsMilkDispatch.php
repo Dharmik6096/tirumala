@@ -238,7 +238,12 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
                             $message = str_replace($arrFrom, $arrTo, $word);
                             $sms_data['refecence_code'] = (string) $collection->milk_collection_code;
                             $sms_data['module_type'] = $module;
-                            $content_id = !empty($apiData->api_master_id) ? $apiData->api_master_id : '';
+                            $content_id = '';
+                            if(!empty($templateData->api_master_id)){
+                                $content_id = $templateData->api_master_id;
+                            } else if(!empty($apiData->api_master_id)){
+                                $content_id = $apiData->api_master_id;
+                            }
 //                            if (YII_ENV_DEV) {
 //                                
 //                            } else {
