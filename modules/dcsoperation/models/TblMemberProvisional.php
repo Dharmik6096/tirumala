@@ -861,6 +861,7 @@ class TblMemberProvisional extends ChildModel {
 
     public function memberApprove(&$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, &$message, &$unlink_files, &$attachments) {
         $tblMember = new TblMember();
+        unset($memberModel->created_at, $memberModel->created_by, $memberModel->updated_at, $memberModel->updated_by, $memberModel->remarks);
         if ($memberModel->provisional_from == 'mobile_update') {
             $tblMember = TblMember::find()->where(['member_code' => $memberModel->member_code])->one();
             $memberCode = $memberModel->member_code;

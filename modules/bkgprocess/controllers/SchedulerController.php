@@ -1520,6 +1520,7 @@ class SchedulerController extends ChildController {
                                 $historyModel = new TblMemberProvisionalHistory();
                                 Yii::$app->operation->history($model, $historyModel, UPDATE);
                                 $model->vendor_code = $row['vendor'];
+                                $model->sap_farmer_code = $row['vendor'];
                                 $model->resp_status = $fileName;
                                 $model->response_msg = $row['message'];
                                 $modelSave = [$historyModel];
@@ -1529,7 +1530,7 @@ class SchedulerController extends ChildController {
                                 $masterdoc = [];
                                 $errors = [];
                                 $model->setChildTableSaveDelete($model, $modelSave, $deleteModelList, $unlink_files, $attachments, $masterdoc, $errors);
-                                $processed = !empty($modelSave) && ($this->generalModel->saveDeleteTransaction([$model], $modelSave, $deleteModelList, ['Member Creation', 'create']) === 'customRedirect');
+                                $processed = empty($errors) && !empty($modelSave) && ($this->generalModel->saveDeleteTransaction([$model], $modelSave, $deleteModelList, ['Member Creation', 'create']) === 'customRedirect');
                                 if ($processed) {
                                     $model->moveFiles($unlink_files, $attachments, $masterdoc);
                                 } else {
