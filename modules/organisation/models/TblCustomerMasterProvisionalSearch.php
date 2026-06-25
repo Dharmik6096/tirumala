@@ -166,6 +166,9 @@ class TblCustomerMasterProvisionalSearch extends TblCustomerMasterProvisional {
                     ->andFilterWhere(['>=', 'cast(registration_date as date)', $fromDate])
                     ->andFilterWhere(['<=', 'cast(registration_date as date)', $toDate])
                     ->andFilterWhere(['=', 'union_code', $this->union_code])
+                    ->andWhere(['IS NOT','provisional_status', NULL])
+                    ->andWhere(['!=','provisional_status', ''])
+                    ->andWhere(['is_active' => 1])
                     ->all();
             $approvedProvisionalMembers = array_filter($provisionalMembers, function($member) {
                 return strtolower($member->provisional_status) == 'approve';
