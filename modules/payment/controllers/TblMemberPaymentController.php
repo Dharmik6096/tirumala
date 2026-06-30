@@ -1074,7 +1074,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                                             $notificationmodel = new TblAlertNotification();
                                             $datetime = date('Y-m-d H:i:s');
                                             $notificationmodel->module_type = 'member_payment';
-                                            $notificationmodel->content_id = 1;
+                                            $notificationmodel->content_id = !empty($templateData->api_master_id) ? $templateData->api_master_id : '1';
                                             $notificationmodel->receiver_detail = $mobilNo;
                                             $notificationmodel->receiver_type = 'SMS';
                                             $notificationmodel->message = $message;
@@ -1942,7 +1942,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         if (false && YII_ENV_DEV) {
                             //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
                         } else {
-                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, true, $templateData->header_info);
+                            $contentId = !empty($templateData->api_master_id) ? $templateData->api_master_id : '1';
+                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, true, $templateData->header_info, $contentId);
                         }
                     }
                     $status = 'success';
