@@ -38,7 +38,8 @@ class EmilkProLiteController extends MasterController {
                 $templateData = $templateModel->getTemplateData('emilk_pro_lite_otp');
                 if (!empty($templateData)) {
                     $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
-                    Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    $contentId = !empty($templateData->api_master_id) ? $templateData->api_master_id : '1';
+                    Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info, $contentId);
                     foreach ($detail as $key => $subArr) {
                         unset($detail[$key]['master_type']);
                         unset($detail[$key]['master_code']);

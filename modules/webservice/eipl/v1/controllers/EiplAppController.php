@@ -56,13 +56,14 @@ class EiplAppController extends MasterController {
                 if (!YII_ENV_DEV && !empty($LiveOTPforHOMobileApp)) {
                     $templateModel = new TblAlertTemplate();
                     $templateData = $templateModel->getTemplateData('eipl_app_otp', 'SMS', $temp_model->union_code);
-                    $apiMasterRecord = TblApiMaster::find()->select('api_master_id')->where(['receiver_type' => 'SMS', 'union_code' => $temp_model->union_code, 'is_active' => 1])->one();
+                    $apiMasterRecord = TblApiMaster::find()->select('api_master_id')->where(['receiver_type' => 'SMS', 'union_code' => $temp_model->union_code, 'is_active' => 1])->andFilterWhere(['api_master_id' => $templateData->api_master_id])->one();
                     if (!empty($templateData) && !empty($apiMasterRecord)) {
                         $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
                         $sms_data = [];
                         $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
                         $sms_data['module_type'] = 'app_activation';
-                        Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info, $apiMasterRecord->api_master_id);
+                        $contentId = !empty($templateData->api_master_id) ? $templateData->api_master_id : $apiMasterRecord->api_master_id;
+                        Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info, $contentId);
                     }
                 }
                 foreach ($detail as $key => $subArr) {

@@ -905,7 +905,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $notificationmodel = new TblAlertNotification();
             $datetime = date('Y-m-d H:i:s');
             $notificationmodel->module_type = 'shift_lock_sms';
-            $notificationmodel->content_id = $masterData->api_master_id;
+            $notificationmodel->content_id = !empty($templateData->api_master_id) ? $templateData->api_master_id : $masterData->api_master_id;
             $notificationmodel->receiver_detail = $mobile_no;
             $notificationmodel->receiver_type = 'SMS';
             $notificationmodel->message = $message;

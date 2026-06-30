@@ -421,7 +421,7 @@ class Applicability extends \yii\base\Module {
                                             $notificationmodel = new TblAlertNotification();
                                             $datetime = date('Y-m-d H:i:s');
                                             $notificationmodel->module_type = $type;
-                                            $notificationmodel->content_id = 1;
+                                            $notificationmodel->content_id = !empty($templateData->api_master_id) ? $templateData->api_master_id : '1';
                                             $notificationmodel->receiver_detail = $mobilNo;
                                             $notificationmodel->receiver_type = 'SMS';
                                             $notificationmodel->message = $message;
