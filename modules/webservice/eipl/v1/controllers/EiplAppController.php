@@ -294,7 +294,7 @@ class EiplAppController extends MasterController {
                     $profile_data['user_type'] = $identity->login_type;
                     $profile_data['mobile_no'] = $identity->mobile_no;
                     $profile_data['email'] = ($identity->login_type != 'DRIVER') ? Yii::$app->general->getforeignkey($identity->masterDetail, 'email') : '';
-//                    $profile_data['department'] = Yii::$app->general->getforeignkey($identity->departmentCode, 'department');
+                    $profile_data['department'] = Yii::$app->general->getforeignkey($identity->departmentCode, 'department');
                     $company_detail = [];
                     $company_detail['union'] = count($union) == 1 ? stripcslashes($union[0]['union_name'] . '\n' . $union[0]['union_code']) : '';
                     $company_detail['plant'] = count($plant) == 1 ? stripcslashes($plant[0]['plant_name'] . '\n' . $plant[0]['plant_code']) : '';
