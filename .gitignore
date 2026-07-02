@@ -49,3 +49,5 @@ config/env.php
 web/uploads/banner_upload/**
 web/export_report/**
 SAPFILES/**2026-07-02-*
+modules/crystalreports/html/
+web/utility/CrystalReportsNinja-master/Deployment/
